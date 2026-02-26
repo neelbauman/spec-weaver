@@ -14,6 +14,8 @@ from rich.table import Table
 from rich.tree import Tree
 
 import re
+import subprocess
+import sys
 from datetime import date as _date
 
 from spec_weaver.doorstop import get_item_map, get_doorstop_tree, _get_custom_attribute, _get_git_file_date, get_specs, is_suspect, get_all_prefixes, get_item_warnings
@@ -25,6 +27,7 @@ from spec_weaver.test_results import (
     result_badge,
     spec_result_summary,
 )
+from spec_weaver.codegen import generate_test_file, generate_conftest
 
 # ---------------------------------------------------------------------------
 # 実装ステータス定義
@@ -260,11 +263,194 @@ def audit_cmd(
 # ---------------------------------------------------------------------------
 
 @app.command("scaffold")
-def scaffold_cmd() -> None:
-    """
-    (開発中) Gherkinに定義されていて、まだ実装されていないテストステップの雛形を生成します。
-    """
-    console.print("[yellow]🚧 scaffold コマンドは現在開発中です。[/yellow]")
+def scaffold_cmd(
+    feature_dir: Path = typer.Argument(
+        ...,
+        exists=True,
+        resolve_path=True,
+        help=".feature ファイルが格納されたディレクトリ",
+    ),
+    out_dir: Path = typer.Option(
+        Path("tests/features"),
+        "--out-dir",
+        "-o",
+        resolve_path=True,
+        help="テストコード出力先ディレクトリ",
+    ),
+    overwrite: bool = typer.Option(
+        False,
+        "--overwrite",
+        help="既存ファイルを上書きする",
+    ),
+) -> None:
+    """Gherkin .feature ファイルから pytest-bdd テストコードの雛形を自動生成します。"""
+    try:
+        feature_files = sorted(feature_dir.rglob("*.feature"))
+        if not feature_files:
+            console.print("[yellow]⚠️ .feature ファイルが見つかりませんでした。[/yellow]")
+            raise typer.Exit(0)
+
+        generated = 0
+        skipped = 0
+        errors = 0
+
+        def _display_path(p: Path) -> str:
+            """表示用パス: cwd からの相対パスを試み、失敗したら絶対パスを返す。"""
+            try:
+                return str(p.relative_to(Path.cwd()))
+            except ValueError:
+                return str(p)
+
+        # conftest.py 生成
+        conftest_result = generate_conftest(out_dir, feature_dir, overwrite=overwrite)
+        if conftest_result:
+            console.print(f"  [green]✅ 生成[/green]: {_display_path(conftest_result)}")
+        else:
+            console.print(f"  [dim]⏭️ スキップ[/dim]: {_display_path(out_dir / 'conftest.py')} (既存)")
+
+        for fpath in feature_files:
+            try:
+                result = generate_test_file(fpath, out_dir, feature_dir, overwrite=overwrite)
+                if result:
+                    console.print(f"  [green]✅ 生成[/green]: {_display_path(result)}")
+                    generated += 1
+                else:
+                    rel = out_dir / f"test_{fpath.stem}.py"
+                    console.print(f"  [dim]⏭️ スキップ[/dim]: {_display_path(rel)} (既存)")
+                    skipped += 1
+            except Exception as e:
+                console.print(f"  [red]❌ エラー[/red]: {fpath.name}: {e}")
+                errors += 1
+
+        console.print()
+        console.print(
+            f"[bold green]生成: {generated}[/bold green]  "
+            f"[dim]スキップ: {skipped}[/dim]  "
+            + (f"[bold red]エラー: {errors}[/bold red]" if errors else "")
+        )
+
+        if errors:
+            raise typer.Exit(1)
+
+    except typer.Exit:
+        raise
+    except Exception as e:
+        console.print(f"[bold red]❌ scaffold エラー: {e}[/bold red]")
+        raise typer.Exit(code=1)
+
+
+# ---------------------------------------------------------------------------
+# ci コマンド
+# ---------------------------------------------------------------------------
+
+@app.command("ci")
+def ci_cmd(
+    feature_dir: Path = typer.Argument(
+        ...,
+        exists=True,
+        resolve_path=True,
+        help=".feature ファイルが格納されたディレクトリ",
+    ),
+    test_dir: Path = typer.Option(
+        Path("tests/features"),
+        "--test-dir",
+        "-d",
+        resolve_path=True,
+        help="テストコード格納先ディレクトリ",
+    ),
+    out_dir: Path = typer.Option(
+        Path(".specification"),
+        "--out-dir",
+        "-o",
+        resolve_path=True,
+        help="build ドキュメント出力先",
+    ),
+    report: Path = typer.Option(
+        Path("test-results.json"),
+        "--report",
+        "-R",
+        resolve_path=True,
+        help="Cucumber 互換 JSON レポート出力先",
+    ),
+    do_scaffold: bool = typer.Option(
+        False,
+        "--scaffold",
+        help="テスト実行前に scaffold を実行する",
+    ),
+    repo_root: Path = typer.Option(
+        Path.cwd(),
+        "--repo-root",
+        "-r",
+        exists=True,
+        resolve_path=True,
+        help="Doorstopのプロジェクトルート",
+    ),
+) -> None:
+    """テスト実行 → Cucumber JSON 生成 → build ドキュメント生成を一気通貫で実行します。"""
+    try:
+        # Step 1: scaffold（オプション）
+        if do_scaffold:
+            console.print("[bold cyan]📝 Step 1/3: テストコード生成 (scaffold)...[/bold cyan]")
+            feature_files = sorted(feature_dir.rglob("*.feature"))
+            if feature_files:
+                generate_conftest(test_dir, feature_dir, overwrite=True)
+                for fpath in feature_files:
+                    try:
+                        generate_test_file(fpath, test_dir, feature_dir, overwrite=True)
+                    except Exception as e:
+                        console.print(f"  [yellow]⚠️ scaffold スキップ: {fpath.name}: {e}[/yellow]")
+            console.print("  [green]✅ scaffold 完了[/green]")
+        else:
+            console.print("[dim]📝 Step 1/3: scaffold スキップ (--scaffold で有効化)[/dim]")
+
+        # Step 2: pytest 実行
+        console.print(f"[bold cyan]🧪 Step 2/3: テスト実行...[/bold cyan]")
+        pytest_cmd = [
+            sys.executable, "-m", "pytest",
+            str(test_dir),
+            f"--cucumber-json-report={report}",
+            "-q",
+        ]
+        console.print(f"  [dim]$ {' '.join(pytest_cmd)}[/dim]")
+        result = subprocess.run(pytest_cmd, capture_output=True, text=True)
+
+        if result.stdout:
+            console.print(result.stdout)
+        if result.stderr:
+            console.print(f"[dim]{result.stderr}[/dim]")
+
+        test_failed = result.returncode != 0
+        if test_failed:
+            console.print("[yellow]⚠️ テストに失敗がありますが、ドキュメント生成を継続します。[/yellow]")
+        else:
+            console.print("  [green]✅ テスト全件 PASS[/green]")
+
+        # Step 3: build
+        console.print(f"[bold cyan]📄 Step 3/3: ドキュメント生成 (build)...[/bold cyan]")
+        if not report.exists():
+            console.print(f"[yellow]⚠️ レポートファイルが生成されませんでした: {report}[/yellow]")
+            console.print("[dim]テスト結果なしで build を実行します。[/dim]")
+            build_test_results = None
+        else:
+            build_test_results = report
+
+        # build コマンドのロジックを直接呼び出す
+        _run_build(feature_dir, repo_root, out_dir, build_test_results)
+
+        console.print()
+        if test_failed:
+            console.print("[bold yellow]⚠️ CI 完了（テスト失敗あり — ドキュメントに FAIL 結果が反映されています）[/bold yellow]")
+            raise typer.Exit(1)
+        else:
+            console.print("[bold green]✅ CI 完了（全テスト PASS）[/bold green]")
+
+    except typer.Exit:
+        raise
+    except Exception as e:
+        console.print(f"[bold red]❌ CI エラー: {e}[/bold red]")
+        import traceback
+        traceback.print_exc()
+        raise typer.Exit(code=1)
 
 
 # ---------------------------------------------------------------------------
@@ -363,119 +549,131 @@ def build(
 ):
     """Doorstopの全ドキュメントを解析し、相互リンク・カバレッジ・テスト結果を含むポータルサイトをビルドします。"""
     try:
-        with console.status("[bold cyan]データの分析と結合を開始...[/bold cyan]"):
-            # 1. Doorstopから全アイテムと全プレフィックス取得
-            raw_items = get_item_map(repo_root)
-            all_items_str = {str(uid): item for uid, item in raw_items.items()}
-            doorstop_tree = get_doorstop_tree(repo_root)
-            all_prefixes = {str(doc.prefix) for doc in doorstop_tree}
-
-            # 2. Gherkinタグマップ取得 (全プレフィックスを対象にする)
-            tag_map = get_tag_map(feature_dir, all_prefixes)
-
-            # feature_path -> 関連アイテムUID一覧（バックリンク用）
-            _backlink_sets: dict[str, set[str]] = {}
-            for _uid, _scenarios in tag_map.items():
-                for _s in _scenarios:
-                    _backlink_sets.setdefault(_s["file"], set()).add(_uid)
-            feature_backlink_map: dict[str, list[str]] = {
-                k: sorted(v) for k, v in _backlink_sets.items()
-            }
-
-            # 3. 子への逆引きマップ（parent_uid -> [child_uid, ...]）
-            child_map: dict[str, list[str]] = {}
-            for uid, item in all_items_str.items():
-                for link in item.links:
-                    parent_uid = str(link)
-                    child_map.setdefault(parent_uid, []).append(uid)
-
-            # 4. 兄弟マップ（同じ親を持つアイテム同士）
-            sibling_map = _compute_sibling_map(all_items_str, child_map)
-
-            # 5. テスト実行結果（省略可）
-            test_result_map: TestResultMap | None = None
-            if test_results_file is not None:
-                if not test_results_file.exists():
-                    console.print(
-                        f"[bold red]❌ テスト結果ファイルが見つかりません: {test_results_file}[/bold red]"
-                    )
-                    raise typer.Exit(1)
-                try:
-                    test_result_map = load_test_results(test_results_file)
-                    console.print(
-                        f"[bold cyan]📊 テスト結果を読み込みました: {len(test_result_map)} シナリオ[/bold cyan]"
-                    )
-                except Exception as e:
-                    console.print(f"[bold red]❌ テスト結果の読み込みに失敗しました: {e}[/bold red]")
-                    raise typer.Exit(1)
-
-        # 出力ディレクトリ準備
-        docs_dir = out_dir / "docs"
-        items_dir = docs_dir / "items"
-        features_md_dir = docs_dir / "features"
-        items_dir.mkdir(parents=True, exist_ok=True)
-        features_md_dir.mkdir(parents=True, exist_ok=True)
-
-        # 6. Gherkin .feature → Markdown 変換
-        feature_md_map: dict[str, str] = {}
-        for feature_file in feature_dir.rglob("*.feature"):
-            try:
-                rel = feature_file.relative_to(feature_dir)
-                md_rel = rel.with_suffix(".md")
-                out_path = features_md_dir / md_rel
-                out_path.parent.mkdir(parents=True, exist_ok=True)
-                try:
-                    tag_rel = str(feature_file.relative_to(feature_dir.parent))
-                except ValueError:
-                    tag_rel = str(feature_file)
-                backlinks = feature_backlink_map.get(tag_rel, [])
-                md_content = _feature_to_markdown(feature_file, backlinks=backlinks)
-                out_path.write_text(md_content, encoding="utf-8")
-                feature_md_map[tag_rel] = f"../features/{md_rel.as_posix()}"
-            except Exception as e:
-                console.print(f"[yellow]⚠️ feature変換スキップ: {feature_file}: {e}[/yellow]")
-
-        # 7. 個別アイテムページ (items/*.md)
-        for uid, item in all_items_str.items():
-            content = _generate_item_markdown(
-                uid, item, all_items_str, child_map, sibling_map, tag_map, feature_md_map,
-                test_result_map=test_result_map,
-            )
-            (items_dir / f"{uid}.md").write_text(content, encoding="utf-8")
-
-        # 8. 各ドキュメントの一覧ページ生成
-        prefix_to_file = {}
-        for doc in doorstop_tree:
-            p = str(doc.prefix)
-            doc_items = {uid: item for uid, item in all_items_str.items() if uid.startswith(p + "-")}
-            # プレフィックスが完全に一致する場合（ハイフンなし）も考慮が必要な場合があるが、Doorstopの標準はハイフン区切り
-            if not doc_items:
-                doc_items = {uid: item for uid, item in all_items_str.items() if uid.startswith(p)}
-            
-            filename = f"{p.lower()}.md"
-            table = _generate_index_table(
-                f"ドキュメント: {p}", doc_items, all_items_str, child_map, sibling_map, tag_map,
-                test_result_map=test_result_map,
-            )
-            (docs_dir / filename).write_text(table, encoding="utf-8")
-            prefix_to_file[p] = filename
-
-        # 9. index.md と mkdocs.yml
-        _generate_basic_files(
-            docs_dir, out_dir, repo_root.name, feature_md_map,
-            all_items_str, child_map, tag_map, doorstop_tree, prefix_to_file
-        )
-
-        console.print(f"[bold green]✅ ビルド成功！ [white]{out_dir}[/white][/bold green]")
-        console.print(
-            f"閲覧: [bold magenta]mkdocs serve -f {out_dir.relative_to(Path.cwd())}/mkdocs.yml[/bold magenta]"
-        )
-
+        _run_build(feature_dir, repo_root, out_dir, test_results_file, prefix)
+    except typer.Exit:
+        raise
     except Exception as e:
         console.print(f"[bold red]❌ ビルドエラー: {e}[/bold red]")
         import traceback
         traceback.print_exc()
         raise typer.Exit(1)
+
+
+def _run_build(
+    feature_dir: Path,
+    repo_root: Path,
+    out_dir: Path,
+    test_results_file: Path | None = None,
+    prefix: str = "SPEC",
+) -> None:
+    """build コマンドのコアロジック。build / ci の両方から呼ばれる。"""
+    with console.status("[bold cyan]データの分析と結合を開始...[/bold cyan]"):
+        # 1. Doorstopから全アイテムと全プレフィックス取得
+        raw_items = get_item_map(repo_root)
+        all_items_str = {str(uid): item for uid, item in raw_items.items()}
+        doorstop_tree = get_doorstop_tree(repo_root)
+        all_prefixes = {str(doc.prefix) for doc in doorstop_tree}
+
+        # 2. Gherkinタグマップ取得 (全プレフィックスを対象にする)
+        tag_map = get_tag_map(feature_dir, all_prefixes)
+
+        # feature_path -> 関連アイテムUID一覧（バックリンク用）
+        _backlink_sets: dict[str, set[str]] = {}
+        for _uid, _scenarios in tag_map.items():
+            for _s in _scenarios:
+                _backlink_sets.setdefault(_s["file"], set()).add(_uid)
+        feature_backlink_map: dict[str, list[str]] = {
+            k: sorted(v) for k, v in _backlink_sets.items()
+        }
+
+        # 3. 子への逆引きマップ（parent_uid -> [child_uid, ...]）
+        child_map: dict[str, list[str]] = {}
+        for uid, item in all_items_str.items():
+            for link in item.links:
+                parent_uid = str(link)
+                child_map.setdefault(parent_uid, []).append(uid)
+
+        # 4. 兄弟マップ（同じ親を持つアイテム同士）
+        sibling_map = _compute_sibling_map(all_items_str, child_map)
+
+        # 5. テスト実行結果（省略可）
+        test_result_map: TestResultMap | None = None
+        if test_results_file is not None:
+            if not test_results_file.exists():
+                console.print(
+                    f"[bold red]❌ テスト結果ファイルが見つかりません: {test_results_file}[/bold red]"
+                )
+                raise typer.Exit(1)
+            try:
+                test_result_map = load_test_results(test_results_file)
+                console.print(
+                    f"[bold cyan]📊 テスト結果を読み込みました: {len(test_result_map)} シナリオ[/bold cyan]"
+                )
+            except Exception as e:
+                console.print(f"[bold red]❌ テスト結果の読み込みに失敗しました: {e}[/bold red]")
+                raise typer.Exit(1)
+
+    # 出力ディレクトリ準備
+    docs_dir = out_dir / "docs"
+    items_dir = docs_dir / "items"
+    features_md_dir = docs_dir / "features"
+    items_dir.mkdir(parents=True, exist_ok=True)
+    features_md_dir.mkdir(parents=True, exist_ok=True)
+
+    # 6. Gherkin .feature → Markdown 変換
+    feature_md_map: dict[str, str] = {}
+    for feature_file in feature_dir.rglob("*.feature"):
+        try:
+            rel = feature_file.relative_to(feature_dir)
+            md_rel = rel.with_suffix(".md")
+            out_path = features_md_dir / md_rel
+            out_path.parent.mkdir(parents=True, exist_ok=True)
+            try:
+                tag_rel = str(feature_file.relative_to(feature_dir.parent))
+            except ValueError:
+                tag_rel = str(feature_file)
+            backlinks = feature_backlink_map.get(tag_rel, [])
+            md_content = _feature_to_markdown(feature_file, backlinks=backlinks)
+            out_path.write_text(md_content, encoding="utf-8")
+            feature_md_map[tag_rel] = f"../features/{md_rel.as_posix()}"
+        except Exception as e:
+            console.print(f"[yellow]⚠️ feature変換スキップ: {feature_file}: {e}[/yellow]")
+
+    # 7. 個別アイテムページ (items/*.md)
+    for uid, item in all_items_str.items():
+        content = _generate_item_markdown(
+            uid, item, all_items_str, child_map, sibling_map, tag_map, feature_md_map,
+            test_result_map=test_result_map,
+        )
+        (items_dir / f"{uid}.md").write_text(content, encoding="utf-8")
+
+    # 8. 各ドキュメントの一覧ページ生成
+    prefix_to_file = {}
+    for doc in doorstop_tree:
+        p = str(doc.prefix)
+        doc_items = {uid: item for uid, item in all_items_str.items() if uid.startswith(p + "-")}
+        # プレフィックスが完全に一致する場合（ハイフンなし）も考慮が必要な場合があるが、Doorstopの標準はハイフン区切り
+        if not doc_items:
+            doc_items = {uid: item for uid, item in all_items_str.items() if uid.startswith(p)}
+
+        filename = f"{p.lower()}.md"
+        table = _generate_index_table(
+            f"ドキュメント: {p}", doc_items, all_items_str, child_map, sibling_map, tag_map,
+            test_result_map=test_result_map,
+        )
+        (docs_dir / filename).write_text(table, encoding="utf-8")
+        prefix_to_file[p] = filename
+
+    # 9. index.md と mkdocs.yml
+    _generate_basic_files(
+        docs_dir, out_dir, repo_root.name, feature_md_map,
+        all_items_str, child_map, tag_map, doorstop_tree, prefix_to_file
+    )
+
+    console.print(f"[bold green]✅ ビルド成功！ [white]{out_dir}[/white][/bold green]")
+    console.print(
+        f"閲覧: [bold magenta]mkdocs serve -f {out_dir.relative_to(Path.cwd())}/mkdocs.yml[/bold magenta]"
+    )
 
 
 # ---------------------------------------------------------------------------
