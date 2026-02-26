@@ -64,4 +64,5 @@ venvPath="."
 [dependency-groups]
 dev = [
     "pytest>=9.0.2",
+    "pytest-bdd>=7.3.0",
 ]
