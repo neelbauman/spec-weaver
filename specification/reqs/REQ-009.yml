@@ -1,0 +1,36 @@
+active: true
+derived: false
+header: |
+  トレーサビリティ・ツリーの対話的探索
+level: 9.0
+links:
+- REQ-001: sQI3PDVLr4t_7FzvaBW2KfO6i0kUFnK0vEnVRhJAA4M=
+normative: true
+ref: ''
+reviewed: du1Y174vf1XNyq2CQUATrj9prG-aj9jLafBYeNkHp9g=
+status: draft
+testable: false
+text: |
+  ## 概要
+  任意のアイテム（REQ・SPEC・Gherkin Feature/Scenario）を起点として、
+  そのアイテムに紐づく上位・下位・横断的な関連アイテムをすべて収集し、
+  階層構造を明確にしたツリー形式でターミナルに表示するCLIコマンドを提供すること。
+
+  ## 背景・動機
+  要件・仕様・テストの数が増えると、あるアイテムがどのビジネス要件に紐づき、
+  どの仕様で具体化され、どのGherkinシナリオで検証されているかを
+  把握することが困難になる。
+  任意の地点から関連アイテムを辿って全体像を即座に確認できる機能があれば、
+  影響分析・仕様レビュー・テスト計画の効率が大幅に向上する。
+
+  ## 対応すべきトレーサビリティの方向
+  - **下方向（トップダウン）**: REQ → 子REQ → SPEC → Gherkin シナリオ
+  - **上方向（ボトムアップ）**: Gherkin シナリオ → SPEC → REQ → 親REQ
+  - **任意起点**: SPEC を指定した場合、上位のREQと下位のGherkinの両方を表示
+
+  ## 受け入れ基準
+  - `spec-weaver trace <ITEM-ID>` コマンドで、指定アイテムを起点としたトレーサビリティ・ツリーを表示できること
+  - REQ ID、SPEC ID、Gherkin Feature/Scenarioタグのいずれを指定しても動作すること
+  - 出力はツリー構造（インデント・罫線）で階層関係が視覚的に明確であること
+  - 各ノードにはID・タイトル・ステータス等の要約情報が含まれること
+  - 紐づくGherkinシナリオがある場合、シナリオ名とファイルパスも表示されること

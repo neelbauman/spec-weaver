@@ -23,10 +23,11 @@ def _make_mock_item(uid: str, suspect: bool = False, status: str | None = None):
     return item
 
 
+@patch("spec_weaver.cli.get_all_prefixes")
 @patch("spec_weaver.cli.get_item_map")
 @patch("spec_weaver.cli.get_tags")
 @patch("spec_weaver.cli.get_specs")
-def test_audit_perfect_match(mock_get_specs, mock_get_tags, mock_get_item_map, tmp_path):
+def test_audit_perfect_match(mock_get_specs, mock_get_tags, mock_get_item_map, mock_get_all_prefixes, tmp_path):
     # 仕様とテストが完全に一致する状態
     mock_get_specs.return_value = {"SPEC-001", "SPEC-002"}
     mock_get_tags.return_value = {"SPEC-001", "SPEC-002"}
@@ -34,6 +35,7 @@ def test_audit_perfect_match(mock_get_specs, mock_get_tags, mock_get_item_map, t
         "SPEC-001": _make_mock_item("SPEC-001"),
         "SPEC-002": _make_mock_item("SPEC-002"),
     }
+    mock_get_all_prefixes.return_value = {"SPEC"}
 
     # 実行
     result = runner.invoke(app, ["audit", str(tmp_path), "--repo-root", str(tmp_path)])
@@ -43,10 +45,11 @@ def test_audit_perfect_match(mock_get_specs, mock_get_tags, mock_get_item_map, t
     assert "完璧です！" in result.stdout
 
 
+@patch("spec_weaver.cli.get_all_prefixes")
 @patch("spec_weaver.cli.get_item_map")
 @patch("spec_weaver.cli.get_tags")
 @patch("spec_weaver.cli.get_specs")
-def test_audit_with_errors(mock_get_specs, mock_get_tags, mock_get_item_map, tmp_path):
+def test_audit_with_errors(mock_get_specs, mock_get_tags, mock_get_item_map, mock_get_all_prefixes, tmp_path):
     # 乖離がある状態
     mock_get_specs.return_value = {"SPEC-001", "SPEC-002"}  # SPEC-002 がテスト漏れ
     mock_get_tags.return_value = {"SPEC-001", "SPEC-003"}   # SPEC-003 が孤児タグ
@@ -54,6 +57,7 @@ def test_audit_with_errors(mock_get_specs, mock_get_tags, mock_get_item_map, tmp
         "SPEC-001": _make_mock_item("SPEC-001"),
         "SPEC-002": _make_mock_item("SPEC-002"),
     }
+    mock_get_all_prefixes.return_value = {"SPEC"}
 
     result = runner.invoke(app, ["audit", str(tmp_path), "--repo-root", str(tmp_path)])
 
@@ -65,10 +69,11 @@ def test_audit_with_errors(mock_get_specs, mock_get_tags, mock_get_item_map, tmp
     assert "@SPEC-003" in result.stdout
 
 
+@patch("spec_weaver.cli.get_all_prefixes")
 @patch("spec_weaver.cli.get_item_map")
 @patch("spec_weaver.cli.get_tags")
 @patch("spec_weaver.cli.get_specs")
-def test_audit_suspect_specs(mock_get_specs, mock_get_tags, mock_get_item_map, tmp_path):
+def test_audit_suspect_specs(mock_get_specs, mock_get_tags, mock_get_item_map, mock_get_all_prefixes, tmp_path):
     # SPEC-002 がSuspect状態
     mock_get_specs.return_value = {"SPEC-001", "SPEC-002"}
     mock_get_tags.return_value = {"SPEC-001", "SPEC-002"}
@@ -76,6 +81,7 @@ def test_audit_suspect_specs(mock_get_specs, mock_get_tags, mock_get_item_map, t
         "SPEC-001": _make_mock_item("SPEC-001", suspect=False),
         "SPEC-002": _make_mock_item("SPEC-002", suspect=True),
     }
+    mock_get_all_prefixes.return_value = {"SPEC"}
 
     result = runner.invoke(app, ["audit", str(tmp_path), "--repo-root", str(tmp_path)])
 
@@ -86,11 +92,12 @@ def test_audit_suspect_specs(mock_get_specs, mock_get_tags, mock_get_item_map, t
     assert "レビューが必要" in result.stdout
 
 
+@patch("spec_weaver.cli.get_all_prefixes")
 @patch("spec_weaver.cli.get_item_map")
 @patch("spec_weaver.cli.get_tags")
 @patch("spec_weaver.cli.get_specs")
 def test_audit_no_suspect_does_not_report_suspect(
-    mock_get_specs, mock_get_tags, mock_get_item_map, tmp_path
+    mock_get_specs, mock_get_tags, mock_get_item_map, mock_get_all_prefixes, tmp_path
 ):
     # Suspectが1件もない場合はSuspect警告が出ないこと
     mock_get_specs.return_value = {"SPEC-001", "SPEC-002"}
@@ -99,6 +106,7 @@ def test_audit_no_suspect_does_not_report_suspect(
         "SPEC-001": _make_mock_item("SPEC-001"),
         "SPEC-002": _make_mock_item("SPEC-002"),
     }
+    mock_get_all_prefixes.return_value = {"SPEC"}
 
     result = runner.invoke(app, ["audit", str(tmp_path), "--repo-root", str(tmp_path)])
 

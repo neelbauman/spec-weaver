@@ -1,0 +1,100 @@
+active: true
+derived: false
+header: |
+  trace コマンド — トレーサビリティ・ツリー表示
+level: 10.0
+links:
+- REQ-009: pkF08weee7PhnkKk5I1Z77rBsyoSdxA8GKAILfZP8yw=
+normative: true
+ref: ''
+reviewed: BPvIVNWYL2Kj9kbW9srXUbVKfR3ZaqPPeFSByHoZBlw=
+status: draft
+testable: true
+text: |
+  ## 概要
+  `spec-weaver trace <ITEM-ID>` コマンドを新設し、指定アイテムを根とした
+  トレーサビリティ・ツリーをターミナルに描画する。
+
+  ## 詳細仕様
+
+  ### サブコマンド定義
+  ```
+  spec-weaver trace <ITEM-ID> [OPTIONS]
+  ```
+
+  #### 引数
+  - `ITEM-ID`（必須）: 探索の起点となるアイテムID。以下の形式を受け付ける：
+    - Doorstop ID: `REQ-001`, `SPEC-003`, `AUTH-REQ-001` 等（任意プレフィックス対応）
+    - Gherkin Feature ファイル名: `audit.feature` 等
+  - `--repo-root` / `-r`（任意）: Doorstopリポジトリのルートパス（デフォルト: カレントディレクトリ）
+  - `--feature-dir` / `-f`（必須）: Gherkin .feature ファイルの格納ディレクトリ
+  - `--direction` / `-d`（任意）: 探索方向。`up`（上位のみ）/ `down`（下位のみ）/ `both`（双方向、デフォルト）
+  - `--format`（任意）: 出力形式。`tree`（デフォルト）/ `flat`（フラットリスト）
+
+  ### 探索ロジック
+
+  #### 1. 起点の解決
+  - 指定された `ITEM-ID` がDoorstopアイテムに存在するか検索する
+  - `.feature` ファイル名の場合、そのファイル内の `@SPEC-XXX` タグを抽出し、対応するSPECを起点とする
+  - 存在しないIDの場合はエラーを返す
+
+  #### 2. 上方向の探索（ボトムアップ）
+  - Doorstop の `links` フィールドを辿り、親アイテムを再帰的に収集する
+  - SPEC → REQ → 親REQ の順に上位へ辿る
+  - 循環参照を検知した場合は警告を出して探索を打ち切る
+
+  #### 3. 下方向の探索（トップダウン）
+  - 指定アイテムをリンク先として持つアイテムを逆引きで収集する
+    （例: REQ-001 を指定 → REQ-001 を links に持つ SPEC を検索）
+  - SPECについては、Gherkin .feature ファイルのタグ（`@SPEC-XXX`）から
+    対応するシナリオを収集する
+  - 再帰的に子孫を辿る
+
+  #### 4. 結果のマージ
+  - `--direction both` の場合、上方向・下方向の結果を起点ノードを中心にマージする
+
+  ### 出力形式
+
+  #### Tree 形式（デフォルト）
+  Rich の `Tree` ウィジェットを使用し、以下のように表示する：
+
+  ```
+  REQ-001 仕様と実装のトレーサビリティ保証 ✅ implemented
+  ├── REQ-002 監査による品質の継続的担保 ✅ implemented
+  │   ├── SPEC-003 audit コマンド仕様 ✅ implemented
+  │   │   └── 🥒 audit.feature
+  │   │       ├── Scenario: 完全一致時の監査成功
+  │   │       ├── Scenario: テスト漏れの検出
+  │   │       └── Scenario: 孤児タグの検出
+  │   └── SPEC-004 build コマンド仕様 ✅ implemented
+  │       └── 🥒 build.feature
+  │           ├── Scenario: MkDocs設定ファイル生成
+  │           └── Scenario: 要件一覧ページ生成
+  ├── SPEC-001 コア・アーキテクチャ ✅ implemented
+  └── SPEC-002 データ抽出基盤 ✅ implemented
+      └── 🥒 data_extraction.feature
+          ├── Scenario: Doorstop APIによる仕様ID集合取得
+          └── Scenario: 非アクティブなアイテムの除外
+  ```
+
+  #### Flat 形式
+  関連アイテムを階層レベルごとにグループ化して表示する：
+
+  ```
+  [REQ]  REQ-001 仕様と実装のトレーサビリティ保証 ✅ implemented
+  [REQ]  REQ-002 監査による品質の継続的担保 ✅ implemented
+  [SPEC] SPEC-003 audit コマンド仕様 ✅ implemented
+  [SPEC] SPEC-004 build コマンド仕様 ✅ implemented
+  [TEST] audit.feature :: 完全一致時の監査成功
+  [TEST] audit.feature :: テスト漏れの検出
+  ```
+
+  ### 各ノードの表示情報
+  - **Doorstopアイテム**: `<ID> <header> <ステータスバッジ>`
+  - **Gherkin Feature**: `🥒 <ファイル名>`
+  - **Gherkin Scenario**: `Scenario: <シナリオ名>`
+
+  ### エラーハンドリング
+  - 指定IDが見つからない場合: `Error: Item '<ID>' not found` を表示して終了コード1
+  - Doorstopツリーが未初期化の場合: `Error: No Doorstop tree found` を表示して終了コード1
+  - .feature ディレクトリが存在しない場合: 警告を出しつつDoorstopアイテムのみ表示

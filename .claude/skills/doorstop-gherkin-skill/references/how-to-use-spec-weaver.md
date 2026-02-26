@@ -1,6 +1,17 @@
 # Spec-Weaverの使い方
 
-### 1. 仕様とテストの紐付けルール
+## コマンド一覧
+
+| コマンド | 概要 |
+|---|---|
+| `audit` | 仕様とGherkinタグの乖離を検知（CI連携向け） |
+| `status` | 実装ステータスの一覧・フィルタリング表示 |
+| `build` | カバレッジ・テスト結果統合ドキュメントサイトの生成 |
+| `trace` | 任意アイテムを起点としたトレーサビリティツリー表示 |
+
+---
+
+## 1. 仕様とテストの紐付けルール
 
 Doorstopの仕様書（YAML）で発番されたIDを、Gherkin（`.feature`）の **タグ** として記述することで両者を紐付けます。
 
@@ -9,9 +20,10 @@ Doorstopの仕様書（YAML）で発番されたIDを、Gherkin（`.feature`）�
 ```yaml
 active: true
 testable: true
+links:
+- REQ-001
 text: |
   パスワードはハッシュ化して保存すること。
-
 ```
 
 **Gherkin側 (`features/login.feature`)**
@@ -21,56 +33,75 @@ text: |
 Feature: ユーザー認証
   Scenario: 正しいパスワードでのログイン
     Given ...
-
 ```
 
-### 2. 監査（Audit）コマンドの実行
+---
 
-`audit` コマンドを使用して、仕様とテストの乖離をチェックします。
+## 2. `audit` コマンド — 仕様とテストの乖離検知
 
 ```bash
 # 基本的な実行（カレントディレクトリをプロジェクトルートとする場合）
 spec-weaver audit ./features
 
-# モノレポ環境などで、Doorstopのルートディレクトリが別にある場合
+# モノレポ環境などでDoorstopのルートが別にある場合
 spec-weaver audit ./backend/tests/features --repo-root ./docs/doorstop
 
-# プレフィックスを変更する場合（デフォルトは "SPEC"）
+# プレフィックスを限定する場合（デフォルトは全プレフィックス）
 spec-weaver audit ./features --prefix REQ
-
 ```
 
-### 3. 出力例
+**終了コード**: 0（乖離なし）/ 1（乖離あり、またはSuspect検出）
 
-仕様と実装に乖離がある場合、エラー（終了コード1）と共に詳細な表が出力されます。
+乖離がある場合の出力例：
 
-```text
+```
 ❌ テストが実装されていない仕様 (Untested Specs):
-Missing Spec ID
----------------
-SPEC-002
+  SPEC-002
 
 ⚠️ 仕様書に存在しない孤児タグ (Orphaned Tags):
-Orphaned Tag
----------------
-@SPEC-003
+  @SPEC-003
 
+⚠️ レビューが必要なSuspect仕様:
+  SPEC-004  上位要件が変更されました。レビューが必要です。
 ```
 
-乖離がない場合は、成功メッセージ（終了コード0）が出力されます。
+---
 
-### 4. サイトのビルド（`build` コマンド）
+## 3. `status` コマンド — 実装ステータス管理
 
-ブラウザで閲覧できる仕様ドキュメントサイトを生成します。
+DoorstopのYAMLに `status` カスタム属性を追記して実装進捗を管理します。
+
+```yaml
+# SPEC-001.yml に追記
+status: in-progress
+```
+
+利用可能な値: `draft` / `in-progress` / `implemented` / `deprecated`
+
+```bash
+# 全アイテムのステータス一覧
+spec-weaver status
+
+# 特定ステータスで絞り込み
+spec-weaver status --filter in-progress
+spec-weaver status --filter draft
+```
+
+---
+
+## 4. `build` コマンド — Living Documentationサイト生成
+
+カバレッジ・相互リンク・テスト結果を統合したドキュメントサイトを生成します。
 
 ```bash
 # 基本的な実行
-spec-weaver build ./specification/features
-
-# 出力先を指定
 spec-weaver build ./specification/features --out-dir .specification
 
-# MkDocsで閲覧
+# Cucumber互換のテスト実行結果（JSON）を組み込む場合
+spec-weaver build ./specification/features --out-dir .specification \
+    --test-results test-results.json
+
+# MkDocsでブラウザ表示
 mkdocs serve -f .specification/mkdocs.yml
 ```
 
@@ -78,28 +109,116 @@ mkdocs serve -f .specification/mkdocs.yml
 
 | ページ | 内容 |
 |---|---|
-| `requirements.md` | 要件一覧（カバレッジ割合・兄弟リンク付き） |
-| `specifications.md` | 仕様一覧（カバレッジ割合・兄弟リンク付き） |
+| `<prefix>.md` | 各ドキュメントの一覧表（カバレッジ・実装状況・相互リンク付き） |
 | `items/REQ-001.md` | 要件詳細（関連仕様・兄弟要件・集計カバレッジ） |
 | `items/SPEC-001.md` | 仕様詳細（関連要件・兄弟仕様・シナリオリンク） |
 | `features/xxx.md` | `.feature` をブラウザで読めるMarkdownに変換したページ |
 
-**カバレッジ表示の見方:**
+**カバレッジバッジの見方:**
 
 - `🟢 1/1 (100%)` — 全シナリオカバー済み
 - `🟡 2/4 (50%)` — 一部カバー済み
 - `🔴 0/3 (0%)` — 未カバー
 - `⚪️ -` — テスト対象外（`testable: false`）
 
-**REQのカバレッジ**: 関連する全テスト対象SPECのうち、Gherkinシナリオが存在するものの割合を集計して表示します。
+**`--test-results` オプション（Cucumber JSON）:**
 
-**兄弟リンク**: 同じ親REQ（またはREQグループ）にリンクされているSPEC同士は「兄弟仕様」として相互リンクされます。
+pytest-bdd などが出力する Cucumber 互換 JSON を指定すると、各シナリオに実行結果バッジが付与されます。
+
+```json
+[
+  {
+    "uri": "features/login.feature",
+    "elements": [
+      {
+        "name": "正しいパスワードでのログイン",
+        "steps": [{"result": {"status": "passed"}}, ...]
+      }
+    ]
+  }
+]
+```
+
+バッジ: `✅ PASS` / `❌ FAIL` / `⏭️ SKIP` / `⏳ PENDING`
 
 ---
 
-## ⚙️ 高度な設定（テスト対象外の仕様）
+## 5. `trace` コマンド — トレーサビリティツリー表示
 
-「UIのカラーコード」や「ライセンス表記」など、Gherkinでの振る舞いテストが不可能な仕様は、DoorstopのYAMLファイルに `testable: false` 属性を追記することで、Spec-Weaverの監査対象から除外できます。
+任意のアイテム（REQ / SPEC / `.feature` ファイル名）を起点として、上位要件〜下位仕様〜Gherkinシナリオを階層ツリーで可視化します。
+
+```bash
+# REQを起点に全子孫を展開（デフォルト: both = 上位+下位）
+spec-weaver trace REQ-001 -f ./specification/features
+
+# SPECを起点に上位REQ + 下位シナリオを表示（both）
+spec-weaver trace SPEC-003 -f ./specification/features
+
+# .featureファイルを起点に紐づくSPEC/REQを遡る（up）
+spec-weaver trace audit.feature -f ./specification/features --direction up
+
+# 方向の指定
+spec-weaver trace REQ-001 --direction down   # 下位のみ（Gherkin含む）
+spec-weaver trace SPEC-003 --direction up    # 上位のみ（シナリオなし）
+
+# テーブル形式で出力
+spec-weaver trace REQ-001 -f ./specification/features --format flat
+```
+
+**オプション:**
+
+| オプション | 短縮 | デフォルト | 説明 |
+|---|---|---|---|
+| `--feature-dir` | `-f` | なし | `.feature` ファイルディレクトリ（Gherkin表示に必要） |
+| `--repo-root` | `-r` | カレント | Doorstopリポジトリのルート |
+| `--direction` | `-d` | `both` | `up` / `down` / `both` |
+| `--format` | | `tree` | `tree`（Rich Tree）/ `flat`（テーブル） |
+
+**ツリー出力例（`SPEC-003` を起点、`both`）:**
+
+```
+REQ-001 仕様と実装のトレーサビリティ保証 ✅ implemented
+└── REQ-002 監査による品質の継続的担保 ✅ implemented
+    └── ★ SPEC-003 audit コマンド仕様 ✅ implemented
+        └── 🥒 audit.feature
+            └── Scenario: audit コマンド
+```
+
+**ツリー出力例（`REQ-001` を起点、`down`）:**
+
+```
+★ REQ-001 仕様と実装のトレーサビリティ保証 ✅ implemented
+├── REQ-002 監査による品質の継続的担保 ✅ implemented
+│   ├── SPEC-002 データ抽出基盤 ✅ implemented
+│   │   └── 🥒 data_extraction.feature
+│   │       └── Scenario: データ抽出基盤
+│   └── SPEC-003 audit コマンド仕様 ✅ implemented
+│       └── 🥒 audit.feature
+│           └── Scenario: audit コマンド
+└── SPEC-001 コア・アーキテクチャ ✅ implemented
+```
+
+**表示記号:**
+
+| 記号 | 意味 |
+|---|---|
+| `★` | 探索起点のアイテム（黄色太字で強調表示） |
+| `🥒` | 関連するGherkin `.feature` ファイル |
+| `Scenario: ...` | `.feature` 内のシナリオ名 |
+
+**起点の種類:**
+
+- `REQ-001` — Doorstop IDで直接指定
+- `SPEC-003` — Doorstop IDで直接指定
+- `audit.feature` — ファイル名で指定（内部でタグを逆引きしてSPEC IDを解決）
+
+---
+
+## ⚙️ 高度な設定
+
+### テスト対象外の仕様
+
+Gherkinでの振る舞いテストが不可能な仕様は `testable: false` を追記して監査対象から除外します。
 
 ```yaml
 # SPEC-005.yml
@@ -107,5 +226,10 @@ active: true
 testable: false
 text: |
   ログインボタンの背景色は青色とすること。
-
 ```
+
+### 実装ステータスの更新手順
+
+1. 対象YAMLファイルを開き `status: <値>` を追記・更新する
+2. `spec-weaver status --filter <値>` で変更を確認する
+3. 必要に応じて `spec-weaver build` でドキュメントを再生成する
