@@ -8,6 +8,7 @@ normative: true
 ref: ''
 reviewed: sQI3PDVLr4t_7FzvaBW2KfO6i0kUFnK0vEnVRhJAA4M=
 status: implemented
+testable: false
 text: |
   ## 概要
   要件管理ツール（Doorstop）のIDと、振る舞い駆動テスト（Gherkin）のタグを紐付け、
@@ -48,4 +49,3 @@ text: |
   - DoorstopのSPEC IDとGherkinの@タグが1対1で紐付けできること
   - 任意のSPEC IDから対応するテストシナリオを特定できること
   - 任意のGherkinタグから対応する仕様書を特定できること
-testable: false

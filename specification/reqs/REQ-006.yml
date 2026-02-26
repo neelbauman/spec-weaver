@@ -9,6 +9,7 @@ normative: true
 ref: ''
 reviewed: L1v0IqoicRd_D1_uNQ3YvaX_Iw271xh3LDAocVS4LTA=
 status: implemented
+testable: false
 text: |
   ## 概要
   REQ・SPECそれぞれの実装進行状況を、仕様YAMLファイル上で直接管理・可視化できること。
@@ -25,4 +26,3 @@ text: |
   - `spec-weaver status` コマンドで全REQ・SPECの実装ステータスを一覧表示できること
   - `--filter` オプションで特定ステータスに絞り込んで表示できること
   - `spec-weaver build` で生成するドキュメントの一覧・詳細ページに実装状況を反映できること
-testable: false

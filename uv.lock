@@ -751,7 +751,7 @@ wheels = [
 
 [[package]]
 name = "spec-weaver"
-version = "0.28.0"
+version = "0.35.0"
 source = { editable = "." }
 dependencies = [
     { name = "doorstop" },

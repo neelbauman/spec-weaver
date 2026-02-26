@@ -1,0 +1,57 @@
+site_name: "spec-weaver Spec"
+theme:
+  name: material
+  features:
+    - navigation.tabs
+    - navigation.top
+    - navigation.footer
+    - search.suggest
+    - search.highlight
+extra_javascript:
+  - https://code.jquery.com/jquery-3.7.1.min.js
+  - https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js
+  - javascripts/custom-datatables.js
+extra_css:
+  - https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css
+  - stylesheets/extra.css
+nav:
+  - Home: index.md
+  - REQ:
+      - REQ一覧: req.md
+      - REQ-001: items/REQ-001.md
+      - REQ-002: items/REQ-002.md
+      - REQ-003: items/REQ-003.md
+      - REQ-004: items/REQ-004.md
+      - REQ-005: items/REQ-005.md
+      - REQ-006: items/REQ-006.md
+      - REQ-007: items/REQ-007.md
+      - REQ-008: items/REQ-008.md
+  - SPEC:
+      - SPEC一覧: spec.md
+      - SPEC-001: items/SPEC-001.md
+      - SPEC-002: items/SPEC-002.md
+      - SPEC-003: items/SPEC-003.md
+      - SPEC-004: items/SPEC-004.md
+      - SPEC-005: items/SPEC-005.md
+      - SPEC-006: items/SPEC-006.md
+      - SPEC-007: items/SPEC-007.md
+      - SPEC-008: items/SPEC-008.md
+      - SPEC-009: items/SPEC-009.md
+
+  - 振る舞い仕様 (Features):
+      - features/index.md
+      - audit.md: features/audit.md
+      - build.md: features/build.md
+      - data_extraction.md: features/data_extraction.md
+      - status.md: features/status.md
+
+markdown_extensions:
+  - tables
+  - attr_list
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format

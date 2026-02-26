@@ -1,6 +1,11 @@
 # src/spec_weaver/cli.py
 
 import typer
+import shutil
+try:
+    from importlib import resources
+except ImportError:
+    import importlib_resources as resources  # type: ignore
 from pathlib import Path
 from typing import Optional
 from rich.console import Console
@@ -374,11 +379,6 @@ def build(
             f"閲覧: [bold magenta]mkdocs serve -f {out_dir.relative_to(Path.cwd())}/mkdocs.yml[/bold magenta]"
         )
 
-        console.print(f"[bold green]✅ ビルド成功！ [white]{out_dir}[/white][/bold green]")
-        console.print(
-            f"閲覧: [bold magenta]mkdocs serve -f {out_dir.relative_to(Path.cwd())}/mkdocs.yml[/bold magenta]"
-        )
-
     except Exception as e:
         console.print(f"[bold red]❌ ビルドエラー: {e}[/bold red]")
         import traceback
@@ -602,6 +602,7 @@ def _generate_index_table(
 
         lines.append(row)
 
+    # 属性リストは空行を挟んで配置（attr_list拡張が解釈できない場合でもJS側でヘッダー判定する）
     return "\n".join(lines)
 
 
@@ -787,15 +788,33 @@ def _generate_basic_files(
 
     # features/ に index.md がなければ生成
     features_index = docs_dir / "features" / "index.md"
-    if not features_index.exists():
-        feature_links = "\n".join(
-            f"- [{Path(tag_rel).name}]({Path(md_url).name})"
-            for tag_rel, md_url in sorted(feature_md_map.items())
-        )
-        features_index.write_text(
-            f"# 振る舞い仕様一覧 (Gherkin Features)\n\n{feature_links or '（まだフィーチャーファイルがありません）'}\n",
-            encoding="utf-8",
-        )
+    feature_links = "\n".join(
+        f"- [{Path(tag_rel).name}]({Path(md_url).name})"
+        for tag_rel, md_url in sorted(feature_md_map.items())
+    )
+    features_index.write_text(
+        f"# 振る舞い仕様一覧 (Gherkin Features)\n\n{feature_links or '（まだフィーチャーファイルがありません）'}\n",
+        encoding="utf-8",
+    )
+
+    # JS / CSS の配置 (テンプレートからコピー)
+    js_dir = docs_dir / "javascripts"
+    css_dir = docs_dir / "stylesheets"
+    js_dir.mkdir(parents=True, exist_ok=True)
+    css_dir.mkdir(parents=True, exist_ok=True)
+
+    # テンプレートファイルを探索してコピー
+    # importlib.resources.files は Python 3.9+ で利用可能
+    template_root = resources.files("spec_weaver") / "templates"
+    
+    js_src = template_root / "javascripts" / "custom-table-filter.js"
+    css_src = template_root / "stylesheets" / "extra.css"
+
+    if js_src.exists():
+        (js_dir / "custom-table-filter.js").write_text(js_src.read_text(encoding="utf-8"), encoding="utf-8")
+    
+    if css_src.exists():
+        (css_dir / "extra.css").write_text(css_src.read_text(encoding="utf-8"), encoding="utf-8")
 
     # mkdocs.yml
     # 各ドキュメントをナビに追加
@@ -824,6 +843,8 @@ theme:
     - navigation.footer
     - search.suggest
     - search.highlight
+extra_javascript:
+    - javascripts/custom-table-filter.js
 nav:
   - Home: index.md
 {docs_nav_entries}
@@ -832,6 +853,7 @@ nav:
 {features_nav_entries}
 markdown_extensions:
   - tables
+  - attr_list
   - admonition
   - pymdownx.details
   - pymdownx.superfences:

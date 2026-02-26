@@ -9,6 +9,7 @@ normative: true
 ref: ''
 reviewed: -frGz19cWtKNZs9bx1K__46W3lY8L886FXsazUbgwtQ=
 status: implemented
+testable: false
 text: |
   ## 概要
   REQ/SPEC以外の任意のドキュメントタイプ（PAY, AUTH, ADM等）を、動的なプレフィックスとして
@@ -25,4 +26,3 @@ text: |
   - 各プレフィックスに対応する独立したインデックスページが生成されること
   - Gherkinタグ（@ID）が検知されたすべてのプレフィックスに対応し、正しく紐付けられること
   - index.md の階層ツリーおよびナビゲーションに、すべてのドキュメントが自動的に含まれること
-testable: false

@@ -9,6 +9,7 @@ normative: true
 ref: ''
 reviewed: WNV2jz6_F0LA58t4_NFABGkiS_LnXWNLD_hIRG7XxDU=
 status: implemented
+testable: false
 text: |
   ## 概要
   単なる「テストの存在」だけでなく、CIでの実際の合否（PASS/FAIL）を
@@ -24,4 +25,3 @@ text: |
   - pytest-bddのCucumber互換JSONレポートを読み込めること
   - テスト結果とSPEC IDを突き合わせて合否を判定できること
   - buildで生成するドキュメントにPASS/FAIL状態を反映できること
-testable: false
