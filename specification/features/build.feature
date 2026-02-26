@@ -48,3 +48,22 @@ Feature: build コマンド
     Given DoorstopプロジェクトとGherkin featureファイルが存在する
     When  build コマンドを --out-dir "./custom_docs" で実行する
     Then  "./custom_docs" ディレクトリに出力されること
+
+  @SPEC-014
+  Scenario: feature MDページへのバックリンク生成
+    Given "@SPEC-003" タグを持つ "audit.feature" が存在する
+    When  build コマンドを実行する
+    Then  "docs/features/audit.md" の冒頭に "関連アイテム" セクションが含まれること
+    And   "[SPEC-003](../items/SPEC-003.md)" へのリンクが含まれること
+
+  @SPEC-014
+  Scenario: 複数アイテムを参照するfeatureのバックリンク
+    Given "@SPEC-004" と "@SPEC-009" の両タグを持つfeatureが存在する
+    When  build コマンドを実行する
+    Then  生成されたfeature MDの "関連アイテム" に "SPEC-004" と "SPEC-009" の両方のリンクが含まれること
+
+  @SPEC-014
+  Scenario: タグのないfeatureにはバックリンクを表示しない
+    Given どのDoorstopアイテムからも参照されていないfeatureが存在する
+    When  build コマンドを実行する
+    Then  生成されたfeature MDに "関連アイテム" 行が含まれないこと
