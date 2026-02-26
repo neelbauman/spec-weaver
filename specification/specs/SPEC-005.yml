@@ -17,10 +17,11 @@ text: |
   ## 詳細仕様
 
   ### 処理
-  - Doorstop APIの `item.suspect` または `link.suspect` 属性を評価すること
-  - `audit` コマンド実行時にSuspect状態の仕様を警告として出力すること
-  - `build` コマンド実行時にテーブルのステータスや詳細ページに警告バッジを動的に付与すること
+  - Doorstop APIの `item.cleared`（suspect link 検出）および `item.reviewed`（未レビュー変更検出）属性を評価すること
+  - `audit` コマンド実行時に Suspect Link / Unreviewed Changes を分離して警告出力すること
+  - `build` コマンド実行時にテーブルの状態列（"⚠️ Suspect" / "📋 Unreviewed"）および詳細ページに警告バナーを動的に付与すること
 
   ### 出力・結果
-  - auditの警告出力例: 「レビューが必要なSuspect仕様: SPEC-xxx」
-  - buildの詳細ページ: 警告バッジの表示
+  - audit の警告出力: Suspect Link テーブル（変更された上位アイテムとアクションを表示）、Unreviewed Changes テーブル（対象 ID とアクションを表示）
+  - build の一覧テーブル: 状態列に "⚠️ Suspect" / "📋 Unreviewed" を表示
+  - build の詳細ページ: Suspect Link バナー（対象リンク付き）、Unreviewed Changes バナーを表示

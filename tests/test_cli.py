@@ -6,12 +6,17 @@ runner = CliRunner()
 
 
 def _make_mock_item(uid: str, suspect: bool = False, status: str | None = None):
-    """テスト用のDoorstopアイテムモックを生成する。"""
+    """テスト用のDoorstopアイテムモックを生成する。
+
+    suspect=True の場合、cleared=False（suspect link あり）として扱う。
+    """
     item = MagicMock()
     item.uid = uid
-    item.suspect = suspect
     item.links = []
     item.header = uid
+    # 新API: cleared / reviewed
+    item.cleared = not suspect
+    item.reviewed = True
     # get() で status を返す
     def _get(key, default=None):
         if key == "status":
@@ -89,7 +94,7 @@ def test_audit_suspect_specs(mock_get_specs, mock_get_tags, mock_get_item_map, m
     assert result.exit_code == 1
     assert "Suspect" in result.stdout
     assert "SPEC-002" in result.stdout
-    assert "レビューが必要" in result.stdout
+    assert "clear" in result.stdout.lower()
 
 
 @patch("spec_weaver.cli.get_all_prefixes")

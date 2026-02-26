@@ -67,3 +67,23 @@ Feature: build コマンド
     Given どのDoorstopアイテムからも参照されていないfeatureが存在する
     When  build コマンドを実行する
     Then  生成されたfeature MDに "関連アイテム" 行が含まれないこと
+
+  @SPEC-005
+  Scenario: Suspect Link 警告の一覧テーブル表示
+    Given アイテムの上位リンク先が変更されている（cleared=false）
+    When  build コマンドを実行する
+    Then  一覧テーブルの状態列に "⚠️ Suspect" が表示されること
+    And   詳細ページに Suspect Link バナーが表示されること
+
+  @SPEC-005
+  Scenario: Unreviewed Changes 警告の一覧テーブル表示
+    Given アイテム自体に未レビューの変更がある（reviewed=false）
+    When  build コマンドを実行する
+    Then  一覧テーブルの状態列に "📋 Unreviewed" が表示されること
+    And   詳細ページに Unreviewed Changes バナーが表示されること
+
+  @SPEC-005
+  Scenario: 複合警告の表示
+    Given アイテムに Suspect Link と Unreviewed Changes の両方がある
+    When  build コマンドを実行する
+    Then  一覧テーブルの状態列に "⚠️ Suspect" と "📋 Unreviewed" の両方が表示されること

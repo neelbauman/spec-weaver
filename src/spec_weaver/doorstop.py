@@ -1,10 +1,53 @@
 # src/spec_weaver/doorstop.py
 
 import os
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Set, Dict, Optional
 
 import doorstop
+
+
+# ---------------------------------------------------------------------------
+# バリデーション警告
+# ---------------------------------------------------------------------------
+
+@dataclass
+class ItemWarnings:
+    """Doorstop バリデーション警告"""
+    has_suspect_links: bool = False
+    has_unreviewed_changes: bool = False
+    suspect_link_targets: list[str] = field(default_factory=list)
+
+    @property
+    def has_any_warning(self) -> bool:
+        return self.has_suspect_links or self.has_unreviewed_changes
+
+
+def get_item_warnings(item: Any) -> ItemWarnings:
+    """item.cleared / item.reviewed を使って警告を検出する。
+
+    - cleared == False → 上位リンク先が変更されている (suspect link)
+    - reviewed == False → アイテム自身に未レビュー変更がある
+    """
+    w = ItemWarnings()
+    try:
+        if not item.cleared:
+            w.has_suspect_links = True
+            try:
+                for uid, parent in item._get_parent_uid_and_item():
+                    if uid.stamp != parent.stamp():
+                        w.suspect_link_targets.append(str(uid))
+            except Exception:
+                w.suspect_link_targets = [str(l) for l in getattr(item, "links", [])]
+    except Exception:
+        pass
+    try:
+        if not item.reviewed:
+            w.has_unreviewed_changes = True
+    except Exception:
+        pass
+    return w
 
 def get_specs(repo_root: Path, prefix: Optional[str] = "SPEC") -> Set[str]:
     """監査用：アクティブな仕様IDの集合を取得します。"""
@@ -52,20 +95,8 @@ def _get_custom_attribute(item: Any, key: str, default: Any = None) -> Any:
         return getattr(item, key, default)
 
 def is_suspect(item: Any) -> bool:
-    """
-    指定されたDoorstopアイテムがSuspect状態（上位要件の変更に伴うレビュー待ち）か判定します。
-    """
-    try:
-        # アイテム自体がsuspectフラグを持っている場合
-        if getattr(item, "suspect", False):
-            return True
-        # リンク先のいずれかがsuspect状態の場合
-        for link in getattr(item, "links", []):
-            if getattr(link, "suspect", False):
-                return True
-        return False
-    except Exception:
-        return False
+    """後方互換ラッパー: いずれかの警告がある場合 True を返す。"""
+    return get_item_warnings(item).has_any_warning
 
 def get_doorstop_tree(repo_root: Path):
     """Doorstopのツリーオブジェクトをそのまま返す（ドキュメント階層の走査用）。"""

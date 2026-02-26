@@ -16,7 +16,7 @@ from rich.tree import Tree
 import re
 from datetime import date as _date
 
-from spec_weaver.doorstop import get_item_map, get_doorstop_tree, _get_custom_attribute, get_specs, is_suspect, get_all_prefixes
+from spec_weaver.doorstop import get_item_map, get_doorstop_tree, _get_custom_attribute, get_specs, is_suspect, get_all_prefixes, get_item_warnings
 from spec_weaver.gherkin import get_tag_map, get_tags
 from spec_weaver.test_results import (
     TestResultMap,
@@ -130,13 +130,20 @@ def audit_cmd(
         with console.status("[bold cyan]Suspect状態の仕様を確認中...[/bold cyan]"):
             try:
                 raw_items = get_item_map(repo_root=repo_root)
-                suspect_specs = {
-                    uid for uid, item in raw_items.items()
-                    if (not prefix or uid.startswith(prefix)) and is_suspect(item)
-                }
+                suspect_link_specs: dict[str, list[str]] = {}
+                unreviewed_specs: set[str] = set()
+                for uid, item in raw_items.items():
+                    if prefix and not uid.startswith(prefix):
+                        continue
+                    w = get_item_warnings(item)
+                    if w.has_suspect_links:
+                        suspect_link_specs[uid] = w.suspect_link_targets
+                    if w.has_unreviewed_changes:
+                        unreviewed_specs.add(uid)
             except Exception as e:
                 console.print(f"[bold red]❌ Suspect状態の確認に失敗しました:[/bold red] {e}")
-                suspect_specs = set()
+                suspect_link_specs = {}
+                unreviewed_specs = set()
 
         untested_specs = specs_in_db - tags_in_code
         orphaned_tags = tags_in_code - specs_in_db
@@ -160,14 +167,26 @@ def audit_cmd(
                 table.add_row(f"@{tag}")
             console.print(table)
 
-        if suspect_specs:
+        if suspect_link_specs:
             has_error = True
-            console.print("\n[bold yellow]⚠️ レビューが必要なSuspect仕様 (Suspect Specs):[/bold yellow]")
+            console.print("\n[bold yellow]⚠️ Suspect Link — 上位アイテムが変更されています:[/bold yellow]")
             table = Table(show_header=True, header_style="bold magenta")
-            table.add_column("Suspect Spec ID", style="dim")
-            table.add_column("理由", style="dim")
-            for spec in sorted(suspect_specs):
-                table.add_row(spec, "上位要件が変更されました。レビューが必要です。")
+            table.add_column("Spec ID", style="dim")
+            table.add_column("変更された上位アイテム", style="dim")
+            table.add_column("アクション", style="dim")
+            for spec in sorted(suspect_link_specs):
+                targets = ", ".join(suspect_link_specs[spec]) or "(全リンク)"
+                table.add_row(spec, targets, "doorstop clear / レビュー後に clear")
+            console.print(table)
+
+        if unreviewed_specs:
+            has_error = True
+            console.print("\n[bold yellow]📋 Unreviewed Changes — 未レビューの変更があります:[/bold yellow]")
+            table = Table(show_header=True, header_style="bold magenta")
+            table.add_column("Spec ID", style="dim")
+            table.add_column("アクション", style="dim")
+            for spec in sorted(unreviewed_specs):
+                table.add_row(spec, "doorstop review / 内容を確認してレビュー")
             console.print(table)
 
         # stale チェック（終了コードには影響しない）
@@ -644,10 +663,20 @@ def _generate_index_table(
         updated_col = _get_timestamp(item, "updated_at")
 
         # 状態アイコン
-        if is_suspect(item): gherkin_status = "⚠️ Suspect"
-        elif not testable: gherkin_status = "⚪️"
-        elif scenarios: gherkin_status = "🟢"
-        else: gherkin_status = "🔴"
+        warnings = get_item_warnings(item)
+        warning_parts: list[str] = []
+        if warnings.has_suspect_links:
+            warning_parts.append("⚠️ Suspect")
+        if warnings.has_unreviewed_changes:
+            warning_parts.append("📋 Unreviewed")
+        if warning_parts:
+            gherkin_status = " ".join(warning_parts)
+        elif not testable:
+            gherkin_status = "⚪️"
+        elif scenarios:
+            gherkin_status = "🟢"
+        else:
+            gherkin_status = "🔴"
 
         # 行の組み立て
         row = f"| [{uid}](items/{uid}.md) | {item.header} | {parents_col} | {children_col} | {siblings_col} | {coverage_col} | {impl_col} | {created_col} | {updated_col} | {gherkin_status} |"
@@ -687,11 +716,16 @@ def _generate_item_markdown(
 
     content: list[str] = [f"# [{uid}] {item.header}\n"]
 
-    # ---- Suspect警告バナー ----
-    if is_suspect(item):
-        content.append(
-            "> ⚠️ **Suspect**: 上位要件が変更されました。このアイテムのレビューが必要です。\n"
-        )
+    # ---- 警告バナー ----
+    warnings = get_item_warnings(item)
+    if warnings.has_suspect_links:
+        targets = ", ".join(f"[{t}]({t}.md)" for t in warnings.suspect_link_targets)
+        if targets:
+            content.append(f"> ⚠️ **Suspect Link**: 上位アイテム ({targets}) が変更されました。リンクのレビューが必要です。\n")
+        else:
+            content.append("> ⚠️ **Suspect Link**: 上位アイテムが変更されました。リンクのレビューが必要です。\n")
+    if warnings.has_unreviewed_changes:
+        content.append("> 📋 **Unreviewed Changes**: このアイテム自体に未レビューの変更があります。\n")
 
     # ---- 実装ステータス ----
     impl_badge = _impl_status_badge(item)

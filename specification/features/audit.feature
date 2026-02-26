@@ -31,3 +31,18 @@ Feature: audit コマンド
     And   "SPEC-001" に対応するGherkinテストが存在しない
     When  audit コマンドを実行する
     Then  "SPEC-001" はテスト漏れとして報告されないこと
+
+  @SPEC-005
+  Scenario: Suspect Link の検出
+    Given 仕様 "SPEC-009" の上位アイテムが変更されている（cleared=false）
+    When  audit コマンドを実行する
+    Then  終了コード 1 が返ること
+    And   Suspect Link テーブルに "SPEC-009" が報告されること
+    And   変更された上位アイテムのIDが表示されること
+
+  @SPEC-005
+  Scenario: Unreviewed Changes の検出
+    Given 仕様 "SPEC-009" 自体に未レビューの変更がある（reviewed=false）
+    When  audit コマンドを実行する
+    Then  終了コード 1 が返ること
+    And   Unreviewed Changes テーブルに "SPEC-009" が報告されること
