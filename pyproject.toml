@@ -1,0 +1,67 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "spec-weaver"
+version = "0.14.0"
+description = "A CLI tool to weave Doorstop requirements and Gherkin feature files."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+    { name = "Your Name", email = "your.email@example.com" }
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Environment :: Console",
+    "Topic :: Software Development :: Testing",
+    "Topic :: Software Development :: Quality Assurance",
+]
+
+# プロジェクトの実行に必要な最小限のコアライブラリ
+dependencies = [
+    "typer>=0.9.0",
+    "rich>=13.0.0",
+    "doorstop>=2.2.0",
+    "gherkin-official>=28.0.0",
+]
+
+# ターミナルから `spec-weaver` コマンドとして呼び出すためのエントリーポイント設定
+[project.scripts]
+spec-weaver = "spec_weaver.cli:app"
+
+# 開発時のみ必要なツール群（Linter, Formatter, Test）
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "mypy>=1.5.0",
+    "ruff>=0.1.0", # flake8, black, isort を統合した超高速な静的解析ツール
+]
+
+# Hatchlingのビルド設定（パッケージに含めるディレクトリの指定）
+[tool.hatch.build.targets.wheel]
+packages = ["src/spec_weaver"]
+
+# Ruff (Linter/Formatter) の設定
+[tool.ruff]
+line-length = 88
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I"] # Error, Fatal, Isort(import順序)
+ignore = []
+
+# Mypy (静的型チェック) の設定
+[tool.pyright]
+venv=".venv"
+venvPath="."
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.2",
+]
