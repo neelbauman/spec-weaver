@@ -120,18 +120,54 @@ references/how-to-use-spec-weaver.md を参照。
 
 ---
 
+## 階層化・グループ化の自由度について
+
+DoorstopのREQ/SPECは**複数レベルの階層**を自由に設計してよい。機能領域やドメインに応じて柔軟に構成すること。
+
+### 階層化の例
+
+```bash
+# 機能グループ別にドキュメントを分ける
+doorstop create REQ      ./specification/reqs              # ルート要件
+doorstop create AUTH-REQ ./specification/reqs/auth --parent REQ    # 認証サブグループ
+doorstop create PAY-REQ  ./specification/reqs/payment --parent REQ # 決済サブグループ
+
+doorstop create SPEC     ./specification/specs             # ルート仕様
+doorstop create AUTH     ./specification/specs/auth --parent AUTH-REQ
+doorstop create PAY      ./specification/specs/payment --parent PAY-REQ
+```
+
+### グループ化の設計指針
+
+- **ドメイン別**: 認証・決済・通知・ユーザー管理など機能ドメインで分ける
+- **レイヤー別**: API仕様・UI仕様・DB仕様など技術レイヤーで分ける
+- **フェーズ別**: MVP要件・拡張要件など開発フェーズで分ける
+- **`level` フィールド活用**: 同一ドキュメント内でも `level: 1.1`, `level: 1.2` で論理的なグルーピングができる
+
+> **制約**: Doorstopの `--parent` は1つだけ指定可能（多重継承不可）。
+> 複数ドメインにまたがる仕様は、上位REQへのリンクを複数張ることで対応する（`doorstop link SPEC-001 REQ-002`）。
+
+---
+
 ## ディレクトリ構成（標準テンプレート）
 
 ```text
 <project-root>/specification/
 ├── reqs/                  # ビジネス要件 [Doorstop: prefix=REQ]
 │   ├── .doorstop.yml      # doorstop create REQ ./specification/reqs で自動生成
-│   └── REQ-001.yml
+│   ├── REQ-001.yml
+│   └── auth/              # サブグループ（認証ドメイン）
+│       ├── .doorstop.yml  # doorstop create AUTH-REQ ./specification/reqs/auth --parent REQ
+│       └── AUTH-REQ-001.yml
 ├── specs/                 # システム仕様 [Doorstop: prefix=SPEC, parent=REQ]
 │   ├── .doorstop.yml      # doorstop create SPEC ./specification/specs --parent REQ で自動生成
-│   └── SPEC-001.yml
+│   ├── SPEC-001.yml
+│   └── auth/              # サブグループ（認証ドメイン）
+│       ├── .doorstop.yml  # doorstop create AUTH ./specification/specs/auth --parent AUTH-REQ
+│       └── AUTH-001.yml
 └── features/              # 振る舞い仕様 [Gherkin]
-    └── auth.feature       # @SPEC-001 タグで紐付け
+    ├── auth.feature       # @AUTH-001 タグで紐付け
+    └── payment.feature    # @PAY-001 タグで紐付け
 ```
 
 ---
