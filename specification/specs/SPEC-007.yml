@@ -1,0 +1,44 @@
+active: true
+status: implemented
+derived: false
+header: |
+  status カスタム属性の定義
+level: 6.1
+links:
+- REQ-006: J-LURfiXF04YgRlNJpeWohPMtFwvYfPQ3NsKp4LKzgc=
+normative: true
+ref: ''
+reviewed: rIMdqXjz5q4psUX0GhUPTwmFSyHQgpOCr0Vyfy-UC-Q=
+testable: false
+text: |
+  ## 概要
+  DoorstopのYAMLファイルに `status` カスタム属性を追記することで、
+  各アイテムの実装進行状況を管理する。
+
+  ## 詳細仕様
+
+  ### フィールド定義
+  - キー名: `status`
+  - 型: 文字列
+  - 省略可（未設定のアイテムは `-` として扱う）
+
+  ### 許容値
+  | 値 | バッジ | 意味 |
+  |---|---|---|
+  | `draft` | 📝 draft | 草案。まだ実装着手していない |
+  | `in-progress` | 🚧 in-progress | 実装中 |
+  | `implemented` | ✅ implemented | 実装済み |
+  | `deprecated` | 🗑️ deprecated | 廃止予定 |
+
+  ### 書き方
+  `doorstop add` で生成したYAMLに手動で追記する:
+  ```yaml
+  active: true
+  status: in-progress
+  text: |
+    （仕様本文）
+  ```
+
+  ### 制約
+  - `status` フィールドはDoorstopが管理するフィールドではなくカスタム属性のため、
+    `doorstop review` のfingerprintには影響しない

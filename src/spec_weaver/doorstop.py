@@ -65,6 +65,16 @@ def is_suspect(item: Any) -> bool:
     except Exception:
         return False
 
+def get_doorstop_tree(repo_root: Path):
+    """Doorstopのツリーオブジェクトをそのまま返す（ドキュメント階層の走査用）。"""
+    original_cwd = os.getcwd()
+    os.chdir(repo_root)
+    try:
+        return doorstop.build()
+    finally:
+        os.chdir(original_cwd)
+
+
 def get_all_items(repo_root: Path) -> Dict[str, Any]:
     """
     リポジトリ内の全ドキュメントから全アイテムを取得し、

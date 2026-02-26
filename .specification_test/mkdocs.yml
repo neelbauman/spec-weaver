@@ -1,0 +1,28 @@
+site_name: "specification Spec"
+theme:
+  name: material
+  features:
+    - navigation.tabs
+    - navigation.top
+    - search.suggest
+    - search.highlight
+nav:
+  - Home: index.md
+  - 要件一覧 (REQ): requirements.md
+  - 仕様一覧 (SPEC): specifications.md
+  - 振る舞い仕様 (Features):
+      - features/index.md
+      - audit.md: features/audit.md
+      - build.md: features/build.md
+      - data_extraction.md: features/data_extraction.md
+      - status.md: features/status.md
+
+markdown_extensions:
+  - tables
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format

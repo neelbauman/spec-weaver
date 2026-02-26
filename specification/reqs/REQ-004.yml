@@ -1,4 +1,5 @@
 active: true
+status: implemented
 derived: false
 header: |
   変更波及 (Suspect) の可視化
@@ -21,6 +22,3 @@ text: |
   - 上位要件が変更された際に、リンクされた下位仕様がSuspect状態になること
   - auditコマンドでSuspect状態の仕様を警告として出力できること
   - buildコマンドでSuspect状態のアイテムに警告バッジを表示できること
-
-  ## ステータス
-  Phase 1（次期開発）

@@ -1,4 +1,5 @@
 active: true
+status: implemented
 derived: false
 header: |
   テスト結果統合
@@ -23,6 +24,3 @@ text: |
   ### 出力・結果
   - 各SPEC IDに対するテスト結果（PASS/FAIL/SKIP）を紐付けること
   - buildで生成するドキュメントにテスト結果ステータスを反映すること
-
-  ## ステータス
-  Phase 2（将来開発）- 未実装
