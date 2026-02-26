@@ -7,9 +7,9 @@ links:
 - REQ-004: KXm5cZc2wXUhF29d-4lpSPbclfjN4ruCBIwDvWX93tg=
 normative: true
 ref: ''
-reviewed: Yj075uh6JGQTjszHOLEmDAxmAJmgb-d75xEmNrQLdeg=
+reviewed: EIJvOju7-qnVB72UkOorTyzVv9DzgjYEEyTKsYqWTWI=
 status: implemented
-testable: false
+testable: true
 text: |
   ## 概要
   DoorstopのSuspect機能を活用した変更波及の検知と可視化の仕様を定義する。

@@ -104,6 +104,27 @@ text: |
 
 > フィールド未設定の場合は `-` として扱われる（エラーにはならない）。
 
+**タイムスタンプ管理（カスタム属性）:**
+
+`doorstop add` でファイルを生成した後、`created_at` と `updated_at` キーを手動で追記することでアイテムの時系列情報を管理できる。
+
+```yaml
+active: true
+status: in-progress
+created_at: '2026-01-15'   # ← 作成日（アイテム追加時に記入、以降変更しない）
+updated_at: '2026-02-20'   # ← 最終更新日（内容変更のたびに更新）
+text: |
+  （仕様本文）
+```
+
+| 属性 | 形式 | 運用ルール |
+|---|---|---|
+| `created_at` | `YYYY-MM-DD` | アイテム作成時に当日の日付を記入。原則変更しない |
+| `updated_at` | `YYYY-MM-DD` | text・header・links 等を変更した際に当日の日付に更新 |
+
+> フィールド未設定の場合は `-` として扱われる（エラーにはならない）。
+> `updated_at` が設定されていて90日以上更新がない場合、`audit --stale-days` で検出される。
+
 **表示確認コマンド:**
 
 ```bash
@@ -177,6 +198,8 @@ text: |
 | `text` | 本文（Markdown） | 人間が直接編集するフィールド |
 | `testable` | テスト対象か | カスタム属性。`false` で audit 除外 |
 | `status` | 実装ステータス | カスタム属性。`draft` / `in-progress` / `implemented` / `deprecated` |
+| `created_at` | 作成日 | カスタム属性。ISO 8601 (`YYYY-MM-DD`)。アイテム作成時に記入 |
+| `updated_at` | 最終更新日 | カスタム属性。ISO 8601 (`YYYY-MM-DD`)。内容変更時に更新 |
 
 ---
 
