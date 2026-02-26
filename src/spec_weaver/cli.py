@@ -16,7 +16,7 @@ from rich.tree import Tree
 import re
 from datetime import date as _date
 
-from spec_weaver.doorstop import get_item_map, get_doorstop_tree, _get_custom_attribute, get_specs, is_suspect, get_all_prefixes, get_item_warnings
+from spec_weaver.doorstop import get_item_map, get_doorstop_tree, _get_custom_attribute, _get_git_file_date, get_specs, is_suspect, get_all_prefixes, get_item_warnings
 from spec_weaver.gherkin import get_tag_map, get_tags
 from spec_weaver.test_results import (
     TestResultMap,
@@ -47,7 +47,15 @@ def _impl_status_badge(item) -> str:
 
 
 def _get_timestamp(item, key: str) -> str:
-    """created_at / updated_at カスタム属性を取得する。未設定は '-'。"""
+    """タイムスタンプを取得する。Git履歴 → YAML属性 → '-' の優先順位。"""
+    # 1. Git から取得を試みる
+    file_path = getattr(item, "path", None)
+    if file_path:
+        mode = "first" if key == "created_at" else "latest"
+        git_date = _get_git_file_date(str(file_path), mode=mode)
+        if git_date:
+            return git_date
+    # 2. YAML のカスタム属性にフォールバック
     val = _get_custom_attribute(item, key, None)
     return str(val) if val else "-"
 
@@ -199,7 +207,13 @@ def audit_cmd(
                 item_status = _get_custom_attribute(item, "status", None)
                 if str(item_status or "") == "deprecated":
                     continue
-                updated_at_val = _get_custom_attribute(item, "updated_at", None)
+                # Git 履歴 → YAML フォールバック
+                file_path = getattr(item, "path", None)
+                updated_at_val = None
+                if file_path:
+                    updated_at_val = _get_git_file_date(str(file_path), mode="latest")
+                if not updated_at_val:
+                    updated_at_val = _get_custom_attribute(item, "updated_at", None)
                 if not updated_at_val:
                     continue
                 try:

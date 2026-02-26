@@ -36,15 +36,25 @@ text: |
     ...
   ```
 
-  ### 3. 属性の取得
+  ### 3. 属性の自動取得（Git 履歴ベース）
 
-  既存の `_get_custom_attribute()` を使用して取得する。
-  - `_get_custom_attribute(item, "created_at", None)`
-  - `_get_custom_attribute(item, "updated_at", None)`
-  - 未設定時は `None` を返し、表示上は `"-"` とする。
+  `build` / `audit` 実行時に、Git コミット履歴からタイムスタンプを自動算出する。
+
+  - **`updated_at`**: `git log -1 --format=%aI -- <ファイルパス>` で最終コミット日を取得
+  - **`created_at`**: `git log --follow --diff-filter=A --format=%aI -- <ファイルパス>` で初回コミット日を取得
+  - 取得した値は `YYYY-MM-DD` に切り詰めて使用する
+
+  #### フォールバック順序
+
+  1. Git 履歴から取得（優先）
+  2. YAML の `created_at` / `updated_at` カスタム属性（Git 情報が取れない場合）
+  3. いずれもなければ `"-"` を表示
+
+  > YAML への手動記入は不要。Git リポジトリ外や未コミットファイルの場合のみ
+  > YAML 属性をフォールバックとして使用する。
 
   ### 4. 運用ルール
 
-  - **作成時**: `doorstop add` でアイテムを追加した後、YAML編集時に `created_at` を当日の日付で記入する。
-  - **更新時**: アイテムのtext・header・links等を変更した際に `updated_at` を当日の日付に更新する。
-  - **不変**: `created_at` は原則として変更しない。
+  - **通常運用**: タイムスタンプは Git 履歴から自動取得されるため、手動管理は不要。
+  - **Git 外での利用**: YAML に `created_at` / `updated_at` を手動記入することで対応可能。
+  - **不変**: `created_at`（初回コミット日）は Git 履歴で自動的に不変となる。

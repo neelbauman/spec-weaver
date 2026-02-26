@@ -1,6 +1,7 @@
 # src/spec_weaver/doorstop.py
 
 import os
+import subprocess
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Set, Dict, Optional
@@ -93,6 +94,27 @@ def _get_custom_attribute(item: Any, key: str, default: Any = None) -> Any:
         return value if value is not None else default
     except AttributeError:
         return getattr(item, key, default)
+
+def _get_git_file_date(file_path: str, mode: str = "latest") -> str | None:
+    """Git履歴からファイルの日付を YYYY-MM-DD で取得する。
+
+    mode="latest": 最終コミット日（updated_at 用）
+    mode="first":  初回コミット日（created_at 用）
+    Git 外や未コミットファイルでは None を返す。
+    """
+    try:
+        if mode == "first":
+            cmd = ["git", "log", "--follow", "--format=%aI", "--diff-filter=A", "--", file_path]
+        else:
+            cmd = ["git", "log", "-1", "--format=%aI", "--", file_path]
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=5)
+        if result.returncode == 0 and result.stdout.strip():
+            line = result.stdout.strip().splitlines()[0]
+            return line[:10]  # YYYY-MM-DD
+    except (subprocess.TimeoutExpired, FileNotFoundError):
+        pass
+    return None
+
 
 def is_suspect(item: Any) -> bool:
     """後方互換ラッパー: いずれかの警告がある場合 True を返す。"""

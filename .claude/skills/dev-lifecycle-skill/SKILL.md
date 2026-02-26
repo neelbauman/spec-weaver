@@ -1,12 +1,10 @@
 ---
 name: dev-lifecycle
 description: >
-  Doorstop + Gherkin + Spec-Weaver で仕様管理されたプロジェクトにおける、
-  開発ライフサイクル全体（分析→設計→計画→実装→検証・コミット）を統制するスキル。
+  Doorstop + Gherkin + Spec-Weaver で仕様管理された開発ライフサイクル全体（分析→設計→計画→実装→検証・コミット）を統制するスキル。
   実装計画をPLANドキュメントとしてDoorstopに永続化し、拡張ドキュメント階層（DESIGN/PLAN/ADR/RESEARCH）を管理する。
-  ユーザーが「開発ー」「実装」「設計」「ADR」「仕様」「要件」
-  「実装手順」「コミット規約」「リサーチ」「技術選定」「Plan-as-Spec」を話題にした場合、
-  または機能の分析・設計・実装・検証の手順を確認したい場合、および開発に取り組む場合は必ずこのスキルを使うこと。
+  ユーザーが要件や仕様を伝えた場合、および開発に取り組む場合は必ずこのスキルを使うこと。
+  ユーザーが「開発」「実装」「設計」「ADR」「仕様」「要件」を話題にした場合もこのスキルをつかうこと。
 ---
 
 # 開発ライフサイクル管理スキル
@@ -72,7 +70,7 @@ graph LR
 | 4 | **実装** | コード変更、REQ/SPEC/feature の更新 | 全タスク完了、テスト通過 |
 | 5 | **検証・コミット** | audit 通過、コミット | 全検証パス、コミット完了 |
 
-> 各フェーズの詳細チェックリストは `references/workflow-phases.md` を参照。
+> 実際に行うときは、必ず `references/workflow-phases.md` を参照すること。
 
 ---
 
@@ -180,7 +178,6 @@ doorstop link PLAN-001 SPEC-001
 2. 仕様の更新が必要な場合は doorstop-gherkin-skill の手順に従う
 3. `.feature` ファイルを追加・更新する
 4. 関連する REQ / SPEC の `status` を `in-progress` に更新する
-5. `updated_at` を更新する
 
 ### 実装中の仕様同期ルール
 
@@ -254,7 +251,6 @@ spec-weaver status
 - [ ] `spec-weaver audit` が exit code 0 を返した
 - [ ] `doorstop` バリデーションが通過した
 - [ ] 関連する REQ / SPEC の `status` を `implemented` に更新した
-- [ ] `updated_at` を更新した
 - [ ] コミット規約に従ったコミットメッセージで変更をコミットした
 
 ---
