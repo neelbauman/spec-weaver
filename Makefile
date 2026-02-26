@@ -114,4 +114,4 @@ update-claude:  ## CLAUDE.md の自動生成セクションを更新
 
 specification:
 	-spec-weaver build specification/
-	-uvx --with mkdocs-material --with "mkdocstrings[python]" mkdocs serve -f .specification/mkdocs.yml
+	-uvx --with mkdocs-material zensical serve -f .specification/mkdocs.yml

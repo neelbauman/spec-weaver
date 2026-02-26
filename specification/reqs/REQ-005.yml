@@ -24,3 +24,4 @@ text: |
   - pytest-bddのCucumber互換JSONレポートを読み込めること
   - テスト結果とSPEC IDを突き合わせて合否を判定できること
   - buildで生成するドキュメントにPASS/FAIL状態を反映できること
+testable: false

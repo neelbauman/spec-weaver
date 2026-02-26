@@ -9,7 +9,7 @@ Feature: audit コマンド
     And   成功メッセージが表示されること
 
   Scenario: テスト漏れの検出
-    Given 仕様 "SPEC-002" に対応するGherkinテストが存在しない
+    Given testable な仕様 "SPEC-002" に対応するGherkinテストが存在しない
     When  audit コマンドを実行する
     Then  終了コード 1 が返ること
     And   テストが実装されていない仕様として "SPEC-002" が報告されること

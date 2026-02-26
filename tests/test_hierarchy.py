@@ -24,7 +24,8 @@ def test_build_hierarchy_tree_only_prefixes():
     # Actually _build_hierarchy_tree starts from doorstop_tree
     # Which seems to have a .document and .children in _build_hierarchy_tree logic
     
-    result = _build_hierarchy_tree(node_req)
+    prefix_to_file = {"REQ": "requirements.md", "SPEC": "specifications.md"}
+    result = _build_hierarchy_tree(node_req, prefix_to_file)
     
     assert "- [**REQ**](requirements.md)" in result
     assert "    - [**SPEC**](specifications.md)" in result
@@ -40,7 +41,7 @@ def test_build_hierarchy_tree_unknown_prefix():
     node_xyz.document = doc_xyz
     node_xyz.children = []
     
-    result = _build_hierarchy_tree(node_xyz)
+    result = _build_hierarchy_tree(node_xyz, {})
     
     # Link should not be there for unknown prefix, just bold
     assert "- **XYZ**" in result

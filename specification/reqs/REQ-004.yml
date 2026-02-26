@@ -23,3 +23,4 @@ text: |
   - 上位要件が変更された際に、リンクされた下位仕様がSuspect状態になること
   - auditコマンドでSuspect状態の仕様を警告として出力できること
   - buildコマンドでSuspect状態のアイテムに警告バッジを表示できること
+testable: false

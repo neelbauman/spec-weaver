@@ -9,7 +9,7 @@ from rich.table import Table
 
 import re
 
-from spec_weaver.doorstop import get_item_map, get_doorstop_tree, _get_custom_attribute, get_specs, is_suspect
+from spec_weaver.doorstop import get_item_map, get_doorstop_tree, _get_custom_attribute, get_specs, is_suspect, get_all_prefixes
 from spec_weaver.gherkin import get_tag_map, get_tags
 from spec_weaver.test_results import (
     TestResultMap,
@@ -70,21 +70,22 @@ def audit_cmd(
         dir_okay=True,
         resolve_path=True,
     ),
-    prefix: str = typer.Option(
-        "SPEC",
+    prefix: Optional[str] = typer.Option(
+        None,
         "--prefix",
         "-p",
-        help="Doorstopの仕様IDのプレフィックス（例: SPEC）",
+        help="監査対象とする仕様IDのプレフィックス（省略した場合は全ドキュメントの testable アイテムが対象）",
     ),
 ) -> None:
     """
     Doorstopに登録された仕様と、Gherkinのフィーチャーファイル間のタグの乖離を監査します。
     """
+    prefix_display = f"@{prefix}" if prefix else "All testable items"
     console.print(
         Panel.fit(
             f"Doorstop Root: [bold green]{repo_root}[/bold green]\n"
             f"Gherkin Dir  : [bold green]{feature_dir}[/bold green]\n"
-            f"Prefix       : [bold cyan]@{prefix}[/bold cyan]",
+            f"Target       : [bold cyan]{prefix_display}[/bold cyan]",
             title="Spec-Weaver Audit",
             border_style="blue",
         )
@@ -94,13 +95,16 @@ def audit_cmd(
         with console.status("[bold cyan]Doorstopの仕様データベースを構築中...[/bold cyan]"):
             try:
                 specs_in_db = get_specs(repo_root=repo_root, prefix=prefix)
+                all_prefixes = get_all_prefixes(repo_root=repo_root)
             except Exception as e:
                 console.print(f"[bold red]❌ Doorstopデータの読み込みに失敗しました:[/bold red] {e}")
                 raise typer.Exit(code=1)
 
         with console.status("[bold cyan]Gherkinのフィーチャーファイルを解析中...[/bold cyan]"):
             try:
-                tags_in_code = get_tags(features_dir=feature_dir, prefix=prefix)
+                # 検索対象のプレフィックスを決定
+                search_prefixes = {prefix} if prefix else all_prefixes
+                tags_in_code = get_tags(features_dir=feature_dir, prefixes=search_prefixes)
             except ValueError as e:
                 console.print(f"[bold red]❌ Gherkinファイルのパースに失敗しました:[/bold red] {e}")
                 raise typer.Exit(code=1)
@@ -110,7 +114,7 @@ def audit_cmd(
                 raw_items = get_item_map(repo_root=repo_root)
                 suspect_specs = {
                     uid for uid, item in raw_items.items()
-                    if uid.startswith(prefix) and is_suspect(item)
+                    if (not prefix or uid.startswith(prefix)) and is_suspect(item)
                 }
             except Exception as e:
                 console.print(f"[bold red]❌ Suspect状態の確認に失敗しました:[/bold red] {e}")
@@ -258,7 +262,7 @@ def build(
     feature_dir: Path = typer.Argument(..., exists=True, resolve_path=True),
     repo_root: Path = typer.Option(Path.cwd(), "--repo-root", "-r", exists=True, resolve_path=True),
     out_dir: Path = typer.Option(Path(".specification"), "--out-dir", "-o", resolve_path=True),
-    prefix: str = typer.Option("SPEC", "--prefix", "-p"),
+    prefix: str = typer.Option("SPEC", "--prefix", "-p", help="Gherkinタグとして主に扱うデフォルトプレフィックス"),
     test_results_file: Path = typer.Option(
         None,
         "--test-results",
@@ -270,15 +274,17 @@ def build(
         resolve_path=True,
     ),
 ):
-    """REQとSPECを分離し、相互リンク・兄弟リンク・カバレッジ割合を含むサイトをビルドします。"""
+    """Doorstopの全ドキュメントを解析し、相互リンク・カバレッジ・テスト結果を含むポータルサイトをビルドします。"""
     try:
         with console.status("[bold cyan]データの分析と結合を開始...[/bold cyan]"):
-            # 1. Doorstopから全アイテム取得
+            # 1. Doorstopから全アイテムと全プレフィックス取得
             raw_items = get_item_map(repo_root)
             all_items_str = {str(uid): item for uid, item in raw_items.items()}
+            doorstop_tree = get_doorstop_tree(repo_root)
+            all_prefixes = {str(doc.prefix) for doc in doorstop_tree}
 
-            # 2. Gherkinタグマップ取得
-            tag_map = get_tag_map(feature_dir, prefix)
+            # 2. Gherkinタグマップ取得 (全プレフィックスを対象にする)
+            tag_map = get_tag_map(feature_dir, all_prefixes)
 
             # 3. 子への逆引きマップ（parent_uid -> [child_uid, ...]）
             child_map: dict[str, list[str]] = {}
@@ -314,12 +320,8 @@ def build(
         items_dir.mkdir(parents=True, exist_ok=True)
         features_md_dir.mkdir(parents=True, exist_ok=True)
 
-        # プレフィックスによるグループ分け
-        req_items = {uid: item for uid, item in all_items_str.items() if uid.startswith("REQ")}
-        spec_items = {uid: item for uid, item in all_items_str.items() if uid.startswith("SPEC")}
-
-        # 6. Gherkin .feature → Markdown 変換（ブラウザから読めるようにする）
-        feature_md_map: dict[str, str] = {}  # rel_feature_path -> md_relative_url
+        # 6. Gherkin .feature → Markdown 変換
+        feature_md_map: dict[str, str] = {}
         for feature_file in feature_dir.rglob("*.feature"):
             try:
                 rel = feature_file.relative_to(feature_dir)
@@ -328,7 +330,6 @@ def build(
                 out_path.parent.mkdir(parents=True, exist_ok=True)
                 md_content = _feature_to_markdown(feature_file)
                 out_path.write_text(md_content, encoding="utf-8")
-                # tag_map の file キーと照合できるよう、相対パス文字列を登録
                 try:
                     tag_rel = str(feature_file.relative_to(feature_dir.parent))
                 except ValueError:
@@ -337,7 +338,7 @@ def build(
             except Exception as e:
                 console.print(f"[yellow]⚠️ feature変換スキップ: {feature_file}: {e}[/yellow]")
 
-        # 7. 個別ページ (items/*.md)
+        # 7. 個別アイテムページ (items/*.md)
         for uid, item in all_items_str.items():
             content = _generate_item_markdown(
                 uid, item, all_items_str, child_map, sibling_map, tag_map, feature_md_map,
@@ -345,25 +346,32 @@ def build(
             )
             (items_dir / f"{uid}.md").write_text(content, encoding="utf-8")
 
-        # 8. 要件一覧 (requirements.md)
-        req_table = _generate_index_table(
-            "要件一覧 (REQ)", req_items, all_items_str, child_map, sibling_map, tag_map,
-            is_req_view=True, test_result_map=test_result_map,
-        )
-        (docs_dir / "requirements.md").write_text(req_table, encoding="utf-8")
-
-        # 9. 仕様一覧 (specifications.md)
-        spec_table = _generate_index_table(
-            "仕様一覧 (SPEC)", spec_items, all_items_str, child_map, sibling_map, tag_map,
-            is_req_view=False, test_result_map=test_result_map,
-        )
-        (docs_dir / "specifications.md").write_text(spec_table, encoding="utf-8")
+        # 8. 各ドキュメントの一覧ページ生成
+        prefix_to_file = {}
+        for doc in doorstop_tree:
+            p = str(doc.prefix)
+            doc_items = {uid: item for uid, item in all_items_str.items() if uid.startswith(p + "-")}
+            # プレフィックスが完全に一致する場合（ハイフンなし）も考慮が必要な場合があるが、Doorstopの標準はハイフン区切り
+            if not doc_items:
+                doc_items = {uid: item for uid, item in all_items_str.items() if uid.startswith(p)}
+            
+            filename = f"{p.lower()}.md"
+            table = _generate_index_table(
+                f"ドキュメント: {p}", doc_items, all_items_str, child_map, sibling_map, tag_map,
+                test_result_map=test_result_map,
+            )
+            (docs_dir / filename).write_text(table, encoding="utf-8")
+            prefix_to_file[p] = filename
 
         # 9. index.md と mkdocs.yml
-        doorstop_tree = get_doorstop_tree(repo_root)
         _generate_basic_files(
             docs_dir, out_dir, repo_root.name, feature_md_map,
-            all_items_str, child_map, tag_map, doorstop_tree,
+            all_items_str, child_map, tag_map, doorstop_tree, prefix_to_file
+        )
+
+        console.print(f"[bold green]✅ ビルド成功！ [white]{out_dir}[/white][/bold green]")
+        console.print(
+            f"閲覧: [bold magenta]mkdocs serve -f {out_dir.relative_to(Path.cwd())}/mkdocs.yml[/bold magenta]"
         )
 
         console.print(f"[bold green]✅ ビルド成功！ [white]{out_dir}[/white][/bold green]")
@@ -530,7 +538,7 @@ def _feature_to_markdown(feature_file: Path) -> str:
 # ---------------------------------------------------------------------------
 
 def _generate_index_table(
-    title, target_items, all_items_str, child_map, sibling_map, tag_map, is_req_view,
+    title, target_items, all_items_str, child_map, sibling_map, tag_map,
     test_result_map: "TestResultMap | None" = None,
 ):
     """一覧ページのテーブルMarkdownを生成。"""
@@ -538,14 +546,9 @@ def _generate_index_table(
     result_col_header = " | テスト結果" if has_results else ""
     result_col_sep = " | :--- " if has_results else ""
 
-    if is_req_view:
-        # ID | タイトル | 親要件 | 子要件 | 関連仕様 | 兄弟 | ...
-        header = f"| ID | タイトル | 親要件 | 子要件 | 関連仕様 | 兄弟 | カバレッジ | 実装状況 | 状態{result_col_header} |"
-        sep = f"| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :---{result_col_sep}|"
-    else:
-        # ID | タイトル | 親要件 | 親仕様 | 子仕様 | 兄弟 | ...
-        header = f"| ID | タイトル | 親要件 | 親仕様 | 子仕様 | 兄弟 | カバレッジ | 実装状況 | 状態{result_col_header} |"
-        sep = f"| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :---{result_col_sep}|"
+    # ID | タイトル | 親 | 子 | 兄弟 | カバレッジ | 実装状況 | 状態
+    header = f"| ID | タイトル | 親 | 子 | 兄弟 | カバレッジ | 実装状況 | 状態{result_col_header} |"
+    sep = f"| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :---{result_col_sep}|"
 
     lines = [f"# {title}\n", header, sep]
 
@@ -556,28 +559,22 @@ def _generate_index_table(
 
         # リンクの抽出
         parents = [str(l) for l in item.links if str(l) in all_items_str]
-        p_reqs = [p for p in parents if p.startswith("REQ")]
-        p_specs = [p for p in parents if p.startswith("SPEC")]
-
         children = child_map.get(uid, [])
-        c_reqs = [c for c in children if c.startswith("REQ")]
-        c_specs = [c for c in children if c.startswith("SPEC")]
-
         siblings = sibling_map.get(uid, [])
+
+        parents_col = "<br>".join(f"[{p}](items/{p}.md)" for p in parents) or "-"
+        children_col = "<br>".join(f"[{c}](items/{c}.md)" for c in children) or "-"
         siblings_col = "<br>".join(f"[{s}](items/{s}.md)" for s in siblings) or "-"
 
-        # カラム用文字列生成
-        p_reqs_col = "<br>".join(f"[{p}](items/{p}.md)" for p in p_reqs) or "-"
-        p_specs_col = "<br>".join(f"[{p}](items/{p}.md)" for p in p_specs) or "-"
-        c_reqs_col = "<br>".join(f"[{c}](items/{c}.md)" for c in c_reqs) or "-"
-        c_specs_col = "<br>".join(f"[{c}](items/{c}.md)" for c in c_specs) or "-"
-
-        # カバレッジ・実装ステータス
-        if is_req_view:
+        # カバレッジ計算
+        # 子がいる場合は集約カバレッジ、いない場合は自身のカバレッジを表示
+        if children:
             covered, total = _req_coverage(uid, child_map, all_items_str, tag_map)
+            coverage_col = _coverage_badge(covered, total) + " [agg]"
         else:
             covered, total = _spec_coverage(uid, tag_map, item, all_items_str)
-        coverage_col = _coverage_badge(covered, total)
+            coverage_col = _coverage_badge(covered, total)
+
         impl_col = _impl_status_badge(item)
 
         # 状態アイコン
@@ -587,19 +584,16 @@ def _generate_index_table(
         else: gherkin_status = "🔴"
 
         # 行の組み立て
-        if is_req_view:
-            row = f"| [{uid}](items/{uid}.md) | {item.header} | {p_reqs_col} | {c_reqs_col} | {c_specs_col} | {siblings_col} | {coverage_col} | {impl_col} | {gherkin_status} |"
-        else:
-            row = f"| [{uid}](items/{uid}.md) | {item.header} | {p_reqs_col} | {p_specs_col} | {c_specs_col} | {siblings_col} | {coverage_col} | {impl_col} | {gherkin_status} |"
+        row = f"| [{uid}](items/{uid}.md) | {item.header} | {parents_col} | {children_col} | {siblings_col} | {coverage_col} | {impl_col} | {gherkin_status} |"
 
         if has_results:
             from .test_results import spec_result_summary, result_badge
-            if is_req_view:
+            if children:
                 cp = cf = ct = 0
-                for child_uid in child_map.get(uid, []):
-                    if child_uid.startswith("SPEC"):
-                        p, f, t = spec_result_summary(child_uid, tag_map, test_result_map)
-                        cp += p; cf += f; ct += t
+                for child_uid in children:
+                    # 子がSPEC相当（テストを持つ可能性があるもの）であれば集計
+                    p, f, t = spec_result_summary(child_uid, tag_map, test_result_map)
+                    cp += p; cf += f; ct += t
                 res_badge = result_badge(cp, cf, ct)
             else:
                 p, f, t = spec_result_summary(uid, tag_map, test_result_map)
@@ -622,7 +616,7 @@ def _generate_item_markdown(
     """個別詳細Markdownを生成（兄弟リンク・カバレッジ割合・featureリンク付き）。"""
     testable = _get_custom_attribute(item, "testable", True)
     scenarios = tag_map.get(uid, [])
-    is_req = uid.startswith("REQ")
+    children = child_map.get(uid, [])
 
     content: list[str] = [f"# [{uid}] {item.header}\n"]
 
@@ -639,58 +633,59 @@ def _generate_item_markdown(
     # ---- リンクセクション（親・子・兄弟）----
     link_parts: list[str] = []
 
-    # 親関係（このアイテムがリンクしている上位アイテム）
+    # 親関係
     if item.links:
         parents = [str(l) for l in item.links if str(l) in all_items_str]
-        p_reqs = [p for p in parents if p.startswith("REQ")]
-        p_specs = [p for p in parents if p.startswith("SPEC")]
-        if p_reqs:
-            link_parts.append(f"**上位要件**: {', '.join(f'[{p}]({p}.md)' for p in p_reqs)}")
-        if p_specs:
-            link_parts.append(f"**上位仕様**: {', '.join(f'[{p}]({p}.md)' for p in p_specs)}")
+        if parents:
+            link_parts.append(f"**上位アイテム**: {', '.join(f'[{p}]({p}.md)' for p in parents)}")
 
-    # 子関係（このアイテムを参照している下位アイテム）
-    if uid in child_map:
-        children = child_map[uid]
-        c_reqs = [c for c in children if c.startswith("REQ") and c in all_items_str]
-        c_specs = [c for c in children if c.startswith("SPEC") and c in all_items_str]
-        if c_reqs:
-            link_parts.append(f"**下位要件**: {', '.join(f'[{c}]({c}.md)' for c in c_reqs)}")
-        if c_specs:
-            label = "**関連仕様**" if is_req else "**下位仕様**"
-            link_parts.append(f"{label}: {', '.join(f'[{c}]({c}.md)' for c in c_specs)}")
+    # 子関係
+    if children:
+        valid_children = [c for c in children if c in all_items_str]
+        if valid_children:
+            link_parts.append(f"**下位アイテム**: {', '.join(f'[{c}]({c}.md)' for c in valid_children)}")
 
-    # 兄弟関係（同じ親を持つアイテム）
+    # 兄弟関係
     siblings = sibling_map.get(uid, [])
     if siblings:
         sibling_links = ", ".join(f"[{s}]({s}.md)" for s in siblings if s in all_items_str)
         if sibling_links:
-            label = "**兄弟要件**" if is_req else "**兄弟仕様**"
-            link_parts.append(f"{label}: {sibling_links}")
+            link_parts.append(f"**兄弟アイテム**: {sibling_links}")
 
     if link_parts:
         content.append(" / ".join(link_parts) + "\n")
 
     # ---- カバレッジバッジ ----
-    if is_req:
+    if children:
         covered, total = _req_coverage(uid, child_map, all_items_str, tag_map)
         coverage_str = _coverage_badge(covered, total)
-        content.append(f"**テストカバレッジ**: {coverage_str} （関連仕様の集計）\n")
-    else:
+        content.append(f"**テストカバレッジ**: {coverage_str} （下位アイテムの集計）\n")
+    
+    # 自身がテスト対象、またはシナリオがある場合
+    if testable or scenarios:
         covered, total = _spec_coverage(uid, tag_map, item, all_items_str)
         coverage_str = _coverage_badge(covered, total)
-        content.append(f"**テスト対象**: {'Yes' if testable else 'No'}　**カバレッジ**: {coverage_str}\n")
+        content.append(f"**テスト対象**: {'Yes' if testable else 'No'}　**個別カバレッジ**: {coverage_str}\n")
 
     # ---- 本文 ----
     content.append(f"\n### 内容\n\n{item.text}\n")
 
-    # ---- テスト実行結果サマリー（--test-results 指定時のみ）----
-    if test_result_map is not None and not is_req:
-        p, f, t = spec_result_summary(uid, tag_map, test_result_map)
-        summary = result_badge(p, f, t)
-        content.append(f"**テスト実行結果**: {summary}\n")
+    # ---- テスト実行結果サマリー ----
+    if test_result_map is not None:
+        if children:
+            cp = cf = ct = 0
+            for child_uid in children:
+                p, f, t = spec_result_summary(child_uid, tag_map, test_result_map)
+                cp += p; cf += f; ct += t
+            summary = result_badge(cp, cf, ct)
+            content.append(f"**テスト実行結果 (集計)**: {summary}\n")
+        
+        if testable or scenarios:
+            p, f, t = spec_result_summary(uid, tag_map, test_result_map)
+            summary = result_badge(p, f, t)
+            content.append(f"**テスト実行結果 (個別)**: {summary}\n")
 
-    # ---- 検証シナリオ（featureへのリンク付き）----
+    # ---- 検証シナリオ ----
     if scenarios:
         content.append("### 🧪 検証シナリオ\n")
         for s in scenarios:
@@ -728,20 +723,13 @@ def _get_uid_prefix(uid: str) -> str:
 # ヘルパー: 階層ツリー生成
 # ---------------------------------------------------------------------------
 
-def _build_hierarchy_tree(doorstop_tree) -> str:
+def _build_hierarchy_tree(doorstop_tree, prefix_to_file: dict) -> str:
     """
-    Doorstopのドキュメント階層（tree.document / tree.children）を
-    Markdownのネストリストで返す。
+    Doorstopのドキュメント階層をMarkdownのネストリストで返す。
     ドキュメントノードを **PREFIX** として見出し行にし、
-    それぞれの一覧ページへリンクする。具体的なアイテムは表示しない。
+    それぞれの一覧ページへリンクする。
     """
     lines: list[str] = []
-
-    # プレフィックスとリンク先の対応
-    prefix_links = {
-        "REQ": "requirements.md",
-        "SPEC": "specifications.md",
-    }
 
     def render_tree_node(tree_node, depth: int) -> None:
         if tree_node.document is None:
@@ -749,7 +737,7 @@ def _build_hierarchy_tree(doorstop_tree) -> str:
         prefix = str(tree_node.document.prefix)
         indent = "    " * depth
 
-        link = prefix_links.get(prefix)
+        link = prefix_to_file.get(prefix)
         if link:
             lines.append(f"{indent}- [**{prefix}**]({link})")
         else:
@@ -776,16 +764,20 @@ def _generate_basic_files(
     child_map: dict,
     tag_map: dict,
     doorstop_tree,
+    prefix_to_file: dict,
 ) -> None:
-    """index.md と mkdocs.yml を生成（毎回再生成・featureページのナビも含む）。"""
-    # index.md（毎回再生成してツリーを最新状態に保つ）
+    """index.md と mkdocs.yml を生成。"""
+    # index.md
     index_path = docs_dir / "index.md"
-    tree_md = _build_hierarchy_tree(doorstop_tree)
+    tree_md = _build_hierarchy_tree(doorstop_tree, prefix_to_file)
+    
+    doc_links = "\n".join(f"- [{p}]({f})" for p, f in sorted(prefix_to_file.items()))
+
     index_content = (
         f"# {project_name} Specification Site\n\n"
         "Spec-Weaverによって自動生成されたドキュメントポータルです。\n\n"
-        "- [要件一覧 (REQ)](requirements.md)\n"
-        "- [仕様一覧 (SPEC)](specifications.md)\n"
+        "### ドキュメント一覧\n"
+        f"{doc_links}\n"
         "- [振る舞い仕様 (Gherkin Features)](features/)\n\n"
         "---\n\n"
         "## 仕様階層ツリー\n\n"
@@ -806,6 +798,12 @@ def _generate_basic_files(
         )
 
     # mkdocs.yml
+    # 各ドキュメントをナビに追加
+    docs_nav_entries = "".join(
+        f"  - {p}一覧: {f}\n"
+        for p, f in sorted(prefix_to_file.items())
+    )
+
     # features/ 以下の .md を動的にナビに追加
     features_nav_entries = "".join(
         f"      - {Path(md_url).name}: features/{Path(md_url).name}\n"
@@ -818,12 +816,12 @@ theme:
   features:
     - navigation.tabs
     - navigation.top
+    - navigation.footer
     - search.suggest
     - search.highlight
 nav:
   - Home: index.md
-  - 要件一覧 (REQ): requirements.md
-  - 仕様一覧 (SPEC): specifications.md
+{docs_nav_entries}
   - 振る舞い仕様 (Features):
       - features/index.md
 {features_nav_entries}

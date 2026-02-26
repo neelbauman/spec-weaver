@@ -14,18 +14,28 @@ ScenarioInfo = Dict[str, Any]  # keys: "file", "line", "name", "keyword"
 TagMap = Dict[str, List[ScenarioInfo]]
 
 
-def get_tag_map(features_dir: Path, prefix: str = "SPEC") -> TagMap:
+def get_tag_map(features_dir: Path, prefixes: Set[str] | str = "SPEC", **kwargs) -> TagMap:
     """
     指定ディレクトリ以下の .feature ファイルを解析し、
     仕様ID（タグ）と、それに紐づくシナリオ（テスト）情報のマッピングを取得します。
 
     Args:
         features_dir (Path): .feature ファイルが格納されているディレクトリ
-        prefix (str): 対象とするタグのプレフィックス（例: SPEC）
+        prefixes (Set[str] | str): 対象とするタグのプレフィックスまたはその集合（例: {"SPEC", "REQ", "AUTH"}）
+        **kwargs: 後方互換性のため、'prefix' 引数を受け入れます。
 
     Returns:
         TagMap: { "SPEC-001": [{"file": "features/login.feature", "line": 5, "name": "...", "keyword": "Scenario"}, ...] }
     """
+    # 後方互換性のための処理
+    if "prefix" in kwargs:
+        prefixes = kwargs["prefix"]
+
+    if isinstance(prefixes, str):
+        target_prefixes = {prefixes.upper()}
+    else:
+        target_prefixes = {p.upper() for p in prefixes}
+
     parser = Parser()
     tag_map: TagMap = defaultdict(list)
     
@@ -45,7 +55,7 @@ def get_tag_map(features_dir: Path, prefix: str = "SPEC") -> TagMap:
                 rel_path = str(feature_file)
 
             # ASTのルートから再帰的に探索し、tag_map に情報を蓄積する
-            _extract_tag_map_recursive(ast, prefix.upper(), rel_path, tag_map)
+            _extract_tag_map_recursive(ast, target_prefixes, rel_path, tag_map)
             
         except Exception as e:
             # 構文エラーの握り潰しは厳禁（フェイルファスト）
@@ -57,9 +67,9 @@ def get_tag_map(features_dir: Path, prefix: str = "SPEC") -> TagMap:
     return dict(tag_map)
 
 
-def _extract_tag_map_recursive(node: Any, target_prefix: str, file_path: str, tag_map: TagMap) -> None:
+def _extract_tag_map_recursive(node: Any, target_prefixes: Set[str], file_path: str, tag_map: TagMap) -> None:
     """
-    ASTのノードツリーを再帰的に探索し、対象プレフィックスに合致するタグと親ノードの情報を抽出します。
+    ASTのノードツリーを再帰的に探索し、対象プレフィックスのいずれかに合致するタグと親ノードの情報を抽出します。
     """
     if isinstance(node, dict):
         # 現在のノードが 'tags' を持っている場合 (Feature, Scenario, Scenario Outline など)
@@ -75,30 +85,32 @@ def _extract_tag_map_recursive(node: Any, target_prefix: str, file_path: str, ta
                 tag_name: str = tag_node.get("name", "")
                 clean_tag = tag_name.lstrip("@")
                 
-                # プレフィックスが一致すれば、詳細情報と共にマッピングに追加
-                if clean_tag.upper().startswith(target_prefix):
-                    tag_map[clean_tag].append({
-                        "file": file_path,
-                        "line": line,
-                        "name": name,
-                        "keyword": keyword
-                    })
+                # プレフィックスのいずれかが一致すれば、詳細情報と共にマッピングに追加
+                for prefix in target_prefixes:
+                    if clean_tag.upper().startswith(prefix):
+                        tag_map[clean_tag].append({
+                            "file": file_path,
+                            "line": line,
+                            "name": name,
+                            "keyword": keyword
+                        })
+                        break
 
         # 辞書の各バリューに対してさらに再帰探索（ネストされたScenarioやExamplesを掘り下げる）
         for value in node.values():
-            _extract_tag_map_recursive(value, target_prefix, file_path, tag_map)
+            _extract_tag_map_recursive(value, target_prefixes, file_path, tag_map)
 
     elif isinstance(node, list):
         # リスト内の各要素に対して再帰探索
         for item in node:
-            _extract_tag_map_recursive(item, target_prefix, file_path, tag_map)
+            _extract_tag_map_recursive(item, target_prefixes, file_path, tag_map)
 
 
-def get_tags(features_dir: Path, prefix: str = "SPEC") -> Set[str]:
+def get_tags(features_dir: Path, prefixes: Set[str] | str = "SPEC", **kwargs) -> Set[str]:
     """
     (後方互換性・監査用)
     仕様IDの文字列の集合（Set）のみを返します。auditコマンド等の差分検知で使用します。
     """
-    tag_map = get_tag_map(features_dir, prefix)
+    tag_map = get_tag_map(features_dir, prefixes, **kwargs)
     return set(tag_map.keys())
 

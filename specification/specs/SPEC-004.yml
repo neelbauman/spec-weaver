@@ -7,7 +7,7 @@ links:
 - REQ-003: Rb8ehO6TwgTYIqN3kXtu3nzq6LWHqvsE0-d2B9HrUWM=
 normative: true
 ref: ''
-reviewed: GJZ0HfapacVeLdB8G4kI5KzYEt5p3AeUMqiuedUTbk4=
+reviewed: rlsiE4meHzaPQWr0nV33-5NoSkbnzWU9VA9hA2yty2c=
 status: implemented
 testable: true
 text: |
@@ -29,6 +29,5 @@ text: |
   ### 生成されるファイル
   - `mkdocs.yml`: MkDocs設定ファイル（Material テーマ、Mermaid対応）
   - `docs/index.md`: トップページ。プロジェクトのドキュメント階層（REQ, SPECなど）を表示し、それぞれの一覧ページへのリンクを提供する。具体的なアイテム一覧は表示せず、階層構造のみを示す。
-  - `docs/requirements.md`: 要件一覧テーブル（相互リンク付き）
-  - `docs/specifications.md`: 仕様一覧テーブル（相互リンク付き）
+  - `docs/{prefix}.md`: 各ドキュメントの一覧テーブル（例: `req.md`, `spec.md`）。相互リンク付き。
   - `docs/items/{ID}.md`: 各アイテムの詳細ページ（本文、上位/下位リンク、テストファイルパス）

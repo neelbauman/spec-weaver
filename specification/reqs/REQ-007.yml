@@ -1,0 +1,28 @@
+active: true
+derived: false
+header: |
+  マルチドキュメント・動的プレフィックスのサポート
+level: 7.0
+links:
+- REQ-001: sQI3PDVLr4t_7FzvaBW2KfO6i0kUFnK0vEnVRhJAA4M=
+normative: true
+ref: ''
+reviewed: -frGz19cWtKNZs9bx1K__46W3lY8L886FXsazUbgwtQ=
+status: implemented
+text: |
+  ## 概要
+  REQ/SPEC以外の任意のドキュメントタイプ（PAY, AUTH, ADM等）を、動的なプレフィックスとして
+  サイト構築時に自動認識・統合すること。
+
+  ## 背景・動機
+  大規模なプロジェクトでは、ドキュメントの構造が「要件(REQ)」と「仕様(SPEC)」だけでは不十分であり、
+  「決済(PAY)」や「認証(AUTH)」など、機能ドメインや技術レイヤーに応じた独立したプレフィックス
+  の運用が必要になる。これらを静的にコードで定義するのではなく、Doorstopのツリーから
+  動的に抽出してサイトに統合することで、将来のドキュメント拡張に柔軟に対応する。
+
+  ## 受け入れ基準
+  - Doorstopのツリーに存在するすべてのドキュメントプレフィックスを自動的に検知できること
+  - 各プレフィックスに対応する独立したインデックスページが生成されること
+  - Gherkinタグ（@ID）が検知されたすべてのプレフィックスに対応し、正しく紐付けられること
+  - index.md の階層ツリーおよびナビゲーションに、すべてのドキュメントが自動的に含まれること
+testable: false

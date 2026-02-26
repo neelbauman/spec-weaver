@@ -2,18 +2,20 @@
 
 import os
 from pathlib import Path
-from typing import Any, Set, Dict
+from typing import Any, Set, Dict, Optional
 
 import doorstop
 
-def get_specs(repo_root: Path, prefix: str = "SPEC") -> Set[str]:
+def get_specs(repo_root: Path, prefix: Optional[str] = "SPEC") -> Set[str]:
     """監査用：アクティブな仕様IDの集合を取得します。"""
     item_map = get_item_map(repo_root)
     specs = set()
     for uid, item in item_map.items():
         uid_str = str(uid)
-        if uid_str.startswith(prefix) and _get_custom_attribute(item, "testable", True):
-            specs.add(uid_str)
+        is_testable = _get_custom_attribute(item, "testable", True)
+        if is_testable:
+            if prefix is None or uid_str.startswith(prefix):
+                specs.add(uid_str)
     return specs
 
 def get_item_map(repo_root: Path) -> Dict[str, Any]:
@@ -73,6 +75,12 @@ def get_doorstop_tree(repo_root: Path):
         return doorstop.build()
     finally:
         os.chdir(original_cwd)
+
+
+def get_all_prefixes(repo_root: Path) -> Set[str]:
+    """Doorstopのツリーからすべてのドキュメントプレフィックスを取得します。"""
+    tree = get_doorstop_tree(repo_root)
+    return {str(doc.prefix) for doc in tree}
 
 
 def get_all_items(repo_root: Path) -> Dict[str, Any]:

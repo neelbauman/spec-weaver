@@ -48,3 +48,4 @@ text: |
   - DoorstopのSPEC IDとGherkinの@タグが1対1で紐付けできること
   - 任意のSPEC IDから対応するテストシナリオを特定できること
   - 任意のGherkinタグから対応する仕様書を特定できること
+testable: false
