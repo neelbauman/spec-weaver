@@ -14,6 +14,7 @@ from rich.table import Table
 from rich.tree import Tree
 
 import re
+from datetime import date as _date
 
 from spec_weaver.doorstop import get_item_map, get_doorstop_tree, _get_custom_attribute, get_specs, is_suspect, get_all_prefixes
 from spec_weaver.gherkin import get_tag_map, get_tags
@@ -43,6 +44,12 @@ def _impl_status_badge(item) -> str:
     if not status:
         return "-"
     return IMPL_STATUS_BADGE.get(str(status), f"❓ {status}")
+
+
+def _get_timestamp(item, key: str) -> str:
+    """created_at / updated_at カスタム属性を取得する。未設定は '-'。"""
+    val = _get_custom_attribute(item, key, None)
+    return str(val) if val else "-"
 
 
 app = typer.Typer(
@@ -81,6 +88,11 @@ def audit_cmd(
         "--prefix",
         "-p",
         help="監査対象とする仕様IDのプレフィックス（省略した場合は全ドキュメントの testable アイテムが対象）",
+    ),
+    stale_days: int = typer.Option(
+        90,
+        "--stale-days",
+        help="updated_at からの経過日数がこの値を超えたアイテムを stale（陳腐化の可能性）として警告する。0 で無効。",
     ),
 ) -> None:
     """
@@ -157,6 +169,42 @@ def audit_cmd(
             for spec in sorted(suspect_specs):
                 table.add_row(spec, "上位要件が変更されました。レビューが必要です。")
             console.print(table)
+
+        # stale チェック（終了コードには影響しない）
+        if stale_days > 0:
+            today = _date.today()
+            stale_items: list[tuple[str, str, int]] = []
+            for uid, item in raw_items.items():
+                if prefix and not uid.startswith(prefix):
+                    continue
+                item_status = _get_custom_attribute(item, "status", None)
+                if str(item_status or "") == "deprecated":
+                    continue
+                updated_at_val = _get_custom_attribute(item, "updated_at", None)
+                if not updated_at_val:
+                    continue
+                try:
+                    updated_at = _date.fromisoformat(str(updated_at_val))
+                    delta = (today - updated_at).days
+                    if delta > stale_days:
+                        stale_items.append((str(uid), str(updated_at_val), delta))
+                except ValueError:
+                    pass
+
+            if stale_items:
+                console.print(
+                    f"\n[bold yellow]⏰ Stale Items（{stale_days}日以上未更新）:[/bold yellow]"
+                )
+                table = Table(show_header=True, header_style="bold magenta")
+                table.add_column("ID", style="bold cyan", no_wrap=True)
+                table.add_column("タイトル")
+                table.add_column("最終更新日", style="dim")
+                table.add_column("経過日数", style="yellow")
+                for uid, updated_at_str, delta in sorted(stale_items):
+                    item = raw_items.get(uid)
+                    title = (item.header or "").strip() if item else ""
+                    table.add_row(uid, title, updated_at_str, f"{delta}日")
+                console.print(table)
 
         if not has_error:
             console.print(
@@ -547,9 +595,9 @@ def _generate_index_table(
     result_col_header = " | テスト結果" if has_results else ""
     result_col_sep = " | :--- " if has_results else ""
 
-    # ID | タイトル | 親 | 子 | 兄弟 | カバレッジ | 実装状況 | 状態
-    header = f"| ID | タイトル | 親 | 子 | 兄弟 | カバレッジ | 実装状況 | 状態{result_col_header} |"
-    sep = f"| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :---{result_col_sep}|"
+    # ID | タイトル | 親 | 子 | 兄弟 | カバレッジ | 実装状況 | 作成日 | 更新日 | 状態
+    header = f"| ID | タイトル | 親 | 子 | 兄弟 | カバレッジ | 実装状況 | 作成日 | 更新日 | 状態{result_col_header} |"
+    sep = f"| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :---{result_col_sep}|"
 
     lines = [f"# {title}\n", header, sep]
 
@@ -577,6 +625,8 @@ def _generate_index_table(
             coverage_col = _coverage_badge(covered, total)
 
         impl_col = _impl_status_badge(item)
+        created_col = _get_timestamp(item, "created_at")
+        updated_col = _get_timestamp(item, "updated_at")
 
         # 状態アイコン
         if is_suspect(item): gherkin_status = "⚠️ Suspect"
@@ -585,7 +635,7 @@ def _generate_index_table(
         else: gherkin_status = "🔴"
 
         # 行の組み立て
-        row = f"| [{uid}](items/{uid}.md) | {item.header} | {parents_col} | {children_col} | {siblings_col} | {coverage_col} | {impl_col} | {gherkin_status} |"
+        row = f"| [{uid}](items/{uid}.md) | {item.header} | {parents_col} | {children_col} | {siblings_col} | {coverage_col} | {impl_col} | {created_col} | {updated_col} | {gherkin_status} |"
 
         if has_results:
             from .test_results import spec_result_summary, result_badge
@@ -631,6 +681,11 @@ def _generate_item_markdown(
     # ---- 実装ステータス ----
     impl_badge = _impl_status_badge(item)
     content.append(f"**実装状況**: {impl_badge}\n")
+
+    # ---- タイムスタンプ ----
+    created_at = _get_timestamp(item, "created_at")
+    updated_at = _get_timestamp(item, "updated_at")
+    content.append(f"**作成日**: {created_at}　|　**更新日**: {updated_at}\n")
 
     # ---- リンクセクション（親・子・兄弟）----
     link_parts: list[str] = []

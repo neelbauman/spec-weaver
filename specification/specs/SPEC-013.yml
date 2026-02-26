@@ -1,0 +1,59 @@
+active: true
+derived: false
+header: |
+  タイムスタンプ鮮度の監査チェック
+level: 10.3
+links:
+- REQ-002: AL9bDV_13Z_dFORw5rjP1YoJvrpxV9BwxqcTBuTGPsA=
+- REQ-010: ECPuWqjRylWWFNUNmco_ygq9reO2BgGgFUNtymMh_HU=
+normative: true
+ref: ''
+reviewed: Gxr7qp0_vLAjgUQuPbLWNzmmIJjAxLI5s5HXdH1tuU8=
+status: implemented
+testable: true
+text: |
+  ## 概要
+  `spec-weaver audit` コマンドを拡張し、長期間更新されていないアイテムを
+  「stale（陳腐化の可能性）」として検出・警告する。
+
+  ## 詳細仕様
+
+  ### 1. Stale 判定ロジック
+
+  以下の条件をすべて満たすアイテムを stale と判定する。
+  - `active: true` である
+  - `status` が `deprecated` でない
+  - `updated_at` が設定されている
+  - `updated_at` から現在日付までの経過日数が閾値を超えている
+
+  **デフォルト閾値**: 90日
+
+  > `updated_at` が未設定のアイテムは stale 判定の対象外とする（警告しない）。
+  > タイムスタンプ運用が浸透していない既存アイテムへの過剰な警告を防ぐため。
+
+  ### 2. CLI オプション
+
+  `spec-weaver audit` コマンドに以下のオプションを追加する。
+
+  | オプション | 型 | デフォルト | 説明 |
+  |---|---|---|---|
+  | `--stale-days` | int | 90 | stale 判定の閾値（日数）。0 で無効化 |
+
+  ### 3. 出力形式
+
+  stale アイテムが検出された場合、既存の監査結果テーブルの後に
+  追加のテーブルを表示する。
+
+  ```
+  ⏰ Stale Items（90日以上未更新）
+  ┌──────────┬────────────────────────┬────────────┬──────────┐
+  │ ID       │ タイトル               │ 最終更新日  │ 経過日数  │
+  ├──────────┼────────────────────────┼────────────┼──────────┤
+  │ SPEC-002 │ データ抽出基盤          │ 2025-11-01 │ 117日    │
+  └──────────┴────────────────────────┴────────────┴──────────┘
+  ```
+
+  ### 4. 終了コードへの影響
+
+  - stale アイテムの検出のみでは終了コードを非ゼロにしない（警告扱い）。
+  - 既存の監査エラー（テスト漏れ・孤児タグ・Suspect）とは独立した報告とする。

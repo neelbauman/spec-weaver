@@ -1,0 +1,29 @@
+active: true
+derived: false
+header: |
+  アイテムのタイムスタンプ管理と可視化
+level: 9.1
+links:
+- REQ-003: Rb8ehO6TwgTYIqN3kXtu3nzq6LWHqvsE0-d2B9HrUWM=
+normative: true
+ref: ''
+reviewed: xrsl9OCLT55soYp71I364rabI8J98hRVlxcH19rUthI=
+status: implemented
+testable: false
+text: |
+  ## 概要
+  各REQ・SPECアイテムの作成日と最終更新日をタイムスタンプとして管理し、
+  生成ドキュメント上で確認できるようにする。
+
+  ## 背景・動機
+  仕様アイテムが増加すると、いつ作成され、いつ最後に見直されたかの把握が
+  困難になる。タイムスタンプを管理することで、長期間メンテナンスされていない
+  「陳腐化した仕様」を早期に発見し、仕様の鮮度を維持できる。
+  また、変更履歴の概観を提供することで、レビューや監査の効率を向上させる。
+
+  ## 受け入れ基準
+  - DoorstopのYAMLファイルに `created_at`（作成日）と `updated_at`（最終更新日）をカスタム属性として記録できること
+  - 日付形式は ISO 8601（`YYYY-MM-DD`）とすること
+  - `spec-weaver build` で生成するドキュメントの一覧ページ・詳細ページにタイムスタンプを表示できること
+  - 未設定の場合でもエラーにならず、`-` 等の代替表記で表示されること
+  - 長期間更新のないアイテムを監査で検出し、仕様の鮮度維持を支援すること

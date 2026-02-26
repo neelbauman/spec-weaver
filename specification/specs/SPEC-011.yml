@@ -1,0 +1,50 @@
+active: true
+derived: false
+header: |
+  タイムスタンプ・カスタム属性の定義
+level: 10.1
+links:
+- REQ-010: ECPuWqjRylWWFNUNmco_ygq9reO2BgGgFUNtymMh_HU=
+normative: true
+ref: ''
+reviewed: rsjs_p5XKAeZZ3THbwM_Hd5xc3jImr6B2r9fPryZa5s=
+status: implemented
+testable: true
+text: |
+  ## 概要
+  Doorstop YAMLにタイムスタンプ用のカスタム属性を定義し、アイテムの時系列情報を記録する。
+
+  ## 詳細仕様
+
+  ### 1. カスタム属性の定義
+
+  | 属性名 | 型 | 形式 | 省略 | デフォルト | 説明 |
+  |---|---|---|---|---|---|
+  | `created_at` | 文字列 | ISO 8601 (`YYYY-MM-DD`) | 可 | `null` | アイテム作成日 |
+  | `updated_at` | 文字列 | ISO 8601 (`YYYY-MM-DD`) | 可 | `null` | 最終更新日 |
+
+  ### 2. YAMLでの記述例
+
+  ```yaml
+  active: true
+  status: in-progress
+  created_at: '2026-01-15'
+  updated_at: '2026-02-20'
+  header: |
+    ○○○○の仕様
+  text: |
+    ...
+  ```
+
+  ### 3. 属性の取得
+
+  既存の `_get_custom_attribute()` を使用して取得する。
+  - `_get_custom_attribute(item, "created_at", None)`
+  - `_get_custom_attribute(item, "updated_at", None)`
+  - 未設定時は `None` を返し、表示上は `"-"` とする。
+
+  ### 4. 運用ルール
+
+  - **作成時**: `doorstop add` でアイテムを追加した後、YAML編集時に `created_at` を当日の日付で記入する。
+  - **更新時**: アイテムのtext・header・links等を変更した際に `updated_at` を当日の日付に更新する。
+  - **不変**: `created_at` は原則として変更しない。
