@@ -1,7 +1,7 @@
 active: true
 derived: false
 header: |
-  テスト実行結果の動的統合
+  テスト実行結果の動的統合と可視化
 level: 3.1
 links:
 - REQ-003: Rb8ehO6TwgTYIqN3kXtu3nzq6LWHqvsE0-d2B9HrUWM=

@@ -1,7 +1,7 @@
 active: true
 derived: false
 header: |
-  仕様と実装のトレーサビリティ保証
+  要件、仕様と実装（テスト）のトレーサビリティ保証
 level: 1
 links: []
 normative: true

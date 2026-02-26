@@ -1,7 +1,7 @@
 active: true
 derived: false
 header: |
-  マルチドキュメント・動的プレフィックスのサポート
+  可視化において、doorstopの任意のプレフィックスを表示できる
 level: 7.0
 links:
 - REQ-001: sQI3PDVLr4t_7FzvaBW2KfO6i0kUFnK0vEnVRhJAA4M=

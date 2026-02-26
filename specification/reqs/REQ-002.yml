@@ -1,7 +1,7 @@
 active: true
 derived: false
 header: |
-  監査による品質の継続的担保
+  CI/CDパイプラインでの品質ゲート機能による継続的担保
 level: 2.0
 links:
 - REQ-001: sQI3PDVLr4t_7FzvaBW2KfO6i0kUFnK0vEnVRhJAA4M=

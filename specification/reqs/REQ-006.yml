@@ -1,7 +1,7 @@
 active: true
 derived: false
 header: |
-  実装ステータスの管理と可視化
+  仕様の実装ステータスの管理と可視化
 level: 4
 links:
 - REQ-003: Rb8ehO6TwgTYIqN3kXtu3nzq6LWHqvsE0-d2B9HrUWM=
