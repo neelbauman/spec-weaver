@@ -340,6 +340,15 @@ def build(
             # 2. Gherkinタグマップ取得 (全プレフィックスを対象にする)
             tag_map = get_tag_map(feature_dir, all_prefixes)
 
+            # feature_path -> 関連アイテムUID一覧（バックリンク用）
+            _backlink_sets: dict[str, set[str]] = {}
+            for _uid, _scenarios in tag_map.items():
+                for _s in _scenarios:
+                    _backlink_sets.setdefault(_s["file"], set()).add(_uid)
+            feature_backlink_map: dict[str, list[str]] = {
+                k: sorted(v) for k, v in _backlink_sets.items()
+            }
+
             # 3. 子への逆引きマップ（parent_uid -> [child_uid, ...]）
             child_map: dict[str, list[str]] = {}
             for uid, item in all_items_str.items():
@@ -382,12 +391,13 @@ def build(
                 md_rel = rel.with_suffix(".md")
                 out_path = features_md_dir / md_rel
                 out_path.parent.mkdir(parents=True, exist_ok=True)
-                md_content = _feature_to_markdown(feature_file)
-                out_path.write_text(md_content, encoding="utf-8")
                 try:
                     tag_rel = str(feature_file.relative_to(feature_dir.parent))
                 except ValueError:
                     tag_rel = str(feature_file)
+                backlinks = feature_backlink_map.get(tag_rel, [])
+                md_content = _feature_to_markdown(feature_file, backlinks=backlinks)
+                out_path.write_text(md_content, encoding="utf-8")
                 feature_md_map[tag_rel] = f"../features/{md_rel.as_posix()}"
             except Exception as e:
                 console.print(f"[yellow]⚠️ feature変換スキップ: {feature_file}: {e}[/yellow]")
@@ -504,9 +514,10 @@ def _coverage_badge(covered: int, total: int) -> str:
 # ヘルパー: Gherkin → Markdown 変換
 # ---------------------------------------------------------------------------
 
-def _feature_to_markdown(feature_file: Path) -> str:
+def _feature_to_markdown(feature_file: Path, backlinks: list[str] | None = None) -> str:
     """
     .featureファイルをGherkinパーサーで解析し、ブラウザで読みやすいMarkdownに変換する。
+    backlinks: このfeatureを参照しているアイテムUID一覧（例: ["SPEC-003", "REQ-001"]）
     """
     from gherkin.parser import Parser
     from gherkin.token_scanner import TokenScanner
@@ -526,6 +537,10 @@ def _feature_to_markdown(feature_file: Path) -> str:
 
     if feature_tags:
         lines.append("**タグ**: " + " ".join(f"`{t}`" for t in feature_tags) + "\n")
+
+    if backlinks:
+        links_str = " / ".join(f"[{uid}](../items/{uid}.md)" for uid in backlinks)
+        lines.append(f"**関連アイテム**: {links_str}\n")
 
     if feature_desc:
         lines.append(f"{feature_desc}\n")
