@@ -1,14 +1,14 @@
 active: true
-status: implemented
 derived: false
 header: |
   Suspect（変更波及）対応
-level: 5.0
+level: 2.1
 links:
-- REQ-004: 34RJf1Cy2LaoH-0pC-Ma0yoKCdz67ELdfte2nrWUy3k=
+- REQ-004: KXm5cZc2wXUhF29d-4lpSPbclfjN4ruCBIwDvWX93tg=
 normative: true
 ref: ''
-reviewed: hT7FuzytHlATivkw4yCf-Uxam0sH7r3NenwcokyAF-I=
+reviewed: Yj075uh6JGQTjszHOLEmDAxmAJmgb-d75xEmNrQLdeg=
+status: implemented
 testable: false
 text: |
   ## 概要

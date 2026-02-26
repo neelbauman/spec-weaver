@@ -1,14 +1,14 @@
 active: true
-status: implemented
 derived: false
 header: |
   コア・アーキテクチャ
 level: 1.0
 links:
-- REQ-001: UKFX-aNhpiA52q-NB5I2Fhu2r6Ph7_u5bJB3qyDdK0M=
+- REQ-001: sQI3PDVLr4t_7FzvaBW2KfO6i0kUFnK0vEnVRhJAA4M=
 normative: true
 ref: ''
 reviewed: 1RoqY0YTffbhxDtBOsQ0wOeclTKergcY6r-ggwtfrSU=
+status: implemented
 testable: false
 text: |
   ## 概要

@@ -1,19 +1,38 @@
 active: true
-status: implemented
 derived: false
 header: |
   データ抽出基盤
-level: 2.0
+level: 1.1
 links:
-- REQ-001: UKFX-aNhpiA52q-NB5I2Fhu2r6Ph7_u5bJB3qyDdK0M=
+- REQ-001: sQI3PDVLr4t_7FzvaBW2KfO6i0kUFnK0vEnVRhJAA4M=
 - REQ-002: AL9bDV_13Z_dFORw5rjP1YoJvrpxV9BwxqcTBuTGPsA=
 normative: true
 ref: ''
-reviewed: HokCctpQ5mIjHT6LmA82ITLFaduUaJYzyfhtD4Aptfg=
+reviewed: ruJ69u4Paue6VJf3mUIvY3j3QmFPePO9ales3qUxdOU=
+status: implemented
 testable: true
 text: |
   ## 概要
   Doorstop と Gherkin からのデータ抽出基盤を定義する。
+
+  ## データ抽出フロー
+  ```mermaid
+  sequenceDiagram
+      participant CLI as Spec-Weaver CLI
+      participant DS as Doorstop API
+      participant GH as Gherkin Parser
+      participant DB as Data Matrix
+
+      CLI->>DS: build() tree
+      DS-->>CLI: List of Items (REQ/SPEC)
+      CLI->>CLI: Filter (active: true, testable: true)
+
+      CLI->>GH: parse(feature_files)
+      GH-->>CLI: AST with Tags & Locations
+
+      CLI->>DB: Map Tags to Spec IDs
+      DB-->>CLI: Integrated Data Model
+  ```
 
   ## 詳細仕様
 

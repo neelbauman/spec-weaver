@@ -1,13 +1,14 @@
 active: true
-status: implemented
 derived: false
 header: |
   テスト実行結果の動的統合
-level: 5.0
-links: []
+level: 3.1
+links:
+- REQ-003: Rb8ehO6TwgTYIqN3kXtu3nzq6LWHqvsE0-d2B9HrUWM=
 normative: true
 ref: ''
-reviewed: IKxNlR1Mc_SO0-NfzT7okP9QZI4WhHRSda3tNlixK0o=
+reviewed: WNV2jz6_F0LA58t4_NFABGkiS_LnXWNLD_hIRG7XxDU=
+status: implemented
 text: |
   ## 概要
   単なる「テストの存在」だけでなく、CIでの実際の合否（PASS/FAIL）を

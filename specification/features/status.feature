@@ -1,4 +1,4 @@
-@SPEC-008
+@SPEC-007
 Feature: status コマンド
   REQ・SPECの実装ステータスをRichテーブル形式で一覧表示する。
 

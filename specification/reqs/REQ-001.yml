@@ -1,13 +1,13 @@
 active: true
-status: implemented
 derived: false
 header: |
   仕様と実装のトレーサビリティ保証
-level: 1.0
+level: 1
 links: []
 normative: true
 ref: ''
-reviewed: UKFX-aNhpiA52q-NB5I2Fhu2r6Ph7_u5bJB3qyDdK0M=
+reviewed: sQI3PDVLr4t_7FzvaBW2KfO6i0kUFnK0vEnVRhJAA4M=
+status: implemented
 text: |
   ## 概要
   要件管理ツール（Doorstop）のIDと、振る舞い駆動テスト（Gherkin）のタグを紐付け、
@@ -18,6 +18,31 @@ text: |
   一貫したトレーサビリティが品質保証の要となる。Doorstop（YAML形式の要件管理）と
   Gherkin（.feature形式の振る舞い仕様）を統合し、仕様IDとテストタグの双方向追跡を
   実現することで、仕様漏れやテスト漏れを構造的に防止する。
+
+  ## システム概念図
+  ```mermaid
+  graph TD
+      subgraph Doorstop [Requirements Management]
+          REQ[Business Requirements] --> SPEC[System Specifications]
+      end
+
+      subgraph Gherkin [Behavioral Specifications]
+          FEAT[Feature Files] --> SCEN[Scenarios @SPEC-ID]
+      end
+
+      subgraph SpecWeaver [Spec-Weaver]
+          AUDIT[audit: Gap Detection]
+          BUILD[build: Living Doc]
+          STATUS[status: Progress Tracking]
+      end
+
+      SPEC <-->|Traceability| SCEN
+      SPEC --> AUDIT
+      SCEN --> AUDIT
+      SPEC --> BUILD
+      SCEN --> BUILD
+      SPEC --> STATUS
+  ```
 
   ## 受け入れ基準
   - DoorstopのSPEC IDとGherkinの@タグが1対1で紐付けできること

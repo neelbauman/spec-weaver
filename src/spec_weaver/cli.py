@@ -348,14 +348,14 @@ def build(
         # 8. 要件一覧 (requirements.md)
         req_table = _generate_index_table(
             "要件一覧 (REQ)", req_items, all_items_str, child_map, sibling_map, tag_map,
-            "関連仕様 (SPEC)", is_parent_view=True, test_result_map=test_result_map,
+            is_req_view=True, test_result_map=test_result_map,
         )
         (docs_dir / "requirements.md").write_text(req_table, encoding="utf-8")
 
         # 9. 仕様一覧 (specifications.md)
         spec_table = _generate_index_table(
             "仕様一覧 (SPEC)", spec_items, all_items_str, child_map, sibling_map, tag_map,
-            "関連要件 (REQ)", is_parent_view=False, test_result_map=test_result_map,
+            is_req_view=False, test_result_map=test_result_map,
         )
         (docs_dir / "specifications.md").write_text(spec_table, encoding="utf-8")
 
@@ -383,15 +383,18 @@ def build(
 # ---------------------------------------------------------------------------
 
 def _compute_sibling_map(all_items_str: dict, child_map: dict) -> dict[str, list[str]]:
-    """同じ親（リンク先）を持つアイテムを兄弟として計算する。"""
+    """同じ親（リンク先）を持ち、かつ同じプレフィックスを持つアイテムを兄弟として計算する。"""
     sibling_map: dict[str, list[str]] = {}
     for uid, item in all_items_str.items():
+        my_prefix = _get_uid_prefix(uid)
         siblings: set[str] = set()
         for link in item.links:
             parent_uid = str(link)
             for sibling_uid in child_map.get(parent_uid, []):
                 if sibling_uid != uid:
-                    siblings.add(sibling_uid)
+                    # 同じプレフィックス（ドキュメントタイプ）の場合のみ兄弟とする
+                    if _get_uid_prefix(sibling_uid) == my_prefix:
+                        siblings.add(sibling_uid)
         if siblings:
             sibling_map[uid] = sorted(siblings)
     return sibling_map
@@ -527,86 +530,83 @@ def _feature_to_markdown(feature_file: Path) -> str:
 # ---------------------------------------------------------------------------
 
 def _generate_index_table(
-    title, target_items, all_items_str, child_map, sibling_map, tag_map, link_col_name, is_parent_view,
+    title, target_items, all_items_str, child_map, sibling_map, tag_map, is_req_view,
     test_result_map: "TestResultMap | None" = None,
 ):
     """一覧ページのテーブルMarkdownを生成。"""
     has_results = test_result_map is not None
     result_col_header = " | テスト結果" if has_results else ""
     result_col_sep = " | :--- " if has_results else ""
-    lines = [
-        f"# {title}\n",
-        f"| ID | タイトル | {link_col_name} | 兄弟 | カバレッジ | 実装状況 | 状態{result_col_header} |",
-        f"| :--- | :--- | :--- | :--- | :--- | :--- | :---{result_col_sep}|",
-    ]
+
+    if is_req_view:
+        # ID | タイトル | 親要件 | 子要件 | 関連仕様 | 兄弟 | ...
+        header = f"| ID | タイトル | 親要件 | 子要件 | 関連仕様 | 兄弟 | カバレッジ | 実装状況 | 状態{result_col_header} |"
+        sep = f"| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :---{result_col_sep}|"
+    else:
+        # ID | タイトル | 親要件 | 親仕様 | 子仕様 | 兄弟 | ...
+        header = f"| ID | タイトル | 親要件 | 親仕様 | 子仕様 | 兄弟 | カバレッジ | 実装状況 | 状態{result_col_header} |"
+        sep = f"| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :---{result_col_sep}|"
+
+    lines = [f"# {title}\n", header, sep]
 
     for uid in sorted(target_items.keys()):
         item = target_items[uid]
         testable = _get_custom_attribute(item, "testable", True)
         scenarios = tag_map.get(uid, [])
 
-        # 関連リンク列
-        if is_parent_view:
-            related_uids = child_map.get(uid, [])
-        else:
-            related_uids = [str(l) for l in item.links]
-        links_col = "<br>".join(
-            f"[{ruid}](items/{ruid}.md)" for ruid in related_uids if ruid in all_items_str
-        ) or "-"
+        # リンクの抽出
+        parents = [str(l) for l in item.links if str(l) in all_items_str]
+        p_reqs = [p for p in parents if p.startswith("REQ")]
+        p_specs = [p for p in parents if p.startswith("SPEC")]
 
-        # 兄弟リンク列
-        sibling_uids = sibling_map.get(uid, [])
-        siblings_col = "<br>".join(
-            f"[{s}](items/{s}.md)" for s in sibling_uids if s in all_items_str
-        ) or "-"
+        children = child_map.get(uid, [])
+        c_reqs = [c for c in children if c.startswith("REQ")]
+        c_specs = [c for c in children if c.startswith("SPEC")]
 
-        # カバレッジ列
-        if is_parent_view:
+        siblings = sibling_map.get(uid, [])
+        siblings_col = "<br>".join(f"[{s}](items/{s}.md)" for s in siblings) or "-"
+
+        # カラム用文字列生成
+        p_reqs_col = "<br>".join(f"[{p}](items/{p}.md)" for p in p_reqs) or "-"
+        p_specs_col = "<br>".join(f"[{p}](items/{p}.md)" for p in p_specs) or "-"
+        c_reqs_col = "<br>".join(f"[{c}](items/{c}.md)" for c in c_reqs) or "-"
+        c_specs_col = "<br>".join(f"[{c}](items/{c}.md)" for c in c_specs) or "-"
+
+        # カバレッジ・実装ステータス
+        if is_req_view:
             covered, total = _req_coverage(uid, child_map, all_items_str, tag_map)
         else:
             covered, total = _spec_coverage(uid, tag_map, item, all_items_str)
         coverage_col = _coverage_badge(covered, total)
-
-        # 実装ステータス列
         impl_col = _impl_status_badge(item)
 
-        # 状態アイコン（一覧用の簡易表示）
-        if is_suspect(item):
-            gherkin_status = "⚠️ Suspect"
-        elif not testable:
-            gherkin_status = "⚪️"
-        elif scenarios:
-            gherkin_status = "🟢"
-        else:
-            gherkin_status = "🔴"
+        # 状態アイコン
+        if is_suspect(item): gherkin_status = "⚠️ Suspect"
+        elif not testable: gherkin_status = "⚪️"
+        elif scenarios: gherkin_status = "🟢"
+        else: gherkin_status = "🔴"
 
-        # テスト結果列（--test-results 指定時のみ）
-        if has_results:
-            if is_parent_view:
-                # REQ: 子 SPEC の結果を集約
-                child_passed = child_failed = child_total = 0
-                for child_uid in child_map.get(uid, []):
-                    child_item = all_items_str.get(child_uid)
-                    if child_item is None:
-                        continue
-                    p, f, t = spec_result_summary(child_uid, tag_map, test_result_map)
-                    child_passed += p
-                    child_failed += f
-                    child_total += t
-                result_col = result_badge(child_passed, child_failed, child_total)
-            else:
-                # SPEC 単体
-                p, f, t = spec_result_summary(uid, tag_map, test_result_map)
-                result_col = result_badge(p, f, t)
-            lines.append(
-                f"| [{uid}](items/{uid}.md) | {item.header} | {links_col} | {siblings_col}"
-                f" | {coverage_col} | {impl_col} | {gherkin_status} | {result_col} |"
-            )
+        # 行の組み立て
+        if is_req_view:
+            row = f"| [{uid}](items/{uid}.md) | {item.header} | {p_reqs_col} | {c_reqs_col} | {c_specs_col} | {siblings_col} | {coverage_col} | {impl_col} | {gherkin_status} |"
         else:
-            lines.append(
-                f"| [{uid}](items/{uid}.md) | {item.header} | {links_col} | {siblings_col}"
-                f" | {coverage_col} | {impl_col} | {gherkin_status} |"
-            )
+            row = f"| [{uid}](items/{uid}.md) | {item.header} | {p_reqs_col} | {p_specs_col} | {c_specs_col} | {siblings_col} | {coverage_col} | {impl_col} | {gherkin_status} |"
+
+        if has_results:
+            from .test_results import spec_result_summary, result_badge
+            if is_req_view:
+                cp = cf = ct = 0
+                for child_uid in child_map.get(uid, []):
+                    if child_uid.startswith("SPEC"):
+                        p, f, t = spec_result_summary(child_uid, tag_map, test_result_map)
+                        cp += p; cf += f; ct += t
+                res_badge = result_badge(cp, cf, ct)
+            else:
+                p, f, t = spec_result_summary(uid, tag_map, test_result_map)
+                res_badge = result_badge(p, f, t)
+            row += f" {res_badge} |"
+
+        lines.append(row)
 
     return "\n".join(lines)
 
@@ -639,28 +639,31 @@ def _generate_item_markdown(
     # ---- リンクセクション（親・子・兄弟）----
     link_parts: list[str] = []
 
-    # 親リンク（このアイテムがリンクしている上位アイテム）
+    # 親関係（このアイテムがリンクしている上位アイテム）
     if item.links:
-        parent_links = ", ".join(
-            f"[{str(l)}]({str(l)}.md)" for l in item.links if str(l) in all_items_str
-        )
-        if parent_links:
-            link_parts.append(f"**関連要件**: {parent_links}")
+        parents = [str(l) for l in item.links if str(l) in all_items_str]
+        p_reqs = [p for p in parents if p.startswith("REQ")]
+        p_specs = [p for p in parents if p.startswith("SPEC")]
+        if p_reqs:
+            link_parts.append(f"**上位要件**: {', '.join(f'[{p}]({p}.md)' for p in p_reqs)}")
+        if p_specs:
+            link_parts.append(f"**上位仕様**: {', '.join(f'[{p}]({p}.md)' for p in p_specs)}")
 
-    # 子リンク（このアイテムを参照している下位アイテム）
+    # 子関係（このアイテムを参照している下位アイテム）
     if uid in child_map:
-        child_links = ", ".join(
-            f"[{c}]({c}.md)" for c in child_map[uid] if c in all_items_str
-        )
-        if child_links:
-            link_parts.append(f"**関連仕様**: {child_links}")
+        children = child_map[uid]
+        c_reqs = [c for c in children if c.startswith("REQ") and c in all_items_str]
+        c_specs = [c for c in children if c.startswith("SPEC") and c in all_items_str]
+        if c_reqs:
+            link_parts.append(f"**下位要件**: {', '.join(f'[{c}]({c}.md)' for c in c_reqs)}")
+        if c_specs:
+            label = "**関連仕様**" if is_req else "**下位仕様**"
+            link_parts.append(f"{label}: {', '.join(f'[{c}]({c}.md)' for c in c_specs)}")
 
-    # 兄弟リンク（同じ親を持つアイテム）
+    # 兄弟関係（同じ親を持つアイテム）
     siblings = sibling_map.get(uid, [])
     if siblings:
-        sibling_links = ", ".join(
-            f"[{s}]({s}.md)" for s in siblings if s in all_items_str
-        )
+        sibling_links = ", ".join(f"[{s}]({s}.md)" for s in siblings if s in all_items_str)
         if sibling_links:
             label = "**兄弟要件**" if is_req else "**兄弟仕様**"
             link_parts.append(f"{label}: {sibling_links}")

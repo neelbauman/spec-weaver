@@ -1,13 +1,14 @@
 active: true
-status: implemented
 derived: false
 header: |
   監査による品質の継続的担保
 level: 2.0
-links: []
+links:
+- REQ-001: sQI3PDVLr4t_7FzvaBW2KfO6i0kUFnK0vEnVRhJAA4M=
 normative: true
 ref: ''
-reviewed: AL9bDV_13Z_dFORw5rjP1YoJvrpxV9BwxqcTBuTGPsA=
+reviewed: OXz_9_Jwffywx_fsFJDF8E7q8yo38RkGwrW1uIYhQRw=
+status: implemented
 text: |
   ## 概要
   仕様とテストの乖離（テスト漏れ、不要な孤児タグ）を静的に検知し、

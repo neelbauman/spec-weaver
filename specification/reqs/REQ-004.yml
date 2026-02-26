@@ -1,13 +1,14 @@
 active: true
-status: implemented
 derived: false
 header: |
   変更波及 (Suspect) の可視化
-level: 4.0
-links: []
+level: 2.1
+links:
+- REQ-002: AL9bDV_13Z_dFORw5rjP1YoJvrpxV9BwxqcTBuTGPsA=
 normative: true
 ref: ''
-reviewed: 34RJf1Cy2LaoH-0pC-Ma0yoKCdz67ELdfte2nrWUy3k=
+reviewed: v9dYtv8B79tXLdFf-uD_UpcBkahA9y-xUNLFYioLWPs=
+status: implemented
 text: |
   ## 概要
   上位要件の変更が下位仕様に及ぼす影響を検知し、

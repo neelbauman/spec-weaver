@@ -1,14 +1,14 @@
 active: true
-status: implemented
 derived: false
 header: |
   テスト結果統合
-level: 6.0
+level: 3.1
 links:
-- REQ-005: IKxNlR1Mc_SO0-NfzT7okP9QZI4WhHRSda3tNlixK0o=
+- REQ-005: Gg6zWXQn7051SFUpy4jSQxj7PHpCAVhcpXNoieLBql4=
 normative: true
 ref: ''
-reviewed: 6td9hRoELb5aSsBG-yz0nSg4fdoDA63ouyqrmfxfg40=
+reviewed: -tmZmxH0myrv9z1rDd5-B1v47Qw5Xig4GMImGcf5eEw=
+status: implemented
 testable: false
 text: |
   ## 概要

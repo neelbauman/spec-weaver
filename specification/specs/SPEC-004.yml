@@ -1,14 +1,14 @@
 active: true
-status: implemented
 derived: false
 header: |
   build コマンド仕様
-level: 4.0
+level: 3.0
 links:
 - REQ-003: Rb8ehO6TwgTYIqN3kXtu3nzq6LWHqvsE0-d2B9HrUWM=
 normative: true
 ref: ''
-reviewed: laf5WXMT472PqRickCNN5XGzT50mZeiQGXAgyGugrw0=
+reviewed: GJZ0HfapacVeLdB8G4kI5KzYEt5p3AeUMqiuedUTbk4=
+status: implemented
 testable: true
 text: |
   ## 概要
