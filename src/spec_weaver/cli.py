@@ -799,10 +799,15 @@ def _generate_basic_files(
 
     # mkdocs.yml
     # 各ドキュメントをナビに追加
-    docs_nav_entries = "".join(
-        f"  - {p}一覧: {f}\n"
-        for p, f in sorted(prefix_to_file.items())
-    )
+    docs_nav_entries = ""
+    for p, f in sorted(prefix_to_file.items()):
+        docs_nav_entries += f"  - {p}:\n"
+        docs_nav_entries += f"      - {p}一覧: {f}\n"
+        p_items = [uid for uid in all_items_str if uid.startswith(f"{p}-")]
+        if not p_items:
+            p_items = [uid for uid in all_items_str if uid.startswith(p)]
+        for uid in sorted(p_items):
+            docs_nav_entries += f"      - {uid}: items/{uid}.md\n"
 
     # features/ 以下の .md を動的にナビに追加
     features_nav_entries = "".join(
