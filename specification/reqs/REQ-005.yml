@@ -1,0 +1,27 @@
+active: true
+derived: false
+header: |
+  テスト実行結果の動的統合
+level: 5.0
+links: []
+normative: true
+ref: ''
+reviewed: IKxNlR1Mc_SO0-NfzT7okP9QZI4WhHRSda3tNlixK0o=
+text: |
+  ## 概要
+  単なる「テストの存在」だけでなく、CIでの実際の合否（PASS/FAIL）を
+  仕様書にフィードバックすること。
+
+  ## 背景・動機
+  テストが存在するだけでは品質は保証されない。テストの実行結果（合否）を
+  仕様書にフィードバックすることで、各仕様が実際に検証済みかどうかを
+  リアルタイムに把握できるようにする。プラガブルなReporterアーキテクチャにより、
+  様々なテストフレームワークとの統合を可能にする。
+
+  ## 受け入れ基準
+  - pytest-bddのCucumber互換JSONレポートを読み込めること
+  - テスト結果とSPEC IDを突き合わせて合否を判定できること
+  - buildで生成するドキュメントにPASS/FAIL状態を反映できること
+
+  ## ステータス
+  Phase 2（将来開発）

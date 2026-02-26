@@ -1,0 +1,26 @@
+active: true
+derived: false
+header: |
+  コア・アーキテクチャ
+level: 1.0
+links:
+- REQ-001: UKFX-aNhpiA52q-NB5I2Fhu2r6Ph7_u5bJB3qyDdK0M=
+normative: true
+ref: ''
+reviewed: 1RoqY0YTffbhxDtBOsQ0wOeclTKergcY6r-ggwtfrSU=
+testable: false
+text: |
+  ## 概要
+  Spec-Weaverのコアアーキテクチャに関する技術的制約事項を定義する。
+
+  ## 詳細仕様
+
+  ### 言語・フレームワーク
+  - Python 3.10+ を使用すること
+  - CLIフレームワークとして `Typer` を使用すること
+  - ターミナルUIとして `Rich` を使用すること
+
+  ### 責務の分離（設計原則）
+  - `spec-weaver` 自身はHTMLのレンダリングやMermaidの描画エンジンを持たないこと
+  - データの抽出・結合（Markdown生成）に徹し、描画の全責務を `MkDocs` に委譲すること
+  - 「データ構築 vs 描画」の分離を厳守すること

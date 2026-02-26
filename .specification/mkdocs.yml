@@ -1,0 +1,20 @@
+site_name: "spec-weaver Spec"
+theme:
+  name: material
+  features:
+    - navigation.tabs
+    - navigation.top
+    - search.suggest
+    - search.highlight
+nav:
+  - Home: index.md
+  - 要件一覧 (REQ): requirements.md
+  - 仕様一覧 (SPEC): specifications.md
+
+markdown_extensions:
+  - tables
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format

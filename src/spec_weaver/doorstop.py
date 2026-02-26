@@ -9,7 +9,12 @@ import doorstop
 def get_specs(repo_root: Path, prefix: str = "SPEC") -> Set[str]:
     """監査用：アクティブな仕様IDの集合を取得します。"""
     item_map = get_item_map(repo_root)
-    return set(item_map.keys())
+    specs = set()
+    for uid, item in item_map.items():
+        uid_str = str(uid)
+        if uid_str.startswith(prefix) and _get_custom_attribute(item, "testable", True):
+            specs.add(uid_str)
+    return specs
 
 def get_item_map(repo_root: Path) -> Dict[str, Any]:
     """
@@ -26,8 +31,8 @@ def get_item_map(repo_root: Path) -> Dict[str, Any]:
             # prefixでのフィルタリングを削除し、全ドキュメントを対象にする
             for item in doc:
                 if item.active:
-                    item_map[item.uid] = item
-                            
+                    item_map[str(item.uid)] = item
+
         return item_map
     finally:
         os.chdir(original_cwd)
@@ -44,6 +49,22 @@ def _get_custom_attribute(item: Any, key: str, default: Any = None) -> Any:
     except AttributeError:
         return getattr(item, key, default)
 
+def is_suspect(item: Any) -> bool:
+    """
+    指定されたDoorstopアイテムがSuspect状態（上位要件の変更に伴うレビュー待ち）か判定します。
+    """
+    try:
+        # アイテム自体がsuspectフラグを持っている場合
+        if getattr(item, "suspect", False):
+            return True
+        # リンク先のいずれかがsuspect状態の場合
+        for link in getattr(item, "links", []):
+            if getattr(link, "suspect", False):
+                return True
+        return False
+    except Exception:
+        return False
+
 def get_all_items(repo_root: Path) -> Dict[str, Any]:
     """
     リポジトリ内の全ドキュメントから全アイテムを取得し、
@@ -57,7 +78,7 @@ def get_all_items(repo_root: Path) -> Dict[str, Any]:
         for doc in tree:
             for item in doc:
                 if item.active:
-                    all_items[item.uid] = item
+                    all_items[str(item.uid)] = item
         return all_items
     finally:
         os.chdir(original_cwd)
