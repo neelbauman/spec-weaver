@@ -101,4 +101,11 @@ REQ-001 仕様と実装のトレーサビリティ保証 ✅ implemented
 
 ### 🧪 検証シナリオ
 
-- **trace コマンド — トレーサビリティ・ツリー表示** — Feature （[features/trace.feature:2](../features/trace.md)）
+- **REQを起点としたトップダウンのツリー表示** — Scenario （[features/trace.feature:20](../features/trace.md)）
+- **SPECを起点とした双方向のツリー表示** — Scenario （[features/trace.feature:30](../features/trace.md)）
+- **Gherkin Featureファイルを起点としたボトムアップ表示** — Scenario （[features/trace.feature:38](../features/trace.md)）
+- **--direction up で上方向のみ探索** — Scenario （[features/trace.feature:45](../features/trace.md)）
+- **--direction down で下方向のみ探索** — Scenario （[features/trace.feature:52](../features/trace.md)）
+- **--format flat でフラットリスト表示** — Scenario （[features/trace.feature:59](../features/trace.md)）
+- **存在しないIDを指定した場合のエラー** — Scenario （[features/trace.feature:65](../features/trace.md)）
+- **各ノードにステータスバッジが表示される** — Scenario （[features/trace.feature:70](../features/trace.md)）

@@ -46,4 +46,6 @@ spec-weaver ci <feature_dir>
 
 ### 🧪 検証シナリオ
 
-- **ci コマンド** — Feature （[features/ci.feature:2](../features/ci.md)）
+- **テスト実行とドキュメント生成の一貫実行** — Scenario （[features/ci.feature:5](../features/ci.md)）
+- **テスト失敗時のドキュメント生成継続** — Scenario （[features/ci.feature:13](../features/ci.md)）
+- **scaffold 付き ci 実行** — Scenario （[features/ci.feature:19](../features/ci.md)）

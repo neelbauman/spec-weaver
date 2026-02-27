@@ -13,38 +13,6 @@ DoorstopのYAML impl_files カスタム属性とコードアノテーション�
 - **Given** Doorstopツリーが初期化されている
 - **And** 以下のSPECアイテムが存在する:
 
-<details><summary><b>Step Definitions (Source Code)</b></summary>
-
-#### Given Doorstopツリーが初期化されている
-
-```python
-@given('Doorstopツリーが初期化されている')
-def step_impl_1(context):
-    setup_doorstop(context, prefixes=["REQ", "SPEC"])
-```
-
-#### And 以下のSPECアイテムが存在する:
-
-```python
-@given('以下のSPECアイテムが存在する:')
-def step_impl_3(context):
-    for row in context.table:
-        item_path = os.path.join(context.temp_dir, "specs", f"{row['ID']}.yml")
-        os.makedirs(os.path.dirname(item_path), exist_ok=True)
-        with open(item_path, "w") as f:
-            f.write(f"active: True\nheader: {row['Header']}\n")
-            if 'Status' in row and row['Status']:
-                f.write(f"status: {row['Status']}\n")
-            if 'Links' in row and row['Links']:
-                links = row['Links'].split(',')
-                f.write("links:\n")
-                for l in links:
-                    f.write(f"- {l.strip()}\n")
-```
-
-</details>
-
-
 ---
 ## Scenario: impl_files にリスト形式でファイルパスを記述できる
 
