@@ -27,7 +27,8 @@ from spec_weaver.test_results import (
     result_badge,
     spec_result_summary,
 )
-from spec_weaver.codegen import generate_test_file
+from spec_weaver.codegen import generate_test_file, _step_keyword_to_prefix
+from spec_weaver.step_resolver import StepResolver
 
 # ---------------------------------------------------------------------------
 # 実装ステータス定義
@@ -46,7 +47,7 @@ def _impl_status_badge(item) -> str:
     status = _get_custom_attribute(item, "status", None)
     if not status:
         return "-"
-    return IMPL_STATUS_BADGE.get(str(status), f"❓ {status}")
+    return IMPL_STATUS_BADGE.get(str(status), f"{status}")
 
 
 def _get_timestamp(item, key: str) -> str:
@@ -399,7 +400,7 @@ def ci_cmd(
             console.print("[dim]📝 Step 1/3: scaffold スキップ (--scaffold で有効化)[/dim]")
 
         # Step 2: behave 実行
-        console.print(f"[bold cyan]🧪 Step 2/3: テスト実行...[/bold cyan]")
+        console.print(f"[bold cyan]🧪 Step 2/3: behave テスト実行...[/bold cyan]")
         behave_cmd = [
             "uv", "run", "behave",
             str(feature_dir),
@@ -616,6 +617,11 @@ def _run_build(
     features_md_dir.mkdir(parents=True, exist_ok=True)
 
     # 6. Gherkin .feature → Markdown 変換
+    step_resolver = StepResolver()
+    # feature_dir と同じ階層、またはその下の steps/ を探す
+    # behave は feature_dir/steps をデフォルトで探す
+    step_resolver.load_steps(feature_dir / "steps")
+    
     feature_md_map: dict[str, str] = {}
     for feature_file in feature_dir.rglob("*.feature"):
         try:
@@ -628,7 +634,7 @@ def _run_build(
             except ValueError:
                 tag_rel = str(feature_file)
             backlinks = feature_backlink_map.get(tag_rel, [])
-            md_content = _feature_to_markdown(feature_file, backlinks=backlinks)
+            md_content = _feature_to_markdown(feature_file, backlinks=backlinks, step_resolver=step_resolver)
             out_path.write_text(md_content, encoding="utf-8")
             feature_md_map[tag_rel] = f"../features/{md_rel.as_posix()}"
         except Exception as e:
@@ -730,7 +736,7 @@ def _req_coverage(req_uid: str, child_map: dict, all_items_str: dict, tag_map: d
 def _coverage_badge(covered: int, total: int) -> str:
     """カバレッジを絵文字付きの割合文字列で返す。"""
     if total == 0:
-        return "⚪️ -"
+        return " -"
     pct = int(covered / total * 100)
     icon = "🟢" if pct == 100 else ("🟡" if pct >= 50 else "🔴")
     return f"{icon} {covered}/{total} ({pct}%)"
@@ -740,7 +746,11 @@ def _coverage_badge(covered: int, total: int) -> str:
 # ヘルパー: Gherkin → Markdown 変換
 # ---------------------------------------------------------------------------
 
-def _feature_to_markdown(feature_file: Path, backlinks: list[str] | None = None) -> str:
+def _feature_to_markdown(
+    feature_file: Path,
+    backlinks: list[str] | None = None,
+    step_resolver: Optional[StepResolver] = None
+) -> str:
     """
     .featureファイルをGherkinパーサーで解析し、ブラウザで読みやすいMarkdownに変換する。
     backlinks: このfeatureを参照しているアイテムUID一覧（例: ["SPEC-003", "REQ-001"]）
@@ -771,14 +781,42 @@ def _feature_to_markdown(feature_file: Path, backlinks: list[str] | None = None)
     if feature_desc:
         lines.append(f"{feature_desc}\n")
 
+    def _resolve_step_prefixes(steps: list[dict]) -> list[tuple[str, str, str]]:
+        """And / But キーワードを直前の Given/When/Then に解決して返す。
+        Returns: (resolved_keyword, raw_keyword, text)
+        """
+        resolved: list[tuple[str, str, str]] = []
+        current_prefix = "given"
+        for step in steps:
+            keyword = step.get("keyword", "").strip()
+            text = step.get("text", "").strip()
+            prefix = _step_keyword_to_prefix(keyword)
+            if prefix:
+                current_prefix = prefix
+            resolved.append((current_prefix, keyword, text))
+        return resolved
+
     for child in feature_node.get("children", []):
         # Background
         if "background" in child:
             bg = child["background"]
             lines.append("---\n## Background\n")
-            for step in bg.get("steps", []):
-                kw = step["keyword"].strip()
-                lines.append(f"- **{kw}** {step['text']}")
+            resolved_steps = _resolve_step_prefixes(bg.get("steps", []))
+            for res_kw, raw_kw, text in resolved_steps:
+                lines.append(f"- **{raw_kw}** {text}")
+            
+            if step_resolver:
+                step_codes = []
+                for res_kw, raw_kw, text in resolved_steps:
+                    step_def = step_resolver.resolve_step(res_kw, text)
+                    if step_def:
+                        step_codes.append((raw_kw, text, step_def.source))
+                if step_codes:
+                    lines.append("\n<details><summary><b>Step Definitions (Source Code)</b></summary>\n")
+                    for rkw, txt, src in step_codes:
+                        lines.append(f"#### {rkw} {txt}\n")
+                        lines.append(f"```python\n{src}\n```\n")
+                    lines.append("</details>\n")
             lines.append("")
 
         # Scenario / Scenario Outline
@@ -796,9 +834,22 @@ def _feature_to_markdown(feature_file: Path, backlinks: list[str] | None = None)
             if sc_desc:
                 lines.append(f"{sc_desc}\n")
 
-            for step in sc.get("steps", []):
-                kw = step["keyword"].strip()
-                lines.append(f"- **{kw}** {step['text']}")
+            resolved_steps = _resolve_step_prefixes(sc.get("steps", []))
+            for res_kw, raw_kw, text in resolved_steps:
+                lines.append(f"- **{raw_kw}** {text}")
+
+            if step_resolver:
+                step_codes = []
+                for res_kw, raw_kw, text in resolved_steps:
+                    step_def = step_resolver.resolve_step(res_kw, text)
+                    if step_def:
+                        step_codes.append((raw_kw, text, step_def.source))
+                if step_codes:
+                    lines.append("\n<details><summary><b>Step Definitions (Source Code)</b></summary>\n")
+                    for rkw, txt, src in step_codes:
+                        lines.append(f"#### {rkw} {txt}\n")
+                        lines.append(f"```python\n{src}\n```\n")
+                    lines.append("</details>\n")
 
             # Examples (Scenario Outline)
             for example in sc.get("examples", []):
@@ -879,7 +930,7 @@ def _generate_index_table(
         if warning_parts:
             gherkin_status = " ".join(warning_parts)
         elif not testable:
-            gherkin_status = "⚪️"
+            gherkin_status = "-"
         elif scenarios:
             gherkin_status = "🟢"
         else:

@@ -9,7 +9,6 @@ Gherkin .feature ファイルから behave テストコードの雛形を自動�
 """
 
 import hashlib
-import textwrap
 from pathlib import Path
 from typing import Any
 import re
@@ -56,6 +55,23 @@ def _parameterize_step(text: str) -> tuple[str, list[str]]:
     # デコレータをシングルクォートで囲むため、テキスト内のシングルクォートをエスケープ
     parameterized_text = parameterized_text.replace("'", "\\'")
     return parameterized_text, params
+
+
+def _escape_string(text: str) -> str:
+    """
+    文字列内のバックスラッシュをエスケープし、ダブルクォーテーションを < > に置換する。
+    （テスト互換用）
+    """
+    # バックスラッシュのエスケープ
+    text = text.replace('\\', '\\\\')
+    # クオーテーションの置換
+    parts = text.split('"')
+    result = []
+    for i, part in enumerate(parts):
+        result.append(part)
+        if i < len(parts) - 1:
+            result.append('<' if i % 2 == 0 else '>')
+    return "".join(result)
 
 
 def _escape_docstring(text: str) -> str:
