@@ -1,0 +1,60 @@
+active: true
+derived: false
+header: |
+  audit コマンドへの実装ファイルリンク検証の追加
+impl_files:
+- src/spec_weaver/cli.py
+level: 19.0
+links:
+- REQ-012: W1M-g8bMakjNSi3dVoSS2rEjVb7A3bfA2f3UYepGHok=
+normative: true
+ref: ''
+reviewed: daEi-eFXEldqkhQGp-To0yEQw8osj44tV_mnUTFgGTM=
+status: implemented
+testable: true
+text: |
+  ## 概要
+  `spec-weaver audit` コマンドに、DoorstopのYAML `ref` フィールドと
+  コードアノテーションの整合性を検証するセクションを追加する。
+
+  ## 詳細仕様
+
+  ### 新オプション
+  ```
+  spec-weaver audit <feature-dir> [OPTIONS]
+    --check-impl          実装ファイルリンクの検証を有効化（デフォルト: 無効）
+    --extensions TEXT     スキャン対象の拡張子（カンマ区切り。例: py,ts）
+                          未指定時は全テキストファイルを対象とする
+  ```
+
+  ### 検証ロジック
+
+  #### チェック1: refに記載されたファイルの存在確認
+  - `ref` リストに含まれるパスがリポジトリ内に実際に存在するか確認する
+  - 存在しないファイルは「壊れたリンク」として報告する
+
+  #### チェック2: refとアノテーションの双方向乖離検出
+  - YAML `ref` に記載されているがコードアノテーションがないファイル → 警告
+  - コードアノテーションがあるが YAML `ref` に記載されていないファイル → 警告
+
+  ### 出力形式
+  既存の audit 出力に続いて、新しいセクションを追加する：
+
+  ```
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  🔗 実装ファイルリンクの検証
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ❌ 存在しないファイルへの ref:
+     SPEC-001 → src/spec_weaver/old_file.py (not found)
+
+  ⚠️  ref のみ（アノテーションなし）:
+     SPEC-002 → src/spec_weaver/cli.py
+
+  ⚠️  アノテーションのみ（ref なし）:
+     SPEC-003 ← src/spec_weaver/gherkin.py
+
+  ✅ リンク検証 完了
+  ```
+
+  ### 既存動作への影響
+  `--check-impl` が指定されない場合、既存の audit 動作は一切変わらない。

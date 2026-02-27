@@ -1,4 +1,5 @@
 # src/spec_weaver/doorstop.py
+# implements: SPEC-017
 
 import os
 import subprocess
@@ -7,6 +8,9 @@ from pathlib import Path
 from typing import Any, Set, Dict, Optional
 
 import doorstop
+
+# get_ref_files は impl_scanner に実装し、ここから re-export する
+from spec_weaver.impl_scanner import get_ref_files as get_ref_files  # noqa: F401
 
 
 # ---------------------------------------------------------------------------

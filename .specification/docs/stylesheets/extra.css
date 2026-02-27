@@ -1,0 +1,40 @@
+/* DataTables styling adjustment for Material theme */
+
+.dataTables_filter {
+    margin-bottom: 1rem;
+}
+.dataTables_filter input {
+    display: inline-block;
+    width: 300px !important;
+    margin-left: 0.5em;
+    padding: 0.4rem;
+    border: 1px solid var(--md-typeset-table-color);
+    border-radius: 0.2rem;
+    background-color: var(--md-code-bg-color);
+    color: var(--md-typeset-color);
+}
+table.dataTable thead th {
+    padding: 10px 18px;
+    border-bottom: 1px solid var(--md-typeset-table-color) !important;
+}
+table.dataTable.no-footer {
+    width: 1500px;
+    border-bottom: 1px solid var(--md-typeset-table-color) !important;
+}
+table.processed-table{
+    width: 1500px;
+    border-bottom: 1px solid var(--md-typeset-table-color) !important;
+}
+select {
+    color: var(--md-typeset-color);
+    background-color: var(--md-code-bg-color);
+    border: 1px solid var(--md-typeset-table-color);
+}
+
+/* Row highlighting for suspect and unreviewed items */
+tr:has(.suspect-row) {
+    background-color: rgba(255, 0, 0, 0.15) !important;
+}
+tr:has(.unreviewed-row) {
+    background-color: rgba(128, 0, 128, 0.15) !important;
+}

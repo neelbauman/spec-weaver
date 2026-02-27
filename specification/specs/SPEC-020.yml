@@ -1,0 +1,48 @@
+active: true
+derived: false
+header: |
+  trace コマンドへの実装ファイル表示の追加
+impl_files:
+- src/spec_weaver/cli.py
+level: 20.0
+links:
+- REQ-012: W1M-g8bMakjNSi3dVoSS2rEjVb7A3bfA2f3UYepGHok=
+normative: true
+ref: ''
+reviewed: K966areEoynHLp5EdssQ3kfIKmmB6_1aost6D4Wrysw=
+status: implemented
+testable: true
+text: |
+  ## 概要
+  `spec-weaver trace` コマンドの出力ツリーに、SPECアイテムに紐づく
+  実装ファイル（`ref` フィールドおよびコードアノテーション）を表示する。
+
+  ## 詳細仕様
+
+  ### 新オプション
+  ```
+  spec-weaver trace <ITEM-ID> [OPTIONS]
+    --show-impl           実装ファイルをツリーに表示（デフォルト: 無効）
+    --extensions TEXT     アノテーションスキャン対象の拡張子（カンマ区切り）
+  ```
+
+  ### 表示形式
+  SPECノードの子要素として、実装ファイルを `📁` アイコンで表示する。
+
+  ```
+  REQ-012 仕様アイテムと実装ファイルのリンク管理 🚧 in-progress
+  └── ★ SPEC-018 コードアノテーションスキャン 🚧 in-progress
+      ├── 🥒 impl_link.feature
+      │   └── Scenario: アノテーションのスキャン
+      └── 📁 src/spec_weaver/impl_scanner.py   ← ref フィールド由来
+          └── 📁 src/spec_weaver/cli.py         ← アノテーション由来（アノテーションのみ）
+  ```
+
+  ### ファイルノードの表示情報
+  - `📁 <相対パス>` — ref フィールド由来
+  - `📝 <相対パス>` — コードアノテーション由来（ref に未記載）
+  - ファイルが存在しない場合は `❌ <パス> (not found)` と表示する
+
+  ### 集約ルール
+  - `ref` フィールドとアノテーション両方に存在するファイルは `📁` として一度だけ表示する
+  - アノテーションのみのファイルは `📝` として表示する

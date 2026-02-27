@@ -1,4 +1,5 @@
 # src/spec_weaver/cli.py
+# implements: SPEC-019, SPEC-020
 
 import typer
 import shutil
@@ -29,6 +30,7 @@ from spec_weaver.test_results import (
 )
 from spec_weaver.codegen import generate_test_file, _step_keyword_to_prefix
 from spec_weaver.step_resolver import StepResolver
+from spec_weaver.impl_scanner import get_ref_files, ImplScanner
 
 # ---------------------------------------------------------------------------
 # 実装ステータス定義
@@ -115,6 +117,16 @@ def audit_cmd(
         90,
         "--stale-days",
         help="updated_at からの経過日数がこの値を超えたアイテムを stale（陳腐化の可能性）として警告する。0 で無効。",
+    ),
+    check_impl: bool = typer.Option(
+        False,
+        "--check-impl",
+        help="実装ファイルリンクの検証を有効化（ref フィールドとコードアノテーションの乖離を検出）",
+    ),
+    extensions: Optional[str] = typer.Option(
+        None,
+        "--extensions",
+        help="アノテーションスキャン対象の拡張子（カンマ区切り。例: py,ts）。未指定時は全テキストファイルを対象とする。",
     ),
 ) -> None:
     """
@@ -253,6 +265,16 @@ def audit_cmd(
                     table.add_row(uid, title, updated_at_str, f"{delta}日")
                 console.print(table)
 
+        # --check-impl: 実装ファイルリンク検証（SPEC-019）
+        if check_impl:
+            has_error = _run_impl_link_check(
+                raw_items=raw_items,
+                repo_root=repo_root,
+                extensions=_parse_extensions(extensions),
+                prefix=prefix,
+                has_error=has_error,
+            )
+
         if not has_error:
             console.print(
                 f"\n[bold green]✅ 完璧です！ {len(specs_in_db)} 件の仕様がすべてGherkinテストでカバーされています。[/bold green]"
@@ -267,6 +289,89 @@ def audit_cmd(
     except Exception as e:
         console.print(f"\n[bold white on red] 予期せぬ致命的なエラーが発生しました: {e} [/bold white on red]")
         raise typer.Exit(code=1)
+
+
+# ---------------------------------------------------------------------------
+# 実装ファイルリンク検証ヘルパー（SPEC-019）
+# ---------------------------------------------------------------------------
+
+def _parse_extensions(extensions: Optional[str]) -> list[str] | None:
+    """カンマ区切り拡張子文字列をリストに変換する。None または空の場合は None を返す。"""
+    if not extensions:
+        return None
+    return [e.strip() for e in extensions.split(",") if e.strip()]
+
+
+def _run_impl_link_check(
+    raw_items: dict,
+    repo_root: Path,
+    extensions: list[str] | None,
+    prefix: Optional[str],
+    has_error: bool,
+) -> bool:
+    """実装ファイルリンクの検証を実行し、問題があれば出力する。has_error を更新して返す。"""
+    console.print("\n[bold blue]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/bold blue]")
+    console.print("[bold blue]🔗 実装ファイルリンクの検証[/bold blue]")
+    console.print("[bold blue]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/bold blue]")
+
+    with console.status("[bold cyan]実装ファイルをスキャン中...[/bold cyan]"):
+        scanner = ImplScanner()
+        annotation_map = scanner.scan(repo_root, extensions=extensions)
+
+    # ref フィールドから {spec_id: [file_path, ...]} を構築
+    ref_map: dict[str, list[str]] = {}
+    for uid, item in raw_items.items():
+        if prefix and not str(uid).startswith(prefix):
+            continue
+        refs = get_ref_files(item)
+        if refs:
+            ref_map[str(uid)] = refs
+
+    # 全 spec_id の集合（ref または annotation のどちらかに存在するもの）
+    all_spec_ids = set(ref_map.keys()) | set(annotation_map.keys())
+    if prefix:
+        all_spec_ids = {sid for sid in all_spec_ids if sid.startswith(prefix)}
+
+    broken_refs: list[tuple[str, str]] = []       # (spec_id, path) — ファイル不在
+    ref_only: list[tuple[str, str]] = []           # (spec_id, path) — ref のみ
+    annotation_only: list[tuple[str, str]] = []    # (spec_id, path) — annotation のみ
+
+    for spec_id in sorted(all_spec_ids):
+        refs = set(ref_map.get(spec_id, []))
+        annotations = annotation_map.get(spec_id, set())
+
+        for path_str in sorted(refs):
+            full_path = repo_root / path_str
+            if not full_path.exists():
+                broken_refs.append((spec_id, path_str))
+            elif path_str not in annotations:
+                ref_only.append((spec_id, path_str))
+
+        for path_str in sorted(annotations - refs):
+            annotation_only.append((spec_id, path_str))
+
+    if broken_refs:
+        has_error = True
+        console.print("\n[bold red]❌ 存在しないファイルへの ref:[/bold red]")
+        for spec_id, path_str in broken_refs:
+            console.print(f"   [cyan]{spec_id}[/cyan] → [dim]{path_str}[/dim] [red](not found)[/red]")
+
+    if ref_only:
+        console.print("\n[bold yellow]⚠️  ref のみ（アノテーションなし）:[/bold yellow]")
+        for spec_id, path_str in ref_only:
+            console.print(f"   [cyan]{spec_id}[/cyan] → [dim]{path_str}[/dim]")
+
+    if annotation_only:
+        console.print("\n[bold yellow]⚠️  アノテーションのみ（ref なし）:[/bold yellow]")
+        for spec_id, path_str in annotation_only:
+            console.print(f"   [cyan]{spec_id}[/cyan] ← [dim]{path_str}[/dim]")
+
+    if not broken_refs and not ref_only and not annotation_only:
+        console.print("\n[bold green]✅ リンク検証 完了 — 乖離なし[/bold green]")
+    else:
+        console.print("\n[bold yellow]⚠️  リンク検証 完了 — 上記の乖離を確認してください[/bold yellow]")
+
+    return has_error
 
 
 # ---------------------------------------------------------------------------
@@ -1113,8 +1218,25 @@ def _format_trace_node(uid: str, item, is_origin: bool = False) -> str:
     return f"[bold cyan]{uid}[/bold cyan] {header} {badge}"
 
 
+def _add_impl_files_to_node(node, uid: str, impl_map: dict, repo_root: Path) -> None:
+    """実装ファイルノードを Rich Tree ノードに追加する（SPEC-020）。
+
+    ref 由来は 📁、アノテーションのみは 📝、不在ファイルは ❌ で表示。
+    """
+    files = impl_map.get(uid)
+    if not files:
+        return
+    for path_str in sorted(files):
+        full_path = repo_root / path_str
+        if not full_path.exists():
+            node.add(f"❌ {path_str} [red](not found)[/red]")
+        else:
+            node.add(f"📁 {path_str}")
+
+
 def _add_descendants_to_rich_node(
-    node, uid: str, all_items: dict, child_map: dict, tag_map: dict, visited: set
+    node, uid: str, all_items: dict, child_map: dict, tag_map: dict, visited: set,
+    impl_map: dict | None = None, repo_root: Path | None = None,
 ) -> None:
     """子アイテム・Gherkinシナリオを再帰的にRich Treeノードへ追加する。"""
     # Gherkinシナリオをファイル別にグループ化して追加
@@ -1129,6 +1251,10 @@ def _add_descendants_to_rich_node(
             for sc in scs:
                 feature_node.add(f"Scenario: {sc['name']}")
 
+    # 実装ファイルノードを追加（--show-impl 時）
+    if impl_map is not None and repo_root is not None:
+        _add_impl_files_to_node(node, uid, impl_map, repo_root)
+
     # 子アイテムを再帰的に追加
     for child_uid in sorted(child_map.get(uid, [])):
         if child_uid in visited:
@@ -1138,18 +1264,25 @@ def _add_descendants_to_rich_node(
         child_node = node.add(label)
         new_visited = set(visited)
         new_visited.add(child_uid)
-        _add_descendants_to_rich_node(child_node, child_uid, all_items, child_map, tag_map, new_visited)
+        _add_descendants_to_rich_node(
+            child_node, child_uid, all_items, child_map, tag_map, new_visited,
+            impl_map=impl_map, repo_root=repo_root,
+        )
 
 
 def _add_focused_path(
     node, current_uid: str, origin_uid: str, on_path: set[str],
     all_items: dict, child_map: dict, tag_map: dict, visited: set,
     expand_at_origin: bool = True,
+    impl_map: dict | None = None, repo_root: Path | None = None,
 ) -> None:
     """祖先からoriginまでのパスを辿り、originで全子孫を展開する（expand_at_origin=True 時）。"""
     if current_uid == origin_uid:
         if expand_at_origin:
-            _add_descendants_to_rich_node(node, current_uid, all_items, child_map, tag_map, set(visited))
+            _add_descendants_to_rich_node(
+                node, current_uid, all_items, child_map, tag_map, set(visited),
+                impl_map=impl_map, repo_root=repo_root,
+            )
         return
 
     # on_path に含まれる子のみを辿る
@@ -1165,11 +1298,13 @@ def _add_focused_path(
         _add_focused_path(
             child_node, child_uid, origin_uid, on_path,
             all_items, child_map, tag_map, new_visited, expand_at_origin,
+            impl_map=impl_map, repo_root=repo_root,
         )
 
 
 def _build_trace_rich_tree(
     origin_uid: str, all_items: dict, child_map: dict, tag_map: dict, direction: str,
+    impl_map: dict | None = None, repo_root: Path | None = None,
 ):
     """トレースツリーを構築して返す。複数ルート祖先がある場合はリストで返す。"""
     origin_item = all_items.get(origin_uid)
@@ -1177,7 +1312,10 @@ def _build_trace_rich_tree(
     if direction == "down":
         label = _format_trace_node(origin_uid, origin_item, is_origin=True)
         tree = Tree(label)
-        _add_descendants_to_rich_node(tree, origin_uid, all_items, child_map, tag_map, {origin_uid})
+        _add_descendants_to_rich_node(
+            tree, origin_uid, all_items, child_map, tag_map, {origin_uid},
+            impl_map=impl_map, repo_root=repo_root,
+        )
         return tree
 
     # up / both: 祖先を収集しルートから辿る
@@ -1187,7 +1325,10 @@ def _build_trace_rich_tree(
         label = _format_trace_node(origin_uid, origin_item, is_origin=True)
         tree = Tree(label)
         if direction == "both":
-            _add_descendants_to_rich_node(tree, origin_uid, all_items, child_map, tag_map, {origin_uid})
+            _add_descendants_to_rich_node(
+                tree, origin_uid, all_items, child_map, tag_map, {origin_uid},
+                impl_map=impl_map, repo_root=repo_root,
+            )
         return tree
 
     on_path = ancestors | {origin_uid}
@@ -1212,6 +1353,7 @@ def _build_trace_rich_tree(
         _add_focused_path(
             tree, root_uid, origin_uid, on_path,
             all_items, child_map, tag_map, {root_uid}, expand_at_origin,
+            impl_map=impl_map, repo_root=repo_root,
         )
         trees.append(tree)
 
@@ -1271,6 +1413,16 @@ def trace_cmd(
         "tree", "--format",
         help="出力形式: tree (デフォルト) / flat",
     ),
+    show_impl: bool = typer.Option(
+        False,
+        "--show-impl",
+        help="実装ファイル（ref フィールド・コードアノテーション）をツリーに表示する",
+    ),
+    extensions: Optional[str] = typer.Option(
+        None,
+        "--extensions",
+        help="アノテーションスキャン対象の拡張子（カンマ区切り。例: py,ts）。未指定時は全テキストファイルを対象とする。",
+    ),
 ) -> None:
     """
     指定したアイテム（REQ/SPEC/Gherkin feature）を起点として、上位・下位のトレーサビリティツリーを表示します。
@@ -1292,6 +1444,20 @@ def trace_cmd(
             if feature_dir is not None:
                 all_prefixes = get_all_prefixes(repo_root)
                 tag_map = get_tag_map(feature_dir, all_prefixes)
+
+            # impl_map 構築（--show-impl 時のみ）
+            impl_map: dict[str, set[str]] = {}
+            if show_impl:
+                ext_list = _parse_extensions(extensions)
+                scanner = ImplScanner()
+                annotation_map = scanner.scan(repo_root, extensions=ext_list)
+                # ref フィールドと annotation を統合: {spec_id: set of paths}
+                for uid, item in all_items_str.items():
+                    refs = set(get_ref_files(item))
+                    annotations = annotation_map.get(uid, set())
+                    merged = refs | annotations
+                    if merged:
+                        impl_map[uid] = merged
 
         # 起点アイテムの解決
         origin_uid: str
@@ -1324,7 +1490,11 @@ def trace_cmd(
         if output_format == "flat":
             _trace_flat_output(origin_uid, all_items_str, child_map, direction)
         else:
-            result = _build_trace_rich_tree(origin_uid, all_items_str, child_map, tag_map, direction)
+            result = _build_trace_rich_tree(
+                origin_uid, all_items_str, child_map, tag_map, direction,
+                impl_map=impl_map if show_impl else None,
+                repo_root=repo_root if show_impl else None,
+            )
             if isinstance(result, list):
                 for tree in result:
                     console.print(tree)
