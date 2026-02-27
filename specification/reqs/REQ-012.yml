@@ -4,11 +4,11 @@ header: |
   仕様アイテムと実装ファイルのリンク管理
 level: 12.0
 links:
-- REQ-001: null
+- REQ-001: sQI3PDVLr4t_7FzvaBW2KfO6i0kUFnK0vEnVRhJAA4M=
 normative: true
 ref: ''
-reviewed: null
-status: draft
+reviewed: y6B0Os4Ptvh1GHmGHGCWV9kcacp4KPoHBLRbY7aWqD8=
+status: implemented
 testable: false
 text: |
   ## 概要

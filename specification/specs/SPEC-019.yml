@@ -2,13 +2,15 @@ active: true
 derived: false
 header: |
   audit コマンドへの実装ファイルリンク検証の追加
+impl_files:
+- src/spec_weaver/cli.py
 level: 19.0
 links:
-- REQ-012: null
+- REQ-012: W1M-g8bMakjNSi3dVoSS2rEjVb7A3bfA2f3UYepGHok=
 normative: true
 ref: ''
-reviewed: null
-status: draft
+reviewed: daEi-eFXEldqkhQGp-To0yEQw8osj44tV_mnUTFgGTM=
+status: implemented
 testable: true
 text: |
   ## 概要

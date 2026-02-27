@@ -4,14 +4,15 @@ header: |
   実装ファイルリンク管理機能の実装計画
 level: 1.0
 links:
-- SPEC-017: null
-- SPEC-018: null
-- SPEC-019: null
-- SPEC-020: null
+- SPEC-017: A76g43OkIi2CSzjgCsf6eLKXl-T3rDYl1Y43xyiW-AU=
+- SPEC-018: KiALrkjdny34oU1P2pPkAC53wjEvznAyP2TYcxjxhnY=
+- SPEC-019: azjeoL4K9UsQcFovSwUyLqeIMVQ-tU35MSwmDiRQMQc=
+- SPEC-020: 4CXi5pU-qZ42cEYDV5ApDZV2SiAJuFpTXV3fU8-oLpU=
 normative: true
 ref: ''
-reviewed: null
-status: draft
+reviewed: u5JY3UQqHlgKW2pR0J-huPTkom_JsQmc2zFS89jV_bo=
+status: implemented
+testable: false
 text: |
   ## 概要
   仕様アイテムと実装ファイルのリンク管理機能を実装する計画。

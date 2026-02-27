@@ -1,44 +1,52 @@
 active: true
 derived: false
 header: |
-  ref フィールドによる実装ファイル参照の定義
+  impl_files カスタム属性による実装ファイル参照の定義
+impl_files:
+- src/spec_weaver/impl_scanner.py
+- src/spec_weaver/doorstop.py
 level: 17.0
 links:
-- REQ-012: null
+- REQ-012: W1M-g8bMakjNSi3dVoSS2rEjVb7A3bfA2f3UYepGHok=
 normative: true
 ref: ''
-reviewed: null
-status: draft
+reviewed: Ht5nQOFqELpnr4nzxvHd4kdGvu6LNwXI6RiZebjrM6Q=
+status: implemented
 testable: true
 text: |
   ## 概要
-  DoorstopのYAMLアイテムが持つ標準フィールド `ref` を、
-  実装ファイルパスのリストとして利用する規約を定める。
+  DoorstopのYAMLアイテムにカスタム属性 `impl_files` を追加し、
+  実装ファイルパスのリストを記録する規約を定める。
 
   ## 詳細仕様
 
-  ### ref フィールドの形式
-  `ref` フィールドには、YAML リスト形式で実装ファイルのパスを記述する。
+  ### なぜ `ref` ではなく `impl_files` を使うか
+  Doorstopの組み込み `ref` フィールドは文字列専用（内部で `.strip()` 等を呼ぶ）のため、
+  リスト形式を格納するとエラーになる。
+  独自のカスタム属性 `impl_files` を用いることで Doorstop と共存できる。
+
+  ### impl_files フィールドの形式
+  `impl_files` フィールドには、YAML リスト形式で実装ファイルのパスを記述する。
   パスはリポジトリルートからの相対パスとする。
 
   ```yaml
   # 単一ファイル
-  ref:
+  impl_files:
     - src/spec_weaver/cli.py
 
   # 複数ファイル
-  ref:
+  impl_files:
     - src/spec_weaver/cli.py
     - src/spec_weaver/doorstop.py
 
-  # 空（リンクなし）— 従来どおり許容
-  ref: ''
+  # 記述なし（リンクなし）— エラーにしない
+  # impl_files フィールド自体を省略してよい
   ```
 
   ### バリデーション
-  - `ref` に記載されたパスが実際にリポジトリ内に存在するかを検証できること
-  - 存在しないパスは `audit` 実行時に警告として報告すること
+  - `impl_files` に記載されたパスが実際にリポジトリ内に存在するかを検証できること
+  - 存在しないパスは `audit --check-impl` 実行時に警告として報告すること
 
   ### 後方互換性
-  - `ref: ''`（空文字）は「リンクなし」を意味し、エラーとしないこと
-  - 文字列形式（旧形式）で記述されている場合は、単一要素リストとして解釈すること
+  - `impl_files` フィールドがない（既存アイテム）場合は「リンクなし」として扱い、エラーにしないこと
+  - 文字列形式で記述されている場合は、単一要素リストとして解釈すること

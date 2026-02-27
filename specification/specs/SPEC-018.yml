@@ -2,13 +2,15 @@ active: true
 derived: false
 header: |
   コードアノテーションスキャンによる実装ファイル検出
+impl_files:
+- src/spec_weaver/impl_scanner.py
 level: 18.0
 links:
-- REQ-012: null
+- REQ-012: W1M-g8bMakjNSi3dVoSS2rEjVb7A3bfA2f3UYepGHok=
 normative: true
 ref: ''
-reviewed: null
-status: draft
+reviewed: IEDfYR9Ce9sTaNWfNob1qIfM31YLn8AR3pvQu6xXj_4=
+status: implemented
 testable: true
 text: |
   ## 概要

@@ -119,11 +119,25 @@ Plan Modeで立てた実装計画などをドキュメントとして保存す�
    ```bash
    uv run pytest tests/ -q
    ```
+5. 実装したファイルのパスを、対応する SPEC の YAML に `impl_files` カスタム属性としてリスト形式で記述すること:
+   ```yaml
+   impl_files:
+     - src/your_module.py
+     - src/another_module.py
+   ```
+   また、実装ファイルの先頭付近にアノテーションも記述すること:
+   ```python
+   # implements: SPEC-XXX
+   ```
+   > **注意**: Doorstop の `ref` フィールドは文字列専用のため、ファイルパスリストには必ず `impl_files` を使うこと。
+   >
+   > **検証方法**: `uv run spec-weaver audit --check-impl ./specification/features` で impl_files とアノテーションの乖離を確認できる。
 
 ### 必須条件（Phase 5 へ進む前に全て満たすこと）
 
 - 計画の全タスクが完了している
 - テストが通過している
+- 実装ファイルが対応 SPEC の `impl_files` カスタム属性に記述されている
 
 ---
 
