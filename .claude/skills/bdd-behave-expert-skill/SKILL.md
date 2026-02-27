@@ -170,16 +170,65 @@ Step 関数は **委譲のみ**。以下を **禁止** する。
 
 ## 実装ワークフロー
 
-1. `spec-weaver trace` で仕様・設計・実装の関連情報を収集する
-2. Doorstop YAML の `text` を読み、「あるべき振る舞い」を確認する
-3. `.feature` ファイルを設計する（仕様ファースト、実装無視）
-4. 仕様と実装の差分を恐れずステップ定義を書く
-5. Step は「1文 = 1委譲」に分解する
-6. テスト失敗を前提に完了とする
-7. `spec-weaver audit` でリンク整合性を確認する
+### Step 1: trace で情報収集する
 
 ```bash
-# 最終確認
+uv run spec-weaver trace SPEC-xxx -f ./specification/features --show-impl
+```
+
+Doorstop YAML の `text` を読み、「あるべき振る舞い」を確認する。
+
+### Step 2: `.feature` ファイルを設計する
+
+仕様ファースト・実装無視で Feature / Scenario を書く。
+`@SPEC-xxx` タグを付けて Doorstop とリンクさせる。
+
+### Step 3: scaffold で雛形を生成する（必須）
+
+**`.feature` を書いたら、必ず最初に `spec-weaver scaffold` を実行すること。**
+手でゼロから Step 定義を書き始めてはならない。
+
+```bash
+uv run spec-weaver scaffold ./specification/features --out-dir features/steps
+```
+
+生成されるファイル: `features/steps/step_<feature名>.py`
+
+生成されたコードの特徴:
+- 各 Step は `raise NotImplementedError('STEP: ...')` を本体とする雛形
+- `"quoted string"` は自動的に `{param0}`, `{param1}` にパラメータ化される
+- 他のファイルに定義済みの Step はコメントアウトされてスキップされる
+- 関数名は Step 文の SHA256 ハッシュ（非 ASCII 文字を避けるため）
+
+既存の Step ファイルを再生成したい場合:
+```bash
+uv run spec-weaver scaffold ./specification/features --out-dir features/steps --overwrite
+```
+
+### Step 4: 雛形を仕様に従って肉付けする
+
+`raise NotImplementedError` を `context.xxx` への委譲と `assert` に置き換える。
+このとき scaffold が生成した型なしパラメータ `{param0}` を、
+仕様の意味に合わせた型付きパラメータ（`{count:d}` 等）へ修正する。
+
+```python
+# scaffold が生成した雛形
+@when('カートに "{param0}" を追加する')  # type: ignore
+def when_a1b2c3d4(context, param0):
+    """カートに "高級イヤホン" を追加する"""
+    raise NotImplementedError('STEP: カートに "{param0}" を追加する')
+
+# ↓ 仕様に合わせて肉付けする
+@when('カートに {count:d} 個の "{item}" (単価: {price:d}円) を追加する')
+def step_impl(context, count, item, price):
+    context.api_client.add_items_to_cart(name=item, unit_price=price, quantity=count)
+```
+
+Step は「1文 = 1委譲」に分解する。テスト失敗を前提に完了とする。
+
+### Step 5: audit でリンク整合性を確認する
+
+```bash
 uv run spec-weaver audit ./specification/features
 ```
 

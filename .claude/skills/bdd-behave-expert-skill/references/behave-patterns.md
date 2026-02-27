@@ -1,5 +1,53 @@
 # behave 実装パターン集
 
+## scaffold による雛形生成（出発点）
+
+Step 定義は必ず `spec-weaver scaffold` で雛形を生成してから始める。
+
+```bash
+uv run spec-weaver scaffold ./specification/features --out-dir features/steps
+```
+
+### 生成されたファイルの読み方
+
+```python
+# scaffold が生成する雛形の例（step_checkout.py）
+
+# 使用されるシナリオ:
+# - VIPユーザーの購入金額別送料
+@when('カートに "{param0}" (単価: "{param1}") を追加する')  # type: ignore
+def when_a1b2c3d4(context, param0, param1):
+    """カートに "高級イヤホン" (単価: 5000円) を追加する"""
+    raise NotImplementedError('STEP: カートに "{param0}" (単価: "{param1}") を追加する')
+```
+
+- **コメント行**: このステップがどのシナリオで使われているかを示す
+- **デコレータ**: `"..."` は `{paramN}` にパラメータ化済み（型なし）
+- **関数名**: SHA256 ハッシュ（非 ASCII 文字回避のため）
+- **docstring**: 元のステップ文（参照用）
+- **本体**: `raise NotImplementedError` — ここを仕様に従って実装する
+
+### 雛形から仕様に合わせて書き換える
+
+```python
+# ❶ デコレータの型なし {paramN} を型付きパラメータに変更する
+# ❷ 関数名を step_impl に変更する（任意）
+# ❸ raise NotImplementedError を委譲コードに置き換える
+
+# Before（scaffold 生成）
+@when('カートに "{param0}" (単価: "{param1}") を追加する')  # type: ignore
+def when_a1b2c3d4(context, param0, param1):
+    """カートに "高級イヤホン" (単価: 5000円) を追加する"""
+    raise NotImplementedError('STEP: カートに "{param0}" (単価: "{param1}") を追加する')
+
+# After（仕様に従って実装）
+@when('カートに {count:d} 個の "{item}" (単価: {price:d}円) を追加する')
+def step_impl(context, count, item, price):
+    context.api_client.add_items_to_cart(name=item, unit_price=price, quantity=count)
+```
+
+---
+
 ## Step 定義の基本構造
 
 ### 正しい Step（Thin Wrapper の例）
