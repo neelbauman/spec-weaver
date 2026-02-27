@@ -18,9 +18,13 @@ description: >
 |---|---|---|---|
 | ビジネス要件 | Doorstop (`specification/reqs/`) | なぜ作るのか | YAML |
 | システム仕様 | Doorstop (`specification/specs/`) | 何を作るのか | YAML |
-| 振る舞い仕様 | Gherkin (`specification/features/`) | どう振る舞うか | .feature |
+| 振る舞い仕様（管理面） | Gherkin (`specification/features/`) | どう振る舞うか（配置・タグ付け） | .feature |
 | 整合性チェック | **Spec-Weaver** | 仕様とテストに乖離がないか | CLI |
-| テスト実装 | 各言語フレームワーク | 実際に動くか | コード（スコープ外） |
+| 振る舞い仕様（設計面） | **bdd-behave-expert-skill** が担当 | 何を書くか・どう書くか | .feature（スコープ外） |
+| テスト実装 | **bdd-behave-expert-skill** が担当 | 実際に動くか | Python（スコープ外） |
+
+> **このスキルの `.feature` 担当範囲**: ファイルの配置・命名・`@SPEC-xxx` タグ付け・Spec-Weaverによる整合性チェックのみ。
+> シナリオの内容（何を書くか・宣言的記述の品質）は **bdd-behave-expert-skill** が担当する。
 
 **⚠️ 重要: DoorstopのYAMLは手動で作ってはいけない。必ず `doorstop` CLIで生成する。**
 
@@ -205,9 +209,10 @@ doorstop link SPEC-001 REQ-001  # リンク設定
 doorstop edit SPEC-001    # エディタで text を記述
 ```
 
-### Step 4: Gherkin .featureの作成
+### Step 4: .feature ファイルの配置・タグ付け
 
-詳細は `references/gherkin-guide.md` を参照。
+- **ファイル管理**（配置・命名・`@SPEC-xxx` タグ付け）: `references/gherkin-guide.md` を参照。
+- **シナリオの内容**（何を書くか・どう書くか）: **bdd-behave-expert-skill** に従うこと。
 
 ### Step 5: 整合性チェック
 

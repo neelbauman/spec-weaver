@@ -1,30 +1,33 @@
-# Gherkin .feature 作成ガイド
+# Gherkin .feature ファイル管理ガイド
 
-## 基本構造
+> **このガイドの担当範囲**: `.feature` ファイルの**管理面**（配置・命名・`@SPEC-xxx` タグ付け）のみ。
+> シナリオの内容（何を書くか・宣言的記述の品質・Given-When-Then の設計）は **bdd-behave-expert-skill** を参照すること。
+
+---
+
+## 基本構造（Doorstop 連携に必要な要素）
 
 ```gherkin
 @SPEC-001         ← DoorstopのSPEC IDをタグとして付与（必須）
 Feature: ユーザー認証
   ユーザーが自分のアカウントに安全にアクセスできること。
 
-  Background:       ← 各シナリオの前提（オプション）
-    Given システムが起動している
-
   Scenario: 正しい認証情報でのログイン成功
-    Given 登録済みユーザー "alice@example.com" が存在する
-    When  正しいパスワードで "/api/login" にPOSTする
-    Then  ステータスコード 200 が返る
-    And   レスポンスにアクセストークンが含まれる
+    Given 登録済みユーザーが存在する
+    When  正しいパスワードでログインする
+    Then  ログインに成功する
 
   Scenario: 誤ったパスワードでのログイン失敗
-    Given 登録済みユーザー "alice@example.com" が存在する
-    When  誤ったパスワードで "/api/login" にPOSTする
-    Then  ステータスコード 401 が返る
+    Given 登録済みユーザーが存在する
+    When  誤ったパスワードでログインを試みる
+    Then  ログインが拒否される
 ```
+
+> **注意**: シナリオ本文でAPIエンドポイント・HTTPステータスコード・DB操作などの実装詳細を書かないこと（宣言的記述の原則 → bdd-behave-expert-skill を参照）。
 
 ---
 
-## タグの付け方
+## タグの付け方（Doorstop との紐付け）
 
 ```gherkin
 @SPEC-001                    # 単一SPECに対応
@@ -45,41 +48,10 @@ Feature: ...
 
 ---
 
-## Given-When-Then の書き方原則
-
-| キーワード | 意味 | 書き方 |
-|---|---|---|
-| `Given` | 前提条件・初期状態 | 「〜が存在する」「〜の状態で」 |
-| `When` | 操作・イベント | 「〜する」「〜をPOSTする」 |
-| `Then` | 期待結果 | 「〜が返る」「〜になる」「〜を含む」 |
-| `And` / `But` | 前のキーワードの継続 | Given/When/Thenの補足 |
-
----
-
-## Scenario Outline（パラメータ化）
-
-複数の入力パターンを1つのシナリオで表現:
-
-```gherkin
-@SPEC-001
-Scenario Outline: さまざまな入力での検証
-  Given ユーザーが "<role>" の権限を持つ
-  When  "<endpoint>" にアクセスする
-  Then  ステータスコード <status> が返る
-
-  Examples:
-    | role  | endpoint      | status |
-    | admin | /api/admin    | 200    |
-    | user  | /api/admin    | 403    |
-    | guest | /api/profile  | 401    |
-```
-
----
-
 ## ファイル命名規則
 
 ```
-features/
+specification/features/
 ├── auth.feature          # 認証系
 ├── payment.feature       # 決済系
 ├── user_profile.feature  # ユーザープロフィール系
@@ -92,28 +64,15 @@ features/
 
 ---
 
-## 既存コードからのGherkin逆引き例
+## 既存コードからの逆引き時のタグ付け
 
-既存テストコード（例: pytest, Jest）から変換する場合:
+既存テストコード（pytest, Jest等）から `.feature` を逆引きする際は、
+対応する SPEC を特定し、必ず `@SPEC-xxx` タグを付与すること。
 
-```python
-# 既存テスト（pytest）
-def test_login_success():
-    response = client.post("/api/login", json={"email": "...", "password": "..."})
-    assert response.status_code == 200
+```bash
+# SPECが未作成の場合は先にDoorstopで作成する
+doorstop add SPEC
+# その後 .feature に @SPEC-xxx タグを付与
 ```
 
-↓ Gherkin に変換
-
-```gherkin
-Scenario: ログイン成功
-  Given 登録済みユーザーが存在する
-  When  正しい認証情報で "/api/login" にPOSTする
-  Then  ステータスコード 200 が返る
-```
-
-**変換のコツ:**
-- `describe`/`context` → `Feature` または `Scenario` のグループ
-- `test`/`it` → `Scenario`
-- `beforeEach`/`setup` → `Background` または `Given`
-- `assert`/`expect` → `Then`
+Gherkin の記述内容（シナリオの設計・変換ルール）は **bdd-behave-expert-skill** を参照すること。

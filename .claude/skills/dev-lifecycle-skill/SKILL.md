@@ -75,7 +75,9 @@ description: >
    | 中規模（単一モジュール内の大きな変更） | 推奨 | — | 推奨 |
    | 小規模（数ファイルの変更） | — | — | 任意 |
 
-4. `.feature` ファイルの追加・更新方針を決定し、**bdd-behave-expert-skill の Gherkin 規則に従って** Feature / Scenario を記述すること。
+4. `.feature` ファイルの方針を決定すること:
+   - **ファイルの配置・命名・`@SPEC-xxx` タグ付け**: **doorstop-gherkin-skill の `gherkin-guide.md`** に従って決定する
+   - **シナリオの内容**（何を書くか・宣言的記述の品質）: **bdd-behave-expert-skill の Gherkin 規則に従って** Feature / Scenario を記述する
 5. 設計方針をユーザーに提示すること。
 
 ### **⛔ STOP: 設計方針を提示し、ユーザーの承認を得ること。承認なしに Phase 3 へ進んではならない。**
@@ -246,16 +248,25 @@ doorstop create RESEARCH ./specification/research --parent SPEC
 
 | 操作 | 担当スキル |
 |---|---|
-| REQ / SPEC の YAML 作成・編集、`.feature` 作成・編集、Spec-Weaver コマンドの使い方 | **doorstop-gherkin-skill** |
-| `.feature` の Gherkin 設計、`scaffold` 実行、ステップ定義の実装 | **bdd-behave-expert-skill** |
+| REQ / SPEC の YAML 作成・編集、Spec-Weaver コマンドの使い方 | **doorstop-gherkin-skill** |
+| `.feature` の**管理面**（配置・命名・`@SPEC-xxx` タグ付け・Spec-Weaver 整合性チェック） | **doorstop-gherkin-skill** |
+| `.feature` の**設計面**（シナリオの内容・宣言的記述の品質・Rule/Background 構造） | **bdd-behave-expert-skill** |
+| `scaffold` 実行、ステップ定義の実装（behave） | **bdd-behave-expert-skill** |
 | フェーズ進行管理、コミット規約、拡張ドキュメント管理 | **本スキル** |
 
 ### bdd-behave-expert-skill を呼び出すタイミング
 
-| フェーズ | 操作 |
-|---|---|
-| **Phase 2 (設計)** | `.feature` ファイルの新規作成・更新時、Gherkin 記述規則を適用する |
-| **Phase 4 (実装)** | `.feature` を追加・更新した後、`scaffold` でステップ雛形を生成し、ステップ定義を実装する |
+| フェーズ | 操作 | 目的 |
+|---|---|---|
+| **Phase 2 (設計)** | `.feature` の新規作成・更新時 | **シナリオの内容を設計する**（宣言的記述・Rule/Background 構造・境界値の決定） |
+| **Phase 4 (実装)** | `.feature` を追加・更新した後 | `scaffold` でステップ雛形を生成し、ステップ定義を実装する |
+
+> **doorstop-gherkin-skill を呼び出すタイミング（`.feature` 関連）**
+>
+> | フェーズ | 操作 | 目的 |
+> |---|---|---|
+> | **Phase 2 (設計)** | `.feature` ファイルの作成時 | ファイルの配置・命名・`@SPEC-xxx` タグ付けを決定する |
+> | **Phase 5 (波及確認)** | `.feature` の変更後 | `spec-weaver audit` で Doorstop ↔ Gherkin の整合性を確認する |
 
 ---
 
