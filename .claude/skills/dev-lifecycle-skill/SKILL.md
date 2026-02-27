@@ -75,7 +75,7 @@ description: >
    | 中規模（単一モジュール内の大きな変更） | 推奨 | — | 推奨 |
    | 小規模（数ファイルの変更） | — | — | 任意 |
 
-4. `.feature` ファイルの追加・更新方針を決定すること。
+4. `.feature` ファイルの追加・更新方針を決定し、**bdd-behave-expert-skill の Gherkin 規則に従って** Feature / Scenario を記述すること。
 5. 設計方針をユーザーに提示すること。
 
 ### **⛔ STOP: 設計方針を提示し、ユーザーの承認を得ること。承認なしに Phase 3 へ進んではならない。**
@@ -114,10 +114,17 @@ Plan Modeで立てた実装計画などをドキュメントとして保存す�
 
 1. 計画に沿ってコードを変更すること。
 2. コード変更に伴い仕様が変わる場合は、**コードと同時に** SPEC / `.feature` を更新すること（doorstop-gherkin-skill の手順に従う）。
-3. 関連する REQ / SPEC の `status` を `in-progress` に更新すること。
-4. テストを実行し、通過を確認すること:
+3. `.feature` ファイルを追加・更新した場合は、**bdd-behave-expert-skill の手順で** ステップ定義を実装すること:
+   ```bash
+   # scaffold で雛形を生成（必須・手書き禁止）
+   uv run spec-weaver scaffold ./specification/features --out-dir features/steps
+   # 生成された雛形の NotImplementedError を仕様に従って肉付けする
+   ```
+4. 関連する REQ / SPEC の `status` を `in-progress` に更新すること。
+5. テストを実行し、確認すること:
    ```bash
    uv run pytest tests/ -q
+   uv run behave          # BDD シナリオの実行（失敗は仕様と実装の乖離を示すため正常）
    ```
 5. 実装したファイルのパスを、対応する SPEC の YAML に `impl_files` カスタム属性としてリスト形式で記述すること:
    ```yaml
@@ -136,7 +143,8 @@ Plan Modeで立てた実装計画などをドキュメントとして保存す�
 ### 必須条件（Phase 5 へ進む前に全て満たすこと）
 
 - 計画の全タスクが完了している
-- テストが通過している
+- `pytest` テストが通過している
+- `.feature` を追加・更新した場合、対応するステップ定義が実装されている（`behave` 実行済み）
 - 実装ファイルが対応 SPEC の `impl_files` カスタム属性に記述されている
 
 ---
@@ -177,16 +185,19 @@ Plan Modeで立てた実装計画などをドキュメントとして保存す�
 ### 必須コマンド（この順序で実行すること。失敗したら修正して再実行）
 
 ```bash
-# 1. テスト
+# 1. ユニットテスト
 uv run pytest tests/ -q
 
-# 2. Spec-Weaver 監査（仕様 ↔ Gherkin の整合性）
+# 2. BDD 受け入れテスト（失敗は仕様と実装の乖離を示す）
+uv run behave
+
+# 3. Spec-Weaver 監査（仕様 ↔ Gherkin の整合性）
 uv run spec-weaver audit ./specification/features
 
-# 3. Doorstop バリデーション（リンク整合性）
+# 4. Doorstop バリデーション（リンク整合性）
 doorstop
 
-# 4. ドキュメント再生成
+# 5. ドキュメント再生成
 uv run spec-weaver build ./specification/features --out-dir .specification
 ```
 
@@ -231,12 +242,20 @@ doorstop create RESEARCH ./specification/research --parent SPEC
 
 ---
 
-## doorstop-gherkin-skill との関係
+## 他スキルとの役割分担
 
 | 操作 | 担当スキル |
 |---|---|
 | REQ / SPEC の YAML 作成・編集、`.feature` 作成・編集、Spec-Weaver コマンドの使い方 | **doorstop-gherkin-skill** |
+| `.feature` の Gherkin 設計、`scaffold` 実行、ステップ定義の実装 | **bdd-behave-expert-skill** |
 | フェーズ進行管理、コミット規約、拡張ドキュメント管理 | **本スキル** |
+
+### bdd-behave-expert-skill を呼び出すタイミング
+
+| フェーズ | 操作 |
+|---|---|
+| **Phase 2 (設計)** | `.feature` ファイルの新規作成・更新時、Gherkin 記述規則を適用する |
+| **Phase 4 (実装)** | `.feature` を追加・更新した後、`scaffold` でステップ雛形を生成し、ステップ定義を実装する |
 
 ---
 
