@@ -8,8 +8,8 @@ if (typeof document$ !== "undefined") {
         .md-typeset table:not([class]) {
           display: table !important;
           table-layout: auto !important; /* 自動計算に戻す */
-          width: 100% !important;
-          min-width: 1200px !important; /* ★ここを大きくするとテーブルが横に広がります */
+          width: 150%;
+          min-width: 2000px !important; /* ★ここを大きくするとテーブルが横に広がります */
           margin-bottom: 1rem;
         }
 

@@ -50,6 +50,16 @@ def _impl_status_badge(item) -> str:
     return IMPL_STATUS_BADGE.get(str(status), f"{status}")
 
 
+def _review_status_badge(item) -> str:
+    """Doorstopのレビューステータスをバッジ文字列に変換する。"""
+    warnings = get_item_warnings(item)
+    if warnings.has_suspect_links:
+        return "⚠️ suspect"
+    if warnings.has_unreviewed_changes:
+        return "📋 unreviewed"
+    return "✅ reviewed"
+
+
 def _get_timestamp(item, key: str) -> str:
     """タイムスタンプを取得する。Git履歴 → YAML属性 → '-' の優先順位。"""
     # 1. Git から取得を試みる
@@ -887,9 +897,9 @@ def _generate_index_table(
     result_col_header = " | テスト結果" if has_results else ""
     result_col_sep = " | :--- " if has_results else ""
 
-    # ID | タイトル | 親 | 子 | 兄弟 | カバレッジ | 実装状況 | 作成日 | 更新日
-    header = f"| ID | タイトル | 親 | 子 | 兄弟 | Gherkinカバレッジ | 実装状況 | 作成日 | 更新日{result_col_header} |"
-    sep = f"| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :---{result_col_sep}|"
+    # ID | タイトル | 親 | 子 | 兄弟 | レビューステータス | Gherkinカバレッジ | 実装状況 | 作成日 | 更新日
+    header = f"| ID | タイトル | 親 | 子 | 兄弟 | レビューステータス | Gherkinカバレッジ | 実装状況 | 作成日 | 更新日{result_col_header} |"
+    sep = f"| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :---{result_col_sep}|"
 
     lines = [ f"# {title}\n", header, sep ]
 
@@ -916,12 +926,13 @@ def _generate_index_table(
             covered, total = _spec_coverage(uid, tag_map, item, all_items_str)
             coverage_col = _coverage_badge(covered, total)
 
+        review_col = _review_status_badge(item)
         impl_col = _impl_status_badge(item)
         created_col = _get_timestamp(item, "created_at")
         updated_col = _get_timestamp(item, "updated_at")
 
         # 行の組み立て
-        row = f"| [{uid}](items/{uid}.md) | {item.header} | {parents_col} | {children_col} | {siblings_col} | {coverage_col} | {impl_col} | {created_col} | {updated_col}"
+        row = f"| [{uid}](items/{uid}.md) | {item.header} | {parents_col} | {children_col} | {siblings_col} | {review_col} | {coverage_col} | {impl_col} | {created_col} | {updated_col}"
 
         # 状態に応じた行ハイライト (attr_list 拡張用)
         warnings = get_item_warnings(item)
