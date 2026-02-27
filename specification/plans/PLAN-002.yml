@@ -4,10 +4,11 @@ header: |
   scaffold コマンド 差分マージ・非対話モード実装計画
 level: 1.1
 links:
-- SPEC-015: cbE2DNy9Udcaf-uVTjkIBXkI_2238Fn5Ilxqtb2VSsw=
-normative: true
+- SPEC-015: U-vevMOnGwyBTzQYbwfympXoAOVJk5qNljruQXQsRsw=
+normative: false
 ref: ''
 reviewed: fBCDh_PPRMAvqbZozgWtwPiCGyi0KSonesZfoZLJCR8=
+testable: false
 text: |
   ## 概要
 
