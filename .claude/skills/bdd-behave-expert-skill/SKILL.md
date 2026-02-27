@@ -211,16 +211,29 @@ uv run spec-weaver scaffold ./specification/features --out-dir features/steps --
 このとき scaffold が生成した型なしパラメータ `{param0}` を、
 仕様の意味に合わせた型付きパラメータ（`{count:d}` 等）へ修正する。
 
+**以下は絶対に削除しないこと:**
+
+| 要素 | 理由 |
+|---|---|
+| `# type: ignore` （デコレータ末尾） | Pyright の誤検知を防ぐ |
+| `# 使用されるシナリオ:` / `# - シナリオ名` | どのシナリオから呼ばれるかのトレーサビリティ |
+| docstring（元ステップ文） | Gherkin の原文を保持し、将来の読者への文脈を提供する |
+
 ```python
 # scaffold が生成した雛形
+# 使用されるシナリオ:
+# - VIPユーザーの購入金額別送料
 @when('カートに "{param0}" を追加する')  # type: ignore
 def when_a1b2c3d4(context, param0):
     """カートに "高級イヤホン" を追加する"""
     raise NotImplementedError('STEP: カートに "{param0}" を追加する')
 
-# ↓ 仕様に合わせて肉付けする
-@when('カートに {count:d} 個の "{item}" (単価: {price:d}円) を追加する')
-def step_impl(context, count, item, price):
+# ↓ 仕様に合わせて肉付けする（コメント・type: ignore・docstring は残す）
+# 使用されるシナリオ:
+# - VIPユーザーの購入金額別送料
+@when('カートに {count:d} 個の "{item}" (単価: {price:d}円) を追加する')  # type: ignore
+def when_a1b2c3d4(context, count, item, price):
+    """カートに "高級イヤホン" を追加する"""
     context.api_client.add_items_to_cart(name=item, unit_price=price, quantity=count)
 ```
 

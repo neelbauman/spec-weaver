@@ -29,20 +29,32 @@ def when_a1b2c3d4(context, param0, param1):
 
 ### 雛形から仕様に合わせて書き換える
 
-```python
-# ❶ デコレータの型なし {paramN} を型付きパラメータに変更する
-# ❷ 関数名を step_impl に変更する（任意）
-# ❸ raise NotImplementedError を委譲コードに置き換える
+変更してよいのは以下のみ:
 
+- **❶** デコレータの型なし `{paramN}` → 型付きパラメータ（`{count:d}` 等）
+- **❷** 本体の `raise NotImplementedError` → 委譲コード・`assert`
+
+**以下は絶対に削除しない:**
+
+- `# type: ignore`（デコレータ末尾）— Pyright の誤検知を防ぐ
+- `# 使用されるシナリオ:` / `# - シナリオ名` — トレーサビリティコメント
+- docstring（元のステップ文）— Gherkin 原文の記録
+
+```python
 # Before（scaffold 生成）
+# 使用されるシナリオ:
+# - VIPユーザーの購入金額別送料
 @when('カートに "{param0}" (単価: "{param1}") を追加する')  # type: ignore
 def when_a1b2c3d4(context, param0, param1):
     """カートに "高級イヤホン" (単価: 5000円) を追加する"""
     raise NotImplementedError('STEP: カートに "{param0}" (単価: "{param1}") を追加する')
 
-# After（仕様に従って実装）
-@when('カートに {count:d} 個の "{item}" (単価: {price:d}円) を追加する')
-def step_impl(context, count, item, price):
+# After（仕様に従って実装 — コメント・type: ignore・docstring は残す）
+# 使用されるシナリオ:
+# - VIPユーザーの購入金額別送料
+@when('カートに {count:d} 個の "{item}" (単価: {price:d}円) を追加する')  # type: ignore
+def when_a1b2c3d4(context, count, item, price):
+    """カートに "高級イヤホン" (単価: 5000円) を追加する"""
     context.api_client.add_items_to_cart(name=item, unit_price=price, quantity=count)
 ```
 
