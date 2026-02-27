@@ -212,9 +212,9 @@ def then_7bdfccf5(context):
 
 # 使用されるシナリオ:
 # - 一覧テーブルのフィルタリング機能
-@then('ID、タイトル、ステータス、レベル等の項目で絞り込みが可能であること')
+@then('ID、タイトル、実装ステータス、レベル等の項目で絞り込みが可能であること')
 def then_a2666350(context):
-    """ID、タイトル、ステータス、レベル等の項目で絞り込みが可能であること"""
+    """ID、タイトル、実装ステータス、レベル等の項目で絞り込みが可能であること"""
     import os
     with open(os.path.join(context.temp_dir, '.specification', 'docs', 'javascripts', 'custom-table-filter.js'), 'r', encoding='utf-8') as f:
         content = f.read()
@@ -376,9 +376,10 @@ def given_5951291a(context):
 # 使用されるシナリオ:
 # - Suspect Link 警告の一覧テーブル表示
 # - Unreviewed Changes 警告の一覧テーブル表示
-@then('一覧テーブルの状態列に "{param0}" が表示されること')
-def then_54a2fd68(context, param0):
-    """一覧テーブルの状態列に表示されること"""
+# - 複合警告の表示
+@then('一覧テーブルの行に "{param0}" が適用されていること')
+def then_apply_row_class(context, param0):
+    """一覧テーブルの行にCSSクラスが適用されていること"""
     import os
     # Check spec.md
     path = os.path.join(context.temp_dir, '.specification', 'docs', 'spec.md')
@@ -466,17 +467,4 @@ def given_89f3d16e(context):
                 f.write('reviewed: False\n')
             else:
                 f.write(line)
-
-
-# 使用されるシナリオ:
-# - 複合警告の表示
-@then('一覧テーブルの状態列に "{param0}" と "{param1}" の両方が表示されること')
-def then_0eea411a(context, param0, param1):
-    """一覧テーブルの状態列に両方が表示されること"""
-    import os
-    path = os.path.join(context.temp_dir, '.specification', 'docs', 'spec.md')
-    with open(path, 'r', encoding='utf-8') as f:
-        content = f.read()
-    assert param0 in content
-    assert param1 in content
 

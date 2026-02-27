@@ -887,11 +887,11 @@ def _generate_index_table(
     result_col_header = " | テスト結果" if has_results else ""
     result_col_sep = " | :--- " if has_results else ""
 
-    # ID | タイトル | 親 | 子 | 兄弟 | カバレッジ | 実装状況 | 作成日 | 更新日 | 状態
-    header = f"| ID | タイトル | 親 | 子 | 兄弟 | カバレッジ | 実装状況 | 作成日 | 更新日 | 状態{result_col_header} |"
-    sep = f"| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :---{result_col_sep}|"
+    # ID | タイトル | 親 | 子 | 兄弟 | カバレッジ | 実装状況 | 作成日 | 更新日
+    header = f"| ID | タイトル | 親 | 子 | 兄弟 | Gherkinカバレッジ | 実装状況 | 作成日 | 更新日{result_col_header} |"
+    sep = f"| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :---{result_col_sep}|"
 
-    lines = [f"# {title}\n", header, sep]
+    lines = [ f"# {title}\n", header, sep ]
 
     for uid in sorted(target_items.keys()):
         item = target_items[uid]
@@ -920,24 +920,15 @@ def _generate_index_table(
         created_col = _get_timestamp(item, "created_at")
         updated_col = _get_timestamp(item, "updated_at")
 
-        # 状態アイコン
-        warnings = get_item_warnings(item)
-        warning_parts: list[str] = []
-        if warnings.has_suspect_links:
-            warning_parts.append("⚠️ Suspect")
-        if warnings.has_unreviewed_changes:
-            warning_parts.append("📋 Unreviewed")
-        if warning_parts:
-            gherkin_status = " ".join(warning_parts)
-        elif not testable:
-            gherkin_status = "-"
-        elif scenarios:
-            gherkin_status = "🟢"
-        else:
-            gherkin_status = "🔴"
-
         # 行の組み立て
-        row = f"| [{uid}](items/{uid}.md) | {item.header} | {parents_col} | {children_col} | {siblings_col} | {coverage_col} | {impl_col} | {created_col} | {updated_col} | {gherkin_status} |"
+        row = f"| [{uid}](items/{uid}.md) | {item.header} | {parents_col} | {children_col} | {siblings_col} | {coverage_col} | {impl_col} | {created_col} | {updated_col}"
+
+        # 状態に応じた行ハイライト (attr_list 拡張用)
+        warnings = get_item_warnings(item)
+        if warnings.has_suspect_links:
+            row += " {: .suspect-row } |"
+        elif warnings.has_unreviewed_changes:
+            row += " {: .unreviewed-row } |"
 
         if has_results:
             from .test_results import spec_result_summary, result_badge
@@ -1461,6 +1452,8 @@ theme:
     - search.highlight
 extra_javascript:
     - javascripts/custom-table-filter.js
+extra_css:
+    - stylesheets/extra.css
 nav:
   - Home: index.md
 {docs_nav_entries}

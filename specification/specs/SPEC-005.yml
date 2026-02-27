@@ -7,7 +7,7 @@ links:
 - REQ-004: KXm5cZc2wXUhF29d-4lpSPbclfjN4ruCBIwDvWX93tg=
 normative: true
 ref: ''
-reviewed: EIJvOju7-qnVB72UkOorTyzVv9DzgjYEEyTKsYqWTWI=
+reviewed: 8VpAHdXWr25L0MtPd3WQhAJsFQ5vRaPKIR3T9qxb6Ug=
 status: implemented
 testable: true
 text: |
@@ -19,9 +19,9 @@ text: |
   ### 処理
   - Doorstop APIの `item.cleared`（suspect link 検出）および `item.reviewed`（未レビュー変更検出）属性を評価すること
   - `audit` コマンド実行時に Suspect Link / Unreviewed Changes を分離して警告出力すること
-  - `build` コマンド実行時にテーブルの状態列（"⚠️ Suspect" / "📋 Unreviewed"）および詳細ページに警告バナーを動的に付与すること
+  - `build` コマンド実行時に一覧テーブルの行ハイライト（Suspectは赤、Unreviewedは紫）および詳細ページに警告バナーを動的に付与すること
 
   ### 出力・結果
   - audit の警告出力: Suspect Link テーブル（変更された上位アイテムとアクションを表示）、Unreviewed Changes テーブル（対象 ID とアクションを表示）
-  - build の一覧テーブル: 状態列に "⚠️ Suspect" / "📋 Unreviewed" を表示
+  - build の一覧テーブル: Suspect状態の行を赤色、Unreviewed状態の行を紫色でハイライト表示する。従来の状態列は廃止する。
   - build の詳細ページ: Suspect Link バナー（対象リンク付き）、Unreviewed Changes バナーを表示

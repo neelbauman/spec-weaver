@@ -30,3 +30,11 @@ select {
     background-color: var(--md-code-bg-color);
     border: 1px solid var(--md-typeset-table-color);
 }
+
+/* Row highlighting for suspect and unreviewed items */
+tr:has(.suspect-row) {
+    background-color: rgba(255, 0, 0, 0.15) !important;
+}
+tr:has(.unreviewed-row) {
+    background-color: rgba(128, 0, 128, 0.15) !important;
+}

@@ -1,10 +1,10 @@
 active: true
 derived: false
 header: |
-  scaffold コマンド — pytest-bdd テストコード自動生成
+  scaffold コマンド —  behave テストコード自動生成
 level: 3.15
 links:
-- REQ-011: 8gEBryi36ONUZEC4eIzuSLhW6aKI9Jh2ITSBgbs4oM4=
+- REQ-011: L8Bl65UQLRlIMAdIbMBwE7YNvvUDNz-IySWal4X7iNI=
 normative: true
 ref: ''
 reviewed: xUja3S-oJjKPnnju4olUTrZ8qmxiLVdkcbm8vmRyPL8=
@@ -13,7 +13,7 @@ testable: true
 text: |
   ## 概要
   `spec-weaver scaffold` コマンドにより、`.feature` ファイルから
-  pytest-bdd 互換のテストコード雛形を自動生成する。
+  behave 互換のテストコード雛形を自動生成する。
 
   ## 詳細仕様
 
@@ -37,16 +37,12 @@ text: |
      - docstring にオリジナルのステップ文を記載
   5. 同一ステップ文が複数シナリオで使われる場合、関数は1回のみ生成する（重複排除）
 
-  ### conftest.py 生成
-  - `--out-dir` に `conftest.py` が存在しない場合、基本的な conftest.py を生成する
-  - pytest-bdd の基本設定（bdd_features_base_dir 等）を含める
-
   ### 上書き制御
   - デフォルトでは既存ファイルをスキップし、警告メッセージを表示する
   - `--overwrite` フラグで既存ファイルの上書きを許可する
 
   ## 受け入れ基準
-  - `.feature` ファイルから pytest-bdd テストコードが生成されること
+  - `.feature` ファイルから behave テストコードが生成されること
   - 生成された関数名に日本語が含まれないこと（ハッシュベース命名）
   - 生成されたコードが構文的に正しい Python であること
   - 同一ステップが重複生成されないこと
