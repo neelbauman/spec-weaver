@@ -11,10 +11,10 @@ from typer.testing import CliRunner
 from spec_weaver.cli import app
 from spec_weaver.codegen import (
     _hash_name,
+    _escape_string,
     _step_keyword_to_prefix,
     _resolve_step_prefixes,
     generate_test_file,
-    generate_conftest,
 )
 
 runner = CliRunner()
@@ -37,6 +37,16 @@ Feature: サンプル機能
     Given testable な仕様に対応するGherkinテストが存在しない
     When  audit コマンドを実行する
     Then  終了コード 1 が返ること
+"""
+
+SAMPLE_FEATURE_QUOTES = """\
+Feature: クオート含むステップ
+  ダブルクオーテーションを含むステップのテスト。
+
+  Scenario: 複合警告の表示
+    Given アイテムに Suspect Link と Unreviewed Changes の両方がある
+    When  build コマンドを実行する
+    Then  一覧テーブルの状態列に "⚠️ Suspect" と "📋 Unreviewed" の両方が表示されること
 """
 
 SAMPLE_FEATURE_SHARED_STEPS = """\
@@ -88,6 +98,39 @@ def test_step_keyword_to_prefix():
     assert _step_keyword_to_prefix("But") == ""
 
 
+def test_escape_string_double_quotes():
+    """ダブルクオーテーションが <...> に変換されること。"""
+    assert _escape_string('hello "world"') == 'hello <world>'
+    assert _escape_string('no quotes') == 'no quotes'
+    assert _escape_string('"⚠️ Suspect"') == '<⚠️ Suspect>'
+
+
+def test_escape_string_backslash():
+    """バックスラッシュが正しくエスケープされること。"""
+    assert _escape_string('path\\to\\file') == 'path\\\\to\\\\file'
+
+
+def test_generate_test_file_with_quotes(tmp_path):
+    """ダブルクオーテーションを含むステップが正しく生成されること。"""
+    feature_dir = tmp_path / "features"
+    feature_dir.mkdir()
+    feature_file = feature_dir / "quotes.feature"
+    feature_file.write_text(SAMPLE_FEATURE_QUOTES, encoding="utf-8")
+
+    out_dir = tmp_path / "tests"
+    result = generate_test_file(feature_file, out_dir, feature_dir)
+
+    assert result is not None
+    content = result.read_text(encoding="utf-8")
+
+    # 構文的に正しい Python であること
+    python_ast.parse(content)
+
+    # <...> に変換された文字列が含まれること
+    assert '<⚠️ Suspect>' in content
+    assert '<📋 Unreviewed>' in content
+
+
 def test_resolve_step_prefixes_and_but():
     """And/But は直前のキーワードを引き継ぐこと。"""
     steps = [
@@ -118,7 +161,7 @@ def test_generate_test_file_basic(tmp_path):
     result = generate_test_file(feature_file, out_dir, feature_dir)
 
     assert result is not None
-    assert result.name == "test_sample.py"
+    assert result.name == "step_sample.py"
     assert result.exists()
 
     content = result.read_text(encoding="utf-8")
@@ -126,18 +169,18 @@ def test_generate_test_file_basic(tmp_path):
     # 構文的に正しい Python であること
     python_ast.parse(content)
 
-    # pytest-bdd のインポートが含まれること
-    assert "from pytest_bdd import" in content
-    assert "@scenario" in content
+    # behave のインポートが含まれること
+    assert "from behave import" in content
+    assert "@given" in content
 
     # 関数名に日本語が含まれないこと
     func_names = re.findall(r"def (\w+)\(", content)
     for name in func_names:
         assert name.isascii(), f"関数名に非 ASCII 文字: {name}"
 
-    # docstring にオリジナルのシナリオ名が含まれること
-    assert "完全一致時の監査成功" in content
-    assert "テスト漏れの検出" in content
+    # ステップ文が含まれること
+    assert "終了コード 0 が返ること" in content
+    assert "終了コード 1 が返ること" in content
 
 
 def test_generate_test_file_step_dedup(tmp_path):
@@ -168,7 +211,7 @@ def test_generate_test_file_skip_existing(tmp_path):
 
     out_dir = tmp_path / "tests"
     out_dir.mkdir()
-    existing = out_dir / "test_sample.py"
+    existing = out_dir / "step_sample.py"
     existing.write_text("# existing", encoding="utf-8")
 
     result = generate_test_file(feature_file, out_dir, feature_dir, overwrite=False)
@@ -185,38 +228,12 @@ def test_generate_test_file_overwrite(tmp_path):
 
     out_dir = tmp_path / "tests"
     out_dir.mkdir()
-    existing = out_dir / "test_sample.py"
+    existing = out_dir / "step_sample.py"
     existing.write_text("# existing", encoding="utf-8")
 
     result = generate_test_file(feature_file, out_dir, feature_dir, overwrite=True)
     assert result is not None
     assert "# existing" not in result.read_text()
-
-
-def test_generate_conftest(tmp_path):
-    """conftest.py が正しく生成されること。"""
-    feature_dir = tmp_path / "features"
-    feature_dir.mkdir()
-    out_dir = tmp_path / "tests"
-
-    result = generate_conftest(out_dir, feature_dir)
-    assert result is not None
-    assert result.name == "conftest.py"
-
-    content = result.read_text(encoding="utf-8")
-    assert "bdd_features_base_dir" in content
-
-
-def test_generate_conftest_skip_existing(tmp_path):
-    """既存 conftest.py はスキップされること。"""
-    out_dir = tmp_path / "tests"
-    out_dir.mkdir()
-    existing = out_dir / "conftest.py"
-    existing.write_text("# existing conftest", encoding="utf-8")
-
-    result = generate_conftest(out_dir, tmp_path, overwrite=False)
-    assert result is None
-    assert existing.read_text() == "# existing conftest"
 
 
 # ---------------------------------------------------------------------------
@@ -238,8 +255,7 @@ def test_scaffold_cmd_generates_files(tmp_path):
     ])
 
     assert result.exit_code == 0
-    assert (out_dir / "test_sample.py").exists()
-    assert (out_dir / "conftest.py").exists()
+    assert (out_dir / "step_sample.py").exists()
     assert "生成" in result.stdout
 
 
@@ -251,8 +267,7 @@ def test_scaffold_cmd_skip_existing(tmp_path):
 
     out_dir = tmp_path / "tests"
     out_dir.mkdir()
-    (out_dir / "test_sample.py").write_text("# existing", encoding="utf-8")
-    (out_dir / "conftest.py").write_text("# existing", encoding="utf-8")
+    (out_dir / "step_sample.py").write_text("# existing", encoding="utf-8")
 
     result = runner.invoke(app, [
         "scaffold", str(feature_dir),
@@ -261,7 +276,7 @@ def test_scaffold_cmd_skip_existing(tmp_path):
 
     assert result.exit_code == 0
     assert "スキップ" in result.stdout
-    assert (out_dir / "test_sample.py").read_text() == "# existing"
+    assert (out_dir / "step_sample.py").read_text() == "# existing"
 
 
 def test_scaffold_cmd_no_features(tmp_path):
@@ -293,7 +308,7 @@ def test_ci_cmd_full_flow(mock_build, mock_subprocess, tmp_path):
 
     test_dir = tmp_path / "tests"
     test_dir.mkdir()
-    (test_dir / "test_sample.py").write_text("# test", encoding="utf-8")
+    (test_dir / "step_sample.py").write_text("# test", encoding="utf-8")
 
     report_path = tmp_path / "results.json"
     # pytest の実行をモック（成功）
@@ -366,5 +381,4 @@ def test_ci_cmd_with_scaffold(mock_build, mock_subprocess, tmp_path):
     ])
 
     # scaffold で生成されたファイルが存在すること
-    assert (test_dir / "test_sample.py").exists()
-    assert (test_dir / "conftest.py").exists()
+    assert (test_dir / "step_sample.py").exists()

@@ -36,7 +36,7 @@ clean:  ## 生成ファイルを削除
 .PHONY: docs-serve docs-deploy
 
 docs-serve:  ## ドキュメントをローカルで確認
-	uvx --with mkdocs-material --with "mkdocstrings[python]" mkdocs serve
+	uvx --with mkdocs-material zensical serve -f .specification/mkdocs.yml
 
 docs-deploy:  ## GitHub Pagesにデプロイ
 	uvx --with mkdocs-material --with "mkdocstrings[python]" mkdocs gh-deploy
@@ -114,4 +114,3 @@ update-claude:  ## CLAUDE.md の自動生成セクションを更新
 
 specification:
 	-spec-weaver build specification/
-	-uvx --with mkdocs-material zensical serve -f .specification/mkdocs.yml

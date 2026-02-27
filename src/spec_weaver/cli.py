@@ -27,7 +27,7 @@ from spec_weaver.test_results import (
     result_badge,
     spec_result_summary,
 )
-from spec_weaver.codegen import generate_test_file, generate_conftest
+from spec_weaver.codegen import generate_test_file
 
 # ---------------------------------------------------------------------------
 # 実装ステータス定義
@@ -283,7 +283,7 @@ def scaffold_cmd(
         help="既存ファイルを上書きする",
     ),
 ) -> None:
-    """Gherkin .feature ファイルから pytest-bdd テストコードの雛形を自動生成します。"""
+    """Gherkin .feature ファイルから behave テストコードの雛形を自動生成します。"""
     try:
         feature_files = sorted(feature_dir.rglob("*.feature"))
         if not feature_files:
@@ -301,12 +301,8 @@ def scaffold_cmd(
             except ValueError:
                 return str(p)
 
-        # conftest.py 生成
-        conftest_result = generate_conftest(out_dir, feature_dir, overwrite=overwrite)
-        if conftest_result:
-            console.print(f"  [green]✅ 生成[/green]: {_display_path(conftest_result)}")
-        else:
-            console.print(f"  [dim]⏭️ スキップ[/dim]: {_display_path(out_dir / 'conftest.py')} (既存)")
+        # conftest.py は behave には不要なため生成しない
+        # behave は自動的に feature ファイルのディレクトリ配下の steps/ ディレクトリを認識する
 
         for fpath in feature_files:
             try:
@@ -393,7 +389,6 @@ def ci_cmd(
             console.print("[bold cyan]📝 Step 1/3: テストコード生成 (scaffold)...[/bold cyan]")
             feature_files = sorted(feature_dir.rglob("*.feature"))
             if feature_files:
-                generate_conftest(test_dir, feature_dir, overwrite=True)
                 for fpath in feature_files:
                     try:
                         generate_test_file(fpath, test_dir, feature_dir, overwrite=True)
@@ -403,16 +398,16 @@ def ci_cmd(
         else:
             console.print("[dim]📝 Step 1/3: scaffold スキップ (--scaffold で有効化)[/dim]")
 
-        # Step 2: pytest 実行
+        # Step 2: behave 実行
         console.print(f"[bold cyan]🧪 Step 2/3: テスト実行...[/bold cyan]")
-        pytest_cmd = [
-            sys.executable, "-m", "pytest",
-            str(test_dir),
-            f"--cucumber-json-report={report}",
-            "-q",
+        behave_cmd = [
+            "uv", "run", "behave",
+            str(feature_dir),
+            "-f", "json",
+            "--outfile", str(report),
         ]
-        console.print(f"  [dim]$ {' '.join(pytest_cmd)}[/dim]")
-        result = subprocess.run(pytest_cmd, capture_output=True, text=True)
+        console.print(f"  [dim]$ {' '.join(behave_cmd)}[/dim]")
+        result = subprocess.run(behave_cmd, capture_output=True, text=True)
 
         if result.stdout:
             console.print(result.stdout)
@@ -1017,7 +1012,7 @@ def _generate_item_markdown(
             if test_result_map is not None:
                 key = (Path(file_path).stem, s["name"])
                 status = test_result_map.get(key)
-                badge = format_status_badge(status) if status is not None else "❓ -"
+                badge = format_status_badge(status) if status is not None else "-"
                 content.append(f"- {badge} **{s['name']}** — {s['keyword']} （{loc}）")
             else:
                 content.append(f"- **{s['name']}** — {s['keyword']} （{loc}）")
