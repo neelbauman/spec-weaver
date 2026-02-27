@@ -16,6 +16,8 @@ nav:
   - PLAN:
       - PLAN一覧: plan.md
       - PLAN-001: items/PLAN-001.md
+      - PLAN-002: items/PLAN-002.md
+      - PLAN-003: items/PLAN-003.md
   - REQ:
       - REQ一覧: req.md
       - REQ-001: items/REQ-001.md
@@ -52,6 +54,7 @@ nav:
       - SPEC-018: items/SPEC-018.md
       - SPEC-019: items/SPEC-019.md
       - SPEC-020: items/SPEC-020.md
+      - SPEC-021: items/SPEC-021.md
 
   - 振る舞い仕様 (Features):
       - features/index.md

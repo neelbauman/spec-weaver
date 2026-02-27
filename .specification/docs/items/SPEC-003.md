@@ -33,4 +33,10 @@
 
 ### 🧪 検証シナリオ
 
-- **audit コマンド** — Feature （[features/audit.feature:2](../features/audit.md)）
+- **完全一致時の監査成功** — Scenario （[features/audit.feature:5](../features/audit.md)）
+- **テスト漏れの検出** — Scenario （[features/audit.feature:11](../features/audit.md)）
+- **孤児タグの検出** — Scenario （[features/audit.feature:17](../features/audit.md)）
+- **テスト漏れと孤児タグの同時検出** — Scenario （[features/audit.feature:23](../features/audit.md)）
+- **testable: false の仕様はスキップされる** — Scenario （[features/audit.feature:29](../features/audit.md)）
+- **Suspect Link の検出** — Scenario （[features/audit.feature:36](../features/audit.md)）
+- **Unreviewed Changes の検出** — Scenario （[features/audit.feature:44](../features/audit.md)）

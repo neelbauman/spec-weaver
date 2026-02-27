@@ -39,4 +39,7 @@ DoorstopのYAMLファイルに `status` キーを追記することで、実装�
 
 ### 🧪 検証シナリオ
 
-- **status コマンド** — Feature （[features/status.feature:2](../features/status.md)）
+- **全アイテムのステータスを一覧表示する** — Scenario （[features/status.feature:5](../features/status.md)）
+- **status 未設定のアイテムは "-" と表示される** — Scenario （[features/status.feature:12](../features/status.md)）
+- **--filter で特定ステータスに絞り込める** — Scenario （[features/status.feature:18](../features/status.md)）
+- **--filter に一致するアイテムが存在しない場合に通知される** — Scenario （[features/status.feature:25](../features/status.md)）

@@ -8,7 +8,7 @@ links:
 - REQ-002: AL9bDV_13Z_dFORw5rjP1YoJvrpxV9BwxqcTBuTGPsA=
 normative: true
 ref: ''
-reviewed: ruJ69u4Paue6VJf3mUIvY3j3QmFPePO9ales3qUxdOU=
+reviewed: D4KjmcrpAg3v3-QAXCdB7bTOowaShXstZqoS8dZBTuI=
 status: implemented
 testable: true
 text: |
@@ -44,6 +44,7 @@ text: |
   - `gherkin-official` パーサーを用いて抽象構文木（AST）を構築すること
   - タグの文字列だけでなく、そのタグが属する「シナリオ名」「ファイル相対パス」「行番号」の
     メタデータを正確に抽出すること
+  - Gherkin のタグ継承（Effective Tags）に関する詳細仕様は **SPEC-021** を参照すること
 
   ### カスタム属性の評価
   - Doorstopの `testable: false` 属性を評価すること

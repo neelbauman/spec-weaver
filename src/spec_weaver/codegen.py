@@ -89,7 +89,7 @@ def _escape_docstring(text: str) -> str:
 
 
 def _collect_scenarios(ast: dict) -> list[dict[str, Any]]:
-    """AST から Scenario / Background ノードを収集する。"""
+    """AST から Scenario / Background ノードを収集する。Rule ブロック内のシナリオも対象とする。"""
     feature = ast.get("feature")
     if not feature:
         return []
@@ -99,6 +99,12 @@ def _collect_scenarios(ast: dict) -> list[dict[str, Any]]:
             blocks.append(child["background"])
         if "scenario" in child:
             blocks.append(child["scenario"])
+        if "rule" in child:
+            for rule_child in child["rule"].get("children", []):
+                if "background" in rule_child:
+                    blocks.append(rule_child["background"])
+                if "scenario" in rule_child:
+                    blocks.append(rule_child["scenario"])
     return blocks
 
 
