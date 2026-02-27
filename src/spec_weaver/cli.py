@@ -11,6 +11,8 @@ from pathlib import Path
 from typing import Optional
 from rich.console import Console
 from rich.panel import Panel
+from rich.prompt import Confirm
+from rich.syntax import Syntax
 from rich.table import Table
 from rich.tree import Tree
 
@@ -81,6 +83,21 @@ app = typer.Typer(
     add_completion=False,
 )
 console = Console()
+
+
+def _is_file_dirty(file_path: Path, repo_root: Path) -> bool:
+    """指定ファイルに未コミットの変更があるか Git ステータスで確認する。"""
+    try:
+        result = subprocess.run(
+            ["git", "status", "--porcelain", str(file_path)],
+            cwd=repo_root,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        return bool(result.stdout.strip())
+    except Exception:
+        return False
 
 
 # ---------------------------------------------------------------------------
@@ -396,10 +413,22 @@ def scaffold_cmd(
     overwrite: bool = typer.Option(
         False,
         "--overwrite",
-        help="既存ファイルを上書きする",
+        help="既存ファイルを全上書きする",
+    ),
+    repo_root: Path = typer.Option(
+        Path.cwd(),
+        "--repo-root",
+        "-r",
+        resolve_path=True,
+        help="Git dirty チェック用リポジトリルート（デフォルト: cwd）",
+    ),
+    force: bool = typer.Option(
+        False,
+        "--force",
+        help="Git 未コミット変更の確認プロンプトをスキップして強制マージする",
     ),
 ) -> None:
-    """Gherkin .feature ファイルから behave テストコードの雛形を自動生成します。"""
+    """Gherkin .feature ファイルから behave テストコードの雛形を生成・差分マージします。"""
     try:
         feature_files = sorted(feature_dir.rglob("*.feature"))
         if not feature_files:
@@ -411,32 +440,53 @@ def scaffold_cmd(
         errors = 0
 
         def _display_path(p: Path) -> str:
-            """表示用パス: cwd からの相対パスを試み、失敗したら絶対パスを返す。"""
             try:
                 return str(p.relative_to(Path.cwd()))
             except ValueError:
                 return str(p)
 
-        # conftest.py は behave には不要なため生成しない
-        # behave は自動的に feature ファイルのディレクトリ配下の steps/ ディレクトリを認識する
-
         for fpath in feature_files:
             try:
+                out_file = out_dir / f"step_{fpath.stem}.py"
+
+                # Git dirty チェック: 既存ファイルに未コミット変更があれば確認
+                if out_file.exists() and not force and not overwrite:
+                    if _is_file_dirty(out_file, repo_root):
+                        console.print(
+                            f"\n[bold yellow]⚠️  {_display_path(out_file)} "
+                            f"に未コミットの変更があります。[/bold yellow]"
+                        )
+                        if not Confirm.ask("差分マージを続行しますか？"):
+                            console.print(
+                                f"  [dim]⏭️ スキップ[/dim]: {_display_path(out_file)} (キャンセル)"
+                            )
+                            skipped += 1
+                            continue
+
                 result = generate_test_file(fpath, out_dir, feature_dir, overwrite=overwrite)
-                if result:
-                    console.print(f"  [green]✅ 生成[/green]: {_display_path(result)}")
-                    generated += 1
-                else:
-                    rel = out_dir / f"test_{fpath.stem}.py"
-                    console.print(f"  [dim]⏭️ スキップ[/dim]: {_display_path(rel)} (既存)")
+
+                if result is None:
+                    console.print(
+                        f"  [dim]⏭️ スキップ[/dim]: {_display_path(out_file)} (差分なし)"
+                    )
                     skipped += 1
+                else:
+                    out_path, status, diff_text = result
+                    if status == "created":
+                        console.print(f"  [green]✅ 新規作成[/green]: {_display_path(out_path)}")
+                    else:
+                        console.print(f"\n  [blue]🔄 差分更新[/blue]: {_display_path(out_path)}")
+                        console.print(Syntax(diff_text, "diff", theme="monokai", padding=(0, 2)))
+                        console.print()
+                    generated += 1
+
             except Exception as e:
                 console.print(f"  [red]❌ エラー[/red]: {fpath.name}: {e}")
                 errors += 1
 
         console.print()
         console.print(
-            f"[bold green]生成: {generated}[/bold green]  "
+            f"[bold green]生成/更新: {generated}[/bold green]  "
             f"[dim]スキップ: {skipped}[/dim]  "
             + (f"[bold red]エラー: {errors}[/bold red]" if errors else "")
         )
@@ -507,7 +557,11 @@ def ci_cmd(
             if feature_files:
                 for fpath in feature_files:
                     try:
-                        generate_test_file(fpath, test_dir, feature_dir, overwrite=True)
+                        scaffold_result = generate_test_file(
+                            fpath, test_dir, feature_dir, overwrite=True
+                        )
+                        if scaffold_result:
+                            console.print(f"  [green]✅ 生成[/green]: {fpath.name}")
                     except Exception as e:
                         console.print(f"  [yellow]⚠️ scaffold スキップ: {fpath.name}: {e}[/yellow]")
             console.print("  [green]✅ scaffold 完了[/green]")

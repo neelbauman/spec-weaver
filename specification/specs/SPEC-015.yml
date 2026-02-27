@@ -7,13 +7,13 @@ links:
 - REQ-011: L8Bl65UQLRlIMAdIbMBwE7YNvvUDNz-IySWal4X7iNI=
 normative: true
 ref: ''
-reviewed: xUja3S-oJjKPnnju4olUTrZ8qmxiLVdkcbm8vmRyPL8=
+reviewed: cnQ4BJ9kxsHukHF733Y8bDZkxLG8Mf81LOtOSF1qcEc=
 status: implemented
 testable: true
 text: |
   ## 概要
   `spec-weaver scaffold` コマンドにより、`.feature` ファイルから
-  behave 互換のテストコード雛形を自動生成する。
+  behave 互換のテストコード雛形を自動生成・差分マージする。
 
   ## 詳細仕様
 
@@ -21,29 +21,46 @@ text: |
   ```
   spec-weaver scaffold <feature_dir>
     --out-dir <path>       # テストコード出力先（デフォルト: tests/features/）
-    --overwrite            # 既存ファイルの上書きを許可
+    --overwrite            # 既存ファイルを全上書きする
+    --repo-root <path>     # Git dirty チェック用リポジトリルート（デフォルト: cwd）
+    --force                # 確認プロンプトをスキップして強制マージ（非対話モード）
   ```
 
   ### テストコード生成ロジック
   1. 指定ディレクトリの `.feature` ファイルを Gherkin AST で解析する
-  2. 各 Feature に対して `test_<feature_stem>.py` を生成する
-  3. 各 Scenario に対して以下を生成する:
-     - `@scenario` デコレータ付きのテスト関数
-     - 関数名はシナリオ名の SHA256 ハッシュ先頭8文字を使用: `test_<hash8>`
-     - docstring にオリジナルのシナリオ名を記載（可読性確保）
-  4. 各ステップ（Given/When/Then）に対して以下を生成する:
+  2. 各 Feature に対して `step_<feature_stem>.py` を生成・マージする
+  3. 各ステップ（Given/When/Then）に対して以下を生成する:
      - `@given` / `@when` / `@then` デコレータ付きのステップ関数
      - 関数名はステップ文のハッシュ先頭8文字: `<prefix>_<hash8>`
-     - docstring にオリジナルのステップ文を記載
-  5. 同一ステップ文が複数シナリオで使われる場合、関数は1回のみ生成する（重複排除）
+     - docstring にオリジナルのステップ文と Scenarios セクションを記載
+  4. 同一ステップ文が複数シナリオで使われる場合、関数は1回のみ生成する（重複排除）
+  5. Docstring の Scenarios セクションには、そのステップを使用する全シナリオを列挙する
 
-  ### 上書き制御
-  - デフォルトでは既存ファイルをスキップし、警告メッセージを表示する
-  - `--overwrite` フラグで既存ファイルの上書きを許可する
+  ### 差分マージ動作（既存ファイルあり・--overwrite なし）
+  1. `.feature` から「仮想新規ファイル」を生成し、理想的な関数順序を得る
+  2. 既存ファイルの関数名リストと照合する:
+     - 既存関数が存在する → Docstring の Scenarios セクションに不足シナリオを追記
+     - 存在しない新規関数 → `.feature` の出現順を維持した位置に挿入する
+        （直前に存在する関数の直後、アンカーがなければヘッダー直後）
+  3. 変更がない場合はファイルへの書き込みを行わない（スキップ）
+  4. 変更がある場合は unified diff を生成してコンソールに表示する
+
+  ### 戻り値（`generate_test_file` 関数）
+  - `(Path, "created", "")` — 新規ファイル作成
+  - `(Path, "updated", diff_text)` — 既存ファイルへの差分マージ
+  - `None` — 変更なし（スキップ）
+
+  ### Git dirty チェック
+  - 既存ファイルに未コミットの変更がある場合、確認プロンプトを表示する
+  - `--force` を指定するとプロンプトをスキップして強制マージする
 
   ## 受け入れ基準
   - `.feature` ファイルから behave テストコードが生成されること
   - 生成された関数名に日本語が含まれないこと（ハッシュベース命名）
   - 生成されたコードが構文的に正しい Python であること
   - 同一ステップが重複生成されないこと
-  - 既存ファイルはデフォルトでスキップされること
+  - 各ステップ関数の Docstring に Scenarios セクションが含まれること
+  - 既存ファイルに差分がない場合はスキップされること
+  - 新規ステップが .feature の出現順で既存ファイルに挿入されること
+  - Git 未コミット変更がある場合に確認プロンプトを表示すること
+  - `--force` でプロンプトなしにマージが実行されること
