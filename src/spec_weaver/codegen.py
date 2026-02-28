@@ -138,8 +138,11 @@ def _collect_existing_steps(steps_dir: Path, exclude_file: Path | None = None) -
             continue
         try:
             content = py_file.read_text(encoding="utf-8")
-            for match in pattern.finditer(content):
-                existing_steps.add(match.group(1))
+            for line in content.splitlines():
+                if line.lstrip().startswith("#"):
+                    continue  # コメント行をスキップ（Duplicate コメントブロックを除外）
+                for match in pattern.finditer(line):
+                    existing_steps.add(match.group(1))
         except Exception:
             continue
     return existing_steps
@@ -290,12 +293,14 @@ def _merge_content(
     existing_content: str,
     ideal_order: list[str],
     ideal_func_to_block: dict[str, str],
+    duplicate_func_names: set[str] | None = None,
 ) -> str:
     """
     仮想新規ファイルの関数順序を基に、既存ファイルへ差分マージを行う。
 
     - 既存関数: Docstring の Scenarios セクションに不足シナリオを追記
     - 新規関数: .feature の出現順（ideal_order）に従い適切な位置に挿入
+    - スタブ関数で他ファイルに実装済みのもの: Duplicate コメントブロックへ置き換え
     """
     header, existing_blocks = _split_by_decorators(existing_content)
 
@@ -335,6 +340,18 @@ def _merge_content(
             new_block = ideal_func_to_block[func_name]
             result_pairs.insert(insert_pos, (func_name, new_block))
             result_names.insert(insert_pos, func_name)
+
+    # 他ファイルに実装済みのスタブを Duplicate コメントブロックへ置き換える
+    if duplicate_func_names:
+        for i, (func_name, block) in enumerate(result_pairs):
+            if func_name in duplicate_func_names and re.search(
+                r"raise NotImplementedError\('STEP:", block
+            ):
+                commented = "\n".join(f"# {line}" for line in block.rstrip("\n").split("\n"))
+                result_pairs[i] = (
+                    func_name,
+                    f"# [Duplicate Skip] This step is already defined elsewhere\n{commented}\n\n",
+                )
 
     return header + "".join(block for _, block in result_pairs)
 
@@ -394,8 +411,15 @@ def generate_test_file(
             ideal_order.append(fname)
             ideal_func_to_block[fname] = block
 
+    # 他ファイルに実装済みのステップ関数名を収集（スタブ→Duplicate コメント変換用）
+    duplicate_func_names: set[str] = set()
+    for meta in step_registry.values():
+        if meta["param_text"] in global_existing_steps:
+            fname = f"{meta['prefix']}_{_hash_name(meta['prefix'] + ':' + meta['param_text'])}"
+            duplicate_func_names.add(fname)
+
     existing_content = out_file.read_text(encoding="utf-8")
-    new_content = _merge_content(existing_content, ideal_order, ideal_func_to_block)
+    new_content = _merge_content(existing_content, ideal_order, ideal_func_to_block, duplicate_func_names)
 
     if new_content == existing_content:
         return None
