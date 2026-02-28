@@ -59,17 +59,19 @@ text: |
 - **Git 外での利用**: YAML に `created_at` / `updated_at` を手動記入することで対応可能。
 - **不変**: `created_at`（初回コミット日）は Git 履歴で自動的に不変となる。
 
+**テスト実行結果 (個別)**: ✅ 12/12 PASS
+
 ### 🧪 検証シナリオ
 
-- **Git履歴から updated_at を自動取得する** — Scenario （[features/timestamp.feature:8](../features/timestamp.md)）
-- **Git履歴から created_at を自動取得する** — Scenario （[features/timestamp.feature:13](../features/timestamp.md)）
-- **Git情報がない場合はYAML属性にフォールバック** — Scenario （[features/timestamp.feature:18](../features/timestamp.md)）
-- **Git情報もYAML属性もない場合のフォールバック** — Scenario （[features/timestamp.feature:24](../features/timestamp.md)）
-- **一覧テーブルにタイムスタンプ列が表示される** — Scenario （[features/timestamp.feature:33](../features/timestamp.md)）
-- **詳細ページにタイムスタンプが表示される** — Scenario （[features/timestamp.feature:41](../features/timestamp.md)）
-- **Git情報がない場合の一覧テーブル表示** — Scenario （[features/timestamp.feature:48](../features/timestamp.md)）
-- **stale アイテムの検出（Git履歴ベース）** — Scenario （[features/timestamp.feature:56](../features/timestamp.md)）
-- **閾値内のアイテムは stale と判定されない** — Scenario （[features/timestamp.feature:64](../features/timestamp.md)）
-- **Git情報もupdated_atもないアイテムは stale 判定の対象外** — Scenario （[features/timestamp.feature:70](../features/timestamp.md)）
-- **deprecated アイテムは stale 判定の対象外** — Scenario （[features/timestamp.feature:76](../features/timestamp.md)）
-- **--stale-days 0 で鮮度チェックを無効化** — Scenario （[features/timestamp.feature:83](../features/timestamp.md)）
+- ✅ PASS **Git履歴から updated_at を自動取得する** — Scenario （[features/timestamp.feature:8](../features/timestamp.md)）
+- ✅ PASS **Git履歴から created_at を自動取得する** — Scenario （[features/timestamp.feature:13](../features/timestamp.md)）
+- ✅ PASS **Git情報がない場合はYAML属性にフォールバック** — Scenario （[features/timestamp.feature:18](../features/timestamp.md)）
+- ✅ PASS **Git情報もYAML属性もない場合のフォールバック** — Scenario （[features/timestamp.feature:24](../features/timestamp.md)）
+- ✅ PASS **一覧テーブルにタイムスタンプ列が表示される** — Scenario （[features/timestamp.feature:33](../features/timestamp.md)）
+- ✅ PASS **詳細ページにタイムスタンプが表示される** — Scenario （[features/timestamp.feature:41](../features/timestamp.md)）
+- ✅ PASS **Git情報がない場合の一覧テーブル表示** — Scenario （[features/timestamp.feature:48](../features/timestamp.md)）
+- ✅ PASS **stale アイテムの検出（Git履歴ベース）** — Scenario （[features/timestamp.feature:56](../features/timestamp.md)）
+- ✅ PASS **閾値内のアイテムは stale と判定されない** — Scenario （[features/timestamp.feature:64](../features/timestamp.md)）
+- ✅ PASS **Git情報もupdated_atもないアイテムは stale 判定の対象外** — Scenario （[features/timestamp.feature:70](../features/timestamp.md)）
+- ✅ PASS **deprecated アイテムは stale 判定の対象外** — Scenario （[features/timestamp.feature:76](../features/timestamp.md)）
+- ✅ PASS **--stale-days 0 で鮮度チェックを無効化** — Scenario （[features/timestamp.feature:83](../features/timestamp.md)）

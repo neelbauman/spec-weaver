@@ -6,26 +6,24 @@ from behave import given, when, then, step
 # Steps
 # ======================================================================
 
-# [Duplicate Skip] This step is already defined elsewhere
-# @given('Doorstopツリーが初期化されている')  # type: ignore
-# def given_6df87eb3(context):
-#     """Doorstopツリーが初期化されている
-# 
-#     Scenarios:
-#       - 
-#     """
-#     raise NotImplementedError('STEP: Doorstopツリーが初期化されている')
+@given('Doorstopツリーが初期化されている')  # type: ignore
+def given_6df87eb3(context):
+    """Doorstopツリーが初期化されている
+
+    Scenarios:
+      - 
+    """
+    raise NotImplementedError('STEP: Doorstopツリーが初期化されている')
 
 
-# [Duplicate Skip] This step is already defined elsewhere
-# @given('以下のSPECアイテムが存在する:')  # type: ignore
-# def given_14c0b615(context):
-#     """以下のSPECアイテムが存在する:
-# 
-#     Scenarios:
-#       - 
-#     """
-#     raise NotImplementedError('STEP: 以下のSPECアイテムが存在する:')
+@given('以下のSPECアイテムが存在する:')  # type: ignore
+def given_14c0b615(context):
+    """以下のSPECアイテムが存在する:
+
+    Scenarios:
+      - 
+    """
+    raise NotImplementedError('STEP: 以下のSPECアイテムが存在する:')
 
 
 @given('SPEC-018 の impl_files に ["{param0}"] が設定されている')  # type: ignore

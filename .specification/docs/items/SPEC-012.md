@@ -40,8 +40,10 @@
 - 日付は `YYYY-MM-DD` 形式でそのまま表示する（ロケール変換は行わない）。
 - 両方未設定の場合でも列・行は表示し、`-` で埋める。
 
+**テスト実行結果 (個別)**: ✅ 3/3 PASS
+
 ### 🧪 検証シナリオ
 
-- **一覧テーブルにタイムスタンプ列が表示される** — Scenario （[features/timestamp.feature:33](../features/timestamp.md)）
-- **詳細ページにタイムスタンプが表示される** — Scenario （[features/timestamp.feature:41](../features/timestamp.md)）
-- **Git情報がない場合の一覧テーブル表示** — Scenario （[features/timestamp.feature:48](../features/timestamp.md)）
+- ✅ PASS **一覧テーブルにタイムスタンプ列が表示される** — Scenario （[features/timestamp.feature:33](../features/timestamp.md)）
+- ✅ PASS **詳細ページにタイムスタンプが表示される** — Scenario （[features/timestamp.feature:41](../features/timestamp.md)）
+- ✅ PASS **Git情報がない場合の一覧テーブル表示** — Scenario （[features/timestamp.feature:48](../features/timestamp.md)）

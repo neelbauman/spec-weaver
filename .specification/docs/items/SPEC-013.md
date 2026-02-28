@@ -57,10 +57,12 @@ stale アイテムが検出された場合、既存の監査結果テーブル�
 - stale アイテムの検出のみでは終了コードを非ゼロにしない（警告扱い）。
 - 既存の監査エラー（テスト漏れ・孤児タグ・Suspect）とは独立した報告とする。
 
+**テスト実行結果 (個別)**: ✅ 5/5 PASS
+
 ### 🧪 検証シナリオ
 
-- **stale アイテムの検出（Git履歴ベース）** — Scenario （[features/timestamp.feature:56](../features/timestamp.md)）
-- **閾値内のアイテムは stale と判定されない** — Scenario （[features/timestamp.feature:64](../features/timestamp.md)）
-- **Git情報もupdated_atもないアイテムは stale 判定の対象外** — Scenario （[features/timestamp.feature:70](../features/timestamp.md)）
-- **deprecated アイテムは stale 判定の対象外** — Scenario （[features/timestamp.feature:76](../features/timestamp.md)）
-- **--stale-days 0 で鮮度チェックを無効化** — Scenario （[features/timestamp.feature:83](../features/timestamp.md)）
+- ✅ PASS **stale アイテムの検出（Git履歴ベース）** — Scenario （[features/timestamp.feature:56](../features/timestamp.md)）
+- ✅ PASS **閾値内のアイテムは stale と判定されない** — Scenario （[features/timestamp.feature:64](../features/timestamp.md)）
+- ✅ PASS **Git情報もupdated_atもないアイテムは stale 判定の対象外** — Scenario （[features/timestamp.feature:70](../features/timestamp.md)）
+- ✅ PASS **deprecated アイテムは stale 判定の対象外** — Scenario （[features/timestamp.feature:76](../features/timestamp.md)）
+- ✅ PASS **--stale-days 0 で鮮度チェックを無効化** — Scenario （[features/timestamp.feature:83](../features/timestamp.md)）

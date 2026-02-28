@@ -44,8 +44,10 @@ spec-weaver ci <feature_dir>
 - テスト失敗時もドキュメント生成が行われ、FAIL 結果が反映されること
 - `--scaffold` オプションでテストコード生成も含められること
 
+**テスト実行結果 (個別)**: ✅ 3/3 PASS
+
 ### 🧪 検証シナリオ
 
-- **テスト実行とドキュメント生成の一貫実行** — Scenario （[features/ci.feature:5](../features/ci.md)）
-- **テスト失敗時のドキュメント生成継続** — Scenario （[features/ci.feature:13](../features/ci.md)）
-- **scaffold 付き ci 実行** — Scenario （[features/ci.feature:19](../features/ci.md)）
+- ✅ PASS **テスト実行とドキュメント生成の一貫実行** — Scenario （[features/ci.feature:5](../features/ci.md)）
+- ✅ PASS **テスト失敗時のドキュメント生成継続** — Scenario （[features/ci.feature:13](../features/ci.md)）
+- ✅ PASS **scaffold 付き ci 実行** — Scenario （[features/ci.feature:19](../features/ci.md)）

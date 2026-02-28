@@ -263,6 +263,18 @@ def _get_func_name_from_block(block: str) -> str | None:
     return m.group(1) if m else None
 
 
+def _get_param_texts_from_block(block: str) -> list[str]:
+    """ブロック内の全てのデコレータからステップのパラメータテキストを抽出する。"""
+    pattern = re.compile(r'@(?:given|when|then|step)\s*\(\s*["\'](.*?)["\']\s*\)')
+    return pattern.findall(block)
+
+
+def _get_primary_param_text(block: str) -> str | None:
+    """ブロックの最初のデコレータのパラメータテキストを取得する。"""
+    pts = _get_param_texts_from_block(block)
+    return pts[0] if pts else None
+
+
 def _extract_scenarios_from_block(block: str) -> list[str]:
     """ブロック内の Scenarios セクションからシナリオ名のリストを返す。"""
     m = re.search(r"Scenarios:\s*\n((?:\s+- .+\n)*)", block)
@@ -306,27 +318,43 @@ def _merge_content(
 
     # 既存ブロックを (func_name, block_str) のリストに変換
     result_pairs: list[tuple[str, str]] = []
+    existing_param_texts: dict[str, int] = {}
     for block in existing_blocks:
         fname = _get_func_name_from_block(block)
         if fname:
+            idx = len(result_pairs)
             result_pairs.append((fname, block))
+            for pt in _get_param_texts_from_block(block):
+                existing_param_texts[pt] = idx
         elif result_pairs:
             # 関数名が取れないブロック（コメントアウトされた重複など）は直前ブロックに結合
             prev_name, prev_block = result_pairs[-1]
-            result_pairs[-1] = (prev_name, prev_block + block)
+            new_block = prev_block + block
+            result_pairs[-1] = (prev_name, new_block)
+            for pt in _get_param_texts_from_block(block):
+                existing_param_texts[pt] = len(result_pairs) - 1
 
     result_names = [name for name, _ in result_pairs]
 
     for i, func_name in enumerate(ideal_order):
+        ideal_block = ideal_func_to_block[func_name]
+        ideal_pt = _get_primary_param_text(ideal_block)
+        
+        match_idx = -1
         if func_name in result_names:
+            match_idx = result_names.index(func_name)
+        elif ideal_pt and ideal_pt in existing_param_texts:
+            match_idx = existing_param_texts[ideal_pt]
+
+        if match_idx != -1:
             # 既存関数: Scenarios セクションを更新
-            idx = result_names.index(func_name)
-            existing_block = result_pairs[idx][1]
-            ideal_scenarios = _extract_scenarios_from_block(ideal_func_to_block[func_name])
+            matched_func_name = result_pairs[match_idx][0]
+            existing_block = result_pairs[match_idx][1]
+            ideal_scenarios = _extract_scenarios_from_block(ideal_block)
             existing_scenarios = _extract_scenarios_from_block(existing_block)
             missing = [s for s in ideal_scenarios if s not in existing_scenarios]
             if missing:
-                result_pairs[idx] = (func_name, _add_scenarios_to_block(existing_block, missing))
+                result_pairs[match_idx] = (matched_func_name, _add_scenarios_to_block(existing_block, missing))
         else:
             # 新規関数: アンカーを探して挿入位置を決定
             # ideal_order[i] より前で result_names に存在する最後の関数 = アンカー

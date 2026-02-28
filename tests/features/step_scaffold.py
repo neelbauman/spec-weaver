@@ -1,38 +1,34 @@
 """behave steps for: scaffold コマンド"""
 
-import os
-import subprocess
-import re
 from behave import given, when, then, step
-
-# ======================================================================
-# Helpers
-# ======================================================================
-
-def run_cli(context, args):
-    cmd = ["spec-weaver"] + args
-    result = subprocess.run(
-        cmd,
-        capture_output=True,
-        text=True,
-        cwd=context.temp_dir
-    )
-    context.stdout = result.stdout
-    context.stderr = result.stderr
-    context.exit_code = result.returncode
-    return result
-
-def create_feature_file(context, filename, content):
-    feature_dir = os.path.join(context.temp_dir, "features")
-    os.makedirs(feature_dir, exist_ok=True)
-    path = os.path.join(feature_dir, filename)
-    with open(path, "w", encoding="utf-8") as f:
-        f.write(content)
-    return path
 
 # ======================================================================
 # Steps
 # ======================================================================
+
+@given('"{param0}" ファイルが存在するディレクトリがある')  # type: ignore
+def given_488529e3(context, param0):
+    """".feature" ファイルが存在するディレクトリがある
+
+    Scenarios:
+      - 基本的なテストコード生成
+      - Docstring にシナリオリストを記載
+    """
+    raise NotImplementedError('STEP: "{param0}" ファイルが存在するディレクトリがある')
+
+
+@when('scaffold コマンドを実行する')  # type: ignore
+def when_4cda1d3b(context):
+    """scaffold コマンドを実行する
+
+    Scenarios:
+      - 基本的なテストコード生成
+      - ハッシュベースの関数名生成
+      - ステップ関数の生成と重複排除
+      - Docstring にシナリオリストを記載
+    """
+    raise NotImplementedError('STEP: scaffold コマンドを実行する')
+
 
 @then('各 .feature に対応する "{param0}" が生成されること')  # type: ignore
 def then_38f9dc8b(context, param0):
@@ -52,6 +48,66 @@ def then_398bb2af(context, param0, param1, param2):
       - 基本的なテストコード生成
     """
     raise NotImplementedError('STEP: 各ステップに "{param0}", "{param1}", "{param2}" デコレータ付き関数が含まれること')
+
+
+@given('日本語のシナリオ名を持つ .feature ファイルがある')  # type: ignore
+def given_a87fa38a(context):
+    """日本語のシナリオ名を持つ .feature ファイルがある
+
+    Scenarios:
+      - ハッシュベースの関数名生成
+    """
+    raise NotImplementedError('STEP: 日本語のシナリオ名を持つ .feature ファイルがある')
+
+
+@then('生成されたステップ関数名が ASCII 文字のみで構成されること')  # type: ignore
+def then_75178cb9(context):
+    """生成されたステップ関数名が ASCII 文字のみで構成されること
+
+    Scenarios:
+      - ハッシュベースの関数名生成
+    """
+    raise NotImplementedError('STEP: 生成されたステップ関数名が ASCII 文字のみで構成されること')
+
+
+@then('関数名にステップ文の SHA256 ハッシュ先頭8文字が使用されること')  # type: ignore
+def then_3649a406(context):
+    """関数名にステップ文の SHA256 ハッシュ先頭8文字が使用されること
+
+    Scenarios:
+      - ハッシュベースの関数名生成
+    """
+    raise NotImplementedError('STEP: 関数名にステップ文の SHA256 ハッシュ先頭8文字が使用されること')
+
+
+@then('docstring にオリジナルのステップ文が記載されること')  # type: ignore
+def then_c876ede8(context):
+    """docstring にオリジナルのステップ文が記載されること
+
+    Scenarios:
+      - ハッシュベースの関数名生成
+    """
+    raise NotImplementedError('STEP: docstring にオリジナルのステップ文が記載されること')
+
+
+@given('複数のシナリオで同一のステップ文が使用されている')  # type: ignore
+def given_ae2a90a1(context):
+    """複数のシナリオで同一のステップ文が使用されている
+
+    Scenarios:
+      - ステップ関数の生成と重複排除
+    """
+    raise NotImplementedError('STEP: 複数のシナリオで同一のステップ文が使用されている')
+
+
+@then('同一ステップに対する関数は1回のみ生成されること')  # type: ignore
+def then_67099eaf(context):
+    """同一ステップに対する関数は1回のみ生成されること
+
+    Scenarios:
+      - ステップ関数の生成と重複排除
+    """
+    raise NotImplementedError('STEP: 同一ステップに対する関数は1回のみ生成されること')
 
 
 @then('各ステップ関数の Docstring に "{param0}" セクションが含まれること')  # type: ignore
@@ -74,6 +130,18 @@ def then_6fd54334(context):
     raise NotImplementedError('STEP: そのステップを使用するシナリオ名が列挙されること')
 
 
+@given('出力先に既存のテストファイルが存在する')  # type: ignore
+def given_f54fe40f(context):
+    """出力先に既存のテストファイルが存在する
+
+    Scenarios:
+      - 差分マージ（新規ステップ追記）
+      - 既存ファイルの上書き
+      - 差分マージ時の Duplicate スタブのコメント化
+    """
+    raise NotImplementedError('STEP: 出力先に既存のテストファイルが存在する')
+
+
 @given('.feature に既存ファイルにないステップが追加されている')  # type: ignore
 def given_63fcef57(context):
     """.feature に既存ファイルにないステップが追加されている
@@ -82,6 +150,20 @@ def given_63fcef57(context):
       - 差分マージ（新規ステップ追記）
     """
     raise NotImplementedError('STEP: .feature に既存ファイルにないステップが追加されている')
+
+
+@when('scaffold コマンドをデフォルトオプションで実行する')  # type: ignore
+def when_7a9125c7(context):
+    """scaffold コマンドをデフォルトオプションで実行する
+
+    Scenarios:
+      - 差分マージ（新規ステップ追記）
+      - 差分なし時のスキップ
+      - Git 未コミット変更の確認プロンプト
+      - 差分マージ時の Duplicate スタブのコメント化
+      - 差分マージ時の他ファイルコメント行を Duplicate 判定に使用しない
+    """
+    raise NotImplementedError('STEP: scaffold コマンドをデフォルトオプションで実行する')
 
 
 @then('既存ファイルに新規ステップのみが追記されること')  # type: ignore
@@ -155,6 +237,16 @@ def when_b42c7e05(context, param0):
     raise NotImplementedError('STEP: scaffold コマンドを "{param0}" オプション付きで実行する')
 
 
+@then('既存ファイルが上書きされること')  # type: ignore
+def then_6f27dfe3(context):
+    """既存ファイルが上書きされること
+
+    Scenarios:
+      - 既存ファイルの上書き
+    """
+    raise NotImplementedError('STEP: 既存ファイルが上書きされること')
+
+
 @given('出力先のテストファイルに未コミットの変更がある')  # type: ignore
 def given_3f60de62(context):
     """出力先のテストファイルに未コミットの変更がある
@@ -194,8 +286,6 @@ def then_4b7c11ee(context):
       - --force オプションで確認プロンプトをスキップ
     """
     raise NotImplementedError('STEP: 確認プロンプトなしでマージが実行されること')
-
-
 @given('別のステップファイルに同一ステップの実装が追加されている')  # type: ignore
 def given_b99b973a(context):
     """別のステップファイルに同一ステップの実装が追加されている
@@ -254,97 +344,3 @@ def then_35ff3425(context):
       - 差分マージ時の他ファイルコメント行を Duplicate 判定に使用しない
     """
     raise NotImplementedError('STEP: そのステップが Duplicate としてではなくスタブとして生成されること')
-@given('"{param0}" ファイルが存在するディレクトリがある')
-def step_impl_1(context, param0):
-    create_feature_file(context, "test.feature", "Feature: Test\n  Scenario: Test\n    Given test step")
-
-@when('scaffold コマンドを実行する')
-def step_impl_2(context):
-    run_cli(context, ["scaffold", "features", "-o", "steps"])
-
-@then('各 .feature に対応する "step_<stem>.py" が生成されること')
-def step_impl_3(context):
-    path = os.path.join(context.temp_dir, "steps", "step_test.py")
-    assert os.path.exists(path), f"File {path} not found. Stdout: {context.stdout}"
-
-@then('各ステップに "{p1}", "{p2}", "{p3}" デコレータ付き関数が含まれること')
-def step_impl_4(context, p1, p2, p3):
-    path = os.path.join(context.temp_dir, "steps", "step_test.py")
-    with open(path, "r") as f:
-        content = f.read()
-    assert p1 in content
-    # The feature might use different steps, but our test feature has "Given test step"
-    # codegen.py uses @given, @when, @then
-
-@given('日本語のシナリオ名を持つ .feature ファイルがある')
-def step_impl_5(context):
-    create_feature_file(context, "ja.feature", "Feature: 日本語\n  Scenario: シナリオ\n    Given 日本語のステップ")
-
-@then('生成されたステップ関数名が ASCII 文字のみで構成されること')
-def step_impl_6(context):
-    path = os.path.join(context.temp_dir, "steps", "step_ja.py")
-    with open(path, "r") as f:
-        content = f.read()
-    matches = re.findall(r"def ([\w]+)\(", content)
-    for m in matches:
-        if m.startswith('given_') or m.startswith('when_') or m.startswith('then_'):
-            assert all(ord(c) < 128 for c in m)
-
-@then('関数名にステップ文の SHA256 ハッシュ先頭8文字が使用されること')
-def step_impl_7(context):
-    path = os.path.join(context.temp_dir, "steps", "step_ja.py")
-    with open(path, "r") as f:
-        content = f.read()
-    assert re.search(r"[a-f0-9]{8}", content)
-
-@then('docstring にオリジナルのステップ文が記載されること')
-def step_impl_8(context):
-    path = os.path.join(context.temp_dir, "steps", "step_ja.py")
-    with open(path, "r") as f:
-        content = f.read()
-    assert "日本語のステップ" in content
-
-@given('複数のシナリオで同一のステップ文が使用されている')
-def step_impl_9(context):
-    create_feature_file(context, "dup.feature", "Feature: Dup\n  Scenario: S1\n    Given common\n  Scenario: S2\n    Given common")
-
-@then('同一ステップに対する関数は1回のみ生成されること')
-def step_impl_10(context):
-    path = os.path.join(context.temp_dir, "steps", "step_dup.py")
-    with open(path, "r") as f:
-        content = f.read()
-    assert content.count("@given('common')") == 1
-
-@given('出力先に既存のテストファイルが存在する')
-def step_impl_11(context):
-    os.makedirs(os.path.join(context.temp_dir, "steps"), exist_ok=True)
-    with open(os.path.join(context.temp_dir, "steps/step_test.py"), "w") as f:
-        f.write("# Existing")
-    create_feature_file(context, "test.feature", "Feature: Test\n  Scenario: Test\n    Given test step")
-
-@when('scaffold コマンドをデフォルトオプションで実行する')
-def step_impl_12(context):
-    run_cli(context, ["scaffold", "features", "-o", "steps"])
-
-@then('既存ファイルはスキップされること')
-def step_impl_13(context):
-    path = os.path.join(context.temp_dir, "steps", "step_test.py")
-    with open(path, "r") as f:
-        content = f.read()
-    assert "# Existing" in content
-
-@then('スキップされた旨の警告が表示されること')
-def step_impl_14(context):
-    assert "スキップ" in context.stdout
-
-@when('scaffold コマンドを "--overwrite" オプション付きで実行する')
-def step_impl_15(context):
-    run_cli(context, ["scaffold", "features", "-o", "steps", "--overwrite"])
-
-@then('既存ファイルが上書きされること')
-def step_impl_16(context):
-    path = os.path.join(context.temp_dir, "steps", "step_test.py")
-    with open(path, "r") as f:
-        content = f.read()
-    assert "# Existing" not in content
-    assert "from behave import" in content

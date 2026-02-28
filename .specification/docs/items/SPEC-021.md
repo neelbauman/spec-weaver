@@ -78,11 +78,15 @@ def _extract_scenarios_with_inherited_tags(
 
 - `_extract_tag_map_recursive()`: 本仕様実装後、コアジェネレータに完全に置き換えられ不要となる
 
+**テスト実行結果 (集計)**: -
+
+**テスト実行結果 (個別)**: -
+
 ### 🧪 検証シナリオ
 
-- **Featureタグのみが付与されたfeatureファイルでScenarioがタグマップに登録される** — Scenario （[features/data_extraction.feature:54](../features/data_extraction.md)）
-- **Featureタグを継承したエントリのkeywordはScenarioになる** — Scenario （[features/data_extraction.feature:60](../features/data_extraction.md)）
-- **Feature→Rule→Scenarioの多段継承でEffective Tagsが正しく算出される** — Scenario （[features/data_extraction.feature:66](../features/data_extraction.md)）
-- **シナリオ自身のタグと継承タグが共存してEffective Tagsを形成する** — Scenario （[features/data_extraction.feature:73](../features/data_extraction.md)）
-- **Scenario Outlineの全ExamplesタグがEffective Tagsに集約される** — Scenario （[features/data_extraction.feature:80](../features/data_extraction.md)）
-- **プレフィックスフィルタはEffective Tags算出後に適用される** — Scenario （[features/data_extraction.feature:87](../features/data_extraction.md)）
+- - **Featureタグのみが付与されたfeatureファイルでScenarioがタグマップに登録される** — Scenario （[features/data_extraction.feature:54](../features/data_extraction.md)）
+- - **Featureタグを継承したエントリのkeywordはScenarioになる** — Scenario （[features/data_extraction.feature:60](../features/data_extraction.md)）
+- - **Feature→Rule→Scenarioの多段継承でEffective Tagsが正しく算出される** — Scenario （[features/data_extraction.feature:66](../features/data_extraction.md)）
+- - **シナリオ自身のタグと継承タグが共存してEffective Tagsを形成する** — Scenario （[features/data_extraction.feature:73](../features/data_extraction.md)）
+- - **Scenario Outlineの全ExamplesタグがEffective Tagsに集約される** — Scenario （[features/data_extraction.feature:80](../features/data_extraction.md)）
+- - **プレフィックスフィルタはEffective Tags算出後に適用される** — Scenario （[features/data_extraction.feature:87](../features/data_extraction.md)）

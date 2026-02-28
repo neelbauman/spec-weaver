@@ -6,25 +6,17 @@ from behave import given, when, then, step
 # Steps
 # ======================================================================
 
-# 使用されるシナリオ:
-# - Doorstop APIによる仕様ID集合の取得
-@given('Doorstopプロジェクトにアクティブな仕様アイテムが存在する')
+@given('Doorstopプロジェクトにアクティブな仕様アイテムが存在する')  # type: ignore
 def given_a04781e9(context):
     """Doorstopプロジェクトにアクティブな仕様アイテムが存在する
 
     Scenarios:
       - Doorstop APIによる仕様ID集合の取得
     """
-    import subprocess
-    from helpers import setup_doorstop, create_feature_file, run_cli
-    setup_doorstop(context)
-    subprocess.run(['doorstop', 'add', 'SPEC'], cwd=context.temp_dir, check=True)
+    raise NotImplementedError('STEP: Doorstopプロジェクトにアクティブな仕様アイテムが存在する')
 
-# 使用されるシナリオ:
-# - Doorstop APIによる仕様ID集合の取得
-# - 非アクティブなアイテムの除外
-# - テスト不可能な仕様の除外
-@when('仕様ID集合を取得する')
+
+@when('仕様ID集合を取得する')  # type: ignore
 def when_e56707cb(context):
     """仕様ID集合を取得する
 
@@ -33,140 +25,100 @@ def when_e56707cb(context):
       - 非アクティブなアイテムの除外
       - テスト不可能な仕様の除外
     """
-    from spec_weaver.doorstop import get_specs
-    from pathlib import Path
-    context.spec_ids = get_specs(Path(context.temp_dir), prefix=None)
+    raise NotImplementedError('STEP: 仕様ID集合を取得する')
 
-# 使用されるシナリオ:
-# - Doorstop APIによる仕様ID集合の取得
-@then('アクティブかつtestableな仕様IDのみが返されること')
+
+@then('アクティブかつtestableな仕様IDのみが返されること')  # type: ignore
 def then_6823b180(context):
     """アクティブかつtestableな仕様IDのみが返されること
 
     Scenarios:
       - Doorstop APIによる仕様ID集合の取得
     """
-    assert 'SPEC-001' in context.spec_ids
+    raise NotImplementedError('STEP: アクティブかつtestableな仕様IDのみが返されること')
 
-# 使用されるシナリオ:
-# - 非アクティブなアイテムの除外
-@given('Doorstopプロジェクトに active: false のアイテムが存在する')
+
+@given('Doorstopプロジェクトに active: false のアイテムが存在する')  # type: ignore
 def given_dccca3dc(context):
     """Doorstopプロジェクトに active: false のアイテムが存在する
 
     Scenarios:
       - 非アクティブなアイテムの除外
     """
-    import subprocess, os, re
-    from helpers import setup_doorstop, create_feature_file, run_cli
-    setup_doorstop(context)
-    subprocess.run(['doorstop', 'add', 'SPEC'], cwd=context.temp_dir, check=True)
-    path = os.path.join(context.temp_dir, 'specs', 'SPEC-001.yml')
-    with open(path, 'r', encoding='utf-8') as f:
-        content = f.read()
-    # Replace active: true or active: True with active: false
-    content = re.sub(r'active:\s*(true|True)', 'active: false', content)
-    with open(path, 'w', encoding='utf-8') as f:
-        f.write(content)
+    raise NotImplementedError('STEP: Doorstopプロジェクトに active: false のアイテムが存在する')
 
 
-# 使用されるシナリオ:
-# - 非アクティブなアイテムの除外
-@then('非アクティブなアイテムは結果に含まれないこと')
+@then('非アクティブなアイテムは結果に含まれないこと')  # type: ignore
 def then_99bfaa46(context):
     """非アクティブなアイテムは結果に含まれないこと
 
     Scenarios:
       - 非アクティブなアイテムの除外
     """
-    assert 'SPEC-001' not in context.spec_ids
+    raise NotImplementedError('STEP: 非アクティブなアイテムは結果に含まれないこと')
 
-# 使用されるシナリオ:
-# - テスト不可能な仕様の除外
-@given('Doorstopプロジェクトに testable: false のアイテムが存在する')
+
+@given('Doorstopプロジェクトに testable: false のアイテムが存在する')  # type: ignore
 def given_d534a041(context):
     """Doorstopプロジェクトに testable: false のアイテムが存在する
 
     Scenarios:
       - テスト不可能な仕様の除外
     """
-    import subprocess, os
-    from helpers import setup_doorstop, create_feature_file, run_cli
-    setup_doorstop(context)
-    subprocess.run(['doorstop', 'add', 'SPEC'], cwd=context.temp_dir, check=True)
-    path = os.path.join(context.temp_dir, 'specs', 'SPEC-001.yml')
-    with open(path, 'a', encoding='utf-8') as f:
-        f.write('testable: false\n')
+    raise NotImplementedError('STEP: Doorstopプロジェクトに testable: false のアイテムが存在する')
 
-# 使用されるシナリオ:
-# - テスト不可能な仕様の除外
-@then('testable: false のアイテムは結果に含まれないこと')
+
+@then('testable: false のアイテムは結果に含まれないこと')  # type: ignore
 def then_f3fad2a6(context):
     """testable: false のアイテムは結果に含まれないこと
 
     Scenarios:
       - テスト不可能な仕様の除外
     """
-    assert 'SPEC-001' not in context.spec_ids
+    raise NotImplementedError('STEP: testable: false のアイテムは結果に含まれないこと')
 
-# 使用されるシナリオ:
-# - プレフィックスによるフィルタリング
-@given('DoorstopプロジェクトにREQアイテムとSPECアイテムが混在する')
+
+@given('DoorstopプロジェクトにREQアイテムとSPECアイテムが混在する')  # type: ignore
 def given_7f8e9c65(context):
     """DoorstopプロジェクトにREQアイテムとSPECアイテムが混在する
 
     Scenarios:
       - プレフィックスによるフィルタリング
     """
-    import subprocess
-    from helpers import setup_doorstop, create_feature_file, run_cli
-    setup_doorstop(context, prefixes=['REQ', 'SPEC'])
-    subprocess.run(['doorstop', 'add', 'REQ'], cwd=context.temp_dir, check=True)
-    subprocess.run(['doorstop', 'add', 'SPEC'], cwd=context.temp_dir, check=True)
+    raise NotImplementedError('STEP: DoorstopプロジェクトにREQアイテムとSPECアイテムが混在する')
 
-# 使用されるシナリオ:
-# - プレフィックスによるフィルタリング
-@when('プレフィックス "{param0}" で仕様ID集合を取得する')
+
+@when('プレフィックス "{param0}" で仕様ID集合を取得する')  # type: ignore
 def when_1d11bcd6(context, param0):
-    """プレフィックスで仕様ID集合を取得する
+    """プレフィックス "SPEC" で仕様ID集合を取得する
 
     Scenarios:
       - プレフィックスによるフィルタリング
     """
-    from spec_weaver.doorstop import get_specs
-    from pathlib import Path
-    context.spec_ids = get_specs(Path(context.temp_dir), prefix=param0)
+    raise NotImplementedError('STEP: プレフィックス "{param0}" で仕様ID集合を取得する')
 
-# 使用されるシナリオ:
-# - プレフィックスによるフィルタリング
-@then('SPECプレフィックスのアイテムのみが返されること')
+
+@then('SPECプレフィックスのアイテムのみが返されること')  # type: ignore
 def then_b5f39418(context):
     """SPECプレフィックスのアイテムのみが返されること
 
     Scenarios:
       - プレフィックスによるフィルタリング
     """
-    assert 'SPEC-001' in context.spec_ids
-    assert 'REQ-001' not in context.spec_ids
+    raise NotImplementedError('STEP: SPECプレフィックスのアイテムのみが返されること')
 
-# 使用されるシナリオ:
-# - Gherkin ASTからのタグ抽出
-@given('Gherkin .feature ファイルに @SPEC-001 タグが付与されている')
+
+@given('Gherkin .feature ファイルに @SPEC-001 タグが付与されている')  # type: ignore
 def given_b830a393(context):
     """Gherkin .feature ファイルに @SPEC-001 タグが付与されている
 
     Scenarios:
       - Gherkin ASTからのタグ抽出
     """
-    from helpers import setup_doorstop, create_feature_file, run_cli
-    create_feature_file(context, 'test.feature', '@SPEC-001\nFeature: Test\n  Scenario: Test\n    Given test')
+    raise NotImplementedError('STEP: Gherkin .feature ファイルに @SPEC-001 タグが付与されている')
 
-# 使用されるシナリオ:
-# - Gherkin ASTからのタグ抽出
-# - Feature・Scenario両レベルのタグ抽出
-# - サブディレクトリ内のfeatureファイルの再帰探索
-# - Gherkin構文エラーの検出
-@when('タグ集合を取得する')
+
+@when('タグ集合を取得する')  # type: ignore
 def when_a12b8a55(context):
     """タグ集合を取得する
 
@@ -176,100 +128,79 @@ def when_a12b8a55(context):
       - サブディレクトリ内のfeatureファイルの再帰探索
       - Gherkin構文エラーの検出
     """
-    from spec_weaver.gherkin import get_tags
-    from pathlib import Path
-    import os
-    feature_dir = Path(context.temp_dir) / 'features'
-    try:
-        # get_tags returns a set of tag names (without @)
-        context.tags = get_tags(feature_dir)
-    except Exception as e:
-        context.exc = e
+    raise NotImplementedError('STEP: タグ集合を取得する')
 
-# 使用されるシナリオ:
-# - Gherkin ASTからのタグ抽出
-@then('"{param0}" がタグ集合に含まれること')
+
+@then('"{param0}" がタグ集合に含まれること')  # type: ignore
 def then_e8d01468(context, param0):
-    """タグ集合に含まれること
+    """"SPEC-001" がタグ集合に含まれること
 
     Scenarios:
       - Gherkin ASTからのタグ抽出
     """
-    assert param0 in context.tags
+    raise NotImplementedError('STEP: "{param0}" がタグ集合に含まれること')
 
-# 使用されるシナリオ:
-# - Feature・Scenario両レベルのタグ抽出
-@given('Feature レベルと Scenario レベルに異なるSPECタグが付与されている')
+
+@given('Feature レベルと Scenario レベルに異なるSPECタグが付与されている')  # type: ignore
 def given_07def24f(context):
     """Feature レベルと Scenario レベルに異なるSPECタグが付与されている
 
     Scenarios:
       - Feature・Scenario両レベルのタグ抽出
     """
-    from helpers import setup_doorstop, create_feature_file, run_cli
-    create_feature_file(context, 'test.feature', '@SPEC-001\nFeature: Test\n  @SPEC-002\n  Scenario: Test\n    Given test')
+    raise NotImplementedError('STEP: Feature レベルと Scenario レベルに異なるSPECタグが付与されている')
 
-# 使用されるシナリオ:
-# - Feature・Scenario両レベルのタグ抽出
-@then('両方のレベルのタグがすべて抽出されること')
+
+@then('両方のレベルのタグがすべて抽出されること')  # type: ignore
 def then_d712dc38(context):
     """両方のレベルのタグがすべて抽出されること
 
     Scenarios:
       - Feature・Scenario両レベルのタグ抽出
     """
-    assert 'SPEC-001' in context.tags
-    assert 'SPEC-002' in context.tags
+    raise NotImplementedError('STEP: 両方のレベルのタグがすべて抽出されること')
 
-# 使用されるシナリオ:
-# - サブディレクトリ内のfeatureファイルの再帰探索
-@given('サブディレクトリに .feature ファイルが存在する')
+
+@given('サブディレクトリに .feature ファイルが存在する')  # type: ignore
 def given_1427ca58(context):
     """サブディレクトリに .feature ファイルが存在する
 
     Scenarios:
       - サブディレクトリ内のfeatureファイルの再帰探索
     """
-    import os
-    os.makedirs(os.path.join(context.temp_dir, 'features', 'sub'), exist_ok=True)
-    with open(os.path.join(context.temp_dir, 'features', 'sub', 'sub.feature'), 'w', encoding='utf-8') as f:
-        f.write('@SPEC-003\nFeature: Sub\n  Scenario: Sub\n    Given sub')
+    raise NotImplementedError('STEP: サブディレクトリに .feature ファイルが存在する')
 
-# 使用されるシナリオ:
-# - サブディレクトリ内のfeatureファイルの再帰探索
-@then('サブディレクトリ内のタグも含めて抽出されること')
+
+@then('サブディレクトリ内のタグも含めて抽出されること')  # type: ignore
 def then_1c0ec472(context):
     """サブディレクトリ内のタグも含めて抽出されること
 
     Scenarios:
       - サブディレクトリ内のfeatureファイルの再帰探索
     """
-    assert 'SPEC-003' in context.tags
+    raise NotImplementedError('STEP: サブディレクトリ内のタグも含めて抽出されること')
 
 
-# 使用されるシナリオ:
-# - Gherkin構文エラーの検出
-@given('構文的に不正な .feature ファイルが存在する')
+@given('構文的に不正な .feature ファイルが存在する')  # type: ignore
 def given_540458bc(context):
     """構文的に不正な .feature ファイルが存在する
 
     Scenarios:
       - Gherkin構文エラーの検出
     """
-    from helpers import setup_doorstop, create_feature_file, run_cli
-    create_feature_file(context, 'invalid.feature', 'Feature Test')
+    raise NotImplementedError('STEP: 構文的に不正な .feature ファイルが存在する')
 
-# 使用されるシナリオ:
-# - Gherkin構文エラーの検出
-@then('ValueError が発生しGherkin構文エラーが報告されること')
+
+@then('ValueError が発生しGherkin構文エラーが報告されること')  # type: ignore
 def then_c5d0b4fe(context):
     """ValueError が発生しGherkin構文エラーが報告されること
 
     Scenarios:
       - Gherkin構文エラーの検出
     """
-    assert hasattr(context, 'exc')
-    assert context.exc is not None
+    raise NotImplementedError('STEP: ValueError が発生しGherkin構文エラーが報告されること')
+
+
 @given('Feature レベルに仕様タグが付与されており、配下のシナリオにはタグが付いていない')  # type: ignore
 def given_630f9d2e(context):
     """Feature レベルに仕様タグが付与されており、配下のシナリオにはタグが付いていない

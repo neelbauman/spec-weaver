@@ -38,8 +38,10 @@ Gherkinのfeatureファイルにはタグ（`@SPEC-003` 等）で仕様IDが紐�
 - 複数アイテムが同一featureを参照する場合、全UIDのリンクが「/」区切りで表示されること
 - どのアイテムにも参照されていないfeatureにはバックリンク行が表示されないこと
 
+**テスト実行結果 (個別)**: ✅ 3/3 PASS
+
 ### 🧪 検証シナリオ
 
-- **feature MDページへのバックリンク生成** — Scenario （[features/build.feature:53](../features/build.md)）
-- **複数アイテムを参照するfeatureのバックリンク** — Scenario （[features/build.feature:60](../features/build.md)）
-- **タグのないfeatureにはバックリンクを表示しない** — Scenario （[features/build.feature:66](../features/build.md)）
+- ✅ PASS **feature MDページへのバックリンク生成** — Scenario （[features/build.feature:53](../features/build.md)）
+- ✅ PASS **複数アイテムを参照するfeatureのバックリンク** — Scenario （[features/build.feature:60](../features/build.md)）
+- ✅ PASS **タグのないfeatureにはバックリンクを表示しない** — Scenario （[features/build.feature:66](../features/build.md)）
