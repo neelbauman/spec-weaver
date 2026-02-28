@@ -14,6 +14,7 @@ from spec_weaver.codegen import (
     _escape_string,
     _step_keyword_to_prefix,
     _resolve_step_prefixes,
+    _collect_existing_steps,
     generate_test_file,
 )
 
@@ -607,3 +608,86 @@ def test_ci_cmd_with_scaffold(mock_build, mock_subprocess, tmp_path):
     ])
 
     assert (test_dir / "step_sample.py").exists()
+
+
+# ---------------------------------------------------------------------------
+# バグ修正テスト
+# ---------------------------------------------------------------------------
+
+
+def test_collect_existing_steps_ignores_commented_duplicates(tmp_path):
+    """Duplicate コメントブロック内の @when 等はスキップされること（Bug 1 修正）。"""
+    steps_dir = tmp_path / "steps"
+    steps_dir.mkdir()
+
+    # コメントのみで実装なしのファイル（Duplicate コメントブロック形式）
+    commented_file = steps_dir / "step_other.py"
+    commented_file.write_text(
+        '"""behave steps for: other"""\n\n'
+        "from behave import given, when, then, step\n\n"
+        "# [Duplicate Skip] This step is already defined elsewhere\n"
+        "# @when('コメントされたステップ')  # type: ignore\n"
+        "# def when_abc12345(context):\n"
+        "#     raise NotImplementedError('STEP: コメントされたステップ')\n",
+        encoding="utf-8",
+    )
+
+    result = _collect_existing_steps(steps_dir)
+    assert "コメントされたステップ" not in result
+
+
+def test_merge_stub_replaced_with_duplicate_comment(tmp_path):
+    """他ファイルで実装されたステップのスタブが Duplicate コメントに置き換わること（Bug 2 修正）。"""
+    feature_dir = tmp_path / "features"
+    feature_dir.mkdir()
+    out_dir = tmp_path / "tests"
+    out_dir.mkdir()
+
+    foo_feature = feature_dir / "foo.feature"
+    foo_feature.write_text(
+        "Feature: foo機能\n"
+        "  Scenario: シナリオ\n"
+        "    Given 共有ステップがある\n"
+        "    When  foo操作を実行する\n"
+        "    Then  foo結果が得られること\n",
+        encoding="utf-8",
+    )
+
+    # 1回目: step_foo.py のスタブを生成
+    generate_test_file(foo_feature, out_dir, feature_dir)
+    step_foo = out_dir / "step_foo.py"
+    assert "@given('共有ステップがある')" in step_foo.read_text(encoding="utf-8")
+
+    # step_bar.py に「共有ステップがある」の実装を追加
+    step_bar = out_dir / "step_bar.py"
+    step_bar.write_text(
+        '"""behave steps for: bar機能"""\n\n'
+        "from behave import given\n\n"
+        "@given('共有ステップがある')  # type: ignore\n"
+        "def given_shared(context):\n"
+        '    """共有ステップがある"""\n'
+        "    pass  # 実装済み\n",
+        encoding="utf-8",
+    )
+
+    # 2回目: 差分マージ → スタブが Duplicate コメントに置き換わること
+    result = generate_test_file(foo_feature, out_dir, feature_dir)
+
+    assert result is not None
+    _, status, _ = result
+    assert status == "updated"
+
+    content = step_foo.read_text(encoding="utf-8")
+
+    # 「共有ステップがある」が Duplicate コメントに置き換わっていること
+    assert "[Duplicate Skip]" in content
+    # Active な @given('共有ステップがある') はないこと（コメント行以外には存在しない）
+    active_given_lines = [
+        line for line in content.splitlines()
+        if "@given('共有ステップがある')" in line and not line.lstrip().startswith("#")
+    ]
+    assert not active_given_lines, f"Active @given が残っている: {active_given_lines}"
+
+    # 他のスタブ（foo操作・foo結果）は残っていること
+    assert "@when('foo操作を実行する')" in content
+    assert "@then('foo結果が得られること')" in content
