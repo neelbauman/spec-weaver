@@ -1,5 +1,10 @@
 # Feature: 仕様アイテムと実装ファイルのリンク管理
 
+> 📋 **Unreviewed Changes**: このフィーチャーファイル自体に未レビューの変更があります。レビュー後に `review` コマンドで更新してください。
+
+> ⚠️ **Suspect**: 関連する仕様や他のテストが変更されました。影響範囲のレビューが必要です。
+> **原因 (Unreviewed)**: [SPEC-020](../items/SPEC-020.md)
+
 **タグ**: `@SPEC-017` `@SPEC-018` `@SPEC-019` `@SPEC-020`
 
 **関連アイテム**: [SPEC-017](../items/SPEC-017.md) / [SPEC-018](../items/SPEC-018.md) / [SPEC-019](../items/SPEC-019.md) / [SPEC-020](../items/SPEC-020.md)

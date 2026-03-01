@@ -268,11 +268,11 @@ def test_result_badge_partial():
 
 def test_result_badge_no_results():
     """シナリオは存在するが実行結果がない場合。"""
-    assert result_badge(0, 0, 2) == "❓ -"
+    assert result_badge(0, 0, 2) == "-"
 
 
 def test_result_badge_no_scenarios():
-    assert result_badge(0, 0, 0) == "❓ -"
+    assert result_badge(0, 0, 0) == "-"
 
 
 # ---------------------------------------------------------------------------

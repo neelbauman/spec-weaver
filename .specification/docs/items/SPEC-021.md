@@ -1,5 +1,8 @@
 # [SPEC-021] Gherkinタグ継承（Effective Tags）
 
+> ⚠️ **Suspect**: 関連するアイテムやテストが変更されました。影響範囲のレビューが必要です。
+> **原因 (Unreviewed)**: [data_extraction.feature](../features/data_extraction.md)
+
 **実装状況**: ✅ implemented
 
 **作成日**: 2026-02-27　|　**更新日**: 2026-03-01

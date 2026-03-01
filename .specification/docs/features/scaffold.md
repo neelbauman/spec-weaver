@@ -1,5 +1,7 @@
 # Feature: scaffold コマンド
 
+> 📋 **Unreviewed Changes**: このフィーチャーファイル自体に未レビューの変更があります。レビュー後に `review` コマンドで更新してください。
+
 **タグ**: `@SPEC-015`
 
 **関連アイテム**: [SPEC-015](../items/SPEC-015.md)

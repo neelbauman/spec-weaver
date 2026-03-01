@@ -1,5 +1,7 @@
 # Feature: status コマンド
 
+> 📋 **Unreviewed Changes**: このフィーチャーファイル自体に未レビューの変更があります。レビュー後に `review` コマンドで更新してください。
+
 **タグ**: `@SPEC-007`
 
 **関連アイテム**: [SPEC-007](../items/SPEC-007.md)

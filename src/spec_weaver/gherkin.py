@@ -68,7 +68,12 @@ def get_tag_map(
     tag_map: TagMap = defaultdict(list)
 
     # 対象ディレクトリ内のすべての .feature ファイルを再帰的に検索
-    for feature_file in features_dir.rglob("*.feature"):
+    if features_dir.is_file():
+        files = [features_dir]
+    else:
+        files = list(features_dir.rglob("*.feature"))
+
+    for feature_file in files:
         try:
             with open(feature_file, "r", encoding="utf-8") as f:
                 content = f.read()
@@ -128,22 +133,39 @@ def _extract_scenarios_with_inherited_tags(
         return
 
     feature_tags = _collect_tags(feature)
+    feature_hash = _get_node_hash_content(feature)
+
+    bg_hash = ""
+    for child in feature.get("children", []):
+        if "background" in child:
+            bg_hash += _get_node_hash_content(child["background"])
+
+    base_hash = feature_hash + bg_hash
 
     for child in feature.get("children", []):
         if "rule" in child:
             rule = child["rule"]
             rule_tags = feature_tags | _collect_tags(rule)
+            rule_hash = base_hash + _get_node_hash_content(rule)
+
+            rule_bg_hash = ""
             for rule_child in rule.get("children", []):
-                yield from _process_scenario_node(rule_child, rule_tags, file_path)
+                if "background" in rule_child:
+                    rule_bg_hash += _get_node_hash_content(rule_child["background"])
+            
+            rule_base_hash = rule_hash + rule_bg_hash
+
+            for rule_child in rule.get("children", []):
+                yield from _process_scenario_node(rule_child, rule_tags, file_path, rule_base_hash)
         elif "scenario" in child:
-            yield from _process_scenario_node(child, feature_tags, file_path)
-        # background は無視
+            yield from _process_scenario_node(child, feature_tags, file_path, base_hash)
 
 
 def _process_scenario_node(
     child: Any,
     inherited_tags: Set[str],
     file_path: str,
+    base_hash_content: str = "",
 ) -> Generator[Tuple[Set[str], ScenarioInfo], None, None]:
     """
     Scenario または Scenario Outline のノードを処理し、
@@ -166,10 +188,10 @@ def _process_scenario_node(
 
     effective_tags = inherited_tags | own_tags | examples_tags
 
-    # フィンガープリントの計算（名前、キーワード、ステップ、Examples）
+    # フィンガープリントの計算（Feature情報、Background、名前、キーワード、ステップ、Examples）
     import hashlib
 
-    f_content = scenario.get("name", "") + keyword
+    f_content = base_hash_content + scenario.get("name", "") + keyword
     for step in scenario.get("steps", []):
         f_content += step.get("keyword", "") + step.get("text", "")
     for example in scenario.get("examples", []):
@@ -194,6 +216,14 @@ def _process_scenario_node(
 def _collect_tags(node: Any) -> Set[str]:
     """ノードの 'tags' リストから '@' を除去したタグ名の集合を返す。"""
     return {tag["name"].lstrip("@") for tag in node.get("tags", [])}
+
+
+def _get_node_hash_content(node: Any) -> str:
+    """ノード（Feature, Rule, Background等）のハッシュ計算用コンテンツ文字列を生成する。"""
+    content = node.get("keyword", "") + node.get("name", "") + (node.get("description", "") or "").strip()
+    for step in node.get("steps", []):
+        content += step.get("keyword", "") + step.get("text", "")
+    return content
 
 
 def get_tags(

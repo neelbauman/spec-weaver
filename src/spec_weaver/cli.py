@@ -33,6 +33,7 @@ from spec_weaver.doorstop import (
     get_item_warnings,
     update_item_attribute,
 )
+from spec_weaver.review_state import compute_review_state, ReviewState
 from spec_weaver.gherkin import get_tag_map, get_tags, get_spec_fingerprints
 from spec_weaver.test_results import (
     TestResultMap,
@@ -65,29 +66,11 @@ def _impl_status_badge(item) -> str:
     return IMPL_STATUS_BADGE.get(str(status), f"{status}")
 
 
-def _review_status_badge(item, gherkin_fingerprints: Optional[dict] = None) -> str:
-    """Doorstopのレビューステータスをバッジ文字列に変換する。"""
-    warnings = get_item_warnings(item)
-    uid = str(item.uid)
-
-    # 1. Gherkin 側の変更 (Test Unreviewed)
-    if gherkin_fingerprints:
-        actual_fp = gherkin_fingerprints.get(uid)
-        expected_fp = _get_custom_attribute(item, "test_fingerprint", None)
-        if expected_fp and isinstance(expected_fp, str):
-            expected_fp = expected_fp.strip()
-
-        if actual_fp and actual_fp != expected_fp:
-            return "📋 test-unreviewed"
-
-    # 2. SPEC 側の変更
-    if warnings.has_suspect_links:
-        return "⚠️ suspect"
-    if warnings.has_unreviewed_changes:
-        if gherkin_fingerprints and uid in gherkin_fingerprints:
-            return "⚠️ test-suspect"
-        return "📋 unreviewed"
-
+def _review_status_badge(item_or_id: str | Any, review_state: Optional[ReviewState] = None) -> str:
+    """DoorstopのレビューステータスまたはGherkin Featureのステータスをバッジ文字列に変換する。"""
+    if review_state:
+        uid = str(getattr(item_or_id, "uid", item_or_id))
+        return review_state.get_status(uid)
     return "✅ reviewed"
 
 
@@ -228,44 +211,32 @@ def audit_cmd(
                 except Exception:
                     gherkin_fingerprints = {}
 
-                suspect_link_specs: dict[str, list[str]] = {}
+                try:
+                    tag_map = get_tag_map(feature_dir, search_prefixes)
+                except Exception:
+                    tag_map = {}
+
+                review_state = compute_review_state(raw_items, gherkin_fingerprints, tag_map)
+
+                suspect_specs: dict[str, set[str]] = {}
                 unreviewed_specs: set[str] = set()
-                test_suspect_specs: set[str] = set()
-                gherkin_unreviewed: list[
-                    tuple[str, str, str]
-                ] = []  # (uid, actual, expected)
 
                 for uid, item in raw_items.items():
                     if prefix and not uid.startswith(prefix):
                         continue
 
-                    # 1. Doorstop 本体の警告
-                    w = get_item_warnings(item)
-                    if w.has_suspect_links:
-                        suspect_link_specs[uid] = w.suspect_link_targets
-                    if w.has_unreviewed_changes:
-                        if uid in gherkin_fingerprints:
-                            test_suspect_specs.add(uid)
-                        else:
-                            unreviewed_specs.add(uid)
-
-                    # 2. Gherkin フィンガープリントの不一致 (Test Unreviewed)
-                    actual_fp = gherkin_fingerprints.get(uid)
-                    expected_fp = _get_custom_attribute(item, "test_fingerprint", None)
-                    if expected_fp and isinstance(expected_fp, str):
-                        expected_fp = expected_fp.strip()
-
-                    if actual_fp and actual_fp != expected_fp:
-                        gherkin_unreviewed.append((uid, actual_fp, expected_fp))
+                    status = review_state.get_status(uid)
+                    if "unreviewed" in status:
+                        unreviewed_specs.add(uid)
+                    if "suspect" in status:
+                        suspect_specs[uid] = review_state.suspect_causes.get(uid, set())
 
             except Exception as e:
                 console.print(
                     f"[bold red]❌ Suspect状態の確認に失敗しました:[/bold red] {e}"
                 )
-                suspect_link_specs = {}
+                suspect_specs = {}
                 unreviewed_specs = set()
-                test_suspect_specs = set()
-                gherkin_unreviewed = []
 
         untested_specs = specs_in_db - tags_in_code
         orphaned_tags = tags_in_code - specs_in_db
@@ -293,18 +264,18 @@ def audit_cmd(
                 table.add_row(f"@{tag}")
             console.print(table)
 
-        if suspect_link_specs:
+        if suspect_specs:
             has_error = True
             console.print(
-                "\n[bold yellow]⚠️ Suspect Link — 上位アイテムが変更されています:[/bold yellow]"
+                "\n[bold yellow]⚠️ Suspect — 関連アイテムが変更されています:[/bold yellow]"
             )
             table = Table(show_header=True, header_style="bold magenta")
             table.add_column("Spec ID", style="dim")
-            table.add_column("変更された上位アイテム", style="dim")
+            table.add_column("原因アイテム", style="dim")
             table.add_column("アクション", style="dim")
-            for spec in sorted(suspect_link_specs):
-                targets = ", ".join(suspect_link_specs[spec]) or "(全リンク)"
-                table.add_row(spec, targets, "doorstop clear / レビュー後に clear")
+            for spec in sorted(suspect_specs):
+                causes = ", ".join(sorted(suspect_specs[spec])) or "不明"
+                table.add_row(spec, causes, "影響範囲を確認し、必要に応じて修正")
             console.print(table)
 
         if unreviewed_specs:
@@ -316,37 +287,7 @@ def audit_cmd(
             table.add_column("Spec ID", style="dim")
             table.add_column("アクション", style="dim")
             for spec in sorted(unreviewed_specs):
-                table.add_row(spec, "doorstop review / 内容を確認してレビュー")
-            console.print(table)
-
-        if test_suspect_specs:
-            has_error = True
-            console.print(
-                "\n[bold yellow]⚠️ Test Suspect — 仕様が変更されたため、対応するテストの確認が必要です:[/bold yellow]"
-            )
-            table = Table(show_header=True, header_style="bold magenta")
-            table.add_column("Spec ID", style="dim")
-            table.add_column("アクション", style="dim")
-            for spec in sorted(test_suspect_specs):
-                table.add_row(
-                    spec, "テストを確認し、必要なら修正後 doorstop review を実行"
-                )
-            console.print(table)
-
-        if gherkin_unreviewed:
-            has_error = True
-            console.print(
-                "\n[bold yellow]🥒 Test Unreviewed — Gherkin シナリオが変更されています:[/bold yellow]"
-            )
-            table = Table(show_header=True, header_style="bold magenta")
-            table.add_column("Spec ID", style="dim")
-            table.add_column("期待されるハッシュ", style="dim")
-            table.add_column("実際のハッシュ", style="dim")
-            table.add_column("アクション", style="dim")
-            for uid, actual, expected in sorted(gherkin_unreviewed):
-                exp_str = (expected[:8] + "...") if expected else "(なし)"
-                act_str = actual[:8] + "..."
-                table.add_row(uid, exp_str, act_str, f"spec-weaver review {uid}")
+                table.add_row(spec, "doorstop review / または spec-weaver review")
             console.print(table)
 
         # stale チェック（終了コードには影響しない）
@@ -779,7 +720,7 @@ def ci_cmd(
 @app.command("review")
 def review_cmd(
     item_id: str = typer.Argument(
-        ..., help="レビュー完了としてフィンガープリントを更新するアイテムID"
+        ..., help="レビュー完了としてフィンガープリントを更新するアイテムID、または .feature ファイルパス"
     ),
     feature_dir: Path = typer.Option(
         Path("specification/features"),
@@ -803,10 +744,53 @@ def review_cmd(
     ),
 ) -> None:
     """
-    指定したアイテムの Gherkin フィンガープリントを最新の状態に更新し、レビュー済みとみなします。
+    指定したアイテム、または .feature ファイル内の全アイテムの Gherkin フィンガープリントを最新の状態に更新し、レビュー済みとみなします。
     注意: この操作により YAML が書き換えられるため、Doorstop 本体の reviewed 状態はリセットされます。
     """
     try:
+        item_path = Path(item_id)
+        if item_path.suffix == ".feature" and item_path.exists():
+            # .feature ファイルが指定された場合
+            all_prefixes = get_all_prefixes(repo_root)
+            with console.status(
+                f"[bold cyan]{item_id} に含まれる仕様IDを特定中...[/bold cyan]"
+            ):
+                tags_in_file = get_tags(item_path, all_prefixes)
+
+            if not tags_in_file:
+                console.print(
+                    f"[bold yellow]⚠️ {item_id} に紐づく仕様IDが見つかりませんでした。[/bold yellow]"
+                )
+                raise typer.Exit(1)
+
+            with console.status(
+                f"[bold cyan]全フィンガープリントを計算中...[/bold cyan]"
+            ):
+                all_fingerprints = get_spec_fingerprints(feature_dir, all_prefixes)
+
+            updated_count = 0
+            sorted_tags = sorted(list(tags_in_file))
+            for tag in sorted_tags:
+                fp = all_fingerprints.get(tag)
+                if fp:
+                    with console.status(f"[bold cyan]{tag} の YAML を更新中...[/bold cyan]"):
+                        update_item_attribute(repo_root, tag, "test_fingerprint", fp)
+                    console.print(
+                        f"✅ [bold]{tag}[/bold] のフィンガープリントを更新しました。 [dim]{fp}[/dim]"
+                    )
+                    updated_count += 1
+
+            if updated_count > 0:
+                console.print(
+                    f"\n[bold green]✨ 合計 {updated_count} 個のアイテムのフィンガープリントを更新しました。[/bold green]"
+                )
+                console.print(
+                    f"[bold yellow]💡 次は Doorstop 本体のレビューを実行してください:[/bold yellow]"
+                )
+                console.print(f"   doorstop review {' '.join(sorted_tags)}")
+            return
+
+        # 従来通りの ID 指定の場合
         with console.status(
             f"[bold cyan]{item_id} の Gherkin フィンガープリントを計算中...[/bold cyan]"
         ):
@@ -888,6 +872,13 @@ def status_cmd(
             except Exception:
                 gherkin_fingerprints = {}
 
+        try:
+            tag_map = get_tag_map(feature_dir, all_prefixes)
+        except Exception:
+            tag_map = {}
+
+        review_state = compute_review_state(all_items_str, gherkin_fingerprints, tag_map)
+
         # プレフィックスごとにアイテムをグループ化
         grouped_items: dict[str, dict] = {p: {} for p in all_prefixes}
         for uid, item in all_items_str.items():
@@ -913,9 +904,7 @@ def status_cmd(
                 if filter_status and str(raw_status or "") != filter_status:
                     continue
                 badge = _impl_status_badge(item)
-                review = _review_status_badge(
-                    item, gherkin_fingerprints=gherkin_fingerprints
-                )
+                review = _review_status_badge(uid, review_state=review_state)
                 updated = _get_timestamp(item, "updated_at")
                 title_text = (item.header or "").strip()
                 table.add_row(uid, title_text, badge, review, updated)
@@ -963,36 +952,8 @@ def status_cmd(
                 for fpath in sorted(feature_files.keys()):
                     info = feature_files[fpath]
                     specs = sorted(info["specs"])
-
-                    # 各ファイルのステータスを判定
-                    file_status = "✅ reviewed"
-                    is_test_unreviewed = False
-                    is_test_suspect = False
-
-                    for spec_id in specs:
-                        item = all_items_str.get(spec_id)
-                        if item:
-                            w = get_item_warnings(item)
-                            # 1. Gherkin自体の変更があるか？
-                            actual_fp = gherkin_fingerprints.get(spec_id)
-                            expected_fp = _get_custom_attribute(
-                                item, "test_fingerprint", None
-                            )
-                            if expected_fp and isinstance(expected_fp, str):
-                                expected_fp = expected_fp.strip()
-                            if actual_fp and actual_fp != expected_fp:
-                                is_test_unreviewed = True
-
-                            # 2. 仕様側に変更があってテストが影響を受けているか？
-                            if w.has_unreviewed_changes:
-                                is_test_suspect = True
-
-                    # 優先順位: test-unreviewed > test-suspect > reviewed
-                    if is_test_unreviewed:
-                        file_status = "📋 test-unreviewed"
-                    elif is_test_suspect:
-                        file_status = "⚠️ test-suspect"
-
+                    
+                    file_status = review_state.get_status(fpath)
                     specs_str = ", ".join(specs)
                     table.add_row(fpath, str(info["scenarios"]), file_status, specs_str)
                 console.print(table)
@@ -1078,6 +1039,8 @@ def _run_build(
 
         # 2. Gherkinタグマップ取得 (全プレフィックスを対象にする)
         tag_map = get_tag_map(feature_dir, all_prefixes)
+        gherkin_fingerprints = get_spec_fingerprints(feature_dir, all_prefixes)
+        review_state = compute_review_state(all_items_str, gherkin_fingerprints, tag_map)
 
         # feature_path -> 関連アイテムUID一覧（バックリンク用）
         _backlink_sets: dict[str, set[str]] = {}
@@ -1143,7 +1106,13 @@ def _run_build(
                 tag_rel = str(feature_file)
             backlinks = feature_backlink_map.get(tag_rel, [])
             md_content = _feature_to_markdown(
-                feature_file, backlinks=backlinks, step_resolver=step_resolver
+                feature_file,
+                backlinks=backlinks,
+                step_resolver=step_resolver,
+                review_state=review_state,
+                all_items_str=all_items_str,
+                feature_md_map=feature_md_map,
+                node_id=tag_rel,
             )
             out_path.write_text(md_content, encoding="utf-8")
             feature_md_map[tag_rel] = f"../features/{md_rel.as_posix()}"
@@ -1163,6 +1132,7 @@ def _run_build(
             tag_map,
             feature_md_map,
             test_result_map=test_result_map,
+            review_state=review_state,
         )
         (items_dir / f"{uid}.md").write_text(content, encoding="utf-8")
 
@@ -1188,6 +1158,7 @@ def _run_build(
             sibling_map,
             tag_map,
             test_result_map=test_result_map,
+            review_state=review_state,
         )
         (docs_dir / filename).write_text(table, encoding="utf-8")
         prefix_to_file[p] = filename
@@ -1203,6 +1174,7 @@ def _run_build(
         tag_map,
         doorstop_tree,
         prefix_to_file,
+        review_state,
     )
 
     console.print(f"[bold green]✅ ビルド成功！ [white]{out_dir}[/white][/bold green]")
@@ -1295,6 +1267,10 @@ def _feature_to_markdown(
     feature_file: Path,
     backlinks: list[str] | None = None,
     step_resolver: Optional[StepResolver] = None,
+    review_state: Optional[ReviewState] = None,
+    all_items_str: dict | None = None,
+    feature_md_map: dict | None = None,
+    node_id: str | None = None,
 ) -> str:
     """
     .featureファイルをGherkinパーサーで解析し、ブラウザで読みやすいMarkdownに変換する。
@@ -1302,6 +1278,11 @@ def _feature_to_markdown(
     """
     from gherkin.parser import Parser
     from gherkin.token_scanner import TokenScanner
+
+    if all_items_str is None:
+        all_items_str = {}
+    if feature_md_map is None:
+        feature_md_map = {}
 
     with open(feature_file, "r", encoding="utf-8") as f:
         raw = f.read()
@@ -1315,6 +1296,34 @@ def _feature_to_markdown(
     feature_tags = [t["name"] for t in feature_node.get("tags", [])]
 
     lines: list[str] = [f"# Feature: {feature_name}\n"]
+
+    # ---- 警告バナー ----
+    if review_state and node_id:
+        status = review_state.get_status(node_id)
+        if "unreviewed" in status:
+            lines.append(
+                "> 📋 **Unreviewed Changes**: このフィーチャーファイル自体に未レビューの変更があります。レビュー後に `review` コマンドで更新してください。\n"
+            )
+        if "suspect" in status:
+            causes = review_state.suspect_causes.get(node_id, set())
+            cause_links = []
+            for c in causes:
+                if c in all_items_str:
+                    cause_links.append(f"[{c}](../items/{c}.md)")
+                else:
+                    # Feature file
+                    md_link = feature_md_map.get(c)
+                    if md_link:
+                        # From features/ to features/
+                        name = Path(c).name
+                        cause_links.append(f"[{name}]({Path(md_link).name})")
+                    else:
+                        cause_links.append(f"`{c}`")
+            
+            causes_str = ", ".join(sorted(cause_links)) if causes else "不明"
+            lines.append(
+                f"> ⚠️ **Suspect**: 関連する仕様や他のテストが変更されました。影響範囲のレビューが必要です。\n> **原因 (Unreviewed)**: {causes_str}\n"
+            )
 
     if feature_tags:
         lines.append("**タグ**: " + " ".join(f"`{t}`" for t in feature_tags) + "\n")
@@ -1436,6 +1445,7 @@ def _generate_index_table(
     sibling_map,
     tag_map,
     test_result_map: "TestResultMap | None" = None,
+    review_state: Optional[ReviewState] = None,
 ):
     """一覧ページのテーブルMarkdownを生成。"""
     has_results = test_result_map is not None
@@ -1471,7 +1481,7 @@ def _generate_index_table(
             covered, total = _spec_coverage(uid, tag_map, item, all_items_str)
             coverage_col = _coverage_badge(covered, total)
 
-        review_col = _review_status_badge(item)
+        review_col = _review_status_badge(uid, review_state=review_state)
         impl_col = _impl_status_badge(item)
         created_col = _get_timestamp(item, "created_at")
         updated_col = _get_timestamp(item, "updated_at")
@@ -1480,11 +1490,11 @@ def _generate_index_table(
         row = f"| [{uid}](items/{uid}.md) | {item.header} | {parents_col} | {children_col} | {siblings_col} | {review_col} | {coverage_col} | {impl_col} | {created_col} | {updated_col}"
 
         # 状態に応じた行ハイライト (attr_list 拡張用)
-        warnings = get_item_warnings(item)
-        if warnings.has_suspect_links:
-            row += " {: .suspect-row } |"
-        elif warnings.has_unreviewed_changes:
+        # unreviewedが含まれる場合は紫、suspectが含まれる場合は赤
+        if "unreviewed" in review_col:
             row += " {: .unreviewed-row } |"
+        elif "suspect" in review_col:
+            row += " {: .suspect-row } |"
 
         if has_results:
             from .test_results import spec_result_summary, result_badge
@@ -1523,6 +1533,7 @@ def _generate_item_markdown(
     tag_map,
     feature_md_map,
     test_result_map: "TestResultMap | None" = None,
+    review_state: Optional[ReviewState] = None,
 ):
     """個別詳細Markdownを生成（兄弟リンク・カバレッジ割合・featureリンク付き）。"""
     testable = _get_custom_attribute(item, "testable", True)
@@ -1532,21 +1543,31 @@ def _generate_item_markdown(
     content: list[str] = [f"# [{uid}] {item.header}\n"]
 
     # ---- 警告バナー ----
-    warnings = get_item_warnings(item)
-    if warnings.has_suspect_links:
-        targets = ", ".join(f"[{t}]({t}.md)" for t in warnings.suspect_link_targets)
-        if targets:
+    if review_state:
+        status = review_state.get_status(uid)
+        if "unreviewed" in status:
             content.append(
-                f"> ⚠️ **Suspect Link**: 上位アイテム ({targets}) が変更されました。リンクのレビューが必要です。\n"
+                "> 📋 **Unreviewed Changes**: このアイテム自体または関連するテストに未レビューの変更があります。\n"
             )
-        else:
+        if "suspect" in status:
+            causes = review_state.suspect_causes.get(uid, set())
+            cause_links = []
+            for c in causes:
+                if c in all_items_str:
+                    cause_links.append(f"[{c}]({c}.md)")
+                else:
+                    # Feature file
+                    # We can try to make a link if it's in feature_md_map
+                    md_link = feature_md_map.get(c)
+                    if md_link:
+                        cause_links.append(f"[{Path(c).name}]({md_link})")
+                    else:
+                        cause_links.append(f"`{c}`")
+                        
+            causes_str = ", ".join(sorted(cause_links)) if causes else "不明"
             content.append(
-                "> ⚠️ **Suspect Link**: 上位アイテムが変更されました。リンクのレビューが必要です。\n"
+                f"> ⚠️ **Suspect**: 関連するアイテムやテストが変更されました。影響範囲のレビューが必要です。\n> **原因 (Unreviewed)**: {causes_str}\n"
             )
-    if warnings.has_unreviewed_changes:
-        content.append(
-            "> 📋 **Unreviewed Changes**: このアイテム自体に未レビューの変更があります。\n"
-        )
 
     # ---- 実装ステータス ----
     impl_badge = _impl_status_badge(item)
@@ -2118,6 +2139,7 @@ def _generate_basic_files(
     tag_map: dict,
     doorstop_tree,
     prefix_to_file: dict,
+    review_state: Optional[ReviewState] = None,
 ) -> None:
     """index.md と mkdocs.yml を生成。"""
     # index.md
@@ -2140,12 +2162,48 @@ def _generate_basic_files(
 
     # features/ に index.md がなければ生成
     features_index = docs_dir / "features" / "index.md"
-    feature_links = "\n".join(
-        f"- [{Path(tag_rel).name}]({Path(md_url).name})"
-        for tag_rel, md_url in sorted(feature_md_map.items())
-    )
+    
+    feature_files = {}
+    for tag, scenarios in tag_map.items():
+        for s in scenarios:
+            file_path = s["file"]
+            if file_path not in feature_files:
+                feature_files[file_path] = {"scenarios": 0, "specs": set()}
+            feature_files[file_path]["scenarios"] += 1
+            feature_files[file_path]["specs"].add(tag)
+
+    table_lines = [
+        "| ファイル | シナリオ数 | レビューステータス | 関連仕様ID |",
+        "| :--- | :---: | :--- | :--- |"
+    ]
+    
+    for tag_rel, md_url in sorted(feature_md_map.items()):
+        info = feature_files.get(tag_rel, {"scenarios": 0, "specs": set()})
+        scenarios_count = info["scenarios"]
+        specs = sorted(info["specs"])
+        
+        # Use review_state if passed, else default to reviewed
+        if review_state:
+            file_status = review_state.get_status(tag_rel)
+        else:
+            file_status = "✅ reviewed"
+
+        specs_str = "<br>".join(f"[{s}](../items/{s}.md)" for s in specs) or "-"
+        
+        row = f"| [{Path(tag_rel).name}]({Path(md_url).name}) | {scenarios_count} | {file_status} | {specs_str}"
+        if "unreviewed" in file_status:
+            row += " {: .unreviewed-row } |"
+        elif "suspect" in file_status:
+            row += " {: .suspect-row } |"
+        else:
+            row += " |"
+            
+        table_lines.append(row)
+
+    feature_table = "\n".join(table_lines)
+    
     features_index.write_text(
-        f"# 振る舞い仕様一覧 (Gherkin Features)\n\n{feature_links or '（まだフィーチャーファイルがありません）'}\n",
+        f"# 振る舞い仕様一覧 (Gherkin Features)\n\n{feature_table}\n",
         encoding="utf-8",
     )
 

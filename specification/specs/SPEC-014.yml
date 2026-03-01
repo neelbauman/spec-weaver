@@ -11,7 +11,7 @@ ref: ''
 reviewed: Y8BNVjASsF43b1sz2z_ZZPVGYJvQS7UC0Jzg0j2H4nc=
 status: implemented
 test_fingerprint: |
-  bc6c27031724cef48dccd961e31d0eec0229e01110b4ce0a9ce313a48f893d0a
+  4b3fd643efc1116117ab8b9174a7d795caa05e46a0f014a977559536689172c0
 testable: true
 text: |
   ## 概要

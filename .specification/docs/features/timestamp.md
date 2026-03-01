@@ -1,5 +1,7 @@
 # Feature: タイムスタンプ管理
 
+> 📋 **Unreviewed Changes**: このフィーチャーファイル自体に未レビューの変更があります。レビュー後に `review` コマンドで更新してください。
+
 **タグ**: `@SPEC-011`
 
 **関連アイテム**: [SPEC-011](../items/SPEC-011.md) / [SPEC-012](../items/SPEC-012.md) / [SPEC-013](../items/SPEC-013.md)

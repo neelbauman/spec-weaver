@@ -102,7 +102,7 @@ def test_audit_suspect_specs(
     assert result.exit_code == 1
     assert "Suspect" in result.stdout
     assert "SPEC-002" in result.stdout
-    assert "clear" in result.stdout.lower()
+    assert "影響範囲を確認" in result.stdout
 
 
 @patch("spec_weaver.cli.get_all_prefixes")

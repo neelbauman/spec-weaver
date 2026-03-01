@@ -1,5 +1,8 @@
 # [SPEC-015] scaffold コマンド —  behave テストコード自動生成
 
+> ⚠️ **Suspect**: 関連するアイテムやテストが変更されました。影響範囲のレビューが必要です。
+> **原因 (Unreviewed)**: [scaffold.feature](../features/scaffold.md)
+
 **実装状況**: ✅ implemented
 
 **作成日**: 2026-02-26　|　**更新日**: 2026-03-01

@@ -11,7 +11,7 @@ ref: ''
 reviewed: D4KjmcrpAg3v3-QAXCdB7bTOowaShXstZqoS8dZBTuI=
 status: implemented
 test_fingerprint: |
-  1df300b6c38a4c90701cfcc99dbce6f7fbd7b3d6023ecd805b7b4e674bb0dbce
+  bfb97c507a8e3e23e58c4c6e0bc437d7d98c1d27c8c9accfcc20affd9fe0aa20
 testable: true
 text: |
   ## 概要

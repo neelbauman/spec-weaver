@@ -1,5 +1,7 @@
 # Feature: audit コマンド
 
+> 📋 **Unreviewed Changes**: このフィーチャーファイル自体に未レビューの変更があります。レビュー後に `review` コマンドで更新してください。
+
 **タグ**: `@SPEC-003`
 
 **関連アイテム**: [SPEC-003](../items/SPEC-003.md) / [SPEC-005](../items/SPEC-005.md)
