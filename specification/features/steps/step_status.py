@@ -117,12 +117,14 @@ def step_impl_1(context):
 def step_impl_2(context):
     run_cli(context, ["status", "--repo-root", "."])
 
-@then('REQ-001 が "draft" バッジとともに表示されること')
+# [Duplicate Skip] line 59 の @then('REQ-001 が "{param0}" バッジとともに表示されること') で処理される
+# @then('REQ-001 が "draft" バッジとともに表示されること')  # type: ignore
 def step_impl_4(context):
     assert "REQ-001" in context.stdout
     assert "draft" in context.stdout
 
-@then('SPEC-001 が "implemented" バッジとともに表示されること')
+# [Duplicate Skip] line 69 の @then('SPEC-001 が "{param0}" バッジとともに表示されること') で処理される
+# @then('SPEC-001 が "implemented" バッジとともに表示されること')  # type: ignore
 def step_impl_5(context):
     assert "SPEC-001" in context.stdout
     assert "implemented" in context.stdout
@@ -132,7 +134,8 @@ def step_impl_6(context):
     setup_doorstop(context, prefixes=["SPEC"])
     add_item_manual(context, "SPEC", "SPEC-001", status=None)
 
-@then('SPEC-001 の実装状況が "-" と表示されること')
+# [Duplicate Skip] line 79 の @then('SPEC-001 の実装状況が "{param0}" と表示されること') で処理される
+# @then('SPEC-001 の実装状況が "-" と表示されること')  # type: ignore
 def step_impl_7(context):
     for line in context.stdout.splitlines():
         if "SPEC-001" in line:
@@ -146,7 +149,8 @@ def step_impl_8(context):
     add_item_manual(context, "REQ", "REQ-001", "implemented")
     add_item_manual(context, "REQ", "REQ-002", "draft")
 
-@when('status コマンドを "--filter implemented" オプション付きで実行する')
+# [Duplicate Skip] line 89 の @when('status コマンドを "{param0}" オプション付きで実行する') で処理される
+# @when('status コマンドを "--filter implemented" オプション付きで実行する')  # type: ignore
 def step_impl_9(context):
     run_cli(context, ["status", "--repo-root", ".", "--filter", "implemented"])
 
@@ -158,7 +162,8 @@ def step_impl_10(context):
 def step_impl_11(context):
     assert "REQ-002" not in context.stdout
 
-@given('すべてのアイテムの status が "draft" に設定されている')
+# [Duplicate Skip] line 100 の @given('すべてのアイテムの status が "{param0}" に設定されている') で処理される
+# @given('すべてのアイテムの status が "draft" に設定されている')  # type: ignore
 def step_impl_12(context):
     setup_doorstop(context, prefixes=["SPEC"])
     add_item_manual(context, "SPEC", "SPEC-001", "draft")

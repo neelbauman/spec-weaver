@@ -57,14 +57,10 @@ def when_20ad7547(context):
 
 # 使用されるシナリオ:
 # - 完全一致時の監査成功
-@then('終了コード 0 が返ること')  # type: ignore
-def then_4f25c571(context):
-    """終了コード 0 が返ること
-
-    Scenarios:
-      - 完全一致時の監査成功
-    """
-    raise NotImplementedError('STEP: 終了コード 0 が返ること')
+# [Duplicate Skip] common_steps.py の @then('終了コード {code:d} が返ること') で処理される
+# @then('終了コード 0 が返ること')  # type: ignore
+# def then_4f25c571(context):
+#     raise NotImplementedError('STEP: 終了コード 0 が返ること')
 
 
 @then('成功メッセージが表示されること')  # type: ignore
@@ -94,18 +90,10 @@ def given_03339ad7(context, param0):
 
 # 使用されるシナリオ:
 # - テスト漏れの検出
-@then('終了コード 1 が返ること')  # type: ignore
-def then_4dccc2fd(context):
-    """終了コード 1 が返ること
-
-    Scenarios:
-      - テスト漏れの検出
-      - 孤児タグの検出
-      - テスト漏れと孤児タグの同時検出
-      - Suspect Link の検出
-      - Unreviewed Changes の検出
-    """
-    raise NotImplementedError('STEP: 終了コード 1 が返ること')
+# [Duplicate Skip] common_steps.py の @then('終了コード {code:d} が返ること') で処理される
+# @then('終了コード 1 が返ること')  # type: ignore
+# def then_4dccc2fd(context):
+#     raise NotImplementedError('STEP: 終了コード 1 が返ること')
 
 
 @then('テストが実装されていない仕様として "{param0}" が報告されること')  # type: ignore

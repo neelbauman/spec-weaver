@@ -66,20 +66,10 @@ def when_6629a1b8(context):
     raise NotImplementedError('STEP: `spec-weaver trace REQ-001 -f ./specification/features` を実行する')
 
 
-@then('終了コードが0である')  # type: ignore
-def then_0f800e56(context):
-    """終了コードが0である
-
-    Scenarios:
-      - REQを起点としたトップダウンのツリー表示
-      - SPECを起点とした双方向のツリー表示
-      - Gherkin Featureファイルを起点としたボトムアップ表示
-      - --direction up で上方向のみ探索
-      - --direction down で下方向のみ探索
-      - --format flat でフラットリスト表示
-      - 各ノードにステータスバッジが表示される
-    """
-    raise NotImplementedError('STEP: 終了コードが0である')
+# [Duplicate Skip] common_steps.py の @then('終了コードが{code:d}である') で処理される
+# @then('終了コードが0である')  # type: ignore
+# def then_0f800e56(context):
+#     raise NotImplementedError('STEP: 終了コードが0である')
 
 
 @then('"{param0}" がルートノードとして表示される')  # type: ignore
@@ -214,14 +204,10 @@ def when_44385436(context):
     raise NotImplementedError('STEP: `spec-weaver trace NONEXIST-999 -f ./specification/features` を実行する')
 
 
-@then('終了コードが1である')  # type: ignore
-def then_9b731a71(context):
-    """終了コードが1である
-
-    Scenarios:
-      - 存在しないIDを指定した場合のエラー
-    """
-    raise NotImplementedError('STEP: 終了コードが1である')
+# [Duplicate Skip] common_steps.py の @then('終了コードが{code:d}である') で処理される
+# @then('終了コードが1である')  # type: ignore
+# def then_9b731a71(context):
+#     raise NotImplementedError('STEP: 終了コードが1である')
 
 
 @then('エラーメッセージに "{param0}" が含まれる')  # type: ignore
@@ -301,20 +287,24 @@ def step_impl_7(context, item_id, fmt):
 def step_impl_8(context):
     assert "REQ-" in context.stdout or "SPEC-" in context.stdout
 
-@then('"{uid}" がルートノードとして表示される')
+# [Duplicate Skip] line 75 の @then('"{param0}" がルートノードとして表示される') で処理される
+# @then('"{uid}" がルートノードとして表示される')  # type: ignore
 def step_impl_9(context, uid):
     assert uid in context.stdout
 
-@step('"{child}" が "{parent}" の子ノードとして表示される')
+# [Duplicate Skip] line 85 の @then('"{param0}" が "{param1}" の子ノードとして表示される') で処理される
+# @step('"{child}" が "{parent}" の子ノードとして表示される')  # type: ignore
 def step_impl_10(context, child, parent):
     assert child in context.stdout
     assert parent in context.stdout
 
-@then('上位に "{uid}" が表示される')
+# [Duplicate Skip] line 105 の @then('上位に "{param0}" が表示される') で処理される
+# @then('上位に "{uid}" が表示される')  # type: ignore
 def step_impl_12(context, uid):
     assert uid in context.stdout
 
-@then('下位に "{filename}" のシナリオが表示される')
+# [Duplicate Skip] line 115 の @then('下位に "{param0}" のシナリオが表示される') で処理される
+# @then('下位に "{filename}" のシナリオが表示される')  # type: ignore
 def step_impl_13(context, filename):
     assert "Scenario:" in context.stdout
 
@@ -322,15 +312,18 @@ def step_impl_13(context, filename):
 def step_impl_17(context):
     assert "ID" in context.stdout
 
-@then('各行に "{label1}" または "{label2}" または "{label3}" のラベルが含まれる')
+# [Duplicate Skip] line 187 の @then('各行に "{param0}" または "{param1}" または "{param2}" のラベルが含まれる') で処理される
+# @then('各行に "{label1}" または "{label2}" または "{label3}" のラベルが含まれる')  # type: ignore
 def step_impl_18(context, label1, label2, label3):
     assert label1.strip('[]') in context.stdout or label2.strip('[]') in context.stdout or label3.strip('[]') in context.stdout
 
-@then('エラーメッセージに "{msg}" が含まれる')
+# [Duplicate Skip] line 213 の @then('エラーメッセージに "{param0}" が含まれる') で処理される
+# @then('エラーメッセージに "{msg}" が含まれる')  # type: ignore
 def step_impl_19(context, msg):
     assert msg.lower() in context.stdout.lower() or msg.lower() in context.stderr.lower()
 
-@then('"{uid}" のノードに "{status}" のステータスバッジが表示される')
+# [Duplicate Skip] line 223 の @then('"{param0}" のノードに "{param1}" のステータスバッジが表示される') で処理される
+# @then('"{uid}" のノードに "{status}" のステータスバッジが表示される')  # type: ignore
 def step_impl_20(context, uid, status):
     assert uid in context.stdout
     assert status in context.stdout

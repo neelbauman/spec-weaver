@@ -8,7 +8,10 @@ try:
 except ImportError:
     import importlib_resources as resources  # type: ignore
 from pathlib import Path
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
+
+if TYPE_CHECKING:
+    from spec_weaver.review import ReviewResult
 from rich.console import Console
 from rich.panel import Panel
 from rich.prompt import Confirm
@@ -16,6 +19,7 @@ from rich.syntax import Syntax
 from rich.table import Table
 from rich.tree import Tree
 
+import json
 import re
 import subprocess
 import sys
@@ -1711,6 +1715,163 @@ markdown_extensions:
           format: !!python/name:pymdownx.superfences.fence_code_format
 """
     (out_dir / "mkdocs.yml").write_text(mkdocs_config, encoding="utf-8")
+
+
+# ---------------------------------------------------------------------------
+# review コマンド (SPEC-022)
+# ---------------------------------------------------------------------------
+
+@app.command("review")
+def review_cmd(
+    item: Optional[str] = typer.Option(
+        None,
+        "--item",
+        "-i",
+        help="レビュー対象の仕様アイテムID（例: SPEC-003）。--all と排他。",
+    ),
+    all_items: bool = typer.Option(
+        False,
+        "--all",
+        help="全仕様アイテムを並列レビューする。--item と排他。",
+    ),
+    feature_dir: Path = typer.Option(
+        Path("specification/features"),
+        "--feature-dir",
+        "-f",
+        help=".feature ファイル検索ディレクトリ",
+        file_okay=False,
+        dir_okay=True,
+        resolve_path=True,
+    ),
+    repo_root: Path = typer.Option(
+        Path.cwd(),
+        "--repo-root",
+        "-r",
+        help="Doorstopのプロジェクトルート",
+        exists=True,
+        file_okay=False,
+        dir_okay=True,
+        resolve_path=True,
+    ),
+    output: str = typer.Option(
+        "text",
+        "--output",
+        "-o",
+        help="出力形式: text（Markdown） / json",
+    ),
+    min_severity: str = typer.Option(
+        "low",
+        "--min-severity",
+        help="表示する finding の最低重大度: low / medium / high",
+    ),
+    fail_on: Optional[str] = typer.Option(
+        None,
+        "--fail-on",
+        help="指定重大度以上の finding があれば終了コード 1 を返す: low / medium / high",
+    ),
+    max_workers: int = typer.Option(
+        3,
+        "--max-workers",
+        help="--all 時の並列 Claude プロセス数",
+    ),
+) -> None:
+    """
+    仕様・Gherkin・実装コードの意味的整合性を Claude でレビューします。
+    """
+    from spec_weaver.review import (
+        ReviewReport,
+        ReviewResult,
+        filter_findings,
+        run_all_reviews,
+        run_claude_review,
+        severity_gte,
+    )
+
+    # --item / --all の排他チェック
+    if item and all_items:
+        console.print("[bold red]❌ --item と --all は同時に指定できません。[/bold red]")
+        raise typer.Exit(code=2)
+    if not item and not all_items:
+        console.print("[bold red]❌ --item または --all のどちらかを指定してください。[/bold red]")
+        raise typer.Exit(code=2)
+
+    # feature_dir が存在しなければ cwd 相対で解決
+    if not feature_dir.exists():
+        candidate = repo_root / feature_dir
+        if candidate.exists():
+            feature_dir = candidate
+
+    # --------------- 単一アイテム ---------------
+    if item:
+        try:
+            result = run_claude_review(item, feature_dir, repo_root)
+        except FileNotFoundError as e:
+            console.print(f"[bold red]❌ {e}[/bold red]")
+            raise typer.Exit(code=1)
+        except ValueError as e:
+            console.print(f"[bold red]❌ {e}[/bold red]")
+            raise typer.Exit(code=1)
+
+        visible = filter_findings(result.findings, min_severity)
+        result.findings = visible
+
+        if output == "json":
+            console.print(result.to_dict().__class__.__name__)  # suppress
+            print(json.dumps(result.to_dict(), ensure_ascii=False, indent=2))
+        else:
+            _print_review_result(console, result)
+
+        if fail_on and any(severity_gte(f.severity, fail_on) for f in visible):
+            raise typer.Exit(code=1)
+        raise typer.Exit(code=0)
+
+    # --------------- 全アイテム並列 ---------------
+    try:
+        report = run_all_reviews(feature_dir, repo_root, max_workers=max_workers)
+    except FileNotFoundError as e:
+        console.print(f"[bold red]❌ {e}[/bold red]")
+        raise typer.Exit(code=1)
+
+    # min_severity フィルタを適用
+    for r in report.items:
+        r.findings = filter_findings(r.findings, min_severity)
+
+    if output == "json":
+        print(json.dumps(report.to_dict(), ensure_ascii=False, indent=2))
+    else:
+        for r in report.items:
+            _print_review_result(console, r)
+
+    if fail_on:
+        for r in report.items:
+            if any(severity_gte(f.severity, fail_on) for f in r.findings):
+                raise typer.Exit(code=1)
+    raise typer.Exit(code=0)
+
+
+def _print_review_result(console: Console, result: ReviewResult) -> None:
+    """ReviewResult を Rich で Markdown 的に出力する。"""
+    from rich.markdown import Markdown
+
+    header = f"## {result.item_id} — {result.item_title}"
+    console.print(Markdown(header))
+
+    if not result.findings:
+        console.print("[green]✅ finding なし[/green]")
+    else:
+        for f in result.findings:
+            sev_color = {"high": "red", "medium": "yellow", "low": "cyan"}.get(f.severity, "white")
+            console.print(
+                f"  [{sev_color}][{f.severity.upper()}][/{sev_color}] "
+                f"[bold]{f.title}[/bold] ({f.kind})"
+            )
+            if f.detail:
+                console.print(f"    {f.detail}")
+            if f.location:
+                console.print(f"    → {f.location}")
+
+    if result.summary:
+        console.print(f"\n[dim]{result.summary}[/dim]\n")
 
 
 if __name__ == "__main__":

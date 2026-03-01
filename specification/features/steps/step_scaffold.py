@@ -262,19 +262,15 @@ def step_impl_1(context, param0):
 def step_impl_2(context):
     run_cli(context, ["scaffold", "features", "-o", "steps"])
 
-@then('各 .feature に対応する "step_<stem>.py" が生成されること')
-def step_impl_3(context):
+# [Duplicate Skip] line 37 の @then('各 .feature に対応する "{param0}" が生成されること') で処理される
+# @then('各 .feature に対応する "step_<stem>.py" が生成されること')
+def _check_step_file_generated(context):
     path = os.path.join(context.temp_dir, "steps", "step_test.py")
     assert os.path.exists(path), f"File {path} not found. Stdout: {context.stdout}"
 
-@then('各ステップに "{p1}", "{p2}", "{p3}" デコレータ付き関数が含まれること')
-def step_impl_4(context, p1, p2, p3):
-    path = os.path.join(context.temp_dir, "steps", "step_test.py")
-    with open(path, "r") as f:
-        content = f.read()
-    assert p1 in content
-    # The feature might use different steps, but our test feature has "Given test step"
-    # codegen.py uses @given, @when, @then
+# [Duplicate Skip] line 47 の @then('各ステップに "{param0}", "{param1}", "{param2}" デコレータ付き関数が含まれること') で処理される
+# @then('各ステップに "{p1}", "{p2}", "{p3}" デコレータ付き関数が含まれること')
+# def step_impl_4(context, p1, p2, p3): ...
 
 @given('日本語のシナリオ名を持つ .feature ファイルがある')
 def step_impl_5(context):
@@ -337,8 +333,9 @@ def step_impl_13(context):
 def step_impl_14(context):
     assert "スキップ" in context.stdout
 
-@when('scaffold コマンドを "--overwrite" オプション付きで実行する')
-def step_impl_15(context):
+# [Duplicate Skip] line 147 の @when('scaffold コマンドを "{param0}" オプション付きで実行する') で処理される
+# @when('scaffold コマンドを "--overwrite" オプション付きで実行する')
+def _scaffold_with_overwrite(context):
     run_cli(context, ["scaffold", "features", "-o", "steps", "--overwrite"])
 
 @then('既存ファイルが上書きされること')
