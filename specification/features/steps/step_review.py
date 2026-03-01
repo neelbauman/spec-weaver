@@ -1,4 +1,5 @@
 """behave steps for: review コマンド — セマンティックレビュー"""
+# implements: SPEC-022
 
 import json
 from unittest.mock import patch

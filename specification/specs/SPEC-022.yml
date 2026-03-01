@@ -5,13 +5,17 @@ header: |
 impl_files:
 - src/spec_weaver/review.py
 - src/spec_weaver/cli.py
+- tests/test_review.py
+- specification/features/steps/step_review.py
+- tests/test_review.py
+- specification/features/steps/step_review.py
 level: 20.2
 links:
-- REQ-013: null
+- REQ-013: mlYsN4aIR9VbxHA-yfOSM2Kvja2WM53jkqu9QVTeP3E=
 normative: true
 ref: ''
-reviewed: null
-status: draft
+reviewed: -5qvr16VpfOQrXSkZb4UB3zQkLpbRc2xhzEYXNyyeDI=
+status: implemented
 testable: true
 text: |
   ## 概要

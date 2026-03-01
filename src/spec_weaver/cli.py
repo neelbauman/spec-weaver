@@ -1,5 +1,5 @@
 # src/spec_weaver/cli.py
-# implements: SPEC-019, SPEC-020
+# implements: SPEC-019, SPEC-020, SPEC-022
 
 import typer
 import shutil
@@ -1816,7 +1816,6 @@ def review_cmd(
         result.findings = visible
 
         if output == "json":
-            console.print(result.to_dict().__class__.__name__)  # suppress
             print(json.dumps(result.to_dict(), ensure_ascii=False, indent=2))
         else:
             _print_review_result(console, result)

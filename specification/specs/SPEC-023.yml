@@ -6,11 +6,11 @@ impl_files:
 - .claude/skills/semantic-review-skill/SKILL.md
 level: 20.3
 links:
-- REQ-013: null
+- REQ-013: mlYsN4aIR9VbxHA-yfOSM2Kvja2WM53jkqu9QVTeP3E=
 normative: true
 ref: ''
-reviewed: null
-status: draft
+reviewed: sWmlXE2wp2ZyujLxdBNjXzAh-5EqmNnJLFr1viuBTTI=
+status: implemented
 testable: false
 text: |
   ## 概要
