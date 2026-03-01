@@ -27,3 +27,10 @@ Feature: status コマンド
     When  status コマンドを "--filter implemented" オプション付きで実行する
     Then  終了コード 0 が返ること
     And   一致するアイテムが見つからなかった旨が表示されること
+
+  Scenario: レビューステータスと最終更新日が表示される
+    Given Doorstopのアイテムが存在する
+    When  status コマンドを実行する
+    Then  終了コード 0 が返ること
+    And   レビューステータス列が表示されること
+    And   最終更新日列が表示されること
