@@ -1,0 +1,191 @@
+active: true
+derived: false
+header: |
+  SPEC-022/023 実装計画：セマンティックレビュー機能
+level: 1.3
+links:
+- SPEC-022: null
+- SPEC-023: null
+normative: true
+ref: ''
+reviewed: null
+status: draft
+testable: false
+text: |
+  ## 概要
+
+  SPEC-022「review コマンド」・SPEC-023「semantic-review-skill」の実装タスクを分解する。
+  規模は大規模（review.py 新規・cli.py 追加・SKILL.md 新規・テスト新規の複数モジュール横断）。
+
+  ## 実装タスク
+
+  ### Task 1: JSONスキーマ定義（review.py — データ構造）
+
+  **目的**: SPEC-022 §JSONスキーマに従った ReviewFinding・ReviewResult・ReviewReport データクラスを定義する。
+
+  **実装内容**:
+  - `src/spec_weaver/review.py` を新規作成
+  - `ReviewFinding(kind, severity, title, detail, location)` dataclass
+  - `ReviewResult(schema_version, item_id, item_title, reviewed_files, findings, summary)` dataclass
+  - `ReviewReport(schema_version, items, summary)` dataclass（--all 用集約）
+  - severity 比較用ヘルパー `severity_gte(a, b)` / `SEVERITY_ORDER`
+
+  **完了条件**: `from spec_weaver.review import ReviewFinding, ReviewResult` が import できる
+
+  **依存**: なし
+
+  ---
+
+  ### Task 2: ファイル収集ロジック（review.py — collect_files）
+
+  **目的**: アイテムIDから仕様・Gherkin・実装コードのパスを収集する `collect_review_files` 関数を実装する。
+
+  **実装内容**:
+  - `collect_review_files(item_id, feature_dir, repo_root) -> dict[str, list[Path]]`
+    - Doorstop YAML パスを `get_item_map` で取得
+    - `get_tag_map` で対応 .feature ファイルを取得
+    - steps/ 配下のステップ定義ファイルを feature ファイルと同ディレクトリから探索
+    - `ImplScanner` + `get_ref_files` で実装ファイルを取得
+  - 返り値: `{"spec": [...], "feature": [...], "steps": [...], "impl": [...]}`
+
+  **完了条件**: 既存 SPEC-003 に対して正しく 3 種類以上のファイルが返る
+
+  **依存**: Task 1
+
+  ---
+
+  ### Task 3: Claudeプロンプト生成と呼び出し（review.py — run_claude）
+
+  **目的**: プロンプトを組み立てて `claude -p` を subprocess で呼び出し、結果 JSON を解析する関数を実装する。
+
+  **実装内容**:
+  - `build_review_prompt(item_id, item_title, files_dict) -> str`
+    - SKILL.md に記述するプロンプトテンプレートを参照
+    - 「純粋なJSONのみで出力」指示を含む
+  - `run_claude_review(item_id, feature_dir, repo_root) -> ReviewResult`
+    - `collect_review_files` でファイル収集
+    - `--file <path>` 形式で各ファイルを渡す
+    - stdout 末尾の JSON ブロックを抽出し `ReviewResult` に変換
+    - `claude` バイナリが見つからない場合は `FileNotFoundError` を raise
+
+  **完了条件**: モックを使ったユニットテストで JSON 抽出ロジックが正常動作する
+
+  **依存**: Task 2
+
+  ---
+
+  ### Task 4: 並列実行ロジック（review.py — run_all）
+
+  **目的**: `--all` 時に全アイテムを `ThreadPoolExecutor` で並列レビューする `run_all_reviews` 関数を実装する。
+
+  **実装内容**:
+  - `run_all_reviews(feature_dir, repo_root, max_workers) -> ReviewReport`
+    - `get_item_map` で全アイテム取得
+    - `ThreadPoolExecutor(max_workers=max_workers)` で並列実行
+    - 各結果を集約して `ReviewReport` を返す
+    - 個別タスクの失敗は findings に `severity=high` の error として記録
+
+  **完了条件**: max_workers=1 でのモックテストが通る
+
+  **依存**: Task 3
+
+  ---
+
+  ### Task 5: CLIコマンド追加（cli.py — review_cmd）
+
+  **目的**: `spec-weaver review` CLI コマンドを `cli.py` に追加する。
+
+  **実装内容**:
+  - `@app.command("review")` デコレータで `review_cmd` を定義
+  - 引数: `--item`, `--all`, `--feature-dir`, `--output`, `--min-severity`, `--fail-on`, `--max-workers`
+  - `--item` と `--all` の排他チェック（どちらもなければエラー）
+  - 出力: text モードは Rich Markdown / json モードは `json.dumps`
+  - 終了コード制御: `--fail-on` に従って `raise typer.Exit(code=1)`
+
+  **完了条件**: `spec-weaver review --help` が正常表示される
+
+  **依存**: Task 3, Task 4
+
+  ---
+
+  ### Task 6: semantic-review-skill の SKILL.md 作成
+
+  **目的**: `.claude/skills/semantic-review-skill/SKILL.md` を作成し、スキルのプロンプトテンプレートを定義する。
+
+  **実装内容**:
+  - トリガーキーワード定義（SPEC-023 §トリガーキーワード参照）
+  - CLIモード（JSONのみ）とインタラクティブモード（Markdown）の出力切り替え定義
+  - JSONスキーマの例示（schema_version, item_id, findings 構造）
+  - finding の severity 基準説明
+
+  **完了条件**: ファイルが作成されており、プロンプトテンプレートとして妥当な内容が記述されている
+
+  **依存**: Task 1（スキーマ定義参照）
+
+  ---
+
+  ### Task 7: ユニットテスト（tests/test_review.py）
+
+  **目的**: review.py の各関数をモックを使って pytest でテストする。
+
+  **テストケース**:
+  1. `severity_gte` の正確な比較（high >= medium, low < high 等）
+  2. `collect_review_files` でアイテム不存在時に ValueError が raise される
+  3. `run_claude_review` で claude バイナリが見つからない場合に適切なエラーが返る
+  4. JSON 抽出ロジック: 非JSON 行を含む stdout から末尾 JSON を正しく抽出できる
+  5. `--min-severity` フィルタが正しく動作する
+
+  **完了条件**: `uv run pytest tests/test_review.py -q` がすべて PASS
+
+  **依存**: Task 3, Task 4
+
+  ---
+
+  ### Task 8: BDDステップ定義（specification/features/steps/ — review シナリオ）
+
+  **目的**: `review.feature` の各シナリオに対応するステップ定義を実装する。
+
+  **実装内容**:
+  - `uv run spec-weaver scaffold ./specification/features --out-dir features/steps` を実行
+  - 生成された review.feature 対応ステップの `NotImplementedError` を肉付け
+  - `claudeコマンドが利用可能/不可能` の Given ステップは環境変数 `CLAUDE_AVAILABLE` で制御
+
+  **完了条件**: `uv run behave --no-capture` で @SPEC-022 シナリオが実行される
+
+  **依存**: Task 5
+
+  ---
+
+  ### Task 9: 仕様ステータス更新
+
+  **目的**: 実装完了後に REQ-013 / SPEC-022 / SPEC-023 のステータスを `implemented` に更新する。
+
+  **実装内容**:
+  - REQ-013, SPEC-022, SPEC-023 の `status` を `in-progress` → `implemented` に変更
+  - `impl_files` アノテーションが SPEC-022 に記載済みであることを確認
+  - `uv run spec-weaver audit ./specification/features` がエラーなしで通過することを確認
+
+  **完了条件**: `uv run spec-weaver status` で全アイテムが `implemented` 表示になる
+
+  **依存**: Task 5〜8 の完了
+
+  ## タスク実行順序
+
+  ```
+  Task 1 (データ構造定義)
+    └── Task 2 (ファイル収集)
+          └── Task 3 (Claude呼び出し)
+                ├── Task 4 (並列実行)   ─┐
+                └── Task 6 (SKILL.md)    │
+                                         │
+  Task 5 (CLI コマンド) ──────────────────┤
+    └── Task 8 (BDD ステップ定義)         │
+                                         │
+  Task 7 (ユニットテスト) ────────────────┘
+    └── Task 9 (ステータス更新)
+  ```
+
+  ## 並列実行可能なタスク
+
+  - Task 6 (SKILL.md) は Task 1 完了後に Task 3 と並列で進められる
+  - Task 7 (ユニットテスト) は Task 3 完了後に Task 4/5 と並列で進められる
