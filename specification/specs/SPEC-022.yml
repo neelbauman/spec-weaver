@@ -7,8 +7,6 @@ impl_files:
 - src/spec_weaver/cli.py
 - tests/test_review.py
 - specification/features/steps/step_review.py
-- tests/test_review.py
-- specification/features/steps/step_review.py
 level: 20.2
 links:
 - REQ-013: mlYsN4aIR9VbxHA-yfOSM2Kvja2WM53jkqu9QVTeP3E=
