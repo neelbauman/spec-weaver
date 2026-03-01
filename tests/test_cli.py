@@ -17,6 +17,7 @@ def _make_mock_item(uid: str, suspect: bool = False, status: str | None = None):
     # 新API: cleared / reviewed
     item.cleared = not suspect
     item.reviewed = True
+
     # get() で status を返す
     def _get(key, default=None):
         if key == "status":
@@ -24,6 +25,7 @@ def _make_mock_item(uid: str, suspect: bool = False, status: str | None = None):
         if key == "testable":
             return default
         return default
+
     item.get.side_effect = _get
     return item
 
@@ -32,7 +34,9 @@ def _make_mock_item(uid: str, suspect: bool = False, status: str | None = None):
 @patch("spec_weaver.cli.get_item_map")
 @patch("spec_weaver.cli.get_tags")
 @patch("spec_weaver.cli.get_specs")
-def test_audit_perfect_match(mock_get_specs, mock_get_tags, mock_get_item_map, mock_get_all_prefixes, tmp_path):
+def test_audit_perfect_match(
+    mock_get_specs, mock_get_tags, mock_get_item_map, mock_get_all_prefixes, tmp_path
+):
     # 仕様とテストが完全に一致する状態
     mock_get_specs.return_value = {"SPEC-001", "SPEC-002"}
     mock_get_tags.return_value = {"SPEC-001", "SPEC-002"}
@@ -54,10 +58,12 @@ def test_audit_perfect_match(mock_get_specs, mock_get_tags, mock_get_item_map, m
 @patch("spec_weaver.cli.get_item_map")
 @patch("spec_weaver.cli.get_tags")
 @patch("spec_weaver.cli.get_specs")
-def test_audit_with_errors(mock_get_specs, mock_get_tags, mock_get_item_map, mock_get_all_prefixes, tmp_path):
+def test_audit_with_errors(
+    mock_get_specs, mock_get_tags, mock_get_item_map, mock_get_all_prefixes, tmp_path
+):
     # 乖離がある状態
     mock_get_specs.return_value = {"SPEC-001", "SPEC-002"}  # SPEC-002 がテスト漏れ
-    mock_get_tags.return_value = {"SPEC-001", "SPEC-003"}   # SPEC-003 が孤児タグ
+    mock_get_tags.return_value = {"SPEC-001", "SPEC-003"}  # SPEC-003 が孤児タグ
     mock_get_item_map.return_value = {
         "SPEC-001": _make_mock_item("SPEC-001"),
         "SPEC-002": _make_mock_item("SPEC-002"),
@@ -78,7 +84,9 @@ def test_audit_with_errors(mock_get_specs, mock_get_tags, mock_get_item_map, moc
 @patch("spec_weaver.cli.get_item_map")
 @patch("spec_weaver.cli.get_tags")
 @patch("spec_weaver.cli.get_specs")
-def test_audit_suspect_specs(mock_get_specs, mock_get_tags, mock_get_item_map, mock_get_all_prefixes, tmp_path):
+def test_audit_suspect_specs(
+    mock_get_specs, mock_get_tags, mock_get_item_map, mock_get_all_prefixes, tmp_path
+):
     # SPEC-002 がSuspect状態
     mock_get_specs.return_value = {"SPEC-001", "SPEC-002"}
     mock_get_tags.return_value = {"SPEC-001", "SPEC-002"}
@@ -123,10 +131,13 @@ def test_audit_no_suspect_does_not_report_suspect(
 # status コマンドのテスト
 # ---------------------------------------------------------------------------
 
+
 @patch("spec_weaver.cli.get_spec_fingerprints")
 @patch("spec_weaver.cli.get_all_prefixes")
 @patch("spec_weaver.cli.get_item_map")
-def test_status_shows_all_items(mock_get_item_map, mock_get_all_prefixes, mock_get_fp, tmp_path):
+def test_status_shows_all_items(
+    mock_get_item_map, mock_get_all_prefixes, mock_get_fp, tmp_path
+):
     """status コマンドが全アイテムを一覧表示する。"""
     mock_get_all_prefixes.return_value = {"REQ", "SPEC"}
     mock_get_fp.return_value = {}
@@ -147,7 +158,9 @@ def test_status_shows_all_items(mock_get_item_map, mock_get_all_prefixes, mock_g
 @patch("spec_weaver.cli.get_spec_fingerprints")
 @patch("spec_weaver.cli.get_all_prefixes")
 @patch("spec_weaver.cli.get_item_map")
-def test_status_filter_by_status(mock_get_item_map, mock_get_all_prefixes, mock_get_fp, tmp_path):
+def test_status_filter_by_status(
+    mock_get_item_map, mock_get_all_prefixes, mock_get_fp, tmp_path
+):
     """--filter オプションで指定ステータスだけを表示する。"""
     mock_get_all_prefixes.return_value = {"REQ", "SPEC"}
     mock_get_fp.return_value = {}
@@ -157,7 +170,9 @@ def test_status_filter_by_status(mock_get_item_map, mock_get_all_prefixes, mock_
         "SPEC-001": _make_mock_item("SPEC-001", status="in-progress"),
     }
 
-    result = runner.invoke(app, ["status", "--repo-root", str(tmp_path), "--filter", "implemented"])
+    result = runner.invoke(
+        app, ["status", "--repo-root", str(tmp_path), "--filter", "implemented"]
+    )
 
     assert result.exit_code == 0
     assert "REQ-002" in result.stdout
@@ -168,7 +183,9 @@ def test_status_filter_by_status(mock_get_item_map, mock_get_all_prefixes, mock_
 @patch("spec_weaver.cli.get_spec_fingerprints")
 @patch("spec_weaver.cli.get_all_prefixes")
 @patch("spec_weaver.cli.get_item_map")
-def test_status_unset_shows_dash(mock_get_item_map, mock_get_all_prefixes, mock_get_fp, tmp_path):
+def test_status_unset_shows_dash(
+    mock_get_item_map, mock_get_all_prefixes, mock_get_fp, tmp_path
+):
     """status フィールドが未設定のアイテムは '-' と表示される。"""
     mock_get_all_prefixes.return_value = {"SPEC"}
     mock_get_fp.return_value = {}

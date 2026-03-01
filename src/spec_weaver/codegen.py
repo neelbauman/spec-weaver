@@ -68,13 +68,13 @@ def _escape_string(text: str) -> str:
     文字列内のバックスラッシュをエスケープし、ダブルクォーテーションを < > に置換する。
     （テスト互換用）
     """
-    text = text.replace('\\', '\\\\')
+    text = text.replace("\\", "\\\\")
     parts = text.split('"')
     result = []
     for i, part in enumerate(parts):
         result.append(part)
         if i < len(parts) - 1:
-            result.append('<' if i % 2 == 0 else '>')
+            result.append("<" if i % 2 == 0 else ">")
     return "".join(result)
 
 
@@ -122,7 +122,9 @@ def _resolve_step_prefixes(steps: list[dict]) -> list[tuple[str, str]]:
     return resolved
 
 
-def _collect_existing_steps(steps_dir: Path, exclude_file: Path | None = None) -> set[str]:
+def _collect_existing_steps(
+    steps_dir: Path, exclude_file: Path | None = None
+) -> set[str]:
     """
     指定ディレクトリ配下の Python ファイルから定義済みの behave ステップ文を収集する。
     exclude_file を指定するとそのファイルは走査対象から除外する。
@@ -204,7 +206,9 @@ def _build_step_block(
 
     if is_duplicate:
         commented = "\n".join(f"# {line}" for line in code.strip().split("\n"))
-        return f"# [Duplicate Skip] This step is already defined elsewhere\n{commented}\n"
+        return (
+            f"# [Duplicate Skip] This step is already defined elsewhere\n{commented}\n"
+        )
     return code
 
 
@@ -339,7 +343,7 @@ def _merge_content(
     for i, func_name in enumerate(ideal_order):
         ideal_block = ideal_func_to_block[func_name]
         ideal_pt = _get_primary_param_text(ideal_block)
-        
+
         match_idx = -1
         if func_name in result_names:
             match_idx = result_names.index(func_name)
@@ -354,7 +358,10 @@ def _merge_content(
             existing_scenarios = _extract_scenarios_from_block(existing_block)
             missing = [s for s in ideal_scenarios if s not in existing_scenarios]
             if missing:
-                result_pairs[match_idx] = (matched_func_name, _add_scenarios_to_block(existing_block, missing))
+                result_pairs[match_idx] = (
+                    matched_func_name,
+                    _add_scenarios_to_block(existing_block, missing),
+                )
         else:
             # 新規関数: アンカーを探して挿入位置を決定
             # ideal_order[i] より前で result_names に存在する最後の関数 = アンカー
@@ -375,7 +382,9 @@ def _merge_content(
             if func_name in duplicate_func_names and re.search(
                 r"raise NotImplementedError\('STEP:", block
             ):
-                commented = "\n".join(f"# {line}" for line in block.rstrip("\n").split("\n"))
+                commented = "\n".join(
+                    f"# {line}" for line in block.rstrip("\n").split("\n")
+                )
                 result_pairs[i] = (
                     func_name,
                     f"# [Duplicate Skip] This step is already defined elsewhere\n{commented}\n\n",
@@ -420,14 +429,18 @@ def generate_test_file(
     # --- 新規作成 / 全上書き ---
     if not out_file.exists() or overwrite:
         global_existing_steps = _collect_existing_steps(out_dir)
-        new_content = _generate_file_content(feature_name, step_registry, global_existing_steps)
+        new_content = _generate_file_content(
+            feature_name, step_registry, global_existing_steps
+        )
         out_file.write_text(new_content, encoding="utf-8")
         return out_file, "created", ""
 
     # --- 差分マージ ---
     # 自ファイルを除いた他のステップファイルから重複チェック用ステップを収集
     global_existing_steps = _collect_existing_steps(out_dir, exclude_file=out_file)
-    ideal_content = _generate_file_content(feature_name, step_registry, global_existing_steps)
+    ideal_content = _generate_file_content(
+        feature_name, step_registry, global_existing_steps
+    )
 
     # 仮想新規ファイルから関数順序とブロックを取得
     _, ideal_blocks = _split_by_decorators(ideal_content)
@@ -447,18 +460,22 @@ def generate_test_file(
             duplicate_func_names.add(fname)
 
     existing_content = out_file.read_text(encoding="utf-8")
-    new_content = _merge_content(existing_content, ideal_order, ideal_func_to_block, duplicate_func_names)
+    new_content = _merge_content(
+        existing_content, ideal_order, ideal_func_to_block, duplicate_func_names
+    )
 
     if new_content == existing_content:
         return None
 
-    diff_lines = list(difflib.unified_diff(
-        existing_content.splitlines(),
-        new_content.splitlines(),
-        fromfile=f"a/{out_file.name}",
-        tofile=f"b/{out_file.name}",
-        lineterm="",
-    ))
+    diff_lines = list(
+        difflib.unified_diff(
+            existing_content.splitlines(),
+            new_content.splitlines(),
+            fromfile=f"a/{out_file.name}",
+            tofile=f"b/{out_file.name}",
+            lineterm="",
+        )
+    )
     diff_text = "\n".join(diff_lines)
 
     out_file.write_text(new_content, encoding="utf-8")

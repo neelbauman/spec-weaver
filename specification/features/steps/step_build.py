@@ -20,11 +20,15 @@ from _helpers import (
 # Steps
 # ======================================================================
 
+
 def _run_build(context, extra_args=None):
     args = [
-        "build", str(context.feature_dir),
-        "--repo-root", str(context.repo_root),
-        "--out-dir", str(context.out_dir),
+        "build",
+        str(context.feature_dir),
+        "--repo-root",
+        str(context.repo_root),
+        "--out-dir",
+        str(context.out_dir),
     ]
     if extra_args:
         args += extra_args
@@ -49,7 +53,7 @@ def _setup_basic_project(context):
     )
 
 
-@given('DoorstopプロジェクトとGherkin featureファイルが存在する')  # type: ignore
+@given("DoorstopプロジェクトとGherkin featureファイルが存在する")  # type: ignore
 def given_8a7b1a87(context):
     """DoorstopプロジェクトとGherkin featureファイルが存在する
 
@@ -60,7 +64,7 @@ def given_8a7b1a87(context):
     _setup_basic_project(context)
 
 
-@when('build コマンドを実行する')  # type: ignore
+@when("build コマンドを実行する")  # type: ignore
 def when_40f323b6(context):
     """build コマンドを実行する
 
@@ -80,7 +84,7 @@ def when_40f323b6(context):
     _run_build(context)
 
 
-@then('出力ディレクトリに mkdocs.yml が生成されること')  # type: ignore
+@then("出力ディレクトリに mkdocs.yml が生成されること")  # type: ignore
 def then_453d91c1(context):
     """出力ディレクトリに mkdocs.yml が生成されること
 
@@ -91,7 +95,7 @@ def then_453d91c1(context):
     assert mkdocs.exists(), f"mkdocs.yml が生成されていません: {context.out_dir}"
 
 
-@then('Material テーマが設定されていること')  # type: ignore
+@then("Material テーマが設定されていること")  # type: ignore
 def then_281c0fa4(context):
     """Material テーマが設定されていること
 
@@ -106,7 +110,7 @@ def then_281c0fa4(context):
         )
 
 
-@given('DoorstopプロジェクトにREQアイテムが存在する')  # type: ignore
+@given("DoorstopプロジェクトにREQアイテムが存在する")  # type: ignore
 def given_ce6845b7(context):
     """DoorstopプロジェクトにREQアイテムが存在する
 
@@ -116,7 +120,7 @@ def given_ce6845b7(context):
     _setup_basic_project(context)
 
 
-@then('docs/req.md が生成されること')  # type: ignore
+@then("docs/req.md が生成されること")  # type: ignore
 def then_5d96da00(context):
     """docs/req.md が生成されること
 
@@ -127,7 +131,7 @@ def then_5d96da00(context):
     assert req_md.exists(), f"docs/req.md が存在しません: {context.out_dir}"
 
 
-@then('各REQアイテムがテーブル行として含まれること')  # type: ignore
+@then("各REQアイテムがテーブル行として含まれること")  # type: ignore
 def then_2977857a(context):
     """各REQアイテムがテーブル行として含まれること
 
@@ -140,7 +144,7 @@ def then_2977857a(context):
         assert "REQ-001" in content, f"REQ-001 が req.md にありません:\n{content[:300]}"
 
 
-@then('関連仕様への相互リンクが含まれること')  # type: ignore
+@then("関連仕様への相互リンクが含まれること")  # type: ignore
 def then_ef9d25c2(context):
     """関連仕様への相互リンクが含まれること
 
@@ -156,7 +160,7 @@ def then_ef9d25c2(context):
         )
 
 
-@given('DoorstopプロジェクトにSPECアイテムが存在する')  # type: ignore
+@given("DoorstopプロジェクトにSPECアイテムが存在する")  # type: ignore
 def given_ae2b8b7d(context):
     """DoorstopプロジェクトにSPECアイテムが存在する
 
@@ -166,7 +170,7 @@ def given_ae2b8b7d(context):
     _setup_basic_project(context)
 
 
-@then('docs/spec.md が生成されること')  # type: ignore
+@then("docs/spec.md が生成されること")  # type: ignore
 def then_854fac30(context):
     """docs/spec.md が生成されること
 
@@ -177,7 +181,7 @@ def then_854fac30(context):
     assert spec_md.exists(), f"docs/spec.md が存在しません"
 
 
-@then('各SPECアイテムがテーブル行として含まれること')  # type: ignore
+@then("各SPECアイテムがテーブル行として含まれること")  # type: ignore
 def then_86be7f51(context):
     """各SPECアイテムがテーブル行として含まれること
 
@@ -190,7 +194,7 @@ def then_86be7f51(context):
         assert "SPEC-001" in content, f"SPEC-001 が spec.md にありません"
 
 
-@then('上位要件への相互リンクが含まれること')  # type: ignore
+@then("上位要件への相互リンクが含まれること")  # type: ignore
 def then_d1af9a65(context):
     """上位要件への相互リンクが含まれること
 
@@ -203,7 +207,7 @@ def then_d1af9a65(context):
         assert "[" in content or "REQ" in content, "上位要件リンクがありません"
 
 
-@given('DoorstopプロジェクトにアイテムとGherkinテストが存在する')  # type: ignore
+@given("DoorstopプロジェクトにアイテムとGherkinテストが存在する")  # type: ignore
 def given_73c18566(context):
     """DoorstopプロジェクトにアイテムとGherkinテストが存在する
 
@@ -213,7 +217,7 @@ def given_73c18566(context):
     _setup_basic_project(context)
 
 
-@then('docs/items/ 配下に各アイテムのMarkdownファイルが生成されること')  # type: ignore
+@then("docs/items/ 配下に各アイテムのMarkdownファイルが生成されること")  # type: ignore
 def then_77d459df(context):
     """docs/items/ 配下に各アイテムのMarkdownファイルが生成されること
 
@@ -226,7 +230,7 @@ def then_77d459df(context):
     assert len(md_files) >= 1, f"docs/items/ に Markdown ファイルがありません"
 
 
-@then('アイテムの本文が含まれること')  # type: ignore
+@then("アイテムの本文が含まれること")  # type: ignore
 def then_650f49fb(context):
     """アイテムの本文が含まれること
 
@@ -241,7 +245,7 @@ def then_650f49fb(context):
             return
 
 
-@then('上位・下位リンクが含まれること')  # type: ignore
+@then("上位・下位リンクが含まれること")  # type: ignore
 def then_677a5bf3(context):
     """上位・下位リンクが含まれること
 
@@ -252,7 +256,7 @@ def then_677a5bf3(context):
     assert context.exit_code == 0, f"build 失敗:\n{context.output}"
 
 
-@then('対応するテストシナリオのファイルパスと行番号が含まれること')  # type: ignore
+@then("対応するテストシナリオのファイルパスと行番号が含まれること")  # type: ignore
 def then_ae3c7159(context):
     """対応するテストシナリオのファイルパスと行番号が含まれること
 
@@ -268,7 +272,7 @@ def then_ae3c7159(context):
     assert context.exit_code == 0, f"build 失敗:\n{context.output}"
 
 
-@given('Doorstopプロジェクトにアイテムが存在する')  # type: ignore
+@given("Doorstopプロジェクトにアイテムが存在する")  # type: ignore
 def given_93d749da(context):
     """Doorstopプロジェクトにアイテムが存在する
 
@@ -278,7 +282,7 @@ def given_93d749da(context):
     _setup_basic_project(context)
 
 
-@then('生成された一覧ページのテーブルにフィルタリング用入力欄が表示されること')  # type: ignore
+@then("生成された一覧ページのテーブルにフィルタリング用入力欄が表示されること")  # type: ignore
 def then_7bdfccf5(context):
     """生成された一覧ページのテーブルにフィルタリング用入力欄が表示されること
 
@@ -289,12 +293,12 @@ def then_7bdfccf5(context):
     if spec_md.exists():
         content = spec_md.read_text(encoding="utf-8")
         # テーブルフィルター用 JavaScript や HTML 要素を確認
-        assert any(kw in content for kw in ["filter", "Filter", "フィルタ", "search", "input"]), (
-            f"フィルタリング要素が見つかりません:\n{content[:500]}"
-        )
+        assert any(
+            kw in content for kw in ["filter", "Filter", "フィルタ", "search", "input"]
+        ), f"フィルタリング要素が見つかりません:\n{content[:500]}"
 
 
-@then('ID、タイトル、実装ステータス、レベル等の項目で絞り込みが可能であること')  # type: ignore
+@then("ID、タイトル、実装ステータス、レベル等の項目で絞り込みが可能であること")  # type: ignore
 def then_ca03093b(context):
     """ID、タイトル、実装ステータス、レベル等の項目で絞り込みが可能であること
 
@@ -305,7 +309,7 @@ def then_ca03093b(context):
     assert context.exit_code == 0, f"build 失敗:\n{context.output}"
 
 
-@given('プロジェクトに既存のドキュメントが存在する')  # type: ignore
+@given("プロジェクトに既存のドキュメントが存在する")  # type: ignore
 def given_b7341593(context):
     """プロジェクトに既存のドキュメントが存在する
 
@@ -320,7 +324,7 @@ def given_b7341593(context):
     context.existing_doc = existing
 
 
-@when('build コマンドをデフォルト出力先で実行する')  # type: ignore
+@when("build コマンドをデフォルト出力先で実行する")  # type: ignore
 def when_6f73d51e(context):
     """build コマンドをデフォルト出力先で実行する
 
@@ -332,17 +336,19 @@ def when_6f73d51e(context):
 
 @then('"{out_dir}" ディレクトリに出力されること')  # type: ignore
 def then_32de837a(context, out_dir):
-    """".specification" ディレクトリに出力されること
+    """ ".specification" ディレクトリに出力されること
 
     Scenarios:
       - 出力ディレクトリの独立性
       - カスタム出力ディレクトリの指定
     """
     assert context.exit_code == 0, f"build 失敗:\n{context.output}"
-    assert context.out_dir.exists(), f"出力ディレクトリが存在しません: {context.out_dir}"
+    assert context.out_dir.exists(), (
+        f"出力ディレクトリが存在しません: {context.out_dir}"
+    )
 
 
-@then('既存のドキュメントファイルは変更されないこと')  # type: ignore
+@then("既存のドキュメントファイルは変更されないこと")  # type: ignore
 def then_56c968de(context):
     """既存のドキュメントファイルは変更されないこと
 
@@ -368,7 +374,7 @@ def when_678e47f6(context, custom_dir):
 
 @given('"{spec_tag}" タグを持つ "{feature_file}" が存在する')  # type: ignore
 def given_8c5d7037(context, spec_tag, feature_file):
-    """"@SPEC-003" タグを持つ "audit.feature" が存在する
+    """ "@SPEC-003" タグを持つ "audit.feature" が存在する
 
     Scenarios:
       - feature MDページへのバックリンク生成
@@ -386,7 +392,7 @@ def given_8c5d7037(context, spec_tag, feature_file):
 
 @then('"{feature_md}" の冒頭に "{section}" セクションが含まれること')  # type: ignore
 def then_dcbe151a(context, feature_md, section):
-    """"docs/features/audit.md" の冒頭に "関連アイテム" セクションが含まれること
+    """ "docs/features/audit.md" の冒頭に "関連アイテム" セクションが含まれること
 
     Scenarios:
       - feature MDページへのバックリンク生成
@@ -401,7 +407,7 @@ def then_dcbe151a(context, feature_md, section):
 
 @then('"{link_text}" へのリンクが含まれること')  # type: ignore
 def then_3dd5fc62(context, link_text):
-    """"[SPEC-003](../items/SPEC-003.md)" へのリンクが含まれること
+    """ "[SPEC-003](../items/SPEC-003.md)" へのリンクが含まれること
 
     Scenarios:
       - feature MDページへのバックリンク生成
@@ -409,18 +415,20 @@ def then_3dd5fc62(context, link_text):
     # build 出力全体でリンクテキストを検索
     link_id = link_text.split("]")[0].lstrip("[").strip()
     found = False
-    for md in (context.out_dir / "docs").rglob("*.md") if (context.out_dir / "docs").exists() else []:
+    for md in (
+        (context.out_dir / "docs").rglob("*.md")
+        if (context.out_dir / "docs").exists()
+        else []
+    ):
         if link_id in md.read_text(encoding="utf-8"):
             found = True
             break
-    assert found or context.exit_code == 0, (
-        f"リンク {link_id!r} が見つかりません"
-    )
+    assert found or context.exit_code == 0, f"リンク {link_id!r} が見つかりません"
 
 
 @given('"{tag1}" と "{tag2}" の両タグを持つfeatureが存在する')  # type: ignore
 def given_1d9c057d(context, tag1, tag2):
-    """"@SPEC-004" と "@SPEC-009" の両タグを持つfeatureが存在する
+    """ "@SPEC-004" と "@SPEC-009" の両タグを持つfeatureが存在する
 
     Scenarios:
       - 複数アイテムを参照するfeatureのバックリンク
@@ -442,7 +450,9 @@ Feature: 複数タグ機能
     )
 
 
-@then('生成されたfeature MDの "{section}" に "{uid1}" と "{uid2}" の両方のリンクが含まれること')  # type: ignore
+@then(
+    '生成されたfeature MDの "{section}" に "{uid1}" と "{uid2}" の両方のリンクが含まれること'
+)  # type: ignore
 def then_d670dbfb(context, section, uid1, uid2):
     """生成されたfeature MDの "関連アイテム" に "SPEC-004" と "SPEC-009" の両方のリンクが含まれること
 
@@ -452,7 +462,7 @@ def then_d670dbfb(context, section, uid1, uid2):
     assert context.exit_code == 0, f"build 失敗:\n{context.output}"
 
 
-@given('どのDoorstopアイテムからも参照されていないfeatureが存在する')  # type: ignore
+@given("どのDoorstopアイテムからも参照されていないfeatureが存在する")  # type: ignore
 def given_486efd83(context):
     """どのDoorstopアイテムからも参照されていないfeatureが存在する
 
@@ -489,7 +499,7 @@ def then_7458537c(context, section):
         )
 
 
-@given('アイテムの上位リンク先が変更されている（cleared=false）')  # type: ignore
+@given("アイテムの上位リンク先が変更されている（cleared=false）")  # type: ignore
 def given_5951291a(context):
     """アイテムの上位リンク先が変更されている（cleared=false）
 
@@ -497,6 +507,7 @@ def given_5951291a(context):
       - Suspect Link 警告の一覧テーブル表示
     """
     import yaml
+
     _setup_basic_project(context)
     spec_file = context.repo_root / "specs" / "SPEC-001.yml"
     with open(spec_file, "r", encoding="utf-8") as f:
@@ -524,7 +535,7 @@ def then_011c6eae(context, css_class):
         )
 
 
-@then('詳細ページに Suspect Link バナーが表示されること')  # type: ignore
+@then("詳細ページに Suspect Link バナーが表示されること")  # type: ignore
 def then_b9db4871(context):
     """詳細ページに Suspect Link バナーが表示されること
 
@@ -540,7 +551,7 @@ def then_b9db4871(context):
     assert context.exit_code == 0, f"build 失敗:\n{context.output}"
 
 
-@given('アイテム自体に未レビューの変更がある（reviewed=false）')  # type: ignore
+@given("アイテム自体に未レビューの変更がある（reviewed=false）")  # type: ignore
 def given_60830b9f(context):
     """アイテム自体に未レビューの変更がある（reviewed=false）
 
@@ -548,6 +559,7 @@ def given_60830b9f(context):
       - Unreviewed Changes 警告の一覧テーブル表示
     """
     import yaml
+
     _setup_basic_project(context)
     spec_file = context.repo_root / "specs" / "SPEC-001.yml"
     with open(spec_file, "r", encoding="utf-8") as f:
@@ -557,7 +569,7 @@ def given_60830b9f(context):
         yaml.dump(data, f, allow_unicode=True)
 
 
-@then('詳細ページに Unreviewed Changes バナーが表示されること')  # type: ignore
+@then("詳細ページに Unreviewed Changes バナーが表示されること")  # type: ignore
 def then_e1fe71d4(context):
     """詳細ページに Unreviewed Changes バナーが表示されること
 
@@ -568,12 +580,14 @@ def then_e1fe71d4(context):
     if items_dir.exists():
         for f in items_dir.glob("SPEC-*.md"):
             content = f.read_text(encoding="utf-8")
-            if any(kw in content for kw in ["unreviewed", "Unreviewed", "📋", "未レビュー"]):
+            if any(
+                kw in content for kw in ["unreviewed", "Unreviewed", "📋", "未レビュー"]
+            ):
                 return
     assert context.exit_code == 0, f"build 失敗:\n{context.output}"
 
 
-@given('アイテムに Suspect Link と Unreviewed Changes の両方がある')  # type: ignore
+@given("アイテムに Suspect Link と Unreviewed Changes の両方がある")  # type: ignore
 def given_89f3d16e(context):
     """アイテムに Suspect Link と Unreviewed Changes の両方がある
 
@@ -581,6 +595,7 @@ def given_89f3d16e(context):
       - 複合警告の表示
     """
     import yaml
+
     _setup_basic_project(context)
     spec_file = context.repo_root / "specs" / "SPEC-001.yml"
     with open(spec_file, "r", encoding="utf-8") as f:

@@ -10,13 +10,35 @@ from gherkin.parser import Parser
 from gherkin.token_scanner import TokenScanner
 
 # 型エイリアス: 1つのテストシナリオが持つ詳細情報
-ScenarioInfo = Dict[str, Any]  # keys: "file", "line", "name", "keyword"
+ScenarioInfo = Dict[str, Any]  # keys: "file", "line", "name", "keyword", "fingerprint"
 
 # 型エイリアス: 仕様IDをキーとし、関連するシナリオ情報のリストを値とする辞書
 TagMap = Dict[str, List[ScenarioInfo]]
 
 
-def get_tag_map(features_dir: Path, prefixes: Set[str] | str = "SPEC", **kwargs) -> TagMap:
+def get_spec_fingerprints(
+    features_dir: Path, prefixes: Set[str] | str = "SPEC"
+) -> Dict[str, str]:
+    """
+    各仕様IDに対して、紐づく全シナリオのフィンガープリントを結合・ハッシュ化したものを返します。
+    """
+    import hashlib
+
+    tag_map = get_tag_map(features_dir, prefixes)
+    fingerprints = {}
+
+    for tag, scenarios in tag_map.items():
+        # 安定性のためにファイルパスと行番号でソート
+        sorted_scenarios = sorted(scenarios, key=lambda s: (s["file"], s["line"]))
+        combined = "".join(s["fingerprint"] for s in sorted_scenarios)
+        fingerprints[tag] = hashlib.sha256(combined.encode("utf-8")).hexdigest()
+
+    return fingerprints
+
+
+def get_tag_map(
+    features_dir: Path, prefixes: Set[str] | str = "SPEC", **kwargs
+) -> TagMap:
     """
     指定ディレクトリ以下の .feature ファイルを解析し、
     仕様ID（タグ）と、それに紐づくシナリオ（テスト）情報のマッピングを取得します。
@@ -62,7 +84,9 @@ def get_tag_map(features_dir: Path, prefixes: Set[str] | str = "SPEC", **kwargs)
 
             # コアジェネレータで (effective_tag_set, scenario_info) を取得し、
             # プレフィックスフィルタを適用してから tag_map に登録する（SPEC-021）
-            for effective_tags, scenario_info in _extract_scenarios_with_inherited_tags(ast, rel_path):
+            for effective_tags, scenario_info in _extract_scenarios_with_inherited_tags(
+                ast, rel_path
+            ):
                 for tag in effective_tags:
                     for prefix in target_prefixes:
                         if tag.upper().startswith(prefix):
@@ -142,11 +166,27 @@ def _process_scenario_node(
 
     effective_tags = inherited_tags | own_tags | examples_tags
 
+    # フィンガープリントの計算（名前、キーワード、ステップ、Examples）
+    import hashlib
+
+    f_content = scenario.get("name", "") + keyword
+    for step in scenario.get("steps", []):
+        f_content += step.get("keyword", "") + step.get("text", "")
+    for example in scenario.get("examples", []):
+        f_content += example.get("name", "")
+        header = example.get("tableHeader", {})
+        if header:
+            f_content += "".join(c["value"] for c in header.get("cells", []))
+        for row in example.get("tableBody", []):
+            f_content += "".join(c["value"] for c in row.get("cells", []))
+    fingerprint = hashlib.sha256(f_content.encode("utf-8")).hexdigest()
+
     scenario_info: ScenarioInfo = {
         "file": file_path,
         "line": scenario.get("location", {}).get("line", 0),
         "name": scenario.get("name", "Unnamed"),
         "keyword": keyword,
+        "fingerprint": fingerprint,
     }
     yield effective_tags, scenario_info
 
@@ -156,7 +196,9 @@ def _collect_tags(node: Any) -> Set[str]:
     return {tag["name"].lstrip("@") for tag in node.get("tags", [])}
 
 
-def get_tags(features_dir: Path, prefixes: Set[str] | str = "SPEC", **kwargs) -> Set[str]:
+def get_tags(
+    features_dir: Path, prefixes: Set[str] | str = "SPEC", **kwargs
+) -> Set[str]:
     """
     (後方互換性・監査用)
     仕様IDの文字列の集合（Set）のみを返します。auditコマンド等の差分検知で使用します。

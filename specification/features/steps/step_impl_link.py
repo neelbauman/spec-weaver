@@ -23,6 +23,7 @@ from spec_weaver.impl_scanner import get_ref_files, ImplScanner
 # ヘルパー
 # ======================================================================
 
+
 def _update_spec_yaml(context, spec_id: str, key: str, value) -> None:
     """SPEC YAML ファイルの指定キーを更新または削除する。"""
     spec_file = context.repo_root / "specs" / f"{spec_id}.yml"
@@ -48,7 +49,7 @@ def _run_cmd(context, param0: str) -> None:
     # "spec-weaver " プレフィックスを除去
     cmd = param0
     if cmd.startswith("spec-weaver "):
-        cmd = cmd[len("spec-weaver "):]
+        cmd = cmd[len("spec-weaver ") :]
 
     parts = cmd.split()
     subcommand = parts[0]
@@ -84,7 +85,8 @@ def _run_cmd(context, param0: str) -> None:
 # Steps（trace.feature / impl_link.feature 共通 Background）
 # ======================================================================
 
-@given('Doorstopツリーが初期化されている')  # type: ignore
+
+@given("Doorstopツリーが初期化されている")  # type: ignore
 def given_6df87eb3(context):
     """Doorstopツリーが初期化されている
 
@@ -105,7 +107,7 @@ def given_6df87eb3(context):
     context.scan_result = {}
 
 
-@given('以下のSPECアイテムが存在する:')  # type: ignore
+@given("以下のSPECアイテムが存在する:")  # type: ignore
 def given_14c0b615(context):
     """以下のSPECアイテムが存在する:
 
@@ -128,7 +130,9 @@ def given_14c0b615(context):
         if "Links" in headings:
             links_str = row["Links"].strip()
             if links_str:
-                item_cfg["links"] = [l.strip() for l in links_str.split(",") if l.strip()]
+                item_cfg["links"] = [
+                    l.strip() for l in links_str.split(",") if l.strip()
+                ]
 
         if "impl_files" in headings:
             impl_str = row["impl_files"].strip()
@@ -141,24 +145,29 @@ def given_14c0b615(context):
     documents = []
     req_items = getattr(context, "_pending_req_items", [])
     if req_items:
-        documents.append({
-            "dir": "reqs",
-            "prefix": "REQ",
-            "parent": None,
-            "items": req_items,
-        })
-    documents.append({
-        "dir": "specs",
-        "prefix": "SPEC",
-        "parent": "REQ" if req_items else None,
-        "items": context._pending_spec_items,
-    })
+        documents.append(
+            {
+                "dir": "reqs",
+                "prefix": "REQ",
+                "parent": None,
+                "items": req_items,
+            }
+        )
+    documents.append(
+        {
+            "dir": "specs",
+            "prefix": "SPEC",
+            "parent": "REQ" if req_items else None,
+            "items": context._pending_spec_items,
+        }
+    )
     create_doorstop_project_yaml(context.repo_root, documents)
 
 
 # ======================================================================
 # Steps（SPEC-017: impl_files カスタム属性）
 # ======================================================================
+
 
 @given('SPEC-018 の impl_files に ["{param0}"] が設定されている')  # type: ignore
 def given_5b35c4dd(context, param0):
@@ -171,7 +180,7 @@ def given_5b35c4dd(context, param0):
     context.target_spec_id = "SPEC-018"
 
 
-@when('impl_files を読み取る')  # type: ignore
+@when("impl_files を読み取る")  # type: ignore
 def when_1e9b41a9(context):
     """impl_files を読み取る
 
@@ -203,7 +212,7 @@ def then_4c08825b(context, param0):
     )
 
 
-@given('SPEC-019 の impl_files が未設定である')  # type: ignore
+@given("SPEC-019 の impl_files が未設定である")  # type: ignore
 def given_60f3699e(context):
     """SPEC-019 の impl_files が未設定である
 
@@ -217,7 +226,7 @@ def given_60f3699e(context):
     context.target_spec_id = "SPEC-019"
 
 
-@then('空のリストが返ること')  # type: ignore
+@then("空のリストが返ること")  # type: ignore
 def then_3cd52b0f(context):
     """空のリストが返ること
 
@@ -233,9 +242,10 @@ def then_3cd52b0f(context):
 # Steps（SPEC-018: アノテーションスキャン）
 # ======================================================================
 
+
 @given('"{param0}" の行頭に "{param1}" が記述されている')  # type: ignore
 def given_1a5b95f0(context, param0, param1):
-    """"src/spec_weaver/impl_scanner.py" の行頭に "# implements: SPEC-018" が記述されている
+    """ "src/spec_weaver/impl_scanner.py" の行頭に "# implements: SPEC-018" が記述されている
 
     Scenarios:
       - アノテーションのスキャンで仕様IDとファイルの対応を抽出できる
@@ -243,10 +253,12 @@ def given_1a5b95f0(context, param0, param1):
       - アノテーションがあって impl_files がない場合は警告を報告する
       - アノテーション由来のファイルも trace ツリーに表示される
     """
-    _create_source_file(context, param0, f"{param1}\n# This is a generated test file.\n")
+    _create_source_file(
+        context, param0, f"{param1}\n# This is a generated test file.\n"
+    )
 
 
-@when('impl-scanner でリポジトリをスキャンする')  # type: ignore
+@when("impl-scanner でリポジトリをスキャンする")  # type: ignore
 def when_59b7b6ae(context):
     """impl-scanner でリポジトリをスキャンする
 
@@ -261,7 +273,7 @@ def when_59b7b6ae(context):
 
 @then('"{param0}" に対して "{param1}" が紐づくこと')  # type: ignore
 def then_6cd9ae6b(context, param0, param1):
-    """"SPEC-018" に対して "src/spec_weaver/impl_scanner.py" が紐づくこと
+    """ "SPEC-018" に対して "src/spec_weaver/impl_scanner.py" が紐づくこと
 
     Scenarios:
       - アノテーションのスキャンで仕様IDとファイルの対応を抽出できる
@@ -278,14 +290,16 @@ def then_6cd9ae6b(context, param0, param1):
     )
 
 
-@given('リポジトリに .py ファイルと .md ファイルが存在する')  # type: ignore
+@given("リポジトリに .py ファイルと .md ファイルが存在する")  # type: ignore
 def given_6f18a295(context):
     """リポジトリに .py ファイルと .md ファイルが存在する
 
     Scenarios:
       - --extensions オプションでスキャン対象を絞れる
     """
-    _create_source_file(context, "src/dummy.py", "# Python file without annotation\npass\n")
+    _create_source_file(
+        context, "src/dummy.py", "# Python file without annotation\npass\n"
+    )
 
 
 @given('.md ファイルの行頭に "{param0}" が記述されている')  # type: ignore
@@ -299,7 +313,7 @@ def given_d9c1b21a(context, param0):
     context.md_file_path = "docs/annotation.md"
 
 
-@when('--extensions py を指定して impl-scanner でスキャンする')  # type: ignore
+@when("--extensions py を指定して impl-scanner でスキャンする")  # type: ignore
 def when_d61ff5a2(context):
     """--extensions py を指定して impl-scanner でスキャンする
 
@@ -310,7 +324,7 @@ def when_d61ff5a2(context):
     context.scan_result = scanner.scan(context.repo_root, extensions=["py"])
 
 
-@then('.md ファイルは結果に含まれないこと')  # type: ignore
+@then(".md ファイルは結果に含まれないこと")  # type: ignore
 def then_1e4aee33(context):
     """.md ファイルは結果に含まれないこと
 
@@ -326,7 +340,7 @@ def then_1e4aee33(context):
 
 @given('"{param0}" にアノテーションが存在しない')  # type: ignore
 def given_8d04b283(context, param0):
-    """"src/spec_weaver/gherkin.py" にアノテーションが存在しない
+    """ "src/spec_weaver/gherkin.py" にアノテーションが存在しない
 
     Scenarios:
       - アノテーションがないファイルはエラーにならない
@@ -334,7 +348,7 @@ def given_8d04b283(context, param0):
     _create_source_file(context, param0, "# No annotation here\npass\n")
 
 
-@then('エラーが発生しないこと')  # type: ignore
+@then("エラーが発生しないこと")  # type: ignore
 def then_b705ab9f(context):
     """エラーが発生しないこと
 
@@ -349,6 +363,7 @@ def then_b705ab9f(context):
 # Steps（SPEC-019: audit --check-impl）
 # ======================================================================
 
+
 @given('SPEC-019 の impl_files に "{param0}" が設定されている')  # type: ignore
 def given_4cea3b9d(context, param0):
     """SPEC-019 の impl_files に "src/spec_weaver/nonexistent.py" が設定されている
@@ -362,7 +377,7 @@ def given_4cea3b9d(context, param0):
 
 @when('"{param0}" を実行する')  # type: ignore
 def when_68ff7f63(context, param0):
-    """"spec-weaver audit --check-impl" を実行する
+    """ "spec-weaver audit --check-impl" を実行する
 
     Scenarios:
       - --check-impl オプションで存在しないファイルへの impl_files を検出する
@@ -374,7 +389,7 @@ def when_68ff7f63(context, param0):
     _run_cmd(context, param0)
 
 
-@then('終了コードが 1 であること')  # type: ignore
+@then("終了コードが 1 であること")  # type: ignore
 def then_3783b41c(context):
     """終了コードが 1 であること
 
@@ -388,7 +403,7 @@ def then_3783b41c(context):
 
 @then('"{param0}" が存在しないファイルとして報告されること')  # type: ignore
 def then_7ef614ad(context, param0):
-    """"nonexistent.py" が存在しないファイルとして報告されること
+    """ "nonexistent.py" が存在しないファイルとして報告されること
 
     Scenarios:
       - --check-impl オプションで存在しないファイルへの impl_files を検出する
@@ -412,18 +427,20 @@ def given_e64bd8f6(context, param0):
 
 @given('"{param0}" に SPEC-018 のアノテーションが存在しない')  # type: ignore
 def given_d0ba98a0(context, param0):
-    """"src/spec_weaver/cli.py" に SPEC-018 のアノテーションが存在しない
+    """ "src/spec_weaver/cli.py" に SPEC-018 のアノテーションが存在しない
 
     Scenarios:
       - impl_files にあってアノテーションがない場合は警告を報告する
     """
     # ファイルを作成するが、SPEC-018 アノテーションは含めない
-    _create_source_file(context, param0, "# This file has no SPEC-018 annotation\npass\n")
+    _create_source_file(
+        context, param0, "# This file has no SPEC-018 annotation\npass\n"
+    )
 
 
 @then('"{param0}" が impl_files のみ（アノテーションなし）として報告されること')  # type: ignore
 def then_f76e2a8d(context, param0):
-    """"SPEC-018 → src/spec_weaver/cli.py" が impl_files のみ（アノテーションなし）として報告されること
+    """ "SPEC-018 → src/spec_weaver/cli.py" が impl_files のみ（アノテーションなし）として報告されること
 
     Scenarios:
       - impl_files にあってアノテーションがない場合は警告を報告する
@@ -443,7 +460,7 @@ def then_f76e2a8d(context, param0):
 
 @then('"{param0}" がアノテーションのみ（impl_files なし）として報告されること')  # type: ignore
 def then_7fa51a4f(context, param0):
-    """"SPEC-019 ← src/spec_weaver/gherkin.py" がアノテーションのみ（impl_files なし）として報告されること
+    """ "SPEC-019 ← src/spec_weaver/gherkin.py" がアノテーションのみ（impl_files なし）として報告されること
 
     Scenarios:
       - アノテーションがあって impl_files がない場合は警告を報告する
@@ -471,7 +488,7 @@ def when_6a6c02d8(context, param0):
     _run_cmd(context, param0)
 
 
-@then('実装ファイルリンクのセクションが出力されないこと')  # type: ignore
+@then("実装ファイルリンクのセクションが出力されないこと")  # type: ignore
 def then_70e4e0dc(context):
     """実装ファイルリンクのセクションが出力されないこと
 
@@ -489,6 +506,7 @@ def then_70e4e0dc(context):
 # Steps（SPEC-020: trace --show-impl）
 # ======================================================================
 
+
 @then('出力ツリーに "{param0}" が含まれること')  # type: ignore
 def then_2c56e82a(context, param0):
     """出力ツリーに "src/spec_weaver/impl_scanner.py" が含まれること
@@ -502,7 +520,7 @@ def then_2c56e82a(context, param0):
     )
 
 
-@given('SPEC-018 の impl_files が未設定である')  # type: ignore
+@given("SPEC-018 の impl_files が未設定である")  # type: ignore
 def given_c11ed496(context):
     """SPEC-018 の impl_files が未設定である
 
@@ -514,7 +532,7 @@ def given_c11ed496(context):
 
 @when('"{param0}" を実行する（--show-impl なし）')  # type: ignore
 def when_dfb07a47(context, param0):
-    """"spec-weaver trace SPEC-018 -f ./specification/features" を実行する（--show-impl なし）
+    """ "spec-weaver trace SPEC-018 -f ./specification/features" を実行する（--show-impl なし）
 
     Scenarios:
       - --show-impl なしでは実装ファイルは表示されない

@@ -21,6 +21,7 @@ from spec_weaver.test_results import (
 # _scenario_status のテスト
 # ---------------------------------------------------------------------------
 
+
 def test_scenario_status_all_passed():
     steps = [
         {"result": {"status": "passed"}},
@@ -59,6 +60,7 @@ def test_scenario_status_missing_result():
 # load_test_results のテスト
 # ---------------------------------------------------------------------------
 
+
 def _make_cucumber_json(scenarios: list[dict]) -> list[dict]:
     """テスト用の Cucumber JSON データを構築するヘルパー。"""
     return [
@@ -71,16 +73,18 @@ def _make_cucumber_json(scenarios: list[dict]) -> list[dict]:
 
 
 def test_load_test_results_passed(tmp_path: Path):
-    data = _make_cucumber_json([
-        {
-            "name": "ログインに成功する",
-            "tags": [{"name": "@SPEC-001"}],
-            "steps": [
-                {"result": {"status": "passed"}},
-                {"result": {"status": "passed"}},
-            ],
-        }
-    ])
+    data = _make_cucumber_json(
+        [
+            {
+                "name": "ログインに成功する",
+                "tags": [{"name": "@SPEC-001"}],
+                "steps": [
+                    {"result": {"status": "passed"}},
+                    {"result": {"status": "passed"}},
+                ],
+            }
+        ]
+    )
     json_file = tmp_path / "results.json"
     json_file.write_text(json.dumps(data), encoding="utf-8")
 
@@ -89,16 +93,18 @@ def test_load_test_results_passed(tmp_path: Path):
 
 
 def test_load_test_results_failed(tmp_path: Path):
-    data = _make_cucumber_json([
-        {
-            "name": "無効なパスワードでログインを試みる",
-            "tags": [{"name": "@SPEC-002"}],
-            "steps": [
-                {"result": {"status": "passed"}},
-                {"result": {"status": "failed"}},
-            ],
-        }
-    ])
+    data = _make_cucumber_json(
+        [
+            {
+                "name": "無効なパスワードでログインを試みる",
+                "tags": [{"name": "@SPEC-002"}],
+                "steps": [
+                    {"result": {"status": "passed"}},
+                    {"result": {"status": "failed"}},
+                ],
+            }
+        ]
+    )
     json_file = tmp_path / "results.json"
     json_file.write_text(json.dumps(data), encoding="utf-8")
 
@@ -111,11 +117,15 @@ def test_load_test_results_failed_takes_priority_over_passed(tmp_path: Path):
     data = [
         {
             "uri": "features/auth.feature",
-            "elements": [{"name": "シナリオA", "steps": [{"result": {"status": "passed"}}]}],
+            "elements": [
+                {"name": "シナリオA", "steps": [{"result": {"status": "passed"}}]}
+            ],
         },
         {
             "uri": "features/auth.feature",
-            "elements": [{"name": "シナリオA", "steps": [{"result": {"status": "failed"}}]}],
+            "elements": [
+                {"name": "シナリオA", "steps": [{"result": {"status": "failed"}}]}
+            ],
         },
     ]
     json_file = tmp_path / "results.json"
@@ -129,11 +139,15 @@ def test_load_test_results_multiple_features(tmp_path: Path):
     data = [
         {
             "uri": "features/login.feature",
-            "elements": [{"name": "ログイン", "steps": [{"result": {"status": "passed"}}]}],
+            "elements": [
+                {"name": "ログイン", "steps": [{"result": {"status": "passed"}}]}
+            ],
         },
         {
             "uri": "features/logout.feature",
-            "elements": [{"name": "ログアウト", "steps": [{"result": {"status": "failed"}}]}],
+            "elements": [
+                {"name": "ログアウト", "steps": [{"result": {"status": "failed"}}]}
+            ],
         },
     ]
     json_file = tmp_path / "results.json"
@@ -156,10 +170,16 @@ def test_load_test_results_empty_json(tmp_path: Path):
 # spec_result_summary のテスト
 # ---------------------------------------------------------------------------
 
+
 def test_spec_result_summary_all_passed():
     tag_map = {
         "SPEC-001": [
-            {"file": "features/auth.feature", "name": "ログイン", "line": 5, "keyword": "Scenario"},
+            {
+                "file": "features/auth.feature",
+                "name": "ログイン",
+                "line": 5,
+                "keyword": "Scenario",
+            },
         ]
     }
     test_result_map = {("auth", "ログイン"): "passed"}
@@ -173,8 +193,18 @@ def test_spec_result_summary_all_passed():
 def test_spec_result_summary_with_failure():
     tag_map = {
         "SPEC-001": [
-            {"file": "features/auth.feature", "name": "ログイン成功", "line": 5, "keyword": "Scenario"},
-            {"file": "features/auth.feature", "name": "ログイン失敗", "line": 10, "keyword": "Scenario"},
+            {
+                "file": "features/auth.feature",
+                "name": "ログイン成功",
+                "line": 5,
+                "keyword": "Scenario",
+            },
+            {
+                "file": "features/auth.feature",
+                "name": "ログイン失敗",
+                "line": 10,
+                "keyword": "Scenario",
+            },
         ]
     }
     test_result_map = {
@@ -200,7 +230,12 @@ def test_spec_result_summary_scenario_not_in_results():
     """シナリオが存在するが結果ファイルに含まれていない場合。"""
     tag_map = {
         "SPEC-001": [
-            {"file": "features/auth.feature", "name": "未実行シナリオ", "line": 5, "keyword": "Scenario"},
+            {
+                "file": "features/auth.feature",
+                "name": "未実行シナリオ",
+                "line": 5,
+                "keyword": "Scenario",
+            },
         ]
     }
     test_result_map: dict = {}
@@ -214,6 +249,7 @@ def test_spec_result_summary_scenario_not_in_results():
 # ---------------------------------------------------------------------------
 # result_badge のテスト
 # ---------------------------------------------------------------------------
+
 
 def test_result_badge_all_passed():
     assert result_badge(3, 0, 3) == "✅ 3/3 PASS"
@@ -242,6 +278,7 @@ def test_result_badge_no_scenarios():
 # ---------------------------------------------------------------------------
 # test_status_badge のテスト
 # ---------------------------------------------------------------------------
+
 
 def test_format_status_badge_passed():
     assert format_status_badge("passed") == "✅ PASS"

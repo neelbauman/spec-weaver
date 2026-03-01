@@ -17,6 +17,7 @@ runner = CliRunner()
 # テスト用フィクスチャ
 # ---------------------------------------------------------------------------
 
+
 def _make_link(uid_str: str):
     """str() で uid_str を返すリンクモック。"""
     link = MagicMock()
@@ -51,6 +52,7 @@ def _make_mock_item(
 # ---------------------------------------------------------------------------
 # _collect_all_ancestors のユニットテスト
 # ---------------------------------------------------------------------------
+
 
 def test_collect_all_ancestors_simple():
     """REQ-001 ← SPEC-001 のリンク構造で、SPEC-001の祖先として REQ-001 が収集される。"""
@@ -97,6 +99,7 @@ def test_collect_all_ancestors_cycle_safety():
 # _format_trace_node のユニットテスト
 # ---------------------------------------------------------------------------
 
+
 def test_format_trace_node_normal():
     """通常ノードのラベルに★が含まれない。"""
     item = _make_mock_item("REQ-001", header="テスト要件")
@@ -118,10 +121,13 @@ def test_format_trace_node_origin():
 # trace コマンド - direction=down
 # ---------------------------------------------------------------------------
 
+
 @patch("spec_weaver.cli.get_all_prefixes")
 @patch("spec_weaver.cli.get_tag_map")
 @patch("spec_weaver.cli.get_item_map")
-def test_trace_down_shows_descendants(mock_get_item_map, mock_get_tag_map, mock_get_all_prefixes, tmp_path):
+def test_trace_down_shows_descendants(
+    mock_get_item_map, mock_get_tag_map, mock_get_all_prefixes, tmp_path
+):
     """--direction down でREQを起点にした場合、子SPECとシナリオが表示される。"""
     mock_get_item_map.return_value = {
         "REQ-001": _make_mock_item("REQ-001", header="上位要件"),
@@ -129,17 +135,29 @@ def test_trace_down_shows_descendants(mock_get_item_map, mock_get_tag_map, mock_
     }
     mock_get_tag_map.return_value = {
         "SPEC-001": [
-            {"file": "features/spec.feature", "line": 5, "name": "シナリオA", "keyword": "Scenario"}
+            {
+                "file": "features/spec.feature",
+                "line": 5,
+                "name": "シナリオA",
+                "keyword": "Scenario",
+            }
         ],
     }
     mock_get_all_prefixes.return_value = {"REQ", "SPEC"}
 
-    result = runner.invoke(app, [
-        "trace", "REQ-001",
-        "--feature-dir", str(tmp_path),
-        "--repo-root", str(tmp_path),
-        "--direction", "down",
-    ])
+    result = runner.invoke(
+        app,
+        [
+            "trace",
+            "REQ-001",
+            "--feature-dir",
+            str(tmp_path),
+            "--repo-root",
+            str(tmp_path),
+            "--direction",
+            "down",
+        ],
+    )
 
     assert result.exit_code == 0
     assert "REQ-001" in result.stdout
@@ -150,7 +168,9 @@ def test_trace_down_shows_descendants(mock_get_item_map, mock_get_tag_map, mock_
 @patch("spec_weaver.cli.get_all_prefixes")
 @patch("spec_weaver.cli.get_tag_map")
 @patch("spec_weaver.cli.get_item_map")
-def test_trace_down_no_ancestors(mock_get_item_map, mock_get_tag_map, mock_get_all_prefixes, tmp_path):
+def test_trace_down_no_ancestors(
+    mock_get_item_map, mock_get_tag_map, mock_get_all_prefixes, tmp_path
+):
     """--direction down では祖先が表示されない。"""
     mock_get_item_map.return_value = {
         "REQ-001": _make_mock_item("REQ-001", header="上位要件"),
@@ -159,12 +179,19 @@ def test_trace_down_no_ancestors(mock_get_item_map, mock_get_tag_map, mock_get_a
     mock_get_tag_map.return_value = {}
     mock_get_all_prefixes.return_value = {"REQ", "SPEC"}
 
-    result = runner.invoke(app, [
-        "trace", "SPEC-001",
-        "--feature-dir", str(tmp_path),
-        "--repo-root", str(tmp_path),
-        "--direction", "down",
-    ])
+    result = runner.invoke(
+        app,
+        [
+            "trace",
+            "SPEC-001",
+            "--feature-dir",
+            str(tmp_path),
+            "--repo-root",
+            str(tmp_path),
+            "--direction",
+            "down",
+        ],
+    )
 
     assert result.exit_code == 0
     assert "SPEC-001" in result.stdout
@@ -175,6 +202,7 @@ def test_trace_down_no_ancestors(mock_get_item_map, mock_get_tag_map, mock_get_a
 # ---------------------------------------------------------------------------
 # trace コマンド - direction=both
 # ---------------------------------------------------------------------------
+
 
 @patch("spec_weaver.cli.get_all_prefixes")
 @patch("spec_weaver.cli.get_tag_map")
@@ -191,17 +219,29 @@ def test_trace_both_shows_ancestors_and_descendants(
     }
     mock_get_tag_map.return_value = {
         "SPEC-001": [
-            {"file": "features/audit.feature", "line": 10, "name": "監査成功", "keyword": "Scenario"}
+            {
+                "file": "features/audit.feature",
+                "line": 10,
+                "name": "監査成功",
+                "keyword": "Scenario",
+            }
         ],
     }
     mock_get_all_prefixes.return_value = {"REQ", "SPEC"}
 
-    result = runner.invoke(app, [
-        "trace", "SPEC-001",
-        "--feature-dir", str(tmp_path),
-        "--repo-root", str(tmp_path),
-        "--direction", "both",
-    ])
+    result = runner.invoke(
+        app,
+        [
+            "trace",
+            "SPEC-001",
+            "--feature-dir",
+            str(tmp_path),
+            "--repo-root",
+            str(tmp_path),
+            "--direction",
+            "both",
+        ],
+    )
 
     assert result.exit_code == 0
     # 祖先が表示される
@@ -218,10 +258,13 @@ def test_trace_both_shows_ancestors_and_descendants(
 # trace コマンド - direction=up
 # ---------------------------------------------------------------------------
 
+
 @patch("spec_weaver.cli.get_all_prefixes")
 @patch("spec_weaver.cli.get_tag_map")
 @patch("spec_weaver.cli.get_item_map")
-def test_trace_up_no_scenarios(mock_get_item_map, mock_get_tag_map, mock_get_all_prefixes, tmp_path):
+def test_trace_up_no_scenarios(
+    mock_get_item_map, mock_get_tag_map, mock_get_all_prefixes, tmp_path
+):
     """--direction up ではシナリオが表示されない（祖先のみ）。"""
     mock_get_item_map.return_value = {
         "REQ-001": _make_mock_item("REQ-001", header="上位要件"),
@@ -229,17 +272,29 @@ def test_trace_up_no_scenarios(mock_get_item_map, mock_get_tag_map, mock_get_all
     }
     mock_get_tag_map.return_value = {
         "SPEC-001": [
-            {"file": "features/spec.feature", "line": 5, "name": "シナリオA", "keyword": "Scenario"}
+            {
+                "file": "features/spec.feature",
+                "line": 5,
+                "name": "シナリオA",
+                "keyword": "Scenario",
+            }
         ],
     }
     mock_get_all_prefixes.return_value = {"REQ", "SPEC"}
 
-    result = runner.invoke(app, [
-        "trace", "SPEC-001",
-        "--feature-dir", str(tmp_path),
-        "--repo-root", str(tmp_path),
-        "--direction", "up",
-    ])
+    result = runner.invoke(
+        app,
+        [
+            "trace",
+            "SPEC-001",
+            "--feature-dir",
+            str(tmp_path),
+            "--repo-root",
+            str(tmp_path),
+            "--direction",
+            "up",
+        ],
+    )
 
     assert result.exit_code == 0
     assert "REQ-001" in result.stdout
@@ -253,10 +308,13 @@ def test_trace_up_no_scenarios(mock_get_item_map, mock_get_tag_map, mock_get_all
 # trace コマンド - format=flat
 # ---------------------------------------------------------------------------
 
+
 @patch("spec_weaver.cli.get_all_prefixes")
 @patch("spec_weaver.cli.get_tag_map")
 @patch("spec_weaver.cli.get_item_map")
-def test_trace_flat_format(mock_get_item_map, mock_get_tag_map, mock_get_all_prefixes, tmp_path):
+def test_trace_flat_format(
+    mock_get_item_map, mock_get_tag_map, mock_get_all_prefixes, tmp_path
+):
     """--format flat でREQとSPECが両方テーブル形式で表示される。"""
     mock_get_item_map.return_value = {
         "REQ-001": _make_mock_item("REQ-001", header="上位要件", status="implemented"),
@@ -267,12 +325,19 @@ def test_trace_flat_format(mock_get_item_map, mock_get_tag_map, mock_get_all_pre
     mock_get_tag_map.return_value = {}
     mock_get_all_prefixes.return_value = {"REQ", "SPEC"}
 
-    result = runner.invoke(app, [
-        "trace", "SPEC-001",
-        "--feature-dir", str(tmp_path),
-        "--repo-root", str(tmp_path),
-        "--format", "flat",
-    ])
+    result = runner.invoke(
+        app,
+        [
+            "trace",
+            "SPEC-001",
+            "--feature-dir",
+            str(tmp_path),
+            "--repo-root",
+            str(tmp_path),
+            "--format",
+            "flat",
+        ],
+    )
 
     assert result.exit_code == 0
     assert "REQ-001" in result.stdout
@@ -285,6 +350,7 @@ def test_trace_flat_format(mock_get_item_map, mock_get_tag_map, mock_get_all_pre
 # trace コマンド - エラーケース
 # ---------------------------------------------------------------------------
 
+
 @patch("spec_weaver.cli.get_item_map")
 def test_trace_nonexistent_id_exits_with_error(mock_get_item_map, tmp_path):
     """存在しないIDを指定すると Exit(1) とエラーメッセージが表示される。"""
@@ -292,10 +358,15 @@ def test_trace_nonexistent_id_exits_with_error(mock_get_item_map, tmp_path):
         "REQ-001": _make_mock_item("REQ-001"),
     }
 
-    result = runner.invoke(app, [
-        "trace", "NONEXIST-999",
-        "--repo-root", str(tmp_path),
-    ])
+    result = runner.invoke(
+        app,
+        [
+            "trace",
+            "NONEXIST-999",
+            "--repo-root",
+            str(tmp_path),
+        ],
+    )
 
     assert result.exit_code == 1
     assert "not found" in result.stdout or "Error" in result.stdout
@@ -304,6 +375,7 @@ def test_trace_nonexistent_id_exits_with_error(mock_get_item_map, tmp_path):
 # ---------------------------------------------------------------------------
 # trace コマンド - .feature ファイルを起点
 # ---------------------------------------------------------------------------
+
 
 @patch("spec_weaver.cli.get_all_prefixes")
 @patch("spec_weaver.cli.get_tag_map")
@@ -318,17 +390,29 @@ def test_trace_feature_file_as_origin_up(
     }
     mock_get_tag_map.return_value = {
         "SPEC-001": [
-            {"file": "features/audit.feature", "line": 5, "name": "監査成功", "keyword": "Scenario"}
+            {
+                "file": "features/audit.feature",
+                "line": 5,
+                "name": "監査成功",
+                "keyword": "Scenario",
+            }
         ],
     }
     mock_get_all_prefixes.return_value = {"REQ", "SPEC"}
 
-    result = runner.invoke(app, [
-        "trace", "audit.feature",
-        "--feature-dir", str(tmp_path),
-        "--repo-root", str(tmp_path),
-        "--direction", "up",
-    ])
+    result = runner.invoke(
+        app,
+        [
+            "trace",
+            "audit.feature",
+            "--feature-dir",
+            str(tmp_path),
+            "--repo-root",
+            str(tmp_path),
+            "--direction",
+            "up",
+        ],
+    )
 
     assert result.exit_code == 0
     assert "REQ-001" in result.stdout

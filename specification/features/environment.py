@@ -12,10 +12,10 @@ def before_scenario(context, scenario):
     """各シナリオ開始前にテスト用一時ディレクトリを用意する。"""
     context.project_root = PROJECT_ROOT
     context.temp_dir = Path(tempfile.mkdtemp(prefix="sw_test_"))
-    context.repo_root = None      # ステップで設定
-    context.feature_dir = None    # ステップで設定
-    context.out_dir = None        # ステップで設定
-    context.result = None         # subprocess.CompletedProcess
+    context.repo_root = None  # ステップで設定
+    context.feature_dir = None  # ステップで設定
+    context.out_dir = None  # ステップで設定
+    context.result = None  # subprocess.CompletedProcess
     context.exit_code = None
     context.output = ""
     # 単体テスト用

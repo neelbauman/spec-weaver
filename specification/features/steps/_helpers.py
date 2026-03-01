@@ -20,7 +20,10 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent  # spec-weav
 # CLI ユーティリティ
 # ──────────────────────────────────────────────
 
-def run_spec_weaver(args: list[str], cwd: Path | None = None) -> subprocess.CompletedProcess:
+
+def run_spec_weaver(
+    args: list[str], cwd: Path | None = None
+) -> subprocess.CompletedProcess:
     """spec-weaver CLI を uv run 経由で実行し、結果を返す。"""
     return subprocess.run(
         ["uv", "run", "spec-weaver"] + args,
@@ -33,6 +36,7 @@ def run_spec_weaver(args: list[str], cwd: Path | None = None) -> subprocess.Comp
 # ──────────────────────────────────────────────
 # .feature ファイル作成
 # ──────────────────────────────────────────────
+
 
 def write_feature_file(path: Path, content: str) -> None:
     """指定パスに .feature ファイルを書き込む。"""
@@ -59,7 +63,10 @@ def minimal_feature(spec_tag: str, scenarios: list[str] | None = None) -> str:
 # Doorstop プロジェクト作成
 # ──────────────────────────────────────────────
 
-def _doorstop_yml(prefix: str, sep: str = "-", digits: int = 3, parent: str | None = None) -> dict:
+
+def _doorstop_yml(
+    prefix: str, sep: str = "-", digits: int = 3, parent: str | None = None
+) -> dict:
     """Document .doorstop.yml 設定辞書を返す。"""
     d: dict[str, Any] = {
         "settings": {
@@ -122,11 +129,21 @@ def write_doorstop_yaml(items_dir: Path, uid: str, **kwargs) -> Path:
 def _git_init(root: Path) -> None:
     """Doorstop が VCS ルートを検出できるよう、root に git リポジトリを初期化する。"""
     import subprocess
+
     root.mkdir(parents=True, exist_ok=True)
     subprocess.run(["git", "init", str(root)], capture_output=True, check=True)
     subprocess.run(
-        ["git", "-C", str(root), "commit", "--allow-empty", "-m", "init",
-         "--author", "test <test@test.com>"],
+        [
+            "git",
+            "-C",
+            str(root),
+            "commit",
+            "--allow-empty",
+            "-m",
+            "init",
+            "--author",
+            "test <test@test.com>",
+        ],
         capture_output=True,
     )
 
@@ -201,9 +218,11 @@ def create_doorstop_project_api(
     try:
         tree = doorstop.build()
         req_doc = tree.create_document("reqs", "REQ", sep="-", digits=3)
-        spec_doc = tree.create_document("specs", "SPEC", sep="-", digits=3, parent="REQ")
+        spec_doc = tree.create_document(
+            "specs", "SPEC", sep="-", digits=3, parent="REQ"
+        )
 
-        for cfg in (req_items or []):
+        for cfg in req_items or []:
             item = req_doc.add_item()
             item.header = cfg.get("header", "Test requirement")
             item.text = cfg.get("text", "Test requirement text.")
@@ -213,7 +232,7 @@ def create_doorstop_project_api(
                 item.set("status", cfg["status"])
             item.save()
 
-        for cfg in (spec_items or []):
+        for cfg in spec_items or []:
             item = spec_doc.add_item()
             item.header = cfg.get("header", "Test specification")
             item.text = cfg.get("text", "Test specification text.")
@@ -262,8 +281,11 @@ def _review_all(root: Path) -> None:
 # 汎用アサーション
 # ──────────────────────────────────────────────
 
+
 def assert_in_output(output: str, expected: str) -> None:
-    assert expected in output, f"期待文字列 {expected!r} が出力に見つかりません。\n出力:\n{output}"
+    assert expected in output, (
+        f"期待文字列 {expected!r} が出力に見つかりません。\n出力:\n{output}"
+    )
 
 
 def assert_not_in_output(output: str, unexpected: str) -> None:

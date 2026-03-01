@@ -18,6 +18,7 @@ from _helpers import (
 # Steps
 # ======================================================================
 
+
 def _run_status(context, extra_args=None):
     args = ["status", "--repo-root", str(context.repo_root)]
     if extra_args:
@@ -27,7 +28,7 @@ def _run_status(context, extra_args=None):
     context.output = context.result.stdout + context.result.stderr
 
 
-@given('REQ-001 が status: draft、SPEC-001 が status: implemented に設定されている')  # type: ignore
+@given("REQ-001 が status: draft、SPEC-001 が status: implemented に設定されている")  # type: ignore
 def given_ef098fcf(context):
     """REQ-001 が status: draft、SPEC-001 が status: implemented に設定されている
 
@@ -42,7 +43,7 @@ def given_ef098fcf(context):
     )
 
 
-@when('status コマンドを実行する')  # type: ignore
+@when("status コマンドを実行する")  # type: ignore
 def when_d68a8d9a(context):
     """status コマンドを実行する
 
@@ -76,7 +77,9 @@ def then_6e220346(context, badge):
       - 全アイテムのステータスを一覧表示する
     """
     assert "REQ-001" in context.output, f"REQ-001 が出力にありません:\n{context.output}"
-    assert badge in context.output, f"バッジ {badge!r} が出力にありません:\n{context.output}"
+    assert badge in context.output, (
+        f"バッジ {badge!r} が出力にありません:\n{context.output}"
+    )
 
 
 @then('SPEC-001 が "{badge}" バッジとともに表示されること')  # type: ignore
@@ -86,11 +89,15 @@ def then_9f0d7f01(context, badge):
     Scenarios:
       - 全アイテムのステータスを一覧表示する
     """
-    assert "SPEC-001" in context.output, f"SPEC-001 が出力にありません:\n{context.output}"
-    assert badge in context.output, f"バッジ {badge!r} が出力にありません:\n{context.output}"
+    assert "SPEC-001" in context.output, (
+        f"SPEC-001 が出力にありません:\n{context.output}"
+    )
+    assert badge in context.output, (
+        f"バッジ {badge!r} が出力にありません:\n{context.output}"
+    )
 
 
-@given('SPEC-001 に status フィールドが設定されていない')  # type: ignore
+@given("SPEC-001 に status フィールドが設定されていない")  # type: ignore
 def given_0d995d24(context):
     """SPEC-001 に status フィールドが設定されていない
 
@@ -117,7 +124,7 @@ def then_5818121f(context, expected):
     )
 
 
-@given('REQ-001 が status: implemented、REQ-002 が status: draft に設定されている')  # type: ignore
+@given("REQ-001 が status: implemented、REQ-002 が status: draft に設定されている")  # type: ignore
 def given_58beb4fc(context):
     """REQ-001 が status: implemented、REQ-002 が status: draft に設定されている
 
@@ -147,7 +154,7 @@ def when_d36ae1bf(context, option):
     _run_status(context, extra_args=parts)
 
 
-@then('REQ-001 が表示されること')  # type: ignore
+@then("REQ-001 が表示されること")  # type: ignore
 def then_2847178d(context):
     """REQ-001 が表示されること
 
@@ -157,7 +164,7 @@ def then_2847178d(context):
     assert "REQ-001" in context.output, f"REQ-001 が出力にありません:\n{context.output}"
 
 
-@then('REQ-002 は表示されないこと')  # type: ignore
+@then("REQ-002 は表示されないこと")  # type: ignore
 def then_9fc4e668(context):
     """REQ-002 は表示されないこと
 
@@ -183,19 +190,19 @@ def given_f93df893(context, status):
     )
 
 
-@then('一致するアイテムが見つからなかった旨が表示されること')  # type: ignore
+@then("一致するアイテムが見つからなかった旨が表示されること")  # type: ignore
 def then_897c0cfb(context):
     """一致するアイテムが見つからなかった旨が表示されること
 
     Scenarios:
       - --filter に一致するアイテムが存在しない場合に通知される
     """
-    assert any(kw in context.output for kw in ["見つかりません", "not found", "0 件", "一致"]), (
-        f"'見つからない' 旨が出力にありません:\n{context.output}"
-    )
+    assert any(
+        kw in context.output for kw in ["見つかりません", "not found", "0 件", "一致"]
+    ), f"'見つからない' 旨が出力にありません:\n{context.output}"
 
 
-@given('Doorstopのアイテムが存在する')  # type: ignore
+@given("Doorstopのアイテムが存在する")  # type: ignore
 def given_0da078b7(context):
     """Doorstopのアイテムが存在する
 
@@ -209,19 +216,20 @@ def given_0da078b7(context):
     )
 
 
-@then('レビューステータス列が表示されること')  # type: ignore
+@then("レビューステータス列が表示されること")  # type: ignore
 def then_33e7dc19(context):
     """レビューステータス列が表示されること
 
     Scenarios:
       - レビューステータスと最終更新日が表示される
     """
-    assert any(kw in context.output for kw in ["レビュー", "reviewed", "suspect", "✅", "⚠️", "📋"]), (
-        f"レビューステータス列が見つかりません:\n{context.output}"
-    )
+    assert any(
+        kw in context.output
+        for kw in ["レビュー", "reviewed", "suspect", "✅", "⚠️", "📋"]
+    ), f"レビューステータス列が見つかりません:\n{context.output}"
 
 
-@then('最終更新日列が表示されること')  # type: ignore
+@then("最終更新日列が表示されること")  # type: ignore
 def then_49bd7463(context):
     """最終更新日列が表示されること
 
