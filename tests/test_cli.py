@@ -123,9 +123,13 @@ def test_audit_no_suspect_does_not_report_suspect(
 # status コマンドのテスト
 # ---------------------------------------------------------------------------
 
+@patch("spec_weaver.cli.get_spec_fingerprints")
+@patch("spec_weaver.cli.get_all_prefixes")
 @patch("spec_weaver.cli.get_item_map")
-def test_status_shows_all_items(mock_get_item_map, tmp_path):
+def test_status_shows_all_items(mock_get_item_map, mock_get_all_prefixes, mock_get_fp, tmp_path):
     """status コマンドが全アイテムを一覧表示する。"""
+    mock_get_all_prefixes.return_value = {"REQ", "SPEC"}
+    mock_get_fp.return_value = {}
     mock_get_item_map.return_value = {
         "REQ-001": _make_mock_item("REQ-001", status="draft"),
         "SPEC-001": _make_mock_item("SPEC-001", status="implemented"),
@@ -140,9 +144,13 @@ def test_status_shows_all_items(mock_get_item_map, tmp_path):
     assert "implemented" in result.stdout
 
 
+@patch("spec_weaver.cli.get_spec_fingerprints")
+@patch("spec_weaver.cli.get_all_prefixes")
 @patch("spec_weaver.cli.get_item_map")
-def test_status_filter_by_status(mock_get_item_map, tmp_path):
+def test_status_filter_by_status(mock_get_item_map, mock_get_all_prefixes, mock_get_fp, tmp_path):
     """--filter オプションで指定ステータスだけを表示する。"""
+    mock_get_all_prefixes.return_value = {"REQ", "SPEC"}
+    mock_get_fp.return_value = {}
     mock_get_item_map.return_value = {
         "REQ-001": _make_mock_item("REQ-001", status="draft"),
         "REQ-002": _make_mock_item("REQ-002", status="implemented"),
@@ -157,9 +165,13 @@ def test_status_filter_by_status(mock_get_item_map, tmp_path):
     assert "SPEC-001" not in result.stdout
 
 
+@patch("spec_weaver.cli.get_spec_fingerprints")
+@patch("spec_weaver.cli.get_all_prefixes")
 @patch("spec_weaver.cli.get_item_map")
-def test_status_unset_shows_dash(mock_get_item_map, tmp_path):
+def test_status_unset_shows_dash(mock_get_item_map, mock_get_all_prefixes, mock_get_fp, tmp_path):
     """status フィールドが未設定のアイテムは '-' と表示される。"""
+    mock_get_all_prefixes.return_value = {"SPEC"}
+    mock_get_fp.return_value = {}
     mock_get_item_map.return_value = {
         "SPEC-001": _make_mock_item("SPEC-001", status=None),
     }

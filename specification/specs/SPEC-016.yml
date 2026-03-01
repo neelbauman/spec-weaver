@@ -9,6 +9,8 @@ normative: true
 ref: ''
 reviewed: OqdFH6AQlo2h3QVLbYrLbkHrDjMJ3QsSLZB4lVvmy40=
 status: implemented
+test_fingerprint: |
+  2b142fbd1e6707b5a3037687ac3a552396488f4f8b977c6a9f62a22f3c2cf55f
 testable: true
 text: |
   ## 概要

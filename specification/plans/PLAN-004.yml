@@ -1,0 +1,74 @@
+active: true
+derived: false
+header: |
+  Gherkin-Doorstop 状態管理の拡張（suspect / unreviewed）
+level: 4.0
+links:
+- SPEC-002: 4aI-LBDgpBzfNQBsdDxDLx2FyZvE3p1QmBDfcBdYu4k=
+- SPEC-017: dorE4wCm0-ha894qzUi-ooVFKB-D9pcLFFgRGWIKIQg=
+- SPEC-021: -utqS9RsMQTwM62PKU2opg0cEhzimKdVertu7_C-pjE=
+normative: true
+ref: ''
+reviewed: NI7Hpzh_Uw0pE0WdAIXC0TzTM9iuUylS1OyaTopOx2s=
+status: in-progress
+testable: false
+text: |
+  ## 概要
+  Doorstopの `suspect` / `unreviewed` 状態管理を、Gherkin `.feature` ファイルと
+  Doorstopアイテムの間の関係性にまで拡張する計画。
+
+  ## 目的
+  - `.feature` ファイル（テスト/実装）が変更されたら、対応する SPEC を `unreviewed` にする
+  - SPEC が `unreviewed` なら、対応する `.feature` シナリオを `suspect` とみなす
+
+  ## 実装タスク（実行順）
+
+  ### Task 1: Gherkin フィンガープリント計算の実装
+  **ファイル**: `src/spec_weaver/gherkin.py`
+  **内容**:
+  - `get_spec_fingerprints(features_dir, prefixes) -> dict[str, str]`
+    各 SPEC ID に対して、紐づく全シナリオの内容（名前、ステップ、Examples）を
+    結合してハッシュ化し、`{spec_id: hash}` のマップを返す。
+  - ハッシュ計算には安定性のため、シナリオをファイルパス・行番号でソートしてから処理する。
+
+  ### Task 2: Doorstop アイテムへの属性追加・更新ユーティリティ
+  **ファイル**: `src/spec_weaver/doorstop.py`
+  **内容**:
+  - `update_item_attribute(repo_root, item_id, key, value)`
+    指定したアイテムの YAML にカスタム属性を書き込む。
+    Doorstop の API を使用して、ファイルへの保存まで行う。
+
+  ### Task 3: audit コマンドの拡張（フィンガープリント検証）
+  **ファイル**: `src/spec_weaver/cli.py`
+  **内容**:
+  - `audit` 実行時に Gherkin の実フィンガープリントを計算。
+  - SPEC アイテムの `test_fingerprint` 属性と比較。
+  - 差分がある場合、`[Gherkin Unreviewed]` として警告を表示し、終了コード 1 を返す。
+  - SPEC が `unreviewed` (reviewed: False) の場合、`[Gherkin Suspect]` として警告を表示。
+
+  ### Task 4: review コマンドの新規追加
+  **ファイル**: `src/spec_weaver/cli.py`
+  **内容**:
+  - `spec-weaver review <ITEM_ID>`
+    指定したアイテムの `test_fingerprint` を、現在の Gherkin の内容に基づいて更新する。
+    これにより Doorstop の `reviewed` 状態もリセット（False）される。
+
+  ### Task 5: status コマンドの表示拡張
+  **ファイル**: `src/spec_weaver/cli.py`
+  **内容**:
+  - レビューステータス列に、フィンガープリントの不一致も反映する。
+    - `📋 test-unreviewed`: Gherkin 側が変更されている
+    - `⚠️ test-suspect`: SPEC 側が変更されている
+
+  ### Task 6: テストの追加
+  **ファイル**: `tests/test_review_state.py`（新規）
+  **内容**:
+  - フィンガープリント計算の安定性テスト。
+  - feature 変更後の audit での検知テスト。
+  - review コマンド実行後の YAML 更新テスト。
+
+  ## 完了条件
+  - `.feature` を編集して `spec-weaver audit` を実行すると警告が出る。
+  - `spec-weaver review SPEC-XXX` を実行すると、YAML の `test_fingerprint` が更新される。
+  - その後 `doorstop status` で対象アイテムが `unreviewed` になっている。
+  - `spec-weaver status` で詳細なステータスが表示される。

@@ -21,8 +21,18 @@ import subprocess
 import sys
 from datetime import date as _date
 
-from spec_weaver.doorstop import get_item_map, get_doorstop_tree, _get_custom_attribute, _get_git_file_date, get_specs, is_suspect, get_all_prefixes, get_item_warnings
-from spec_weaver.gherkin import get_tag_map, get_tags
+from spec_weaver.doorstop import (
+    get_item_map,
+    get_doorstop_tree,
+    _get_custom_attribute,
+    _get_git_file_date,
+    get_specs,
+    is_suspect,
+    get_all_prefixes,
+    get_item_warnings,
+    update_item_attribute,
+)
+from spec_weaver.gherkin import get_tag_map, get_tags, get_spec_fingerprints
 from spec_weaver.test_results import (
     TestResultMap,
     format_status_badge,
@@ -54,13 +64,29 @@ def _impl_status_badge(item) -> str:
     return IMPL_STATUS_BADGE.get(str(status), f"{status}")
 
 
-def _review_status_badge(item) -> str:
+def _review_status_badge(item, gherkin_fingerprints: Optional[dict] = None) -> str:
     """Doorstopのレビューステータスをバッジ文字列に変換する。"""
     warnings = get_item_warnings(item)
+    uid = str(item.uid)
+
+    # 1. Gherkin 側の変更 (Test Unreviewed)
+    if gherkin_fingerprints:
+        actual_fp = gherkin_fingerprints.get(uid)
+        expected_fp = _get_custom_attribute(item, "test_fingerprint", None)
+        if expected_fp and isinstance(expected_fp, str):
+            expected_fp = expected_fp.strip()
+            
+        if actual_fp and actual_fp != expected_fp:
+            return "📋 test-unreviewed"
+
+    # 2. SPEC 側の変更
     if warnings.has_suspect_links:
         return "⚠️ suspect"
     if warnings.has_unreviewed_changes:
+        if gherkin_fingerprints and uid in gherkin_fingerprints:
+            return "⚠️ test-suspect"
         return "📋 unreviewed"
+
     return "✅ reviewed"
 
 
@@ -181,20 +207,47 @@ def audit_cmd(
         with console.status("[bold cyan]Suspect状態の仕様を確認中...[/bold cyan]"):
             try:
                 raw_items = get_item_map(repo_root=repo_root)
+                # Gherkin フィンガープリントを取得
+                try:
+                    search_prefixes = {prefix} if prefix else all_prefixes
+                    gherkin_fingerprints = get_spec_fingerprints(feature_dir, search_prefixes)
+                except Exception:
+                    gherkin_fingerprints = {}
+
                 suspect_link_specs: dict[str, list[str]] = {}
                 unreviewed_specs: set[str] = set()
+                test_suspect_specs: set[str] = set()
+                gherkin_unreviewed: list[tuple[str, str, str]] = []  # (uid, actual, expected)
+
                 for uid, item in raw_items.items():
                     if prefix and not uid.startswith(prefix):
                         continue
+                    
+                    # 1. Doorstop 本体の警告
                     w = get_item_warnings(item)
                     if w.has_suspect_links:
                         suspect_link_specs[uid] = w.suspect_link_targets
                     if w.has_unreviewed_changes:
-                        unreviewed_specs.add(uid)
+                        if uid in gherkin_fingerprints:
+                            test_suspect_specs.add(uid)
+                        else:
+                            unreviewed_specs.add(uid)
+
+                    # 2. Gherkin フィンガープリントの不一致 (Test Unreviewed)
+                    actual_fp = gherkin_fingerprints.get(uid)
+                    expected_fp = _get_custom_attribute(item, "test_fingerprint", None)
+                    if expected_fp and isinstance(expected_fp, str):
+                        expected_fp = expected_fp.strip()
+                        
+                    if actual_fp and actual_fp != expected_fp:
+                        gherkin_unreviewed.append((uid, actual_fp, expected_fp))
+
             except Exception as e:
                 console.print(f"[bold red]❌ Suspect状態の確認に失敗しました:[/bold red] {e}")
                 suspect_link_specs = {}
                 unreviewed_specs = set()
+                test_suspect_specs = set()
+                gherkin_unreviewed = []
 
         untested_specs = specs_in_db - tags_in_code
         orphaned_tags = tags_in_code - specs_in_db
@@ -238,6 +291,30 @@ def audit_cmd(
             table.add_column("アクション", style="dim")
             for spec in sorted(unreviewed_specs):
                 table.add_row(spec, "doorstop review / 内容を確認してレビュー")
+            console.print(table)
+
+        if test_suspect_specs:
+            has_error = True
+            console.print("\n[bold yellow]⚠️ Test Suspect — 仕様が変更されたため、対応するテストの確認が必要です:[/bold yellow]")
+            table = Table(show_header=True, header_style="bold magenta")
+            table.add_column("Spec ID", style="dim")
+            table.add_column("アクション", style="dim")
+            for spec in sorted(test_suspect_specs):
+                table.add_row(spec, "テストを確認し、必要なら修正後 doorstop review を実行")
+            console.print(table)
+
+        if gherkin_unreviewed:
+            has_error = True
+            console.print("\n[bold yellow]🥒 Test Unreviewed — Gherkin シナリオが変更されています:[/bold yellow]")
+            table = Table(show_header=True, header_style="bold magenta")
+            table.add_column("Spec ID", style="dim")
+            table.add_column("期待されるハッシュ", style="dim")
+            table.add_column("実際のハッシュ", style="dim")
+            table.add_column("アクション", style="dim")
+            for uid, actual, expected in sorted(gherkin_unreviewed):
+                exp_str = (expected[:8] + "...") if expected else "(なし)"
+                act_str = actual[:8] + "..."
+                table.add_row(uid, exp_str, act_str, f"spec-weaver review {uid}")
             console.print(table)
 
         # stale チェック（終了コードには影響しない）
@@ -619,6 +696,61 @@ def ci_cmd(
 
 
 # ---------------------------------------------------------------------------
+# review コマンド
+# ---------------------------------------------------------------------------
+
+@app.command("review")
+def review_cmd(
+    item_id: str = typer.Argument(..., help="レビュー完了としてフィンガープリントを更新するアイテムID"),
+    feature_dir: Path = typer.Option(
+        Path("specification/features"),
+        "--feature-dir",
+        "-f",
+        help="Gherkinの .feature ファイルが格納されているディレクトリのパス",
+        exists=True,
+        file_okay=False,
+        dir_okay=True,
+        resolve_path=True,
+    ),
+    repo_root: Path = typer.Option(
+        Path.cwd(),
+        "--repo-root",
+        "-r",
+        help="Doorstopのプロジェクトルート",
+        exists=True,
+        file_okay=False,
+        dir_okay=True,
+        resolve_path=True,
+    ),
+) -> None:
+    """
+    指定したアイテムの Gherkin フィンガープリントを最新の状態に更新し、レビュー済みとみなします。
+    注意: この操作により YAML が書き換えられるため、Doorstop 本体の reviewed 状態はリセットされます。
+    """
+    try:
+        with console.status(f"[bold cyan]{item_id} の Gherkin フィンガープリントを計算中...[/bold cyan]"):
+            all_prefixes = get_all_prefixes(repo_root)
+            fingerprints = get_spec_fingerprints(feature_dir, all_prefixes)
+            actual_fp = fingerprints.get(item_id)
+
+        if not actual_fp:
+            console.print(f"[bold yellow]⚠️ {item_id} に紐づく Gherkin シナリオが見つかりませんでした。[/bold yellow]")
+            raise typer.Exit(1)
+
+        with console.status(f"[bold cyan]{item_id} の YAML を更新中...[/bold cyan]"):
+            update_item_attribute(repo_root, item_id, "test_fingerprint", actual_fp)
+
+        console.print(f"[bold green]✅ {item_id} のフィンガープリントを更新しました。[/bold green]")
+        console.print(f"[dim]新ハッシュ: {actual_fp}[/dim]")
+        console.print(f"\n[bold yellow]💡 次は Doorstop 本体のレビューを実行してください:[/bold yellow]")
+        console.print(f"   doorstop review {item_id}")
+
+    except Exception as e:
+        console.print(f"[bold red]❌ review エラー: {e}[/bold red]")
+        raise typer.Exit(1)
+
+
+# ---------------------------------------------------------------------------
 # status コマンド
 # ---------------------------------------------------------------------------
 
@@ -634,10 +766,20 @@ def status_cmd(
         dir_okay=True,
         resolve_path=True,
     ),
+    feature_dir: Path = typer.Option(
+        Path("specification/features"),
+        "--feature-dir",
+        "-f",
+        help="Gherkinの .feature ファイルが格納されているディレクトリのパス",
+        exists=True,
+        file_okay=False,
+        dir_okay=True,
+        resolve_path=True,
+    ),
     filter_status: Optional[str] = typer.Option(
         None,
         "--filter",
-        "-f",
+        "-F",
         help="表示するステータスで絞り込む（draft / in-progress / implemented / deprecated）",
     ),
 ) -> None:
@@ -648,6 +790,13 @@ def status_cmd(
         with console.status("[bold cyan]Doorstopデータを読み込み中...[/bold cyan]"):
             raw_items = get_item_map(repo_root=repo_root)
             all_items_str = {str(uid): item for uid, item in raw_items.items()}
+            all_prefixes = get_all_prefixes(repo_root)
+
+        with console.status("[bold cyan]Gherkinのフィンガープリントを計算中...[/bold cyan]"):
+            try:
+                gherkin_fingerprints = get_spec_fingerprints(feature_dir, all_prefixes)
+            except Exception:
+                gherkin_fingerprints = {}
 
         req_items = {uid: item for uid, item in all_items_str.items() if uid.startswith("REQ")}
         spec_items = {uid: item for uid, item in all_items_str.items() if uid.startswith("SPEC")}
@@ -666,7 +815,7 @@ def status_cmd(
                 if filter_status and str(raw_status or "") != filter_status:
                     continue
                 badge = _impl_status_badge(item)
-                review = _review_status_badge(item)
+                review = _review_status_badge(item, gherkin_fingerprints=gherkin_fingerprints)
                 updated = _get_timestamp(item, "updated_at")
                 title_text = (item.header or "").strip()
                 table.add_row(uid, title_text, badge, review, updated)

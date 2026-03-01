@@ -11,6 +11,8 @@ normative: true
 ref: ''
 reviewed: DNdd7QOwXUNGtJIcW6QRxIELp92ax-ebhh8n2B0ywZ0=
 status: implemented
+test_fingerprint: |
+  2a706c297cc92ef058aa49de06c4e31f6249110261b6b4a07abc182c42e238a6
 testable: true
 text: |
   ## 概要
