@@ -20,7 +20,7 @@ Doorstopの仕様データとGherkinテストを統合した
 #### Given DoorstopプロジェクトとGherkin featureファイルが存在する
 
 ```python
-@given('DoorstopプロジェクトとGherkin featureファイルが存在する')  # type: ignore
+@given("DoorstopプロジェクトとGherkin featureファイルが存在する")  # type: ignore
 def given_8a7b1a87(context):
     """DoorstopプロジェクトとGherkin featureファイルが存在する
 
@@ -34,7 +34,7 @@ def given_8a7b1a87(context):
 #### When build コマンドを実行する
 
 ```python
-@when('build コマンドを実行する')  # type: ignore
+@when("build コマンドを実行する")  # type: ignore
 def when_40f323b6(context):
     """build コマンドを実行する
 
@@ -57,7 +57,7 @@ def when_40f323b6(context):
 #### Then 出力ディレクトリに mkdocs.yml が生成されること
 
 ```python
-@then('出力ディレクトリに mkdocs.yml が生成されること')  # type: ignore
+@then("出力ディレクトリに mkdocs.yml が生成されること")  # type: ignore
 def then_453d91c1(context):
     """出力ディレクトリに mkdocs.yml が生成されること
 
@@ -71,7 +71,7 @@ def then_453d91c1(context):
 #### And Material テーマが設定されていること
 
 ```python
-@then('Material テーマが設定されていること')  # type: ignore
+@then("Material テーマが設定されていること")  # type: ignore
 def then_281c0fa4(context):
     """Material テーマが設定されていること
 
@@ -103,7 +103,7 @@ def then_281c0fa4(context):
 #### Given DoorstopプロジェクトにREQアイテムが存在する
 
 ```python
-@given('DoorstopプロジェクトにREQアイテムが存在する')  # type: ignore
+@given("DoorstopプロジェクトにREQアイテムが存在する")  # type: ignore
 def given_ce6845b7(context):
     """DoorstopプロジェクトにREQアイテムが存在する
 
@@ -116,7 +116,7 @@ def given_ce6845b7(context):
 #### When build コマンドを実行する
 
 ```python
-@when('build コマンドを実行する')  # type: ignore
+@when("build コマンドを実行する")  # type: ignore
 def when_40f323b6(context):
     """build コマンドを実行する
 
@@ -139,7 +139,7 @@ def when_40f323b6(context):
 #### Then docs/req.md が生成されること
 
 ```python
-@then('docs/req.md が生成されること')  # type: ignore
+@then("docs/req.md が生成されること")  # type: ignore
 def then_5d96da00(context):
     """docs/req.md が生成されること
 
@@ -153,7 +153,7 @@ def then_5d96da00(context):
 #### And 各REQアイテムがテーブル行として含まれること
 
 ```python
-@then('各REQアイテムがテーブル行として含まれること')  # type: ignore
+@then("各REQアイテムがテーブル行として含まれること")  # type: ignore
 def then_2977857a(context):
     """各REQアイテムがテーブル行として含まれること
 
@@ -169,7 +169,7 @@ def then_2977857a(context):
 #### And 関連仕様への相互リンクが含まれること
 
 ```python
-@then('関連仕様への相互リンクが含まれること')  # type: ignore
+@then("関連仕様への相互リンクが含まれること")  # type: ignore
 def then_ef9d25c2(context):
     """関連仕様への相互リンクが含まれること
 
@@ -202,7 +202,7 @@ def then_ef9d25c2(context):
 #### Given DoorstopプロジェクトにSPECアイテムが存在する
 
 ```python
-@given('DoorstopプロジェクトにSPECアイテムが存在する')  # type: ignore
+@given("DoorstopプロジェクトにSPECアイテムが存在する")  # type: ignore
 def given_ae2b8b7d(context):
     """DoorstopプロジェクトにSPECアイテムが存在する
 
@@ -215,7 +215,7 @@ def given_ae2b8b7d(context):
 #### When build コマンドを実行する
 
 ```python
-@when('build コマンドを実行する')  # type: ignore
+@when("build コマンドを実行する")  # type: ignore
 def when_40f323b6(context):
     """build コマンドを実行する
 
@@ -238,7 +238,7 @@ def when_40f323b6(context):
 #### Then docs/spec.md が生成されること
 
 ```python
-@then('docs/spec.md が生成されること')  # type: ignore
+@then("docs/spec.md が生成されること")  # type: ignore
 def then_854fac30(context):
     """docs/spec.md が生成されること
 
@@ -252,7 +252,7 @@ def then_854fac30(context):
 #### And 各SPECアイテムがテーブル行として含まれること
 
 ```python
-@then('各SPECアイテムがテーブル行として含まれること')  # type: ignore
+@then("各SPECアイテムがテーブル行として含まれること")  # type: ignore
 def then_86be7f51(context):
     """各SPECアイテムがテーブル行として含まれること
 
@@ -268,7 +268,7 @@ def then_86be7f51(context):
 #### And 上位要件への相互リンクが含まれること
 
 ```python
-@then('上位要件への相互リンクが含まれること')  # type: ignore
+@then("上位要件への相互リンクが含まれること")  # type: ignore
 def then_d1af9a65(context):
     """上位要件への相互リンクが含まれること
 
@@ -299,7 +299,7 @@ def then_d1af9a65(context):
 #### Given DoorstopプロジェクトにアイテムとGherkinテストが存在する
 
 ```python
-@given('DoorstopプロジェクトにアイテムとGherkinテストが存在する')  # type: ignore
+@given("DoorstopプロジェクトにアイテムとGherkinテストが存在する")  # type: ignore
 def given_73c18566(context):
     """DoorstopプロジェクトにアイテムとGherkinテストが存在する
 
@@ -312,7 +312,7 @@ def given_73c18566(context):
 #### When build コマンドを実行する
 
 ```python
-@when('build コマンドを実行する')  # type: ignore
+@when("build コマンドを実行する")  # type: ignore
 def when_40f323b6(context):
     """build コマンドを実行する
 
@@ -335,7 +335,7 @@ def when_40f323b6(context):
 #### Then docs/items/ 配下に各アイテムのMarkdownファイルが生成されること
 
 ```python
-@then('docs/items/ 配下に各アイテムのMarkdownファイルが生成されること')  # type: ignore
+@then("docs/items/ 配下に各アイテムのMarkdownファイルが生成されること")  # type: ignore
 def then_77d459df(context):
     """docs/items/ 配下に各アイテムのMarkdownファイルが生成されること
 
@@ -351,7 +351,7 @@ def then_77d459df(context):
 #### And アイテムの本文が含まれること
 
 ```python
-@then('アイテムの本文が含まれること')  # type: ignore
+@then("アイテムの本文が含まれること")  # type: ignore
 def then_650f49fb(context):
     """アイテムの本文が含まれること
 
@@ -369,7 +369,7 @@ def then_650f49fb(context):
 #### And 上位・下位リンクが含まれること
 
 ```python
-@then('上位・下位リンクが含まれること')  # type: ignore
+@then("上位・下位リンクが含まれること")  # type: ignore
 def then_677a5bf3(context):
     """上位・下位リンクが含まれること
 
@@ -383,7 +383,7 @@ def then_677a5bf3(context):
 #### And 対応するテストシナリオのファイルパスと行番号が含まれること
 
 ```python
-@then('対応するテストシナリオのファイルパスと行番号が含まれること')  # type: ignore
+@then("対応するテストシナリオのファイルパスと行番号が含まれること")  # type: ignore
 def then_ae3c7159(context):
     """対応するテストシナリオのファイルパスと行番号が含まれること
 
@@ -417,7 +417,7 @@ def then_ae3c7159(context):
 #### Given Doorstopプロジェクトにアイテムが存在する
 
 ```python
-@given('Doorstopプロジェクトにアイテムが存在する')  # type: ignore
+@given("Doorstopプロジェクトにアイテムが存在する")  # type: ignore
 def given_93d749da(context):
     """Doorstopプロジェクトにアイテムが存在する
 
@@ -430,7 +430,7 @@ def given_93d749da(context):
 #### When build コマンドを実行する
 
 ```python
-@when('build コマンドを実行する')  # type: ignore
+@when("build コマンドを実行する")  # type: ignore
 def when_40f323b6(context):
     """build コマンドを実行する
 
@@ -453,7 +453,7 @@ def when_40f323b6(context):
 #### Then 生成された一覧ページのテーブルにフィルタリング用入力欄が表示されること
 
 ```python
-@then('生成された一覧ページのテーブルにフィルタリング用入力欄が表示されること')  # type: ignore
+@then("生成された一覧ページのテーブルにフィルタリング用入力欄が表示されること")  # type: ignore
 def then_7bdfccf5(context):
     """生成された一覧ページのテーブルにフィルタリング用入力欄が表示されること
 
@@ -464,15 +464,15 @@ def then_7bdfccf5(context):
     if spec_md.exists():
         content = spec_md.read_text(encoding="utf-8")
         # テーブルフィルター用 JavaScript や HTML 要素を確認
-        assert any(kw in content for kw in ["filter", "Filter", "フィルタ", "search", "input"]), (
-            f"フィルタリング要素が見つかりません:\n{content[:500]}"
-        )
+        assert any(
+            kw in content for kw in ["filter", "Filter", "フィルタ", "search", "input"]
+        ), f"フィルタリング要素が見つかりません:\n{content[:500]}"
 ```
 
 #### And ID、タイトル、実装ステータス、レベル等の項目で絞り込みが可能であること
 
 ```python
-@then('ID、タイトル、実装ステータス、レベル等の項目で絞り込みが可能であること')  # type: ignore
+@then("ID、タイトル、実装ステータス、レベル等の項目で絞り込みが可能であること")  # type: ignore
 def then_ca03093b(context):
     """ID、タイトル、実装ステータス、レベル等の項目で絞り込みが可能であること
 
@@ -499,7 +499,7 @@ def then_ca03093b(context):
 #### Given プロジェクトに既存のドキュメントが存在する
 
 ```python
-@given('プロジェクトに既存のドキュメントが存在する')  # type: ignore
+@given("プロジェクトに既存のドキュメントが存在する")  # type: ignore
 def given_b7341593(context):
     """プロジェクトに既存のドキュメントが存在する
 
@@ -517,7 +517,7 @@ def given_b7341593(context):
 #### When build コマンドをデフォルト出力先で実行する
 
 ```python
-@when('build コマンドをデフォルト出力先で実行する')  # type: ignore
+@when("build コマンドをデフォルト出力先で実行する")  # type: ignore
 def when_6f73d51e(context):
     """build コマンドをデフォルト出力先で実行する
 
@@ -532,20 +532,22 @@ def when_6f73d51e(context):
 ```python
 @then('"{out_dir}" ディレクトリに出力されること')  # type: ignore
 def then_32de837a(context, out_dir):
-    """".specification" ディレクトリに出力されること
+    """ ".specification" ディレクトリに出力されること
 
     Scenarios:
       - 出力ディレクトリの独立性
       - カスタム出力ディレクトリの指定
     """
     assert context.exit_code == 0, f"build 失敗:\n{context.output}"
-    assert context.out_dir.exists(), f"出力ディレクトリが存在しません: {context.out_dir}"
+    assert context.out_dir.exists(), (
+        f"出力ディレクトリが存在しません: {context.out_dir}"
+    )
 ```
 
 #### And 既存のドキュメントファイルは変更されないこと
 
 ```python
-@then('既存のドキュメントファイルは変更されないこと')  # type: ignore
+@then("既存のドキュメントファイルは変更されないこと")  # type: ignore
 def then_56c968de(context):
     """既存のドキュメントファイルは変更されないこと
 
@@ -572,7 +574,7 @@ def then_56c968de(context):
 #### Given DoorstopプロジェクトとGherkin featureファイルが存在する
 
 ```python
-@given('DoorstopプロジェクトとGherkin featureファイルが存在する')  # type: ignore
+@given("DoorstopプロジェクトとGherkin featureファイルが存在する")  # type: ignore
 def given_8a7b1a87(context):
     """DoorstopプロジェクトとGherkin featureファイルが存在する
 
@@ -603,14 +605,16 @@ def when_678e47f6(context, custom_dir):
 ```python
 @then('"{out_dir}" ディレクトリに出力されること')  # type: ignore
 def then_32de837a(context, out_dir):
-    """".specification" ディレクトリに出力されること
+    """ ".specification" ディレクトリに出力されること
 
     Scenarios:
       - 出力ディレクトリの独立性
       - カスタム出力ディレクトリの指定
     """
     assert context.exit_code == 0, f"build 失敗:\n{context.output}"
-    assert context.out_dir.exists(), f"出力ディレクトリが存在しません: {context.out_dir}"
+    assert context.out_dir.exists(), (
+        f"出力ディレクトリが存在しません: {context.out_dir}"
+    )
 ```
 
 </details>
@@ -633,7 +637,7 @@ def then_32de837a(context, out_dir):
 ```python
 @given('"{spec_tag}" タグを持つ "{feature_file}" が存在する')  # type: ignore
 def given_8c5d7037(context, spec_tag, feature_file):
-    """"@SPEC-003" タグを持つ "audit.feature" が存在する
+    """ "@SPEC-003" タグを持つ "audit.feature" が存在する
 
     Scenarios:
       - feature MDページへのバックリンク生成
@@ -652,7 +656,7 @@ def given_8c5d7037(context, spec_tag, feature_file):
 #### When build コマンドを実行する
 
 ```python
-@when('build コマンドを実行する')  # type: ignore
+@when("build コマンドを実行する")  # type: ignore
 def when_40f323b6(context):
     """build コマンドを実行する
 
@@ -677,7 +681,7 @@ def when_40f323b6(context):
 ```python
 @then('"{feature_md}" の冒頭に "{section}" セクションが含まれること')  # type: ignore
 def then_dcbe151a(context, feature_md, section):
-    """"docs/features/audit.md" の冒頭に "関連アイテム" セクションが含まれること
+    """ "docs/features/audit.md" の冒頭に "関連アイテム" セクションが含まれること
 
     Scenarios:
       - feature MDページへのバックリンク生成
@@ -695,7 +699,7 @@ def then_dcbe151a(context, feature_md, section):
 ```python
 @then('"{link_text}" へのリンクが含まれること')  # type: ignore
 def then_3dd5fc62(context, link_text):
-    """"[SPEC-003](../items/SPEC-003.md)" へのリンクが含まれること
+    """ "[SPEC-003](../items/SPEC-003.md)" へのリンクが含まれること
 
     Scenarios:
       - feature MDページへのバックリンク生成
@@ -703,13 +707,15 @@ def then_3dd5fc62(context, link_text):
     # build 出力全体でリンクテキストを検索
     link_id = link_text.split("]")[0].lstrip("[").strip()
     found = False
-    for md in (context.out_dir / "docs").rglob("*.md") if (context.out_dir / "docs").exists() else []:
+    for md in (
+        (context.out_dir / "docs").rglob("*.md")
+        if (context.out_dir / "docs").exists()
+        else []
+    ):
         if link_id in md.read_text(encoding="utf-8"):
             found = True
             break
-    assert found or context.exit_code == 0, (
-        f"リンク {link_id!r} が見つかりません"
-    )
+    assert found or context.exit_code == 0, f"リンク {link_id!r} が見つかりません"
 ```
 
 </details>
@@ -731,7 +737,7 @@ def then_3dd5fc62(context, link_text):
 ```python
 @given('"{tag1}" と "{tag2}" の両タグを持つfeatureが存在する')  # type: ignore
 def given_1d9c057d(context, tag1, tag2):
-    """"@SPEC-004" と "@SPEC-009" の両タグを持つfeatureが存在する
+    """ "@SPEC-004" と "@SPEC-009" の両タグを持つfeatureが存在する
 
     Scenarios:
       - 複数アイテムを参照するfeatureのバックリンク
@@ -756,7 +762,7 @@ Feature: 複数タグ機能
 #### When build コマンドを実行する
 
 ```python
-@when('build コマンドを実行する')  # type: ignore
+@when("build コマンドを実行する")  # type: ignore
 def when_40f323b6(context):
     """build コマンドを実行する
 
@@ -779,7 +785,9 @@ def when_40f323b6(context):
 #### Then 生成されたfeature MDの "関連アイテム" に "SPEC-004" と "SPEC-009" の両方のリンクが含まれること
 
 ```python
-@then('生成されたfeature MDの "{section}" に "{uid1}" と "{uid2}" の両方のリンクが含まれること')  # type: ignore
+@then(
+    '生成されたfeature MDの "{section}" に "{uid1}" と "{uid2}" の両方のリンクが含まれること'
+)  # type: ignore
 def then_d670dbfb(context, section, uid1, uid2):
     """生成されたfeature MDの "関連アイテム" に "SPEC-004" と "SPEC-009" の両方のリンクが含まれること
 
@@ -806,7 +814,7 @@ def then_d670dbfb(context, section, uid1, uid2):
 #### Given どのDoorstopアイテムからも参照されていないfeatureが存在する
 
 ```python
-@given('どのDoorstopアイテムからも参照されていないfeatureが存在する')  # type: ignore
+@given("どのDoorstopアイテムからも参照されていないfeatureが存在する")  # type: ignore
 def given_486efd83(context):
     """どのDoorstopアイテムからも参照されていないfeatureが存在する
 
@@ -831,7 +839,7 @@ Feature: タグなし機能
 #### When build コマンドを実行する
 
 ```python
-@when('build コマンドを実行する')  # type: ignore
+@when("build コマンドを実行する")  # type: ignore
 def when_40f323b6(context):
     """build コマンドを実行する
 
@@ -887,7 +895,7 @@ def then_7458537c(context, section):
 #### Given アイテムの上位リンク先が変更されている（cleared=false）
 
 ```python
-@given('アイテムの上位リンク先が変更されている（cleared=false）')  # type: ignore
+@given("アイテムの上位リンク先が変更されている（cleared=false）")  # type: ignore
 def given_5951291a(context):
     """アイテムの上位リンク先が変更されている（cleared=false）
 
@@ -895,6 +903,7 @@ def given_5951291a(context):
       - Suspect Link 警告の一覧テーブル表示
     """
     import yaml
+
     _setup_basic_project(context)
     spec_file = context.repo_root / "specs" / "SPEC-001.yml"
     with open(spec_file, "r", encoding="utf-8") as f:
@@ -907,7 +916,7 @@ def given_5951291a(context):
 #### When build コマンドを実行する
 
 ```python
-@when('build コマンドを実行する')  # type: ignore
+@when("build コマンドを実行する")  # type: ignore
 def when_40f323b6(context):
     """build コマンドを実行する
 
@@ -951,7 +960,7 @@ def then_011c6eae(context, css_class):
 #### And 詳細ページに Suspect Link バナーが表示されること
 
 ```python
-@then('詳細ページに Suspect Link バナーが表示されること')  # type: ignore
+@then("詳細ページに Suspect Link バナーが表示されること")  # type: ignore
 def then_b9db4871(context):
     """詳細ページに Suspect Link バナーが表示されること
 
@@ -985,7 +994,7 @@ def then_b9db4871(context):
 #### Given アイテム自体に未レビューの変更がある（reviewed=false）
 
 ```python
-@given('アイテム自体に未レビューの変更がある（reviewed=false）')  # type: ignore
+@given("アイテム自体に未レビューの変更がある（reviewed=false）")  # type: ignore
 def given_60830b9f(context):
     """アイテム自体に未レビューの変更がある（reviewed=false）
 
@@ -993,6 +1002,7 @@ def given_60830b9f(context):
       - Unreviewed Changes 警告の一覧テーブル表示
     """
     import yaml
+
     _setup_basic_project(context)
     spec_file = context.repo_root / "specs" / "SPEC-001.yml"
     with open(spec_file, "r", encoding="utf-8") as f:
@@ -1005,7 +1015,7 @@ def given_60830b9f(context):
 #### When build コマンドを実行する
 
 ```python
-@when('build コマンドを実行する')  # type: ignore
+@when("build コマンドを実行する")  # type: ignore
 def when_40f323b6(context):
     """build コマンドを実行する
 
@@ -1049,7 +1059,7 @@ def then_011c6eae(context, css_class):
 #### And 詳細ページに Unreviewed Changes バナーが表示されること
 
 ```python
-@then('詳細ページに Unreviewed Changes バナーが表示されること')  # type: ignore
+@then("詳細ページに Unreviewed Changes バナーが表示されること")  # type: ignore
 def then_e1fe71d4(context):
     """詳細ページに Unreviewed Changes バナーが表示されること
 
@@ -1060,7 +1070,9 @@ def then_e1fe71d4(context):
     if items_dir.exists():
         for f in items_dir.glob("SPEC-*.md"):
             content = f.read_text(encoding="utf-8")
-            if any(kw in content for kw in ["unreviewed", "Unreviewed", "📋", "未レビュー"]):
+            if any(
+                kw in content for kw in ["unreviewed", "Unreviewed", "📋", "未レビュー"]
+            ):
                 return
     assert context.exit_code == 0, f"build 失敗:\n{context.output}"
 ```
@@ -1082,7 +1094,7 @@ def then_e1fe71d4(context):
 #### Given アイテムに Suspect Link と Unreviewed Changes の両方がある
 
 ```python
-@given('アイテムに Suspect Link と Unreviewed Changes の両方がある')  # type: ignore
+@given("アイテムに Suspect Link と Unreviewed Changes の両方がある")  # type: ignore
 def given_89f3d16e(context):
     """アイテムに Suspect Link と Unreviewed Changes の両方がある
 
@@ -1090,6 +1102,7 @@ def given_89f3d16e(context):
       - 複合警告の表示
     """
     import yaml
+
     _setup_basic_project(context)
     spec_file = context.repo_root / "specs" / "SPEC-001.yml"
     with open(spec_file, "r", encoding="utf-8") as f:
@@ -1103,7 +1116,7 @@ def given_89f3d16e(context):
 #### When build コマンドを実行する
 
 ```python
-@when('build コマンドを実行する')  # type: ignore
+@when("build コマンドを実行する")  # type: ignore
 def when_40f323b6(context):
     """build コマンドを実行する
 

@@ -21,7 +21,7 @@
 ```python
 @given('".feature" ファイルが存在するディレクトリがある')  # type: ignore
 def given_488529e3(context):
-    """".feature" ファイルが存在するディレクトリがある
+    """ ".feature" ファイルが存在するディレクトリがある
 
     Scenarios:
       - 基本的なテストコード生成
@@ -46,7 +46,7 @@ Feature: サンプル機能
 #### When scaffold コマンドを実行する
 
 ```python
-@when('scaffold コマンドを実行する')  # type: ignore
+@when("scaffold コマンドを実行する")  # type: ignore
 def when_4cda1d3b(context):
     """scaffold コマンドを実行する
 
@@ -71,7 +71,9 @@ def then_38f9dc8b(context, param0="step_<stem>.py"):
     """
     out = context.steps_out_dir
     step_files = list(out.glob("step_*.py"))
-    assert len(step_files) >= 1, f"step_*.py が生成されていません: {list(out.iterdir()) if out.exists() else '(ディレクトリなし)'}"
+    assert len(step_files) >= 1, (
+        f"step_*.py が生成されていません: {list(out.iterdir()) if out.exists() else '(ディレクトリなし)'}"
+    )
 ```
 
 #### And 各ステップに "@given", "@when", "@then" デコレータ付き関数が含まれること
@@ -108,7 +110,7 @@ def then_398bb2af(context, g, w, t):
 #### Given 日本語のシナリオ名を持つ .feature ファイルがある
 
 ```python
-@given('日本語のシナリオ名を持つ .feature ファイルがある')  # type: ignore
+@given("日本語のシナリオ名を持つ .feature ファイルがある")  # type: ignore
 def given_a87fa38a(context):
     """日本語のシナリオ名を持つ .feature ファイルがある
 
@@ -134,7 +136,7 @@ Feature: 日本語機能テスト
 #### When scaffold コマンドを実行する
 
 ```python
-@when('scaffold コマンドを実行する')  # type: ignore
+@when("scaffold コマンドを実行する")  # type: ignore
 def when_4cda1d3b(context):
     """scaffold コマンドを実行する
 
@@ -150,7 +152,7 @@ def when_4cda1d3b(context):
 #### Then 生成されたステップ関数名が ASCII 文字のみで構成されること
 
 ```python
-@then('生成されたステップ関数名が ASCII 文字のみで構成されること')  # type: ignore
+@then("生成されたステップ関数名が ASCII 文字のみで構成されること")  # type: ignore
 def then_75178cb9(context):
     """生成されたステップ関数名が ASCII 文字のみで構成されること
 
@@ -171,7 +173,7 @@ def then_75178cb9(context):
 #### And 関数名にステップ文の SHA256 ハッシュ先頭8文字が使用されること
 
 ```python
-@then('関数名にステップ文の SHA256 ハッシュ先頭8文字が使用されること')  # type: ignore
+@then("関数名にステップ文の SHA256 ハッシュ先頭8文字が使用されること")  # type: ignore
 def then_3649a406(context):
     """関数名にステップ文の SHA256 ハッシュ先頭8文字が使用されること
 
@@ -189,7 +191,7 @@ def then_3649a406(context):
 #### And docstring にオリジナルのステップ文が記載されること
 
 ```python
-@then('docstring にオリジナルのステップ文が記載されること')  # type: ignore
+@then("docstring にオリジナルのステップ文が記載されること")  # type: ignore
 def then_c876ede8(context):
     """docstring にオリジナルのステップ文が記載されること
 
@@ -217,7 +219,7 @@ def then_c876ede8(context):
 #### Given 複数のシナリオで同一のステップ文が使用されている
 
 ```python
-@given('複数のシナリオで同一のステップ文が使用されている')  # type: ignore
+@given("複数のシナリオで同一のステップ文が使用されている")  # type: ignore
 def given_ae2a90a1(context):
     """複数のシナリオで同一のステップ文が使用されている
 
@@ -248,7 +250,7 @@ Feature: 重複ステップテスト
 #### When scaffold コマンドを実行する
 
 ```python
-@when('scaffold コマンドを実行する')  # type: ignore
+@when("scaffold コマンドを実行する")  # type: ignore
 def when_4cda1d3b(context):
     """scaffold コマンドを実行する
 
@@ -264,7 +266,7 @@ def when_4cda1d3b(context):
 #### Then 同一ステップに対する関数は1回のみ生成されること
 
 ```python
-@then('同一ステップに対する関数は1回のみ生成されること')  # type: ignore
+@then("同一ステップに対する関数は1回のみ生成されること")  # type: ignore
 def then_67099eaf(context):
     """同一ステップに対する関数は1回のみ生成されること
 
@@ -275,9 +277,7 @@ def then_67099eaf(context):
         content = step_file.read_text(encoding="utf-8")
         # "共通の前提条件" に対応するデコレータが1回だけ現れること
         matches = re.findall(r"@given\('共通の前提条件'\)", content)
-        assert len(matches) <= 1, (
-            f"同一ステップが {len(matches)} 回定義されています"
-        )
+        assert len(matches) <= 1, f"同一ステップが {len(matches)} 回定義されています"
 ```
 
 </details>
@@ -298,7 +298,7 @@ def then_67099eaf(context):
 ```python
 @given('".feature" ファイルが存在するディレクトリがある')  # type: ignore
 def given_488529e3(context):
-    """".feature" ファイルが存在するディレクトリがある
+    """ ".feature" ファイルが存在するディレクトリがある
 
     Scenarios:
       - 基本的なテストコード生成
@@ -323,7 +323,7 @@ Feature: サンプル機能
 #### When scaffold コマンドを実行する
 
 ```python
-@when('scaffold コマンドを実行する')  # type: ignore
+@when("scaffold コマンドを実行する")  # type: ignore
 def when_4cda1d3b(context):
     """scaffold コマンドを実行する
 
@@ -356,7 +356,7 @@ def then_5ab7d202(context, section):
 #### And そのステップを使用するシナリオ名が列挙されること
 
 ```python
-@then('そのステップを使用するシナリオ名が列挙されること')  # type: ignore
+@then("そのステップを使用するシナリオ名が列挙されること")  # type: ignore
 def then_6fd54334(context):
     """そのステップを使用するシナリオ名が列挙されること
 
@@ -389,7 +389,7 @@ def then_6fd54334(context):
 #### Given 出力先に既存のテストファイルが存在する
 
 ```python
-@given('出力先に既存のテストファイルが存在する')  # type: ignore
+@given("出力先に既存のテストファイルが存在する")  # type: ignore
 def given_f54fe40f(context):
     """出力先に既存のテストファイルが存在する
 
@@ -421,7 +421,7 @@ Feature: ベース機能
 #### And .feature に既存ファイルにないステップが追加されている
 
 ```python
-@given('.feature に既存ファイルにないステップが追加されている')  # type: ignore
+@given(".feature に既存ファイルにないステップが追加されている")  # type: ignore
 def given_63fcef57(context):
     """.feature に既存ファイルにないステップが追加されている
 
@@ -450,7 +450,7 @@ Feature: ベース機能
 #### When scaffold コマンドをデフォルトオプションで実行する
 
 ```python
-@when('scaffold コマンドをデフォルトオプションで実行する')  # type: ignore
+@when("scaffold コマンドをデフォルトオプションで実行する")  # type: ignore
 def when_7a9125c7(context):
     """scaffold コマンドをデフォルトオプションで実行する
 
@@ -467,7 +467,7 @@ def when_7a9125c7(context):
 #### Then 既存ファイルに新規ステップのみが追記されること
 
 ```python
-@then('既存ファイルに新規ステップのみが追記されること')  # type: ignore
+@then("既存ファイルに新規ステップのみが追記されること")  # type: ignore
 def then_84ae62d5(context):
     """既存ファイルに新規ステップのみが追記されること
 
@@ -484,7 +484,7 @@ def then_84ae62d5(context):
 #### And 既存のステップ定義は保持されること
 
 ```python
-@then('既存のステップ定義は保持されること')  # type: ignore
+@then("既存のステップ定義は保持されること")  # type: ignore
 def then_0cdc5832(context):
     """既存のステップ定義は保持されること
 
@@ -501,7 +501,7 @@ def then_0cdc5832(context):
 #### And 新規ステップは .feature の出現順で挿入されること
 
 ```python
-@then('新規ステップは .feature の出現順で挿入されること')  # type: ignore
+@then("新規ステップは .feature の出現順で挿入されること")  # type: ignore
 def then_5c2cc2d3(context):
     """新規ステップは .feature の出現順で挿入されること
 
@@ -528,7 +528,7 @@ def then_5c2cc2d3(context):
 #### Given 出力先の既存テストファイルが .feature と完全に同期している
 
 ```python
-@given('出力先の既存テストファイルが .feature と完全に同期している')  # type: ignore
+@given("出力先の既存テストファイルが .feature と完全に同期している")  # type: ignore
 def given_fdb17660(context):
     """出力先の既存テストファイルが .feature と完全に同期している
 
@@ -556,7 +556,7 @@ Feature: 同期済み機能
 #### When scaffold コマンドをデフォルトオプションで実行する
 
 ```python
-@when('scaffold コマンドをデフォルトオプションで実行する')  # type: ignore
+@when("scaffold コマンドをデフォルトオプションで実行する")  # type: ignore
 def when_7a9125c7(context):
     """scaffold コマンドをデフォルトオプションで実行する
 
@@ -573,7 +573,7 @@ def when_7a9125c7(context):
 #### Then ファイルへの書き込みは行われないこと
 
 ```python
-@then('ファイルへの書き込みは行われないこと')  # type: ignore
+@then("ファイルへの書き込みは行われないこと")  # type: ignore
 def then_834cd5e1(context):
     """ファイルへの書き込みは行われないこと
 
@@ -587,16 +587,17 @@ def then_834cd5e1(context):
 #### And スキップ（差分なし）が表示されること
 
 ```python
-@then('スキップ（差分なし）が表示されること')  # type: ignore
+@then("スキップ（差分なし）が表示されること")  # type: ignore
 def then_f45c0000(context):
     """スキップ（差分なし）が表示されること
 
     Scenarios:
       - 差分なし時のスキップ
     """
-    assert any(kw in context.output for kw in ["スキップ", "skip", "Skip", "差分なし", "up-to-date"]), (
-        f"スキップメッセージが見つかりません:\n{context.output}"
-    )
+    assert any(
+        kw in context.output
+        for kw in ["スキップ", "skip", "Skip", "差分なし", "up-to-date"]
+    ), f"スキップメッセージが見つかりません:\n{context.output}"
 ```
 
 </details>
@@ -614,7 +615,7 @@ def then_f45c0000(context):
 #### Given 出力先に既存のテストファイルが存在する
 
 ```python
-@given('出力先に既存のテストファイルが存在する')  # type: ignore
+@given("出力先に既存のテストファイルが存在する")  # type: ignore
 def given_f54fe40f(context):
     """出力先に既存のテストファイルが存在する
 
@@ -661,7 +662,7 @@ def when_b42c7e05(context, option):
 #### Then 既存ファイルが上書きされること
 
 ```python
-@then('既存ファイルが上書きされること')  # type: ignore
+@then("既存ファイルが上書きされること")  # type: ignore
 def then_6f27dfe3(context):
     """既存ファイルが上書きされること
 
@@ -669,9 +670,10 @@ def then_6f27dfe3(context):
       - 既存ファイルの上書き
     """
     assert context.exit_code == 0, f"scaffold 失敗:\n{context.output}"
-    assert any(kw in context.output for kw in ["上書き", "overwrite", "Overwrite", "生成", "created"]), (
-        f"上書き旨が出力にありません:\n{context.output}"
-    )
+    assert any(
+        kw in context.output
+        for kw in ["上書き", "overwrite", "Overwrite", "生成", "created"]
+    ), f"上書き旨が出力にありません:\n{context.output}"
 ```
 
 </details>
@@ -690,7 +692,7 @@ def then_6f27dfe3(context):
 #### Given 出力先のテストファイルに未コミットの変更がある
 
 ```python
-@given('出力先のテストファイルに未コミットの変更がある')  # type: ignore
+@given("出力先のテストファイルに未コミットの変更がある")  # type: ignore
 def given_3f60de62(context):
     """出力先のテストファイルに未コミットの変更がある
 
@@ -721,7 +723,7 @@ Feature: 変更あり機能
 #### When scaffold コマンドをデフォルトオプションで実行する
 
 ```python
-@when('scaffold コマンドをデフォルトオプションで実行する')  # type: ignore
+@when("scaffold コマンドをデフォルトオプションで実行する")  # type: ignore
 def when_7a9125c7(context):
     """scaffold コマンドをデフォルトオプションで実行する
 
@@ -738,7 +740,7 @@ def when_7a9125c7(context):
 #### Then マージするか確認プロンプトが表示されること
 
 ```python
-@then('マージするか確認プロンプトが表示されること')  # type: ignore
+@then("マージするか確認プロンプトが表示されること")  # type: ignore
 def then_fe932c66(context):
     """マージするか確認プロンプトが表示されること
 
@@ -752,7 +754,7 @@ def then_fe932c66(context):
 #### And キャンセルするとそのファイルはスキップされること
 
 ```python
-@then('キャンセルするとそのファイルはスキップされること')  # type: ignore
+@then("キャンセルするとそのファイルはスキップされること")  # type: ignore
 def then_c8096039(context):
     """キャンセルするとそのファイルはスキップされること
 
@@ -778,7 +780,7 @@ def then_c8096039(context):
 #### Given 出力先のテストファイルに未コミットの変更がある
 
 ```python
-@given('出力先のテストファイルに未コミットの変更がある')  # type: ignore
+@given("出力先のテストファイルに未コミットの変更がある")  # type: ignore
 def given_3f60de62(context):
     """出力先のテストファイルに未コミットの変更がある
 
@@ -824,7 +826,7 @@ def when_b42c7e05(context, option):
 #### Then 確認プロンプトなしでマージが実行されること
 
 ```python
-@then('確認プロンプトなしでマージが実行されること')  # type: ignore
+@then("確認プロンプトなしでマージが実行されること")  # type: ignore
 def then_4b7c11ee(context):
     """確認プロンプトなしでマージが実行されること
 
@@ -851,7 +853,7 @@ def then_4b7c11ee(context):
 #### Given 出力先に既存のテストファイルが存在する
 
 ```python
-@given('出力先に既存のテストファイルが存在する')  # type: ignore
+@given("出力先に既存のテストファイルが存在する")  # type: ignore
 def given_f54fe40f(context):
     """出力先に既存のテストファイルが存在する
 
@@ -883,7 +885,7 @@ Feature: ベース機能
 #### And 別のステップファイルに同一ステップの実装が追加されている
 
 ```python
-@given('別のステップファイルに同一ステップの実装が追加されている')  # type: ignore
+@given("別のステップファイルに同一ステップの実装が追加されている")  # type: ignore
 def given_b99b973a(context):
     """別のステップファイルに同一ステップの実装が追加されている
 
@@ -921,7 +923,7 @@ def given_shared(context):
 #### When scaffold コマンドをデフォルトオプションで実行する
 
 ```python
-@when('scaffold コマンドをデフォルトオプションで実行する')  # type: ignore
+@when("scaffold コマンドをデフォルトオプションで実行する")  # type: ignore
 def when_7a9125c7(context):
     """scaffold コマンドをデフォルトオプションで実行する
 
@@ -938,7 +940,7 @@ def when_7a9125c7(context):
 #### Then 既存ファイルのスタブが Duplicate コメントに置き換わること
 
 ```python
-@then('既存ファイルのスタブが Duplicate コメントに置き換わること')  # type: ignore
+@then("既存ファイルのスタブが Duplicate コメントに置き換わること")  # type: ignore
 def then_df56f0cc(context):
     """既存ファイルのスタブが Duplicate コメントに置き換わること
 
@@ -952,7 +954,7 @@ def then_df56f0cc(context):
 #### And 他のステップのスタブは保持されること
 
 ```python
-@then('他のステップのスタブは保持されること')  # type: ignore
+@then("他のステップのスタブは保持されること")  # type: ignore
 def then_d0e8d8d6(context):
     """他のステップのスタブは保持されること
 
@@ -982,7 +984,7 @@ def then_d0e8d8d6(context):
 #### Given 別のステップファイルに同一ステップが Duplicate コメントとして記載されている
 
 ```python
-@given('別のステップファイルに同一ステップが Duplicate コメントとして記載されている')  # type: ignore
+@given("別のステップファイルに同一ステップが Duplicate コメントとして記載されている")  # type: ignore
 def given_e0006816(context):
     """別のステップファイルに同一ステップが Duplicate コメントとして記載されている
 
@@ -1017,7 +1019,7 @@ from behave import given
 #### And その同一ステップを実際に定義しているファイルは存在しない
 
 ```python
-@given('その同一ステップを実際に定義しているファイルは存在しない')  # type: ignore
+@given("その同一ステップを実際に定義しているファイルは存在しない")  # type: ignore
 def given_0e535b1f(context):
     """その同一ステップを実際に定義しているファイルは存在しない
 
@@ -1030,7 +1032,7 @@ def given_0e535b1f(context):
 #### When scaffold コマンドをデフォルトオプションで実行する
 
 ```python
-@when('scaffold コマンドをデフォルトオプションで実行する')  # type: ignore
+@when("scaffold コマンドをデフォルトオプションで実行する")  # type: ignore
 def when_7a9125c7(context):
     """scaffold コマンドをデフォルトオプションで実行する
 
@@ -1047,7 +1049,7 @@ def when_7a9125c7(context):
 #### Then そのステップが Duplicate としてではなくスタブとして生成されること
 
 ```python
-@then('そのステップが Duplicate としてではなくスタブとして生成されること')  # type: ignore
+@then("そのステップが Duplicate としてではなくスタブとして生成されること")  # type: ignore
 def then_35ff3425(context):
     """そのステップが Duplicate としてではなくスタブとして生成されること
 

@@ -20,7 +20,7 @@ REQ・SPECの実装ステータスをRichテーブル形式で一覧表示する
 #### Given REQ-001 が status: draft、SPEC-001 が status: implemented に設定されている
 
 ```python
-@given('REQ-001 が status: draft、SPEC-001 が status: implemented に設定されている')  # type: ignore
+@given("REQ-001 が status: draft、SPEC-001 が status: implemented に設定されている")  # type: ignore
 def given_ef098fcf(context):
     """REQ-001 が status: draft、SPEC-001 が status: implemented に設定されている
 
@@ -38,7 +38,7 @@ def given_ef098fcf(context):
 #### When status コマンドを実行する
 
 ```python
-@when('status コマンドを実行する')  # type: ignore
+@when("status コマンドを実行する")  # type: ignore
 def when_d68a8d9a(context):
     """status コマンドを実行する
 
@@ -53,14 +53,16 @@ def when_d68a8d9a(context):
 #### Then 終了コード 0 が返ること
 
 ```python
-@then('終了コード 0 が返ること')  # type: ignore
+@then("終了コード 0 が返ること")  # type: ignore
 def then_4f25c571(context):
     """終了コード 0 が返ること
 
     Scenarios:
       - 完全一致時の監査成功
     """
-    assert context.exit_code == 0, f"終了コード {context.exit_code} (期待: 0)\n{context.output}"
+    assert context.exit_code == 0, (
+        f"終了コード {context.exit_code} (期待: 0)\n{context.output}"
+    )
 ```
 
 #### And REQ-001 が "draft" バッジとともに表示されること
@@ -74,7 +76,9 @@ def then_6e220346(context, badge):
       - 全アイテムのステータスを一覧表示する
     """
     assert "REQ-001" in context.output, f"REQ-001 が出力にありません:\n{context.output}"
-    assert badge in context.output, f"バッジ {badge!r} が出力にありません:\n{context.output}"
+    assert badge in context.output, (
+        f"バッジ {badge!r} が出力にありません:\n{context.output}"
+    )
 ```
 
 #### And SPEC-001 が "implemented" バッジとともに表示されること
@@ -87,8 +91,12 @@ def then_9f0d7f01(context, badge):
     Scenarios:
       - 全アイテムのステータスを一覧表示する
     """
-    assert "SPEC-001" in context.output, f"SPEC-001 が出力にありません:\n{context.output}"
-    assert badge in context.output, f"バッジ {badge!r} が出力にありません:\n{context.output}"
+    assert "SPEC-001" in context.output, (
+        f"SPEC-001 が出力にありません:\n{context.output}"
+    )
+    assert badge in context.output, (
+        f"バッジ {badge!r} が出力にありません:\n{context.output}"
+    )
 ```
 
 </details>
@@ -107,7 +115,7 @@ def then_9f0d7f01(context, badge):
 #### Given SPEC-001 に status フィールドが設定されていない
 
 ```python
-@given('SPEC-001 に status フィールドが設定されていない')  # type: ignore
+@given("SPEC-001 に status フィールドが設定されていない")  # type: ignore
 def given_0d995d24(context):
     """SPEC-001 に status フィールドが設定されていない
 
@@ -125,7 +133,7 @@ def given_0d995d24(context):
 #### When status コマンドを実行する
 
 ```python
-@when('status コマンドを実行する')  # type: ignore
+@when("status コマンドを実行する")  # type: ignore
 def when_d68a8d9a(context):
     """status コマンドを実行する
 
@@ -140,14 +148,16 @@ def when_d68a8d9a(context):
 #### Then 終了コード 0 が返ること
 
 ```python
-@then('終了コード 0 が返ること')  # type: ignore
+@then("終了コード 0 が返ること")  # type: ignore
 def then_4f25c571(context):
     """終了コード 0 が返ること
 
     Scenarios:
       - 完全一致時の監査成功
     """
-    assert context.exit_code == 0, f"終了コード {context.exit_code} (期待: 0)\n{context.output}"
+    assert context.exit_code == 0, (
+        f"終了コード {context.exit_code} (期待: 0)\n{context.output}"
+    )
 ```
 
 #### And SPEC-001 の実装状況が "-" と表示されること
@@ -182,7 +192,7 @@ def then_5818121f(context, expected):
 #### Given REQ-001 が status: implemented、REQ-002 が status: draft に設定されている
 
 ```python
-@given('REQ-001 が status: implemented、REQ-002 が status: draft に設定されている')  # type: ignore
+@given("REQ-001 が status: implemented、REQ-002 が status: draft に設定されている")  # type: ignore
 def given_58beb4fc(context):
     """REQ-001 が status: implemented、REQ-002 が status: draft に設定されている
 
@@ -218,20 +228,22 @@ def when_d36ae1bf(context, option):
 #### Then 終了コード 0 が返ること
 
 ```python
-@then('終了コード 0 が返ること')  # type: ignore
+@then("終了コード 0 が返ること")  # type: ignore
 def then_4f25c571(context):
     """終了コード 0 が返ること
 
     Scenarios:
       - 完全一致時の監査成功
     """
-    assert context.exit_code == 0, f"終了コード {context.exit_code} (期待: 0)\n{context.output}"
+    assert context.exit_code == 0, (
+        f"終了コード {context.exit_code} (期待: 0)\n{context.output}"
+    )
 ```
 
 #### And REQ-001 が表示されること
 
 ```python
-@then('REQ-001 が表示されること')  # type: ignore
+@then("REQ-001 が表示されること")  # type: ignore
 def then_2847178d(context):
     """REQ-001 が表示されること
 
@@ -244,7 +256,7 @@ def then_2847178d(context):
 #### And REQ-002 は表示されないこと
 
 ```python
-@then('REQ-002 は表示されないこと')  # type: ignore
+@then("REQ-002 は表示されないこと")  # type: ignore
 def then_9fc4e668(context):
     """REQ-002 は表示されないこと
 
@@ -305,29 +317,31 @@ def when_d36ae1bf(context, option):
 #### Then 終了コード 0 が返ること
 
 ```python
-@then('終了コード 0 が返ること')  # type: ignore
+@then("終了コード 0 が返ること")  # type: ignore
 def then_4f25c571(context):
     """終了コード 0 が返ること
 
     Scenarios:
       - 完全一致時の監査成功
     """
-    assert context.exit_code == 0, f"終了コード {context.exit_code} (期待: 0)\n{context.output}"
+    assert context.exit_code == 0, (
+        f"終了コード {context.exit_code} (期待: 0)\n{context.output}"
+    )
 ```
 
 #### And 一致するアイテムが見つからなかった旨が表示されること
 
 ```python
-@then('一致するアイテムが見つからなかった旨が表示されること')  # type: ignore
+@then("一致するアイテムが見つからなかった旨が表示されること")  # type: ignore
 def then_897c0cfb(context):
     """一致するアイテムが見つからなかった旨が表示されること
 
     Scenarios:
       - --filter に一致するアイテムが存在しない場合に通知される
     """
-    assert any(kw in context.output for kw in ["見つかりません", "not found", "0 件", "一致"]), (
-        f"'見つからない' 旨が出力にありません:\n{context.output}"
-    )
+    assert any(
+        kw in context.output for kw in ["見つかりません", "not found", "0 件", "一致"]
+    ), f"'見つからない' 旨が出力にありません:\n{context.output}"
 ```
 
 </details>
@@ -347,7 +361,7 @@ def then_897c0cfb(context):
 #### Given Doorstopのアイテムが存在する
 
 ```python
-@given('Doorstopのアイテムが存在する')  # type: ignore
+@given("Doorstopのアイテムが存在する")  # type: ignore
 def given_0da078b7(context):
     """Doorstopのアイテムが存在する
 
@@ -364,7 +378,7 @@ def given_0da078b7(context):
 #### When status コマンドを実行する
 
 ```python
-@when('status コマンドを実行する')  # type: ignore
+@when("status コマンドを実行する")  # type: ignore
 def when_d68a8d9a(context):
     """status コマンドを実行する
 
@@ -379,35 +393,38 @@ def when_d68a8d9a(context):
 #### Then 終了コード 0 が返ること
 
 ```python
-@then('終了コード 0 が返ること')  # type: ignore
+@then("終了コード 0 が返ること")  # type: ignore
 def then_4f25c571(context):
     """終了コード 0 が返ること
 
     Scenarios:
       - 完全一致時の監査成功
     """
-    assert context.exit_code == 0, f"終了コード {context.exit_code} (期待: 0)\n{context.output}"
+    assert context.exit_code == 0, (
+        f"終了コード {context.exit_code} (期待: 0)\n{context.output}"
+    )
 ```
 
 #### And レビューステータス列が表示されること
 
 ```python
-@then('レビューステータス列が表示されること')  # type: ignore
+@then("レビューステータス列が表示されること")  # type: ignore
 def then_33e7dc19(context):
     """レビューステータス列が表示されること
 
     Scenarios:
       - レビューステータスと最終更新日が表示される
     """
-    assert any(kw in context.output for kw in ["レビュー", "reviewed", "suspect", "✅", "⚠️", "📋"]), (
-        f"レビューステータス列が見つかりません:\n{context.output}"
-    )
+    assert any(
+        kw in context.output
+        for kw in ["レビュー", "reviewed", "suspect", "✅", "⚠️", "📋"]
+    ), f"レビューステータス列が見つかりません:\n{context.output}"
 ```
 
 #### And 最終更新日列が表示されること
 
 ```python
-@then('最終更新日列が表示されること')  # type: ignore
+@then("最終更新日列が表示されること")  # type: ignore
 def then_49bd7463(context):
     """最終更新日列が表示されること
 

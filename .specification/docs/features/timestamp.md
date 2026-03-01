@@ -19,7 +19,7 @@
 #### Given DoorstopアイテムのYAMLファイルがGitにコミットされている
 
 ```python
-@given('DoorstopアイテムのYAMLファイルがGitにコミットされている')  # type: ignore
+@given("DoorstopアイテムのYAMLファイルがGitにコミットされている")  # type: ignore
 def given_5c08ab27(context):
     """DoorstopアイテムのYAMLファイルがGitにコミットされている
 
@@ -40,7 +40,7 @@ def given_5c08ab27(context):
 #### When タイムスタンプ属性を取得する
 
 ```python
-@when('タイムスタンプ属性を取得する')  # type: ignore
+@when("タイムスタンプ属性を取得する")  # type: ignore
 def when_7e4b3813(context):
     """タイムスタンプ属性を取得する
 
@@ -61,6 +61,7 @@ def when_7e4b3813(context):
                     self.data = yaml.safe_load(f) or {}
             except Exception:
                 self.data = {}
+
         def get(self, key):
             return self.data.get(key)
 
@@ -72,7 +73,7 @@ def when_7e4b3813(context):
 #### Then updated_at として最終コミット日が YYYY-MM-DD 形式で返されること
 
 ```python
-@then('updated_at として最終コミット日が YYYY-MM-DD 形式で返されること')  # type: ignore
+@then("updated_at として最終コミット日が YYYY-MM-DD 形式で返されること")  # type: ignore
 def then_c495b67c(context):
     """updated_at として最終コミット日が YYYY-MM-DD 形式で返されること
 
@@ -81,7 +82,9 @@ def then_c495b67c(context):
     """
     val = context.updated_at
     assert val is not None and val != "-", f"updated_at が取得できません: {val!r}"
-    assert re.match(r"^\d{4}-\d{2}-\d{2}$", val), f"YYYY-MM-DD 形式ではありません: {val!r}"
+    assert re.match(r"^\d{4}-\d{2}-\d{2}$", val), (
+        f"YYYY-MM-DD 形式ではありません: {val!r}"
+    )
 ```
 
 </details>
@@ -99,7 +102,7 @@ def then_c495b67c(context):
 #### Given DoorstopアイテムのYAMLファイルがGitにコミットされている
 
 ```python
-@given('DoorstopアイテムのYAMLファイルがGitにコミットされている')  # type: ignore
+@given("DoorstopアイテムのYAMLファイルがGitにコミットされている")  # type: ignore
 def given_5c08ab27(context):
     """DoorstopアイテムのYAMLファイルがGitにコミットされている
 
@@ -120,7 +123,7 @@ def given_5c08ab27(context):
 #### When タイムスタンプ属性を取得する
 
 ```python
-@when('タイムスタンプ属性を取得する')  # type: ignore
+@when("タイムスタンプ属性を取得する")  # type: ignore
 def when_7e4b3813(context):
     """タイムスタンプ属性を取得する
 
@@ -141,6 +144,7 @@ def when_7e4b3813(context):
                     self.data = yaml.safe_load(f) or {}
             except Exception:
                 self.data = {}
+
         def get(self, key):
             return self.data.get(key)
 
@@ -152,7 +156,7 @@ def when_7e4b3813(context):
 #### Then created_at として初回コミット日が YYYY-MM-DD 形式で返されること
 
 ```python
-@then('created_at として初回コミット日が YYYY-MM-DD 形式で返されること')  # type: ignore
+@then("created_at として初回コミット日が YYYY-MM-DD 形式で返されること")  # type: ignore
 def then_c016ae72(context):
     """created_at として初回コミット日が YYYY-MM-DD 形式で返されること
 
@@ -161,7 +165,9 @@ def then_c016ae72(context):
     """
     val = context.created_at
     assert val is not None and val != "-", f"created_at が取得できません: {val!r}"
-    assert re.match(r"^\d{4}-\d{2}-\d{2}$", val), f"YYYY-MM-DD 形式ではありません: {val!r}"
+    assert re.match(r"^\d{4}-\d{2}-\d{2}$", val), (
+        f"YYYY-MM-DD 形式ではありません: {val!r}"
+    )
 ```
 
 </details>
@@ -180,7 +186,7 @@ def then_c016ae72(context):
 #### Given DoorstopアイテムのYAMLファイルがGit管理外である
 
 ```python
-@given('DoorstopアイテムのYAMLファイルがGit管理外である')  # type: ignore
+@given("DoorstopアイテムのYAMLファイルがGit管理外である")  # type: ignore
 def given_02feb7b0(context):
     """DoorstopアイテムのYAMLファイルがGit管理外である
 
@@ -197,7 +203,7 @@ def given_02feb7b0(context):
 #### And YAMLに created_at: '2026-01-15' が設定されている
 
 ```python
-@given('YAMLに created_at: \'2026-01-15\' が設定されている')  # type: ignore
+@given("YAMLに created_at: '2026-01-15' が設定されている")  # type: ignore
 def given_78ddd292(context):
     """YAMLに created_at: '2026-01-15' が設定されている
 
@@ -212,7 +218,7 @@ def given_78ddd292(context):
 #### When タイムスタンプ属性を取得する
 
 ```python
-@when('タイムスタンプ属性を取得する')  # type: ignore
+@when("タイムスタンプ属性を取得する")  # type: ignore
 def when_7e4b3813(context):
     """タイムスタンプ属性を取得する
 
@@ -233,6 +239,7 @@ def when_7e4b3813(context):
                     self.data = yaml.safe_load(f) or {}
             except Exception:
                 self.data = {}
+
         def get(self, key):
             return self.data.get(key)
 
@@ -251,7 +258,9 @@ def then_afecb621(context, expected):
     Scenarios:
       - Git情報がない場合はYAML属性にフォールバック
     """
-    assert context.created_at == expected, f"created_at={context.created_at!r} (期待: {expected!r})"
+    assert context.created_at == expected, (
+        f"created_at={context.created_at!r} (期待: {expected!r})"
+    )
 ```
 
 </details>
@@ -270,7 +279,7 @@ def then_afecb621(context, expected):
 #### Given DoorstopアイテムのYAMLファイルがGit管理外である
 
 ```python
-@given('DoorstopアイテムのYAMLファイルがGit管理外である')  # type: ignore
+@given("DoorstopアイテムのYAMLファイルがGit管理外である")  # type: ignore
 def given_02feb7b0(context):
     """DoorstopアイテムのYAMLファイルがGit管理外である
 
@@ -287,7 +296,7 @@ def given_02feb7b0(context):
 #### And YAMLに created_at も updated_at も設定されていない
 
 ```python
-@given('YAMLに created_at も updated_at も設定されていない')  # type: ignore
+@given("YAMLに created_at も updated_at も設定されていない")  # type: ignore
 def given_20d06697(context):
     """YAMLに created_at も updated_at も設定されていない
 
@@ -301,7 +310,7 @@ def given_20d06697(context):
 #### When タイムスタンプ属性を取得する
 
 ```python
-@when('タイムスタンプ属性を取得する')  # type: ignore
+@when("タイムスタンプ属性を取得する")  # type: ignore
 def when_7e4b3813(context):
     """タイムスタンプ属性を取得する
 
@@ -322,6 +331,7 @@ def when_7e4b3813(context):
                     self.data = yaml.safe_load(f) or {}
             except Exception:
                 self.data = {}
+
         def get(self, key):
             return self.data.get(key)
 
@@ -341,6 +351,7 @@ def then_6f3caa07(context, expected):
       - Git情報もYAML属性もない場合のフォールバック
     """
     from spec_weaver.doorstop import _get_git_file_date
+
     val_upd = _get_git_file_date(str(context.yaml_file), mode="latest") or "-"
     val_crt = _get_git_file_date(str(context.yaml_file), mode="first") or "-"
     assert val_upd == expected, f"updated_at={val_upd!r} (期待: {expected!r})"
@@ -366,7 +377,7 @@ def then_6f3caa07(context, expected):
 #### Given DoorstopアイテムがGitにコミットされている
 
 ```python
-@given('DoorstopアイテムがGitにコミットされている')  # type: ignore
+@given("DoorstopアイテムがGitにコミットされている")  # type: ignore
 def given_cc8e9bef(context):
     """DoorstopアイテムがGitにコミットされている
 
@@ -383,7 +394,7 @@ def given_cc8e9bef(context):
 #### When build コマンドを実行する
 
 ```python
-@when('build コマンドを実行する')  # type: ignore
+@when("build コマンドを実行する")  # type: ignore
 def when_40f323b6(context):
     """build コマンドを実行する
 
@@ -406,7 +417,7 @@ def when_40f323b6(context):
 #### Then 一覧テーブルに「作成日」列が含まれること
 
 ```python
-@then('一覧テーブルに「作成日」列が含まれること')  # type: ignore
+@then("一覧テーブルに「作成日」列が含まれること")  # type: ignore
 def then_ed934883(context):
     """一覧テーブルに「作成日」列が含まれること
 
@@ -427,7 +438,7 @@ def then_ed934883(context):
 #### And 一覧テーブルに「更新日」列が含まれること
 
 ```python
-@then('一覧テーブルに「更新日」列が含まれること')  # type: ignore
+@then("一覧テーブルに「更新日」列が含まれること")  # type: ignore
 def then_2ae95f61(context):
     """一覧テーブルに「更新日」列が含まれること
 
@@ -448,7 +459,7 @@ def then_2ae95f61(context):
 #### And Git履歴から取得した日付が正しく表示されること
 
 ```python
-@then('Git履歴から取得した日付が正しく表示されること')  # type: ignore
+@then("Git履歴から取得した日付が正しく表示されること")  # type: ignore
 def then_232626f7(context):
     """Git履歴から取得した日付が正しく表示されること
 
@@ -484,7 +495,7 @@ def then_232626f7(context):
 #### Given DoorstopアイテムがGitにコミットされている
 
 ```python
-@given('DoorstopアイテムがGitにコミットされている')  # type: ignore
+@given("DoorstopアイテムがGitにコミットされている")  # type: ignore
 def given_cc8e9bef(context):
     """DoorstopアイテムがGitにコミットされている
 
@@ -501,7 +512,7 @@ def given_cc8e9bef(context):
 #### When build コマンドを実行する
 
 ```python
-@when('build コマンドを実行する')  # type: ignore
+@when("build コマンドを実行する")  # type: ignore
 def when_40f323b6(context):
     """build コマンドを実行する
 
@@ -524,7 +535,7 @@ def when_40f323b6(context):
 #### Then 詳細ページに作成日と更新日が表示されること
 
 ```python
-@then('詳細ページに作成日と更新日が表示されること')  # type: ignore
+@then("詳細ページに作成日と更新日が表示されること")  # type: ignore
 def then_4954ab92(context):
     """詳細ページに作成日と更新日が表示されること
 
@@ -550,7 +561,7 @@ def then_4954ab92(context):
 #### And 実装状況バッジの直後に配置されていること
 
 ```python
-@then('実装状況バッジの直後に配置されていること')  # type: ignore
+@then("実装状況バッジの直後に配置されていること")  # type: ignore
 def then_1a39f98b(context):
     """実装状況バッジの直後に配置されていること
 
@@ -563,8 +574,9 @@ def then_1a39f98b(context):
     if items_dir.exists():
         for f in items_dir.glob("*.md"):
             content = f.read_text(encoding="utf-8")
-            if re.search(r"(draft|implemented|in-progress|deprecated)", content) and \
-               re.search(r"\d{4}-\d{2}-\d{2}", content):
+            if re.search(
+                r"(draft|implemented|in-progress|deprecated)", content
+            ) and re.search(r"\d{4}-\d{2}-\d{2}", content):
                 return  # OK
     # 緩い確認: build 出力自体が成功していれば OK
     assert context.exit_code == 0
@@ -587,7 +599,7 @@ def then_1a39f98b(context):
 #### Given DoorstopアイテムがGit管理外でYAMLにもタイムスタンプがない
 
 ```python
-@given('DoorstopアイテムがGit管理外でYAMLにもタイムスタンプがない')  # type: ignore
+@given("DoorstopアイテムがGit管理外でYAMLにもタイムスタンプがない")  # type: ignore
 def given_8798cdab(context):
     """DoorstopアイテムがGit管理外でYAMLにもタイムスタンプがない
 
@@ -595,17 +607,20 @@ def given_8798cdab(context):
       - Git情報がない場合の一覧テーブル表示
     """
     context.repo_root = context.temp_dir / "repo"
-    create_doorstop_project_api(context.repo_root,
-        spec_items=[{"header":"Git管理外仕様","testable":True}])
+    create_doorstop_project_api(
+        context.repo_root, spec_items=[{"header": "Git管理外仕様", "testable": True}]
+    )
     context.feature_dir = context.temp_dir / "features"
-    write_feature_file(context.feature_dir / "spec.feature", minimal_feature("@SPEC-001"))
+    write_feature_file(
+        context.feature_dir / "spec.feature", minimal_feature("@SPEC-001")
+    )
     context.out_dir = context.temp_dir / "out"
 ```
 
 #### When build コマンドを実行する
 
 ```python
-@when('build コマンドを実行する')  # type: ignore
+@when("build コマンドを実行する")  # type: ignore
 def when_40f323b6(context):
     """build コマンドを実行する
 
@@ -666,7 +681,7 @@ def then_645670cf(context, expected):
 #### Given Doorstopアイテムの最終コミット日が 91日前である
 
 ```python
-@given('Doorstopアイテムの最終コミット日が 91日前である')  # type: ignore
+@given("Doorstopアイテムの最終コミット日が 91日前である")  # type: ignore
 def given_6998f2b6(context):
     """Doorstopアイテムの最終コミット日が 91日前である
 
@@ -674,9 +689,12 @@ def given_6998f2b6(context):
       - stale アイテムの検出（Git履歴ベース）
     """
     import yaml
+
     context.repo_root = context.temp_dir / "repo"
-    create_doorstop_project_api(context.repo_root,
-        spec_items=[{"header":"古い仕様","testable":True,"status":"implemented"}])
+    create_doorstop_project_api(
+        context.repo_root,
+        spec_items=[{"header": "古い仕様", "testable": True, "status": "implemented"}],
+    )
     # YAML に 91 日前の updated_at を設定
     spec_file = context.repo_root / "specs" / "SPEC-001.yml"
     with open(spec_file, "r", encoding="utf-8") as f:
@@ -686,7 +704,9 @@ def given_6998f2b6(context):
     with open(spec_file, "w", encoding="utf-8") as f:
         yaml.dump(data, f, allow_unicode=True)
     context.feature_dir = context.temp_dir / "features"
-    write_feature_file(context.feature_dir / "spec.feature", minimal_feature("@SPEC-001"))
+    write_feature_file(
+        context.feature_dir / "spec.feature", minimal_feature("@SPEC-001")
+    )
 ```
 
 #### And そのアイテムの status が "implemented" である
@@ -705,7 +725,7 @@ def given_a61b1d71(context, status):
 #### When audit コマンドを --stale-days 90 で実行する
 
 ```python
-@when('audit コマンドを --stale-days 90 で実行する')  # type: ignore
+@when("audit コマンドを --stale-days 90 で実行する")  # type: ignore
 def when_81d68298(context):
     """audit コマンドを --stale-days 90 で実行する
 
@@ -715,11 +735,16 @@ def when_81d68298(context):
       - Git情報もupdated_atもないアイテムは stale 判定の対象外
       - deprecated アイテムは stale 判定の対象外
     """
-    result = run_spec_weaver([
-        "audit", str(context.feature_dir),
-        "--repo-root", str(context.repo_root),
-        "--stale-days", "90",
-    ])
+    result = run_spec_weaver(
+        [
+            "audit",
+            str(context.feature_dir),
+            "--repo-root",
+            str(context.repo_root),
+            "--stale-days",
+            "90",
+        ]
+    )
     context.result = result
     context.exit_code = result.returncode
     context.output = result.stdout + result.stderr
@@ -728,30 +753,31 @@ def when_81d68298(context):
 #### Then そのアイテムが stale として報告されること
 
 ```python
-@then('そのアイテムが stale として報告されること')  # type: ignore
+@then("そのアイテムが stale として報告されること")  # type: ignore
 def then_54f17b4b(context):
     """そのアイテムが stale として報告されること
 
     Scenarios:
       - stale アイテムの検出（Git履歴ベース）
     """
-    assert any(kw in context.output for kw in ["stale", "陳腐", "SPEC-001"]), \
+    assert any(kw in context.output for kw in ["stale", "陳腐", "SPEC-001"]), (
         f"stale 報告が見つかりません:\n{context.output}"
+    )
 ```
 
 #### And 経過日数が表示されること
 
 ```python
-@then('経過日数が表示されること')  # type: ignore
+@then("経過日数が表示されること")  # type: ignore
 def then_9500bbae(context):
     """経過日数が表示されること
 
     Scenarios:
       - stale アイテムの検出（Git履歴ベース）
     """
-    assert re.search(r"\d+\s*(日|days?)", context.output) or \
-           re.search(r"\d{2,}", context.output), \
-        f"経過日数が見つかりません:\n{context.output}"
+    assert re.search(r"\d+\s*(日|days?)", context.output) or re.search(
+        r"\d{2,}", context.output
+    ), f"経過日数が見つかりません:\n{context.output}"
 ```
 
 </details>
@@ -771,7 +797,7 @@ def then_9500bbae(context):
 #### Given Doorstopアイテムの最終コミット日が 30日前である
 
 ```python
-@given('Doorstopアイテムの最終コミット日が 30日前である')  # type: ignore
+@given("Doorstopアイテムの最終コミット日が 30日前である")  # type: ignore
 def given_32d4fe40(context):
     """Doorstopアイテムの最終コミット日が 30日前である
 
@@ -779,9 +805,14 @@ def given_32d4fe40(context):
       - 閾値内のアイテムは stale と判定されない
     """
     import yaml
+
     context.repo_root = context.temp_dir / "repo"
-    create_doorstop_project_api(context.repo_root,
-        spec_items=[{"header":"新鮮な仕様","testable":True,"status":"implemented"}])
+    create_doorstop_project_api(
+        context.repo_root,
+        spec_items=[
+            {"header": "新鮮な仕様", "testable": True, "status": "implemented"}
+        ],
+    )
     spec_file = context.repo_root / "specs" / "SPEC-001.yml"
     with open(spec_file, "r", encoding="utf-8") as f:
         data = yaml.safe_load(f)
@@ -790,13 +821,15 @@ def given_32d4fe40(context):
     with open(spec_file, "w", encoding="utf-8") as f:
         yaml.dump(data, f, allow_unicode=True)
     context.feature_dir = context.temp_dir / "features"
-    write_feature_file(context.feature_dir / "spec.feature", minimal_feature("@SPEC-001"))
+    write_feature_file(
+        context.feature_dir / "spec.feature", minimal_feature("@SPEC-001")
+    )
 ```
 
 #### When audit コマンドを --stale-days 90 で実行する
 
 ```python
-@when('audit コマンドを --stale-days 90 で実行する')  # type: ignore
+@when("audit コマンドを --stale-days 90 で実行する")  # type: ignore
 def when_81d68298(context):
     """audit コマンドを --stale-days 90 で実行する
 
@@ -806,11 +839,16 @@ def when_81d68298(context):
       - Git情報もupdated_atもないアイテムは stale 判定の対象外
       - deprecated アイテムは stale 判定の対象外
     """
-    result = run_spec_weaver([
-        "audit", str(context.feature_dir),
-        "--repo-root", str(context.repo_root),
-        "--stale-days", "90",
-    ])
+    result = run_spec_weaver(
+        [
+            "audit",
+            str(context.feature_dir),
+            "--repo-root",
+            str(context.repo_root),
+            "--stale-days",
+            "90",
+        ]
+    )
     context.result = result
     context.exit_code = result.returncode
     context.output = result.stdout + result.stderr
@@ -819,7 +857,7 @@ def when_81d68298(context):
 #### Then そのアイテムは stale として報告されないこと
 
 ```python
-@then('そのアイテムは stale として報告されないこと')  # type: ignore
+@then("そのアイテムは stale として報告されないこと")  # type: ignore
 def then_e9c88743(context):
     """そのアイテムは stale として報告されないこと
 
@@ -828,9 +866,9 @@ def then_e9c88743(context):
       - Git情報もupdated_atもないアイテムは stale 判定の対象外
       - deprecated アイテムは stale 判定の対象外
     """
-    assert "SPEC-001" not in context.output or \
-           not any(kw in context.output for kw in ["stale", "陳腐"]), \
-        f"stale 報告が含まれています:\n{context.output}"
+    assert "SPEC-001" not in context.output or not any(
+        kw in context.output for kw in ["stale", "陳腐"]
+    ), f"stale 報告が含まれています:\n{context.output}"
 ```
 
 </details>
@@ -850,7 +888,7 @@ def then_e9c88743(context):
 #### Given DoorstopアイテムがGit管理外でupdated_atも設定されていない
 
 ```python
-@given('DoorstopアイテムがGit管理外でupdated_atも設定されていない')  # type: ignore
+@given("DoorstopアイテムがGit管理外でupdated_atも設定されていない")  # type: ignore
 def given_9da29b97(context):
     """DoorstopアイテムがGit管理外でupdated_atも設定されていない
 
@@ -858,16 +896,20 @@ def given_9da29b97(context):
       - Git情報もupdated_atもないアイテムは stale 判定の対象外
     """
     context.repo_root = context.temp_dir / "repo"
-    create_doorstop_project_api(context.repo_root,
-        spec_items=[{"header":"タイムスタンプなし仕様","testable":True}])
+    create_doorstop_project_api(
+        context.repo_root,
+        spec_items=[{"header": "タイムスタンプなし仕様", "testable": True}],
+    )
     context.feature_dir = context.temp_dir / "features"
-    write_feature_file(context.feature_dir / "spec.feature", minimal_feature("@SPEC-001"))
+    write_feature_file(
+        context.feature_dir / "spec.feature", minimal_feature("@SPEC-001")
+    )
 ```
 
 #### When audit コマンドを --stale-days 90 で実行する
 
 ```python
-@when('audit コマンドを --stale-days 90 で実行する')  # type: ignore
+@when("audit コマンドを --stale-days 90 で実行する")  # type: ignore
 def when_81d68298(context):
     """audit コマンドを --stale-days 90 で実行する
 
@@ -877,11 +919,16 @@ def when_81d68298(context):
       - Git情報もupdated_atもないアイテムは stale 判定の対象外
       - deprecated アイテムは stale 判定の対象外
     """
-    result = run_spec_weaver([
-        "audit", str(context.feature_dir),
-        "--repo-root", str(context.repo_root),
-        "--stale-days", "90",
-    ])
+    result = run_spec_weaver(
+        [
+            "audit",
+            str(context.feature_dir),
+            "--repo-root",
+            str(context.repo_root),
+            "--stale-days",
+            "90",
+        ]
+    )
     context.result = result
     context.exit_code = result.returncode
     context.output = result.stdout + result.stderr
@@ -890,7 +937,7 @@ def when_81d68298(context):
 #### Then そのアイテムは stale として報告されないこと
 
 ```python
-@then('そのアイテムは stale として報告されないこと')  # type: ignore
+@then("そのアイテムは stale として報告されないこと")  # type: ignore
 def then_e9c88743(context):
     """そのアイテムは stale として報告されないこと
 
@@ -899,9 +946,9 @@ def then_e9c88743(context):
       - Git情報もupdated_atもないアイテムは stale 判定の対象外
       - deprecated アイテムは stale 判定の対象外
     """
-    assert "SPEC-001" not in context.output or \
-           not any(kw in context.output for kw in ["stale", "陳腐"]), \
-        f"stale 報告が含まれています:\n{context.output}"
+    assert "SPEC-001" not in context.output or not any(
+        kw in context.output for kw in ["stale", "陳腐"]
+    ), f"stale 報告が含まれています:\n{context.output}"
 ```
 
 </details>
@@ -930,17 +977,22 @@ def given_e5e93deb(context, status):
       - deprecated アイテムは stale 判定の対象外
     """
     import yaml
+
     context.repo_root = context.temp_dir / "repo"
-    create_doorstop_project_api(context.repo_root,
-        spec_items=[{"header":"非推奨仕様","testable":True,"status":status}])
+    create_doorstop_project_api(
+        context.repo_root,
+        spec_items=[{"header": "非推奨仕様", "testable": True, "status": status}],
+    )
     context.feature_dir = context.temp_dir / "features"
-    write_feature_file(context.feature_dir / "spec.feature", minimal_feature("@SPEC-001"))
+    write_feature_file(
+        context.feature_dir / "spec.feature", minimal_feature("@SPEC-001")
+    )
 ```
 
 #### And 最終コミット日が 180日前である
 
 ```python
-@given('最終コミット日が 180日前である')  # type: ignore
+@given("最終コミット日が 180日前である")  # type: ignore
 def given_1588d2c1(context):
     """最終コミット日が 180日前である
 
@@ -948,6 +1000,7 @@ def given_1588d2c1(context):
       - deprecated アイテムは stale 判定の対象外
     """
     import yaml
+
     spec_file = context.repo_root / "specs" / "SPEC-001.yml"
     with open(spec_file, "r", encoding="utf-8") as f:
         data = yaml.safe_load(f)
@@ -959,7 +1012,7 @@ def given_1588d2c1(context):
 #### When audit コマンドを --stale-days 90 で実行する
 
 ```python
-@when('audit コマンドを --stale-days 90 で実行する')  # type: ignore
+@when("audit コマンドを --stale-days 90 で実行する")  # type: ignore
 def when_81d68298(context):
     """audit コマンドを --stale-days 90 で実行する
 
@@ -969,11 +1022,16 @@ def when_81d68298(context):
       - Git情報もupdated_atもないアイテムは stale 判定の対象外
       - deprecated アイテムは stale 判定の対象外
     """
-    result = run_spec_weaver([
-        "audit", str(context.feature_dir),
-        "--repo-root", str(context.repo_root),
-        "--stale-days", "90",
-    ])
+    result = run_spec_weaver(
+        [
+            "audit",
+            str(context.feature_dir),
+            "--repo-root",
+            str(context.repo_root),
+            "--stale-days",
+            "90",
+        ]
+    )
     context.result = result
     context.exit_code = result.returncode
     context.output = result.stdout + result.stderr
@@ -982,7 +1040,7 @@ def when_81d68298(context):
 #### Then そのアイテムは stale として報告されないこと
 
 ```python
-@then('そのアイテムは stale として報告されないこと')  # type: ignore
+@then("そのアイテムは stale として報告されないこと")  # type: ignore
 def then_e9c88743(context):
     """そのアイテムは stale として報告されないこと
 
@@ -991,9 +1049,9 @@ def then_e9c88743(context):
       - Git情報もupdated_atもないアイテムは stale 判定の対象外
       - deprecated アイテムは stale 判定の対象外
     """
-    assert "SPEC-001" not in context.output or \
-           not any(kw in context.output for kw in ["stale", "陳腐"]), \
-        f"stale 報告が含まれています:\n{context.output}"
+    assert "SPEC-001" not in context.output or not any(
+        kw in context.output for kw in ["stale", "陳腐"]
+    ), f"stale 報告が含まれています:\n{context.output}"
 ```
 
 </details>
@@ -1013,7 +1071,7 @@ def then_e9c88743(context):
 #### Given Doorstopアイテムの最終コミット日が 365日前である
 
 ```python
-@given('Doorstopアイテムの最終コミット日が 365日前である')  # type: ignore
+@given("Doorstopアイテムの最終コミット日が 365日前である")  # type: ignore
 def given_45c0cb00(context):
     """Doorstopアイテムの最終コミット日が 365日前である
 
@@ -1021,9 +1079,11 @@ def given_45c0cb00(context):
       - --stale-days 0 で鮮度チェックを無効化
     """
     import yaml
+
     context.repo_root = context.temp_dir / "repo"
-    create_doorstop_project_api(context.repo_root,
-        spec_items=[{"header":"超古い仕様","testable":True}])
+    create_doorstop_project_api(
+        context.repo_root, spec_items=[{"header": "超古い仕様", "testable": True}]
+    )
     spec_file = context.repo_root / "specs" / "SPEC-001.yml"
     with open(spec_file, "r", encoding="utf-8") as f:
         data = yaml.safe_load(f)
@@ -1031,24 +1091,31 @@ def given_45c0cb00(context):
     with open(spec_file, "w", encoding="utf-8") as f:
         yaml.dump(data, f, allow_unicode=True)
     context.feature_dir = context.temp_dir / "features"
-    write_feature_file(context.feature_dir / "spec.feature", minimal_feature("@SPEC-001"))
+    write_feature_file(
+        context.feature_dir / "spec.feature", minimal_feature("@SPEC-001")
+    )
 ```
 
 #### When audit コマンドを --stale-days 0 で実行する
 
 ```python
-@when('audit コマンドを --stale-days 0 で実行する')  # type: ignore
+@when("audit コマンドを --stale-days 0 で実行する")  # type: ignore
 def when_5cbe8c38(context):
     """audit コマンドを --stale-days 0 で実行する
 
     Scenarios:
       - --stale-days 0 で鮮度チェックを無効化
     """
-    result = run_spec_weaver([
-        "audit", str(context.feature_dir),
-        "--repo-root", str(context.repo_root),
-        "--stale-days", "0",
-    ])
+    result = run_spec_weaver(
+        [
+            "audit",
+            str(context.feature_dir),
+            "--repo-root",
+            str(context.repo_root),
+            "--stale-days",
+            "0",
+        ]
+    )
     context.result = result
     context.exit_code = result.returncode
     context.output = result.stdout + result.stderr
@@ -1057,15 +1124,16 @@ def when_5cbe8c38(context):
 #### Then stale に関する報告は表示されないこと
 
 ```python
-@then('stale に関する報告は表示されないこと')  # type: ignore
+@then("stale に関する報告は表示されないこと")  # type: ignore
 def then_e6a9cec1(context):
     """stale に関する報告は表示されないこと
 
     Scenarios:
       - --stale-days 0 で鮮度チェックを無効化
     """
-    assert "stale" not in context.output.lower() and "陳腐" not in context.output, \
+    assert "stale" not in context.output.lower() and "陳腐" not in context.output, (
         f"stale 報告が含まれています:\n{context.output}"
+    )
 ```
 
 </details>

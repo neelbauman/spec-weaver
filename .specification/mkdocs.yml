@@ -18,6 +18,7 @@ nav:
       - PLAN-001: items/PLAN-001.md
       - PLAN-002: items/PLAN-002.md
       - PLAN-003: items/PLAN-003.md
+      - PLAN-004: items/PLAN-004.md
   - REQ:
       - REQ一覧: req.md
       - REQ-001: items/REQ-001.md

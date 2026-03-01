@@ -21,7 +21,7 @@
 #### Given scaffold で生成されたテストコードが存在する
 
 ```python
-@given('scaffold で生成されたテストコードが存在する')  # type: ignore
+@given("scaffold で生成されたテストコードが存在する")  # type: ignore
 def given_179333d2(context):
     """scaffold で生成されたテストコードが存在する
 
@@ -35,17 +35,21 @@ def given_179333d2(context):
     )
     # scaffold を実行してテストコードを生成
     steps_dir = context.temp_dir / "steps"
-    result = run_spec_weaver([
-        "scaffold", str(context.feature_dir),
-        "--out-dir", str(steps_dir),
-    ])
+    result = run_spec_weaver(
+        [
+            "scaffold",
+            str(context.feature_dir),
+            "--out-dir",
+            str(steps_dir),
+        ]
+    )
     context.steps_dir = steps_dir
 ```
 
 #### And .feature ファイルが存在する
 
 ```python
-@given('.feature ファイルが存在する')  # type: ignore
+@given(".feature ファイルが存在する")  # type: ignore
 def given_93845d68(context):
     """.feature ファイルが存在する
 
@@ -63,7 +67,7 @@ def given_93845d68(context):
 #### When ci コマンドを実行する
 
 ```python
-@when('ci コマンドを実行する')  # type: ignore
+@when("ci コマンドを実行する")  # type: ignore
 def when_b11cd326(context):
     """ci コマンドを実行する
 
@@ -77,7 +81,7 @@ def when_b11cd326(context):
 #### Then pytest-bdd が実行されること
 
 ```python
-@then('pytest-bdd が実行されること')  # type: ignore
+@then("pytest-bdd が実行されること")  # type: ignore
 def then_f0e0adb5(context):
     """pytest-bdd が実行されること
 
@@ -85,15 +89,16 @@ def then_f0e0adb5(context):
       - テスト実行とドキュメント生成の一貫実行
     """
     # pytest 実行ログが出力に含まれることを確認
-    assert any(kw in context.output for kw in ["pytest", "test", "passed", "failed", "error", "ci"]), (
-        f"pytest 実行の痕跡が見つかりません:\n{context.output}"
-    )
+    assert any(
+        kw in context.output
+        for kw in ["pytest", "test", "passed", "failed", "error", "ci"]
+    ), f"pytest 実行の痕跡が見つかりません:\n{context.output}"
 ```
 
 #### And Cucumber 互換 JSON レポートが生成されること
 
 ```python
-@then('Cucumber 互換 JSON レポートが生成されること')  # type: ignore
+@then("Cucumber 互換 JSON レポートが生成されること")  # type: ignore
 def then_ba414369(context):
     """Cucumber 互換 JSON レポートが生成されること
 
@@ -108,7 +113,7 @@ def then_ba414369(context):
 #### And テスト結果を含む build ドキュメントが生成されること
 
 ```python
-@then('テスト結果を含む build ドキュメントが生成されること')  # type: ignore
+@then("テスト結果を含む build ドキュメントが生成されること")  # type: ignore
 def then_4f90a447(context):
     """テスト結果を含む build ドキュメントが生成されること
 
@@ -137,7 +142,7 @@ def then_4f90a447(context):
 #### Given テストに失敗するシナリオが含まれている
 
 ```python
-@given('テストに失敗するシナリオが含まれている')  # type: ignore
+@given("テストに失敗するシナリオが含まれている")  # type: ignore
 def given_ed203364(context):
     """テストに失敗するシナリオが含まれている
 
@@ -163,7 +168,7 @@ Feature: 失敗機能テスト
 #### When ci コマンドを実行する
 
 ```python
-@when('ci コマンドを実行する')  # type: ignore
+@when("ci コマンドを実行する")  # type: ignore
 def when_b11cd326(context):
     """ci コマンドを実行する
 
@@ -177,7 +182,7 @@ def when_b11cd326(context):
 #### Then ドキュメント生成は継続されること
 
 ```python
-@then('ドキュメント生成は継続されること')  # type: ignore
+@then("ドキュメント生成は継続されること")  # type: ignore
 def then_2584d8e2(context):
     """ドキュメント生成は継続されること
 
@@ -191,7 +196,7 @@ def then_2584d8e2(context):
 #### And FAIL 結果がドキュメントに反映されること
 
 ```python
-@then('FAIL 結果がドキュメントに反映されること')  # type: ignore
+@then("FAIL 結果がドキュメントに反映されること")  # type: ignore
 def then_649f612f(context):
     """FAIL 結果がドキュメントに反映されること
 
@@ -199,10 +204,10 @@ def then_649f612f(context):
       - テスト失敗時のドキュメント生成継続
     """
     # FAIL 結果が出力に含まれていることを確認
-    assert any(kw in context.output for kw in ["FAIL", "fail", "失敗", "❌"]) or \
-           context.result is not None, (
-        f"FAIL 結果の痕跡が見つかりません:\n{context.output}"
-    )
+    assert (
+        any(kw in context.output for kw in ["FAIL", "fail", "失敗", "❌"])
+        or context.result is not None
+    ), f"FAIL 結果の痕跡が見つかりません:\n{context.output}"
 ```
 
 </details>
@@ -221,7 +226,7 @@ def then_649f612f(context):
 #### Given .feature ファイルが存在する
 
 ```python
-@given('.feature ファイルが存在する')  # type: ignore
+@given(".feature ファイルが存在する")  # type: ignore
 def given_93845d68(context):
     """.feature ファイルが存在する
 
@@ -253,23 +258,26 @@ def when_ec489531(context, option):
 #### Then テストコード生成が先に実行されること
 
 ```python
-@then('テストコード生成が先に実行されること')  # type: ignore
+@then("テストコード生成が先に実行されること")  # type: ignore
 def then_0f77e713(context):
     """テストコード生成が先に実行されること
 
     Scenarios:
       - scaffold 付き ci 実行
     """
-    assert any(kw in context.output for kw in ["scaffold", "生成", "created", "スキャフォルド"]) or \
-           context.result is not None, (
-        f"scaffold 実行の痕跡が見つかりません:\n{context.output}"
-    )
+    assert (
+        any(
+            kw in context.output
+            for kw in ["scaffold", "生成", "created", "スキャフォルド"]
+        )
+        or context.result is not None
+    ), f"scaffold 実行の痕跡が見つかりません:\n{context.output}"
 ```
 
 #### And 続けてテスト実行とドキュメント生成が行われること
 
 ```python
-@then('続けてテスト実行とドキュメント生成が行われること')  # type: ignore
+@then("続けてテスト実行とドキュメント生成が行われること")  # type: ignore
 def then_9af9bba1(context):
     """続けてテスト実行とドキュメント生成が行われること
 

@@ -20,7 +20,7 @@
 #### Given Doorstopツリーが初期化されている
 
 ```python
-@given('Doorstopツリーが初期化されている')  # type: ignore
+@given("Doorstopツリーが初期化されている")  # type: ignore
 def given_6df87eb3(context):
     """Doorstopツリーが初期化されている
 
@@ -44,7 +44,7 @@ def given_6df87eb3(context):
 #### And 以下のREQアイテムが存在する:
 
 ```python
-@given('以下のREQアイテムが存在する:')  # type: ignore
+@given("以下のREQアイテムが存在する:")  # type: ignore
 def given_28140be4(context):
     """以下のREQアイテムが存在する:
 
@@ -73,7 +73,9 @@ def given_28140be4(context):
         if "Links" in headings:
             links_str = row["Links"].strip()
             if links_str:
-                item_cfg["links"] = [l.strip() for l in links_str.split(",") if l.strip()]
+                item_cfg["links"] = [
+                    l.strip() for l in links_str.split(",") if l.strip()
+                ]
 
         if not hasattr(context, "_pending_req_items"):
             context._pending_req_items = []
@@ -83,7 +85,7 @@ def given_28140be4(context):
 #### And 以下のSPECアイテムが存在する:
 
 ```python
-@given('以下のSPECアイテムが存在する:')  # type: ignore
+@given("以下のSPECアイテムが存在する:")  # type: ignore
 def given_14c0b615(context):
     """以下のSPECアイテムが存在する:
 
@@ -106,7 +108,9 @@ def given_14c0b615(context):
         if "Links" in headings:
             links_str = row["Links"].strip()
             if links_str:
-                item_cfg["links"] = [l.strip() for l in links_str.split(",") if l.strip()]
+                item_cfg["links"] = [
+                    l.strip() for l in links_str.split(",") if l.strip()
+                ]
 
         if "impl_files" in headings:
             impl_str = row["impl_files"].strip()
@@ -119,25 +123,29 @@ def given_14c0b615(context):
     documents = []
     req_items = getattr(context, "_pending_req_items", [])
     if req_items:
-        documents.append({
-            "dir": "reqs",
-            "prefix": "REQ",
-            "parent": None,
-            "items": req_items,
-        })
-    documents.append({
-        "dir": "specs",
-        "prefix": "SPEC",
-        "parent": "REQ" if req_items else None,
-        "items": context._pending_spec_items,
-    })
+        documents.append(
+            {
+                "dir": "reqs",
+                "prefix": "REQ",
+                "parent": None,
+                "items": req_items,
+            }
+        )
+    documents.append(
+        {
+            "dir": "specs",
+            "prefix": "SPEC",
+            "parent": "REQ" if req_items else None,
+            "items": context._pending_spec_items,
+        }
+    )
     create_doorstop_project_yaml(context.repo_root, documents)
 ```
 
 #### And 以下のfeatureファイルが存在する:
 
 ```python
-@given('以下のfeatureファイルが存在する:')  # type: ignore
+@given("以下のfeatureファイルが存在する:")  # type: ignore
 def given_a838a6ff(context):
     """以下のfeatureファイルが存在する:
 
@@ -190,7 +198,7 @@ def given_a838a6ff(context):
 #### When `spec-weaver trace REQ-001 -f ./specification/features` を実行する
 
 ```python
-@when('`spec-weaver trace REQ-001 -f ./specification/features` を実行する')  # type: ignore
+@when("`spec-weaver trace REQ-001 -f ./specification/features` を実行する")  # type: ignore
 def when_6629a1b8(context):
     """`spec-weaver trace REQ-001 -f ./specification/features` を実行する
 
@@ -204,7 +212,7 @@ def when_6629a1b8(context):
 #### Then 終了コードが0である
 
 ```python
-@then('終了コードが0である')  # type: ignore
+@then("終了コードが0である")  # type: ignore
 def then_0f800e56(context):
     """終了コードが0である
 
@@ -225,7 +233,7 @@ def then_0f800e56(context):
 #### And 出力にツリー構造が含まれる
 
 ```python
-@then('出力にツリー構造が含まれる')  # type: ignore
+@then("出力にツリー構造が含まれる")  # type: ignore
 def then_a551e8cd(context):
     """出力にツリー構造が含まれる
 
@@ -234,10 +242,9 @@ def then_a551e8cd(context):
       - SPECを起点とした双方向のツリー表示
     """
     # Rich ツリーは "│", "├", "└" などのボックス描画文字か、ID を含む
-    assert any(ch in context.output for ch in ["│", "├", "└", "┌", "─"]) or \
-           any(uid in context.output for uid in ["REQ-", "SPEC-"]), (
-        f"ツリー構造が見つかりません:\n{context.output}"
-    )
+    assert any(ch in context.output for ch in ["│", "├", "└", "┌", "─"]) or any(
+        uid in context.output for uid in ["REQ-", "SPEC-"]
+    ), f"ツリー構造が見つかりません:\n{context.output}"
 ```
 
 #### And "REQ-001" がルートノードとして表示される
@@ -245,7 +252,7 @@ def then_a551e8cd(context):
 ```python
 @then('"{param0}" がルートノードとして表示される')  # type: ignore
 def then_24c28817(context, param0):
-    """"REQ-001" がルートノードとして表示される
+    """ "REQ-001" がルートノードとして表示される
 
     Scenarios:
       - REQを起点としたトップダウンのツリー表示
@@ -260,7 +267,7 @@ def then_24c28817(context, param0):
 ```python
 @then('"{param0}" が "{param1}" の子ノードとして表示される')  # type: ignore
 def then_5c046e43(context, param0, param1):
-    """"REQ-002" が "REQ-001" の子ノードとして表示される
+    """ "REQ-002" が "REQ-001" の子ノードとして表示される
 
     Scenarios:
       - REQを起点としたトップダウンのツリー表示
@@ -279,7 +286,7 @@ def then_5c046e43(context, param0, param1):
 ```python
 @then('"{param0}" が "{param1}" の子ノードとして表示される')  # type: ignore
 def then_5c046e43(context, param0, param1):
-    """"REQ-002" が "REQ-001" の子ノードとして表示される
+    """ "REQ-002" が "REQ-001" の子ノードとして表示される
 
     Scenarios:
       - REQを起点としたトップダウンのツリー表示
@@ -298,7 +305,7 @@ def then_5c046e43(context, param0, param1):
 ```python
 @then('"{param0}" が "{param1}" の子ノードとして表示される')  # type: ignore
 def then_5c046e43(context, param0, param1):
-    """"REQ-002" が "REQ-001" の子ノードとして表示される
+    """ "REQ-002" が "REQ-001" の子ノードとして表示される
 
     Scenarios:
       - REQを起点としたトップダウンのツリー表示
@@ -317,7 +324,7 @@ def then_5c046e43(context, param0, param1):
 ```python
 @then('"{param0}" が "{param1}" の子ノードとして表示される')  # type: ignore
 def then_5c046e43(context, param0, param1):
-    """"REQ-002" が "REQ-001" の子ノードとして表示される
+    """ "REQ-002" が "REQ-001" の子ノードとして表示される
 
     Scenarios:
       - REQを起点としたトップダウンのツリー表示
@@ -349,7 +356,7 @@ def then_5c046e43(context, param0, param1):
 #### When `spec-weaver trace SPEC-003 -f ./specification/features` を実行する
 
 ```python
-@when('`spec-weaver trace SPEC-003 -f ./specification/features` を実行する')  # type: ignore
+@when("`spec-weaver trace SPEC-003 -f ./specification/features` を実行する")  # type: ignore
 def when_b1a2f499(context):
     """`spec-weaver trace SPEC-003 -f ./specification/features` を実行する
 
@@ -362,7 +369,7 @@ def when_b1a2f499(context):
 #### Then 終了コードが0である
 
 ```python
-@then('終了コードが0である')  # type: ignore
+@then("終了コードが0である")  # type: ignore
 def then_0f800e56(context):
     """終了コードが0である
 
@@ -383,7 +390,7 @@ def then_0f800e56(context):
 #### And 出力にツリー構造が含まれる
 
 ```python
-@then('出力にツリー構造が含まれる')  # type: ignore
+@then("出力にツリー構造が含まれる")  # type: ignore
 def then_a551e8cd(context):
     """出力にツリー構造が含まれる
 
@@ -392,10 +399,9 @@ def then_a551e8cd(context):
       - SPECを起点とした双方向のツリー表示
     """
     # Rich ツリーは "│", "├", "└" などのボックス描画文字か、ID を含む
-    assert any(ch in context.output for ch in ["│", "├", "└", "┌", "─"]) or \
-           any(uid in context.output for uid in ["REQ-", "SPEC-"]), (
-        f"ツリー構造が見つかりません:\n{context.output}"
-    )
+    assert any(ch in context.output for ch in ["│", "├", "└", "┌", "─"]) or any(
+        uid in context.output for uid in ["REQ-", "SPEC-"]
+    ), f"ツリー構造が見つかりません:\n{context.output}"
 ```
 
 #### And 上位に "REQ-002" が表示される
@@ -460,7 +466,7 @@ def then_b2f19b22(context, param0):
 #### When `spec-weaver trace audit.feature -f ./specification/features` を実行する
 
 ```python
-@when('`spec-weaver trace audit.feature -f ./specification/features` を実行する')  # type: ignore
+@when("`spec-weaver trace audit.feature -f ./specification/features` を実行する")  # type: ignore
 def when_53222a94(context):
     """`spec-weaver trace audit.feature -f ./specification/features` を実行する
 
@@ -473,7 +479,7 @@ def when_53222a94(context):
 #### Then 終了コードが0である
 
 ```python
-@then('終了コードが0である')  # type: ignore
+@then("終了コードが0である")  # type: ignore
 def then_0f800e56(context):
     """終了コードが0である
 
@@ -503,9 +509,7 @@ def then_1b9fcb6e(context, param0):
       - --direction up で上方向のみ探索
       - --direction down で下方向のみ探索
     """
-    assert param0 in context.output, (
-        f'"{param0}" が出力にありません:\n{context.output}'
-    )
+    assert param0 in context.output, f'"{param0}" が出力にありません:\n{context.output}'
 ```
 
 #### And 出力に "REQ-002" が表示される
@@ -520,9 +524,7 @@ def then_1b9fcb6e(context, param0):
       - --direction up で上方向のみ探索
       - --direction down で下方向のみ探索
     """
-    assert param0 in context.output, (
-        f'"{param0}" が出力にありません:\n{context.output}'
-    )
+    assert param0 in context.output, f'"{param0}" が出力にありません:\n{context.output}'
 ```
 
 #### And 出力に "REQ-001" が表示される
@@ -537,9 +539,7 @@ def then_1b9fcb6e(context, param0):
       - --direction up で上方向のみ探索
       - --direction down で下方向のみ探索
     """
-    assert param0 in context.output, (
-        f'"{param0}" が出力にありません:\n{context.output}'
-    )
+    assert param0 in context.output, f'"{param0}" が出力にありません:\n{context.output}'
 ```
 
 </details>
@@ -559,7 +559,9 @@ def then_1b9fcb6e(context, param0):
 #### When `spec-weaver trace SPEC-003 -f ./specification/features --direction up` を実行する
 
 ```python
-@when('`spec-weaver trace SPEC-003 -f ./specification/features --direction up` を実行する')  # type: ignore
+@when(
+    "`spec-weaver trace SPEC-003 -f ./specification/features --direction up` を実行する"
+)  # type: ignore
 def when_770f884f(context):
     """`spec-weaver trace SPEC-003 -f ./specification/features --direction up` を実行する
 
@@ -572,7 +574,7 @@ def when_770f884f(context):
 #### Then 終了コードが0である
 
 ```python
-@then('終了コードが0である')  # type: ignore
+@then("終了コードが0である")  # type: ignore
 def then_0f800e56(context):
     """終了コードが0である
 
@@ -602,9 +604,7 @@ def then_1b9fcb6e(context, param0):
       - --direction up で上方向のみ探索
       - --direction down で下方向のみ探索
     """
-    assert param0 in context.output, (
-        f'"{param0}" が出力にありません:\n{context.output}'
-    )
+    assert param0 in context.output, f'"{param0}" が出力にありません:\n{context.output}'
 ```
 
 #### And 出力に "REQ-001" が表示される
@@ -619,9 +619,7 @@ def then_1b9fcb6e(context, param0):
       - --direction up で上方向のみ探索
       - --direction down で下方向のみ探索
     """
-    assert param0 in context.output, (
-        f'"{param0}" が出力にありません:\n{context.output}'
-    )
+    assert param0 in context.output, f'"{param0}" が出力にありません:\n{context.output}'
 ```
 
 #### And 出力に "audit.feature" が表示されない
@@ -656,7 +654,9 @@ def then_1c0ce4ff(context, param0):
 #### When `spec-weaver trace REQ-001 -f ./specification/features --direction down` を実行する
 
 ```python
-@when('`spec-weaver trace REQ-001 -f ./specification/features --direction down` を実行する')  # type: ignore
+@when(
+    "`spec-weaver trace REQ-001 -f ./specification/features --direction down` を実行する"
+)  # type: ignore
 def when_24d70f7f(context):
     """`spec-weaver trace REQ-001 -f ./specification/features --direction down` を実行する
 
@@ -669,7 +669,7 @@ def when_24d70f7f(context):
 #### Then 終了コードが0である
 
 ```python
-@then('終了コードが0である')  # type: ignore
+@then("終了コードが0である")  # type: ignore
 def then_0f800e56(context):
     """終了コードが0である
 
@@ -699,9 +699,7 @@ def then_1b9fcb6e(context, param0):
       - --direction up で上方向のみ探索
       - --direction down で下方向のみ探索
     """
-    assert param0 in context.output, (
-        f'"{param0}" が出力にありません:\n{context.output}'
-    )
+    assert param0 in context.output, f'"{param0}" が出力にありません:\n{context.output}'
 ```
 
 #### And 出力に "SPEC-003" が表示される
@@ -716,9 +714,7 @@ def then_1b9fcb6e(context, param0):
       - --direction up で上方向のみ探索
       - --direction down で下方向のみ探索
     """
-    assert param0 in context.output, (
-        f'"{param0}" が出力にありません:\n{context.output}'
-    )
+    assert param0 in context.output, f'"{param0}" が出力にありません:\n{context.output}'
 ```
 
 #### And 出力に "audit.feature" が表示される
@@ -733,9 +729,7 @@ def then_1b9fcb6e(context, param0):
       - --direction up で上方向のみ探索
       - --direction down で下方向のみ探索
     """
-    assert param0 in context.output, (
-        f'"{param0}" が出力にありません:\n{context.output}'
-    )
+    assert param0 in context.output, f'"{param0}" が出力にありません:\n{context.output}'
 ```
 
 </details>
@@ -754,7 +748,9 @@ def then_1b9fcb6e(context, param0):
 #### When `spec-weaver trace REQ-001 -f ./specification/features --format flat` を実行する
 
 ```python
-@when('`spec-weaver trace REQ-001 -f ./specification/features --format flat` を実行する')  # type: ignore
+@when(
+    "`spec-weaver trace REQ-001 -f ./specification/features --format flat` を実行する"
+)  # type: ignore
 def when_816b7b2c(context):
     """`spec-weaver trace REQ-001 -f ./specification/features --format flat` を実行する
 
@@ -767,7 +763,7 @@ def when_816b7b2c(context):
 #### Then 終了コードが0である
 
 ```python
-@then('終了コードが0である')  # type: ignore
+@then("終了コードが0である")  # type: ignore
 def then_0f800e56(context):
     """終了コードが0である
 
@@ -788,7 +784,7 @@ def then_0f800e56(context):
 #### And 出力がフラットリスト形式である
 
 ```python
-@then('出力がフラットリスト形式である')  # type: ignore
+@then("出力がフラットリスト形式である")  # type: ignore
 def then_f50604f0(context):
     """出力がフラットリスト形式である
 
@@ -832,7 +828,7 @@ def then_29017220(context, param0, param1, param2):
 #### When `spec-weaver trace NONEXIST-999 -f ./specification/features` を実行する
 
 ```python
-@when('`spec-weaver trace NONEXIST-999 -f ./specification/features` を実行する')  # type: ignore
+@when("`spec-weaver trace NONEXIST-999 -f ./specification/features` を実行する")  # type: ignore
 def when_44385436(context):
     """`spec-weaver trace NONEXIST-999 -f ./specification/features` を実行する
 
@@ -845,7 +841,7 @@ def when_44385436(context):
 #### Then 終了コードが1である
 
 ```python
-@then('終了コードが1である')  # type: ignore
+@then("終了コードが1である")  # type: ignore
 def then_9b731a71(context):
     """終了コードが1である
 
@@ -888,7 +884,7 @@ def then_9998fad9(context, param0):
 #### When `spec-weaver trace REQ-001 -f ./specification/features` を実行する
 
 ```python
-@when('`spec-weaver trace REQ-001 -f ./specification/features` を実行する')  # type: ignore
+@when("`spec-weaver trace REQ-001 -f ./specification/features` を実行する")  # type: ignore
 def when_6629a1b8(context):
     """`spec-weaver trace REQ-001 -f ./specification/features` を実行する
 
@@ -902,7 +898,7 @@ def when_6629a1b8(context):
 #### Then 終了コードが0である
 
 ```python
-@then('終了コードが0である')  # type: ignore
+@then("終了コードが0である")  # type: ignore
 def then_0f800e56(context):
     """終了コードが0である
 
@@ -925,7 +921,7 @@ def then_0f800e56(context):
 ```python
 @then('"{param0}" のノードに "{param1}" のステータスバッジが表示される')  # type: ignore
 def then_f676df97(context, param0, param1):
-    """"REQ-001" のノードに "implemented" のステータスバッジが表示される
+    """ "REQ-001" のノードに "implemented" のステータスバッジが表示される
 
     Scenarios:
       - 各ノードにステータスバッジが表示される
@@ -943,7 +939,7 @@ def then_f676df97(context, param0, param1):
 ```python
 @then('"{param0}" のノードに "{param1}" のステータスバッジが表示される')  # type: ignore
 def then_f676df97(context, param0, param1):
-    """"REQ-001" のノードに "implemented" のステータスバッジが表示される
+    """ "REQ-001" のノードに "implemented" のステータスバッジが表示される
 
     Scenarios:
       - 各ノードにステータスバッジが表示される

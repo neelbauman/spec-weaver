@@ -7,7 +7,6 @@ from pathlib import Path
 
 from behave import given, when, then
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
 from _helpers import (
     PROJECT_ROOT,
     create_doorstop_project_api,
