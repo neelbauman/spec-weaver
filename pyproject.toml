@@ -4,10 +4,10 @@ build-backend = "hatchling.build"
 
 [project]
 name = "spec-weaver"
-version = "0.60.0"
+version = "0.63.0"
 description = "A CLI tool to weave Doorstop requirements and Gherkin feature files."
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.14"
 license = { text = "MIT" }
 authors = [
     { name = "Your Name", email = "your.email@example.com" }
@@ -28,6 +28,7 @@ dependencies = [
     "rich>=13.0.0",
     "doorstop>=2.2.0",
     "gherkin-official>=28.0.0",
+    "parse>=1.21.1",
 ]
 
 # ターミナルから `spec-weaver` コマンドとして呼び出すためのエントリーポイント設定
