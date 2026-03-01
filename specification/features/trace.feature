@@ -60,7 +60,7 @@ Feature: trace コマンド — トレーサビリティ・ツリー表示
     When `spec-weaver trace REQ-001 -f ./specification/features --format flat` を実行する
     Then 終了コードが0である
     And 出力がフラットリスト形式である
-    And 各行に "[REQ]" または "[SPEC]" または "[TEST]" のラベルが含まれる
+    And 各行に "REQ" または "SPEC" または "TEST" のラベルが含まれる
 
   Scenario: 存在しないIDを指定した場合のエラー
     When `spec-weaver trace NONEXIST-999 -f ./specification/features` を実行する

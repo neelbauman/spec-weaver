@@ -845,8 +845,12 @@ def _run_build(
     )
 
     console.print(f"[bold green]✅ ビルド成功！ [white]{out_dir}[/white][/bold green]")
+    try:
+        display_path = out_dir.relative_to(Path.cwd())
+    except ValueError:
+        display_path = out_dir
     console.print(
-        f"閲覧: [bold magenta]mkdocs serve -f {out_dir.relative_to(Path.cwd())}/mkdocs.yml[/bold magenta]"
+        f"閲覧: [bold magenta]mkdocs serve -f {display_path}/mkdocs.yml[/bold magenta]"
     )
 
 

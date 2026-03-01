@@ -69,18 +69,18 @@ spec-weaver scaffold <feature_dir>
 
 **テスト実行結果 (集計)**: -
 
-**テスト実行結果 (個別)**: ✅ 4/11 PASS
+**テスト実行結果 (個別)**: ✅ 11/11 PASS
 
 ### 🧪 検証シナリオ
 
 - ✅ PASS **基本的なテストコード生成** — Scenario （[features/scaffold.feature:5](../features/scaffold.md)）
 - ✅ PASS **ハッシュベースの関数名生成** — Scenario （[features/scaffold.feature:11](../features/scaffold.md)）
 - ✅ PASS **ステップ関数の生成と重複排除** — Scenario （[features/scaffold.feature:18](../features/scaffold.md)）
-- - **Docstring にシナリオリストを記載** — Scenario （[features/scaffold.feature:23](../features/scaffold.md)）
-- - **差分マージ（新規ステップ追記）** — Scenario （[features/scaffold.feature:29](../features/scaffold.md)）
-- - **差分なし時のスキップ** — Scenario （[features/scaffold.feature:37](../features/scaffold.md)）
+- ✅ PASS **Docstring にシナリオリストを記載** — Scenario （[features/scaffold.feature:23](../features/scaffold.md)）
+- ✅ PASS **差分マージ（新規ステップ追記）** — Scenario （[features/scaffold.feature:29](../features/scaffold.md)）
+- ✅ PASS **差分なし時のスキップ** — Scenario （[features/scaffold.feature:37](../features/scaffold.md)）
 - ✅ PASS **既存ファイルの上書き** — Scenario （[features/scaffold.feature:43](../features/scaffold.md)）
-- - **Git 未コミット変更の確認プロンプト** — Scenario （[features/scaffold.feature:48](../features/scaffold.md)）
-- - **--force オプションで確認プロンプトをスキップ** — Scenario （[features/scaffold.feature:54](../features/scaffold.md)）
-- - **差分マージ時の Duplicate スタブのコメント化** — Scenario （[features/scaffold.feature:59](../features/scaffold.md)）
-- - **差分マージ時の他ファイルコメント行を Duplicate 判定に使用しない** — Scenario （[features/scaffold.feature:66](../features/scaffold.md)）
+- ✅ PASS **Git 未コミット変更の確認プロンプト** — Scenario （[features/scaffold.feature:48](../features/scaffold.md)）
+- ✅ PASS **--force オプションで確認プロンプトをスキップ** — Scenario （[features/scaffold.feature:54](../features/scaffold.md)）
+- ✅ PASS **差分マージ時の Duplicate スタブのコメント化** — Scenario （[features/scaffold.feature:59](../features/scaffold.md)）
+- ✅ PASS **差分マージ時の他ファイルコメント行を Duplicate 判定に使用しない** — Scenario （[features/scaffold.feature:66](../features/scaffold.md)）

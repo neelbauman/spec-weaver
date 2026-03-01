@@ -107,11 +107,12 @@ def _get_git_file_date(file_path: str, mode: str = "latest") -> str | None:
     Git 外や未コミットファイルでは None を返す。
     """
     try:
+        cwd = os.path.dirname(os.path.abspath(file_path))
         if mode == "first":
             cmd = ["git", "log", "--follow", "--format=%aI", "--diff-filter=A", "--", file_path]
         else:
             cmd = ["git", "log", "-1", "--format=%aI", "--", file_path]
-        result = subprocess.run(cmd, capture_output=True, text=True, timeout=5)
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=5, cwd=cwd)
         if result.returncode == 0 and result.stdout.strip():
             line = result.stdout.strip().splitlines()[0]
             return line[:10]  # YYYY-MM-DD

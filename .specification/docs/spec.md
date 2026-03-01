@@ -3,12 +3,12 @@
 | ID | タイトル | 親 | 子 | 兄弟 | レビューステータス | Gherkinカバレッジ | 実装状況 | 作成日 | 更新日 | テスト結果 |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | [SPEC-001](items/SPEC-001.md) | コア・アーキテクチャ | [REQ-001](items/REQ-001.md) | - | [SPEC-002](items/SPEC-002.md)<br>[SPEC-021](items/SPEC-021.md) | ✅ reviewed |  - | ✅ implemented | 2026-02-26 | 2026-02-26 - |
-| [SPEC-002](items/SPEC-002.md) | データ抽出基盤 | [REQ-001](items/REQ-001.md)<br>[REQ-002](items/REQ-002.md) | - | [SPEC-001](items/SPEC-001.md)<br>[SPEC-003](items/SPEC-003.md)<br>[SPEC-013](items/SPEC-013.md)<br>[SPEC-021](items/SPEC-021.md) | ✅ reviewed | 🟢 1/1 (100%) | ✅ implemented | 2026-02-26 | 2026-02-27 ✅ 8/14 PASS |
+| [SPEC-002](items/SPEC-002.md) | データ抽出基盤 | [REQ-001](items/REQ-001.md)<br>[REQ-002](items/REQ-002.md) | - | [SPEC-001](items/SPEC-001.md)<br>[SPEC-003](items/SPEC-003.md)<br>[SPEC-013](items/SPEC-013.md)<br>[SPEC-021](items/SPEC-021.md) | ✅ reviewed | 🟢 1/1 (100%) | ✅ implemented | 2026-02-26 | 2026-02-27 ✅ 14/14 PASS |
 | [SPEC-003](items/SPEC-003.md) | audit コマンド仕様 | [REQ-002](items/REQ-002.md) | - | [SPEC-002](items/SPEC-002.md)<br>[SPEC-013](items/SPEC-013.md) | ✅ reviewed | 🟢 1/1 (100%) | ✅ implemented | 2026-02-26 | 2026-02-26 ✅ 7/7 PASS |
 | [SPEC-004](items/SPEC-004.md) | build コマンド仕様 | [REQ-003](items/REQ-003.md) | - | [SPEC-014](items/SPEC-014.md) | ✅ reviewed | 🟢 1/1 (100%) | ✅ implemented | 2026-02-26 | 2026-02-26 ✅ 13/13 PASS |
 | [SPEC-005](items/SPEC-005.md) | Suspect（変更波及）対応 | [REQ-004](items/REQ-004.md) | - | - | ✅ reviewed | 🟢 1/1 (100%) | ✅ implemented | 2026-02-26 | 2026-02-27 ✅ 5/5 PASS |
 | [SPEC-006](items/SPEC-006.md) | テスト結果統合 | [REQ-005](items/REQ-005.md) | - | - | ✅ reviewed |  - | ✅ implemented | 2026-02-26 | 2026-02-26 - |
-| [SPEC-007](items/SPEC-007.md) | 実装ステータス管理 | [REQ-006](items/REQ-006.md) | - | - | ✅ reviewed | 🟢 1/1 (100%) | ✅ implemented | 2026-02-26 | 2026-02-26 ✅ 4/4 PASS |
+| [SPEC-007](items/SPEC-007.md) | 実装ステータス管理 | [REQ-006](items/REQ-006.md) | - | - | ✅ reviewed | 🟢 1/1 (100%) | ✅ implemented | 2026-02-26 | 2026-03-01 ✅ 5/5 PASS |
 | [SPEC-008](items/SPEC-008.md) | 動的プレフィックス検知とマルチインデックス生成 | [REQ-007](items/REQ-007.md) | - | - | ✅ reviewed |  - | ✅ implemented | 2026-02-26 | 2026-02-26 - |
 | [SPEC-009](items/SPEC-009.md) | 一覧テーブルのフィルタリング機能 | [REQ-008](items/REQ-008.md) | - | - | ✅ reviewed | 🟢 1/1 (100%) | ✅ implemented | 2026-02-26 | 2026-02-26 ✅ 1/1 PASS |
 | [SPEC-010](items/SPEC-010.md) | trace コマンド — トレーサビリティ・ツリー表示 | [REQ-009](items/REQ-009.md) | - | - | ✅ reviewed | 🟢 1/1 (100%) | ✅ implemented | 2026-02-26 | 2026-02-26 ✅ 8/8 PASS |

@@ -50,7 +50,7 @@ sequenceDiagram
 - UIの色やライセンス表記など「自動テスト不可能な仕様」を監査の対象外（スキップ扱い）
   として処理すること
 
-**テスト実行結果 (個別)**: ✅ 8/14 PASS
+**テスト実行結果 (個別)**: ✅ 14/14 PASS
 
 ### 🧪 検証シナリオ
 
@@ -62,9 +62,9 @@ sequenceDiagram
 - ✅ PASS **Feature・Scenario両レベルのタグ抽出** — Scenario （[features/data_extraction.feature:34](../features/data_extraction.md)）
 - ✅ PASS **サブディレクトリ内のfeatureファイルの再帰探索** — Scenario （[features/data_extraction.feature:39](../features/data_extraction.md)）
 - ✅ PASS **Gherkin構文エラーの検出** — Scenario （[features/data_extraction.feature:44](../features/data_extraction.md)）
-- - **Featureタグのみが付与されたfeatureファイルでScenarioがタグマップに登録される** — Scenario （[features/data_extraction.feature:54](../features/data_extraction.md)）
-- - **Featureタグを継承したエントリのkeywordはScenarioになる** — Scenario （[features/data_extraction.feature:60](../features/data_extraction.md)）
-- - **Feature→Rule→Scenarioの多段継承でEffective Tagsが正しく算出される** — Scenario （[features/data_extraction.feature:66](../features/data_extraction.md)）
-- - **シナリオ自身のタグと継承タグが共存してEffective Tagsを形成する** — Scenario （[features/data_extraction.feature:73](../features/data_extraction.md)）
-- - **Scenario Outlineの全ExamplesタグがEffective Tagsに集約される** — Scenario （[features/data_extraction.feature:80](../features/data_extraction.md)）
-- - **プレフィックスフィルタはEffective Tags算出後に適用される** — Scenario （[features/data_extraction.feature:87](../features/data_extraction.md)）
+- ✅ PASS **Featureタグのみが付与されたfeatureファイルでScenarioがタグマップに登録される** — Scenario （[features/data_extraction.feature:54](../features/data_extraction.md)）
+- ✅ PASS **Featureタグを継承したエントリのkeywordはScenarioになる** — Scenario （[features/data_extraction.feature:60](../features/data_extraction.md)）
+- ✅ PASS **Feature→Rule→Scenarioの多段継承でEffective Tagsが正しく算出される** — Scenario （[features/data_extraction.feature:66](../features/data_extraction.md)）
+- ✅ PASS **シナリオ自身のタグと継承タグが共存してEffective Tagsを形成する** — Scenario （[features/data_extraction.feature:73](../features/data_extraction.md)）
+- ✅ PASS **Scenario Outlineの全ExamplesタグがEffective Tagsに集約される** — Scenario （[features/data_extraction.feature:80](../features/data_extraction.md)）
+- ✅ PASS **プレフィックスフィルタはEffective Tags算出後に適用される** — Scenario （[features/data_extraction.feature:87](../features/data_extraction.md)）
