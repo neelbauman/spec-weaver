@@ -798,10 +798,18 @@ def status_cmd(
             except Exception:
                 gherkin_fingerprints = {}
 
-        req_items = {uid: item for uid, item in all_items_str.items() if uid.startswith("REQ")}
-        spec_items = {uid: item for uid, item in all_items_str.items() if uid.startswith("SPEC")}
+        # プレフィックスごとにアイテムをグループ化
+        grouped_items: dict[str, dict] = {p: {} for p in all_prefixes}
+        for uid, item in all_items_str.items():
+            prefix = _get_uid_prefix(uid)
+            if prefix in grouped_items:
+                grouped_items[prefix][uid] = item
+            else:
+                grouped_items.setdefault("OTHER", {})[uid] = item
 
         def _print_status_table(title: str, items: dict) -> int:
+            if not items:
+                return 0
             table = Table(title=title, show_header=True, header_style="bold magenta")
             table.add_column("ID", style="bold cyan", no_wrap=True)
             table.add_column("タイトル")
@@ -824,10 +832,42 @@ def status_cmd(
                 console.print(table)
             return shown
 
-        req_shown = _print_status_table("要件 (REQ)", req_items)
-        spec_shown = _print_status_table("仕様 (SPEC)", spec_items)
+        total = 0
+        # 優先して表示するプレフィックスの順序
+        for prefix in ["REQ", "SPEC", "DESIGN", "PLAN", "ADR", "RESEARCH"]:
+            if prefix in grouped_items:
+                total += _print_status_table(f"ドキュメント: {prefix}", grouped_items.pop(prefix))
+        
+        # 残りのプレフィックスを表示
+        for prefix, items in sorted(grouped_items.items()):
+            total += _print_status_table(f"ドキュメント: {prefix}", items)
 
-        total = req_shown + spec_shown
+        # Gherkin Featureファイルのステータス表示
+        try:
+            tag_map = get_tag_map(feature_dir, all_prefixes)
+            feature_files = {}
+            for uid, scenarios in tag_map.items():
+                for sc in scenarios:
+                    file_path = sc["file"]
+                    if file_path not in feature_files:
+                        feature_files[file_path] = {"scenarios": 0, "specs": set()}
+                    feature_files[file_path]["scenarios"] += 1
+                    feature_files[file_path]["specs"].add(uid)
+            
+            if feature_files and not filter_status: # filter_status がある場合はfeatureはステータスを持たないので除外する（要件次第だが、基本は出さない）
+                table = Table(title="振る舞い仕様 (Gherkin Features)", show_header=True, header_style="bold green")
+                table.add_column("ファイルパス", style="bold cyan")
+                table.add_column("シナリオ数", justify="right")
+                table.add_column("関連仕様ID")
+                for fpath in sorted(feature_files.keys()):
+                    info = feature_files[fpath]
+                    specs_str = ", ".join(sorted(info["specs"]))
+                    table.add_row(fpath, str(info["scenarios"]), specs_str)
+                console.print(table)
+                # ファイル数は total には含めないでおくか、含めるか。ドキュメントアイテム数とは違うので含めない。
+        except Exception:
+            pass
+
         if total == 0:
             if filter_status:
                 console.print(f"[yellow]ステータス '{filter_status}' に一致するアイテムが見つかりませんでした。[/yellow]")
