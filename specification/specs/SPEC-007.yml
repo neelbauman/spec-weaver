@@ -7,7 +7,7 @@ links:
 - REQ-006: J-LURfiXF04YgRlNJpeWohPMtFwvYfPQ3NsKp4LKzgc=
 normative: true
 ref: ''
-reviewed: Qpgpa7f2Hl5TYW9oTuuTN5J_Ufi8MKFMO7NQMxHAuSo=
+reviewed: sEm14a6kh3UMOpIXqMPl7ywCUrfg0VFeb1V_b_Y27HI=
 status: implemented
 testable: true
 text: |
@@ -29,7 +29,9 @@ text: |
 
   ### 2. status コマンド
   `spec-weaver status` コマンドにより、全アイテムのステータスを一覧表示する。
-  - **表示**: ID / タイトル / 実装ステータス（絵文字バッジ付き）
+  - **表示**: ID / タイトル / 実装ステータス（絵文字バッジ付き）/ レビューステータス / 最終更新日
+  - **レビューステータス**: Doorstopの `reviewed` / `cleared` 属性を評価し `⚠️ suspect` / `📋 unreviewed` / `✅ reviewed` を表示
+  - **最終更新日**: Gitの最終コミット日付を優先し、未取得時は YAML の `updated_at` 属性にフォールバック。どちらもない場合は `-` を表示
   - **フィルタリング**: `--filter` オプションで特定ステータスのみを表示可能
 
   ### 3. build コマンドへの統合

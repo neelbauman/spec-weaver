@@ -657,6 +657,8 @@ def status_cmd(
             table.add_column("ID", style="bold cyan", no_wrap=True)
             table.add_column("タイトル")
             table.add_column("実装ステータス")
+            table.add_column("レビューステータス")
+            table.add_column("最終更新日", no_wrap=True)
             shown = 0
             for uid in sorted(items.keys()):
                 item = items[uid]
@@ -664,8 +666,10 @@ def status_cmd(
                 if filter_status and str(raw_status or "") != filter_status:
                     continue
                 badge = _impl_status_badge(item)
+                review = _review_status_badge(item)
+                updated = _get_timestamp(item, "updated_at")
                 title_text = (item.header or "").strip()
-                table.add_row(uid, title_text, badge)
+                table.add_row(uid, title_text, badge, review, updated)
                 shown += 1
             if shown > 0:
                 console.print(table)
