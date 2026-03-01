@@ -1,0 +1,28 @@
+active: true
+derived: false
+header: |
+  仕様と実装のセマンティックレビュー機能
+level: 12.1
+links: []
+normative: true
+ref: ''
+reviewed: null
+status: draft
+testable: false
+text: |
+  ## 概要
+  仕様書・Gherkinシナリオと実装コードの**意味的な整合性**をLLMで検証する
+  `spec-weaver review` コマンドを提供すること。
+
+  ## 背景・動機
+  既存の `audit` コマンドはリンクの有無・タグの整合性を静的に検証するが、
+  「ファイルは存在しリンクも正しいが、内容が仕様と食い違う」状況は検出できない。
+  このギャップを埋めるため、LLMによる意味的なレビュー機能を追加する。
+
+  ## 受け入れ基準
+  - 単一アイテムを指定して仕様・Gherkin・実装コードの意味的整合性をレビューできること
+  - 全アイテムを並列でレビューできること（CI/CD統合を想定）
+  - レビュー結果をJSON形式またはMarkdown形式で出力できること
+  - 実装漏れ・仕様の欠落・意味的矛盾の3種別でfindingを分類できること
+  - findingの重大度（high/medium/low）を付与できること
+  - --fail-on オプションで指定重大度以上のfindingがある場合に終了コード1を返せること（CI用）

@@ -1,0 +1,67 @@
+active: true
+derived: false
+header: |
+  review コマンド — セマンティックレビュー
+impl_files:
+- src/spec_weaver/review.py
+- src/spec_weaver/cli.py
+level: 20.2
+links:
+- REQ-013: null
+normative: true
+ref: ''
+reviewed: null
+status: draft
+testable: true
+text: |
+  ## 概要
+  仕様・Gherkin・実装コードの意味的整合性をLLMで検証する `review` コマンドの仕様。
+
+  ## 入力
+
+  ### 個別レビューモード
+  - `--item <ID>` (必須): レビュー対象の仕様アイテムID（例: REQ-001, SPEC-042）
+  - `--feature-dir <path>` (オプション): .featureファイル検索ディレクトリ（デフォルト: ./specification/features）
+  - `--output <format>` (オプション): 出力形式 `text`（Markdown）/ `json`（デフォルト: text）
+  - `--min-severity <level>` (オプション): 表示するfindingの最低重大度 low/medium/high（デフォルト: low）
+  - `--fail-on <level>` (オプション): 終了コード1を返す閾値 low/medium/high（未設定時は常に0）
+
+  ### 全体並列レビューモード
+  - `--all` (必須): 全仕様アイテムを並列レビュー（`--item` と排他）
+  - `--max-workers <N>` (オプション): 並列Claudeプロセス数（デフォルト: 3）
+  - その他オプションは個別モードと共通
+
+  ## 処理
+
+  ### ファイル収集
+  1. 対象アイテムのDoorstop YAMLパスを取得する
+  2. `get_tag_map` でアイテムIDに対応する .featureファイルパスを取得する
+  3. `ImplScanner` と `get_ref_files` でアノテーション付き実装ファイルを取得する
+  4. ステップ定義ファイルを feature ファイルと同ディレクトリの steps/ から探索する
+
+  ### Claude呼び出し
+  - `claude -p "<prompt>" --file <file1> --file <file2> ...` をsubprocessで実行する
+  - プロンプトは仕様書 §3.4 のテンプレートに従う
+  - stdout から最後のJSON ブロックを抽出する（非JSON行は無視）
+
+  ### 並列実行（--all 時）
+  - `concurrent.futures.ThreadPoolExecutor(max_workers=N)` で並列実行する
+  - 各タスクは独立した subprocess として claude を起動する
+
+  ## 出力・結果
+
+  ### 個別レビュー (--output text)
+  - Markdown形式でfinding一覧を出力する
+  - severity が --min-severity 未満のfindingは非表示にする
+
+  ### 個別レビュー (--output json)
+  - 仕様書 §5.1 のJSONスキーマに従ったオブジェクトを stdout に出力する
+
+  ### 全体並列レビュー (--output json)
+  - 仕様書 §3.5 の集約レポートJSONを stdout に出力する
+
+  ### 終了コード
+  - --fail-on 指定時: 該当重大度以上のfindingが1件以上あれば終了コード1を返す
+  - それ以外: 終了コード0を返す
+
+  ## impl_files

@@ -1,0 +1,43 @@
+active: true
+derived: false
+header: |
+  semantic-review-skill — Claude Code セマンティックレビュースキル
+impl_files:
+- .claude/skills/semantic-review-skill/SKILL.md
+level: 20.3
+links:
+- REQ-013: null
+normative: true
+ref: ''
+reviewed: null
+status: draft
+testable: false
+text: |
+  ## 概要
+  spec-weaver の review コマンドから起動された Claude プロセス内、または
+  ユーザーの直接依頼において発動し、渡されたファイル群を3つの評価観点で
+  解析して結果を出力するスキル。
+
+  ## トリガーキーワード
+  - `spec-weaverセマンティックレビュー`（CLIからの自動呼び出し）
+  - `セマンティックレビュー`
+  - `semantic review`
+  - `仕様と実装の乖離`
+
+  ## 評価観点
+  1. **missing_implementation**: 仕様に記述された要件が実装に存在するか
+  2. **undocumented_feature**: 実装に存在する振る舞いが仕様に記述されているか
+  3. **semantic_contradiction**: 仕様とコードの両方に記述はあるが内容が食い違っていないか
+
+  ## 出力モード
+  - CLIモード（プロンプトに「純粋なJSONのみで出力」指示あり）: JSONのみ出力
+  - インタラクティブモード（ユーザー直接依頼）: Markdown形式レポート
+
+  ## JSONスキーマ
+  仕様書 §5.1 の個別レビュー結果スキーマに従う。
+  schema_version, item_id, item_title, reviewed_files, findings, summary を含む。
+
+  ## finding の severity 基準
+  - high: セキュリティ・データ整合性・主要機能に関わる乖離
+  - medium: エラーハンドリング・境界値・副作用の不一致
+  - low: 軽微な表現の違い・補足情報の欠落
