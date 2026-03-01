@@ -854,17 +854,46 @@ def status_cmd(
                     feature_files[file_path]["scenarios"] += 1
                     feature_files[file_path]["specs"].add(uid)
             
-            if feature_files and not filter_status: # filter_status がある場合はfeatureはステータスを持たないので除外する（要件次第だが、基本は出さない）
+            if feature_files and not filter_status: # filter_status がある場合はfeatureはステータスを持たないので除外する
                 table = Table(title="振る舞い仕様 (Gherkin Features)", show_header=True, header_style="bold green")
                 table.add_column("ファイルパス", style="bold cyan")
                 table.add_column("シナリオ数", justify="right")
+                table.add_column("レビューステータス")
                 table.add_column("関連仕様ID")
                 for fpath in sorted(feature_files.keys()):
                     info = feature_files[fpath]
-                    specs_str = ", ".join(sorted(info["specs"]))
-                    table.add_row(fpath, str(info["scenarios"]), specs_str)
+                    specs = sorted(info["specs"])
+                    
+                    # 各ファイルのステータスを判定
+                    file_status = "✅ reviewed"
+                    is_test_unreviewed = False
+                    is_test_suspect = False
+                    
+                    for spec_id in specs:
+                        item = all_items_str.get(spec_id)
+                        if item:
+                            w = get_item_warnings(item)
+                            # 1. Gherkin自体の変更があるか？
+                            actual_fp = gherkin_fingerprints.get(spec_id)
+                            expected_fp = _get_custom_attribute(item, "test_fingerprint", None)
+                            if expected_fp and isinstance(expected_fp, str):
+                                expected_fp = expected_fp.strip()
+                            if actual_fp and actual_fp != expected_fp:
+                                is_test_unreviewed = True
+                            
+                            # 2. 仕様側に変更があってテストが影響を受けているか？
+                            if w.has_unreviewed_changes:
+                                is_test_suspect = True
+                    
+                    # 優先順位: test-unreviewed > test-suspect > reviewed
+                    if is_test_unreviewed:
+                        file_status = "📋 test-unreviewed"
+                    elif is_test_suspect:
+                        file_status = "⚠️ test-suspect"
+                    
+                    specs_str = ", ".join(specs)
+                    table.add_row(fpath, str(info["scenarios"]), file_status, specs_str)
                 console.print(table)
-                # ファイル数は total には含めないでおくか、含めるか。ドキュメントアイテム数とは違うので含めない。
         except Exception:
             pass
 
