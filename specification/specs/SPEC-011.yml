@@ -10,7 +10,7 @@ ref: ''
 reviewed: jwwZiIldu80K5LmvzeU34GlnKrg4R2q1xF8nFe59BqU=
 status: implemented
 test_fingerprint: |
-  e9d9139bc86d3879bc2e4107f809cd794da2fd3e202ad4c508e879acdf5a721d
+  dfc7dc567fae311e6160c3091a82177fc1b2b708b098dab64aca6aba7f39faf3
 testable: true
 text: |
   ## 概要
