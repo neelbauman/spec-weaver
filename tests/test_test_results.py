@@ -256,14 +256,14 @@ def test_result_badge_all_passed():
 
 
 def test_result_badge_all_failed():
-    assert result_badge(0, 3, 3) == "❌ 3/3 FAIL"
+    assert result_badge(0, 3, 3) == "✘ 3/3 FAIL"
 
 
 def test_result_badge_partial():
     badge = result_badge(2, 1, 3)
     assert "🟡" in badge
     assert "2✅" in badge
-    assert "1❌" in badge
+    assert "1✘" in badge
 
 
 def test_result_badge_no_results():
@@ -285,7 +285,7 @@ def test_format_status_badge_passed():
 
 
 def test_format_status_badge_failed():
-    assert format_status_badge("failed") == "❌ FAIL"
+    assert format_status_badge("failed") == "✘ FAIL"
 
 
 def test_format_status_badge_skipped():

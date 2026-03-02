@@ -100,7 +100,7 @@ def format_status_badge(status: Optional[str]) -> str:
     if status == "passed":
         return "✅ PASS"
     elif status in ("failed", "error"):
-        return "❌ FAIL"
+        return "✘ FAIL"
     elif status == "skipped":
         return "⏭️ SKIP"
     else:
@@ -113,8 +113,8 @@ def result_badge(passed: int, failed: int, total: int) -> str:
     if failed == 0:
         return f"✅ {passed}/{total} PASS"
     if passed == 0:
-        return f"❌ {failed}/{total} FAIL"
-    return f"🟡 {passed}✅ {failed}❌ /{total}"
+        return f"✘ {failed}/{total} FAIL"
+    return f"🟡 {passed}✅ {failed}✘ /{total}"
 
 
 def spec_result_summary(
