@@ -7,10 +7,10 @@ links:
 - REQ-002: AL9bDV_13Z_dFORw5rjP1YoJvrpxV9BwxqcTBuTGPsA=
 normative: true
 ref: ''
-reviewed: J6P-Se92LhMk2tg5vdC-OoCCabl-wvrwY629qjehlRc=
+reviewed: pAu8mRop_aUkb1KHhM6xoRjX8znLuJc8JfQsVVlrjeY=
 status: implemented
 test_fingerprint: |
-  efe4261adde09a828fc2d0ee2f20ee4aaf69fa3f43cddebbcb06e3b728d4c72b
+  e11de1431ec17c49e55b442ad435cfe478c827fec16a2e357ba0e17529692ff3
 testable: true
 text: |
   ## 概要
@@ -26,7 +26,7 @@ text: |
   ### 処理
   - DoorstopのID集合とGherkinのタグ集合の差分（集合演算）を算出する
   - `untested_specs = specs_in_db - tags_in_code`（テスト漏れ）
-  - `orphaned_tags = tags_in_code - specs_in_db`（孤児タグ）
+  - `orphaned_tags = tags_in_code - specs_in_db`（orphanタグ）
   - `testable: false` のアイテムは集合から除外する
 
   ### 出力・結果

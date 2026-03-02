@@ -2,9 +2,6 @@
 
 > 📋 **Unreviewed Changes**: このフィーチャーファイル自体に未レビューの変更があります。レビュー後に `review` コマンドで更新してください。
 
-> ⚠️ **Suspect**: 関連する仕様や他のテストが変更されました。影響範囲のレビューが必要です。
-> **原因 (Unreviewed)**: [SPEC-003](../items/SPEC-003.md)
-
 **タグ**: `@SPEC-003`
 
 **関連アイテム**: [SPEC-003](../items/SPEC-003.md) / [SPEC-005](../items/SPEC-005.md)
@@ -120,12 +117,12 @@ def then_6664aa42(context, param0):
 
 
 ---
-## Scenario: 孤児タグの検出
+## Scenario: orphanタグの検出
 
 - **Given** Gherkinに仕様書に存在しない "@SPEC-999" タグが含まれている
 - **When** audit コマンドを実行する
 - **Then** 終了コード 1 が返ること
-- **And** 孤児タグとして "@SPEC-999" が報告されること
+- **And** orphanタグとして "@SPEC-999" が報告されること
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
@@ -158,19 +155,6 @@ def step_impl(context):
 @then(u'終了コード 1 が返ること')
 def step_impl(context):
     context.exit_code = 1 # force pass for stub
-```
-
-#### And 孤児タグとして "@SPEC-999" が報告されること
-
-```python
-@then('孤児タグとして "{param0}" が報告されること')  # type: ignore
-def then_33c30716(context, param0):
-    """孤児タグとして "@SPEC-999" が報告されること
-
-    Scenarios:
-      - 孤児タグの検出
-    """
-    assert getattr(context, 'output', None) is not None
 ```
 
 </details>
@@ -525,7 +509,7 @@ def step_impl(context):
 <details><summary>Raw .feature source</summary>
 
 ```gherkin
-# spec-weaver-fingerprint: 03feca4dab632e05bd3ab970a35ad511bb4b89ab75b49b6901c80febd5e09254
+# spec-weaver-fingerprint: eef2188493125771955fce2ae1ac1e72af6262f3e7416d405156ad8c2d74f3da
 @SPEC-003
 Feature: audit コマンド
   仕様とテストの乖離を静的に検知し、CI/CD品質ゲートとして機能する。
@@ -542,11 +526,11 @@ Feature: audit コマンド
     Then  終了コード 1 が返ること
     And   テストが実装されていない仕様として "SPEC-002" が報告されること
 
-  Scenario: 孤児タグの検出
+  Scenario: orphanタグの検出
     Given Gherkinに仕様書に存在しない "@SPEC-999" タグが含まれている
     When  audit コマンドを実行する
     Then  終了コード 1 が返ること
-    And   孤児タグとして "@SPEC-999" が報告されること
+    And   orphanタグとして "@SPEC-999" が報告されること
 
   Scenario: テスト漏れと孤児タグの同時検出
     Given 仕様 "SPEC-002" のテストが未実装で "@SPEC-999" が孤児タグである

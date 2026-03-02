@@ -1,4 +1,4 @@
-# spec-weaver-fingerprint: eef2188493125771955fce2ae1ac1e72af6262f3e7416d405156ad8c2d74f3da
+# spec-weaver-fingerprint: e72e52f1a09100e944312ac3edc505de44b43c24c963f1b696b64e2f90d45824
 @SPEC-003
 Feature: audit コマンド
   仕様とテストの乖離を静的に検知し、CI/CD品質ゲートとして機能する。
@@ -21,11 +21,11 @@ Feature: audit コマンド
     Then  終了コード 1 が返ること
     And   orphanタグとして "@SPEC-999" が報告されること
 
-  Scenario: テスト漏れと孤児タグの同時検出
-    Given 仕様 "SPEC-002" のテストが未実装で "@SPEC-999" が孤児タグである
+  Scenario: テスト漏れとorphanタグの同時検出
+    Given 仕様 "SPEC-002" のテストが未実装で "@SPEC-999" がorphanタグである
     When  audit コマンドを実行する
     Then  終了コード 1 が返ること
-    And   テスト漏れと孤児タグの両方が報告されること
+    And   テスト漏れとorphanタグの両方が報告されること
 
   Scenario: testable: false の仕様はスキップされる
     Given 仕様 "SPEC-001" が testable: false に設定されている

@@ -27,8 +27,8 @@ from behave import given, when, then, step
 #     Scenarios:
 #       - 完全一致時の監査成功
 #       - テスト漏れの検出
-#       - 孤児タグの検出
-#       - テスト漏れと孤児タグの同時検出
+#       - orphanタグの検出
+#       - テスト漏れとorphanタグの同時検出
 #       - testable: false の仕様はスキップされる
 #       - Suspect Link の検出
 #       - Unreviewed Changes の検出
@@ -78,8 +78,8 @@ from behave import given, when, then, step
 # 
 #     Scenarios:
 #       - テスト漏れの検出
-#       - 孤児タグの検出
-#       - テスト漏れと孤児タグの同時検出
+#       - orphanタグの検出
+#       - テスト漏れとorphanタグの同時検出
 #       - Suspect Link の検出
 #       - Unreviewed Changes の検出
 #       - feature ファイルが Suspect として検出される
@@ -103,14 +103,14 @@ def given_3aa00113(context, param0):
     """Gherkinに仕様書に存在しない "@SPEC-999" タグが含まれている
 
     Scenarios:
-      - 孤児タグの検出
+      - orphanタグの検出
     """
     pass
 
 
-@then('孤児タグとして "{param0}" が報告されること')  # type: ignore
+@then('orphanタグとして "{param0}" が報告されること')  # type: ignore
 def then_33c30716(context, param0):
-    """孤児タグとして "@SPEC-999" が報告されること
+    """orphanタグとして "@SPEC-999" が報告されること
 
     Scenarios:
       - orphanタグの検出
@@ -118,25 +118,25 @@ def then_33c30716(context, param0):
     assert getattr(context, 'output', None) is not None
 
 
-@given('仕様 "{param0}" のテストが未実装で "{param1}" が孤児タグである')  # type: ignore
+@given('仕様 "{param0}" のテストが未実装で "{param1}" がorphanタグである')  # type: ignore
 def given_ffdcf7f2(context, param0, param1):
-    """仕様 "SPEC-002" のテストが未実装で "@SPEC-999" が孤児タグである
+    """仕様 "SPEC-002" のテストが未実装で "@SPEC-999" がorphanタグである
 
     Scenarios:
-      - テスト漏れと孤児タグの同時検出
+      - テスト漏れとorphanタグの同時検出
     """
     pass
 
 
 # [Duplicate Skip] This step is already defined elsewhere
-# @then('テスト漏れと孤児タグの両方が報告されること')  # type: ignore
+# @then('テスト漏れとorphanタグの両方が報告されること')  # type: ignore
 # def then_4928ac49(context):
-#     """テスト漏れと孤児タグの両方が報告されること
+#     """テスト漏れとorphanタグの両方が報告されること
 # 
 #     Scenarios:
-#       - テスト漏れと孤児タグの同時検出
+#       - テスト漏れとorphanタグの同時検出
 #     """
-#     raise NotImplementedError('STEP: テスト漏れと孤児タグの両方が報告されること')
+#     raise NotImplementedError('STEP: テスト漏れとorphanタグの両方が報告されること')
 
 
 @given('仕様 "{param0}" が testable: false に設定されている')  # type: ignore

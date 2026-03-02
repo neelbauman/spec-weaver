@@ -102,6 +102,13 @@ def compute_review_state(
     direct_suspects = set(state.suspect_causes.keys()) | state.unreviewed_nodes
     for node in direct_suspects:
         if node in all_items:
+            # node が suspect になっている理由が "test_fingerprint mismatch" のみの場合、
+            # これは子である feature ファイルの変更が原因であるため、
+            # feature ファイルへ suspect を伝播（逆流）させない。
+            causes = state.suspect_causes.get(node, set())
+            if causes == {"test_fingerprint mismatch"} and node not in state.unreviewed_nodes:
+                continue
+
             for child in children.get(node, set()):
                 # Doorstop アイテム以外の子（= feature ファイル）にのみ伝播
                 if child not in all_items:

@@ -77,16 +77,20 @@ spec-weaver scaffold <feature_dir>
 - 他のステップファイルに定義済みのステップ（スタブ含む）は Duplicate コメントとして生成されること
 - Duplicate コメント行内のデコレータは重複判定に使用されないこと
 
+**テスト実行結果 (集計)**: -
+
+**テスト実行結果 (個別)**: ✅ 11/11 PASS
+
 ### 🧪 検証シナリオ
 
-- **基本的なテストコード生成** — Scenario （[features/scaffold.feature:6](../features/scaffold.md)）
-- **ハッシュベースの関数名生成** — Scenario （[features/scaffold.feature:12](../features/scaffold.md)）
-- **ステップ関数の生成と重複排除** — Scenario （[features/scaffold.feature:19](../features/scaffold.md)）
-- **Docstring にシナリオリストを記載** — Scenario （[features/scaffold.feature:24](../features/scaffold.md)）
-- **差分マージ（新規ステップ追記）** — Scenario （[features/scaffold.feature:30](../features/scaffold.md)）
-- **差分なし時のスキップ** — Scenario （[features/scaffold.feature:38](../features/scaffold.md)）
-- **既存ファイルの上書き** — Scenario （[features/scaffold.feature:44](../features/scaffold.md)）
-- **Git 未コミット変更の確認プロンプト** — Scenario （[features/scaffold.feature:49](../features/scaffold.md)）
-- **--force オプションで確認プロンプトをスキップ** — Scenario （[features/scaffold.feature:55](../features/scaffold.md)）
-- **差分マージ時の Duplicate スタブのコメント化** — Scenario （[features/scaffold.feature:60](../features/scaffold.md)）
-- **差分マージ時の他ファイルコメント行を Duplicate 判定に使用しない** — Scenario （[features/scaffold.feature:67](../features/scaffold.md)）
+- ✅ PASS **基本的なテストコード生成** — Scenario （[features/scaffold.feature:6](../features/scaffold.md)）
+- ✅ PASS **ハッシュベースの関数名生成** — Scenario （[features/scaffold.feature:12](../features/scaffold.md)）
+- ✅ PASS **ステップ関数の生成と重複排除** — Scenario （[features/scaffold.feature:19](../features/scaffold.md)）
+- ✅ PASS **Docstring にシナリオリストを記載** — Scenario （[features/scaffold.feature:24](../features/scaffold.md)）
+- ✅ PASS **差分マージ（新規ステップ追記）** — Scenario （[features/scaffold.feature:30](../features/scaffold.md)）
+- ✅ PASS **差分なし時のスキップ** — Scenario （[features/scaffold.feature:38](../features/scaffold.md)）
+- ✅ PASS **既存ファイルの上書き** — Scenario （[features/scaffold.feature:44](../features/scaffold.md)）
+- ✅ PASS **Git 未コミット変更の確認プロンプト** — Scenario （[features/scaffold.feature:49](../features/scaffold.md)）
+- ✅ PASS **--force オプションで確認プロンプトをスキップ** — Scenario （[features/scaffold.feature:55](../features/scaffold.md)）
+- ✅ PASS **差分マージ時の Duplicate スタブのコメント化** — Scenario （[features/scaffold.feature:60](../features/scaffold.md)）
+- ✅ PASS **差分マージ時の他ファイルコメント行を Duplicate 判定に使用しない** — Scenario （[features/scaffold.feature:67](../features/scaffold.md)）

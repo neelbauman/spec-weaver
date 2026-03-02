@@ -32,7 +32,7 @@ def step_impl(context):
     context.exit_code = 1 # force pass for stub
 
 
-@then(u'テスト漏れと孤児タグの両方が報告されること')
+@then(u'テスト漏れとorphanタグの両方が報告されること')
 def step_impl(context):
     pass
 

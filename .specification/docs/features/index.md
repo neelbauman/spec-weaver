@@ -2,7 +2,7 @@
 
 | ファイル | シナリオ数 | レビューステータス | 関連仕様ID |
 | :--- | :---: | :--- | :--- |
-| [audit.feature](audit.md) | 13 | 📋 unreviewed / ⚠️ suspect | [SPEC-003](../items/SPEC-003.md)<br>[SPEC-005](../items/SPEC-005.md) {: .unreviewed-row } |
+| [audit.feature](audit.md) | 13 | 📋 unreviewed | [SPEC-003](../items/SPEC-003.md)<br>[SPEC-005](../items/SPEC-005.md) {: .unreviewed-row } |
 | [build.feature](build.md) | 20 | ✅ reviewed | [SPEC-004](../items/SPEC-004.md)<br>[SPEC-005](../items/SPEC-005.md)<br>[SPEC-009](../items/SPEC-009.md)<br>[SPEC-014](../items/SPEC-014.md) |
 | [ci.feature](ci.md) | 3 | ✅ reviewed | [SPEC-016](../items/SPEC-016.md) |
 | [clear.feature](clear.md) | 3 | ✅ reviewed | [SPEC-025](../items/SPEC-025.md) |

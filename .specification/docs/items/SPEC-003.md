@@ -34,14 +34,16 @@
 - 乖離がある場合: 終了コード `1`（CI失敗）を返し、テーブルで乖離内容を出力
 - 完全一致の場合: 終了コード `0`（成功）を返し、成功メッセージを出力
 
+**テスト実行結果 (個別)**: ✅ 5/9 PASS
+
 ### 🧪 検証シナリオ
 
-- **完全一致で、監査が成功する** — Scenario （[features/audit.feature:6](../features/audit.md)）
-- **テスト漏れの検出** — Scenario （[features/audit.feature:12](../features/audit.md)）
-- **孤児タグの検出** — Scenario （[features/audit.feature:18](../features/audit.md)）
-- **テスト漏れと孤児タグの同時検出** — Scenario （[features/audit.feature:24](../features/audit.md)）
-- **testable: false の仕様はスキップされる** — Scenario （[features/audit.feature:30](../features/audit.md)）
-- **Suspect Link の検出** — Scenario （[features/audit.feature:37](../features/audit.md)）
-- **Unreviewed Changes の検出** — Scenario （[features/audit.feature:45](../features/audit.md)）
-- **feature ファイルが Suspect として検出される** — Scenario （[features/audit.feature:52](../features/audit.md)）
-- **feature ファイルが Unreviewed として検出される** — Scenario （[features/audit.feature:59](../features/audit.md)）
+- - **完全一致で、監査が成功する** — Scenario （[features/audit.feature:6](../features/audit.md)）
+- ✅ PASS **テスト漏れの検出** — Scenario （[features/audit.feature:12](../features/audit.md)）
+- - **orphanタグの検出** — Scenario （[features/audit.feature:18](../features/audit.md)）
+- ✅ PASS **テスト漏れと孤児タグの同時検出** — Scenario （[features/audit.feature:24](../features/audit.md)）
+- ✅ PASS **testable: false の仕様はスキップされる** — Scenario （[features/audit.feature:30](../features/audit.md)）
+- ✅ PASS **Suspect Link の検出** — Scenario （[features/audit.feature:37](../features/audit.md)）
+- ✅ PASS **Unreviewed Changes の検出** — Scenario （[features/audit.feature:45](../features/audit.md)）
+- - **feature ファイルが Suspect として検出される** — Scenario （[features/audit.feature:52](../features/audit.md)）
+- - **feature ファイルが Unreviewed として検出される** — Scenario （[features/audit.feature:59](../features/audit.md)）

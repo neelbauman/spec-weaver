@@ -47,6 +47,7 @@ from spec_weaver.gherkin import (
     read_stored_fingerprint,
     write_feature_fingerprint,
 )
+from spec_weaver.behave import check_behave_steps
 from spec_weaver.test_results import (
     TestResultMap,
     format_status_badge,
@@ -417,6 +418,31 @@ def audit_cmd(
                 prefix=prefix,
                 has_error=has_error,
             )
+
+        # Behave ステップの整合性チェック
+        with console.status("[bold cyan]Behave ステップの整合性を確認中...[/bold cyan]"):
+            unused_defs, undefined_steps = check_behave_steps(feature_dir)
+
+        if unused_defs:
+            console.print(
+                "\n[bold yellow]⚠️ 未使用のステップ定義 (Unused Step Definitions):[/bold yellow]"
+            )
+            table = Table(show_header=True, header_style="bold magenta")
+            table.add_column("Definition", style="dim")
+            for d in sorted(unused_defs):
+                table.add_row(d)
+            console.print(table)
+
+        if undefined_steps:
+            has_error = True
+            console.print(
+                "\n[bold red]❌ 未定義のステップ (Undefined Steps):[/bold red]"
+            )
+            table = Table(show_header=True, header_style="bold magenta")
+            table.add_column("Undefined Step", style="dim")
+            for s in sorted(undefined_steps):
+                table.add_row(s)
+            console.print(table)
 
         if not has_error:
             console.print(
@@ -796,35 +822,91 @@ def ci_cmd(
 
 @app.command("review")
 def review_cmd(
-    feature_file: str = typer.Argument(
-        ..., help="フィンガープリントを書き込む .feature ファイルのパス"
+    target_path: str = typer.Argument(
+        ..., help="レビュー対象 ( .feature ファイルのパス, Doorstop アイテム ID, または .yml ファイルのパス )"
+    ),
+    feature_dir: Path = typer.Option(
+        Path("specification/features"),
+        "--feature-dir",
+        "-f",
+        help="Gherkinの .feature ファイルが格納されているディレクトリのパス",
+        exists=True,
+        file_okay=False,
+        dir_okay=True,
+        resolve_path=True,
+    ),
+    repo_root: Path = typer.Option(
+        Path.cwd(),
+        "--repo-root",
+        "-r",
+        help="Doorstop of the project root",
+        exists=True,
+        file_okay=False,
+        dir_okay=True,
+        resolve_path=True,
     ),
 ) -> None:
     """
-    指定した .feature ファイルの構造コンテンツ（Feature / Background / Scenario）の
-    SHA-256 ハッシュを計算し、ファイル先頭に '# spec-weaver-fingerprint: <hash>' として書き込みます。
+    指定したアイテムをレビュー済み状態にします。
 
-    既存のコメントがある場合は上書き更新されます。
-    ファイル自身がレビュー済み状態を自己証明する仕組みです（SPEC-024）。
+    - .feature ファイルの場合: フィンガープリントを計算し書き込みます（SPEC-024）。
+    - Doorstop アイテムの場合: doorstop review コマンドを呼び出します。
     """
     try:
-        target = Path(feature_file)
+        target = Path(target_path)
 
-        if not target.exists():
-            console.print(f"[bold red]❌ ファイルが見つかりません: {feature_file}[/bold red]")
-            raise typer.Exit(1)
+        # 1. .feature ファイルの場合（既存のフィンガープリント計算）
+        if target.exists() and target.suffix == ".feature":
+            with console.status(f"[bold cyan]{target_path} のハッシュを計算中...[/bold cyan]"):
+                fp = compute_feature_file_hash(target)
 
-        if target.suffix != ".feature":
-            console.print(f"[bold red]❌ .feature ファイルを指定してください: {feature_file}[/bold red]")
-            raise typer.Exit(1)
+            write_feature_fingerprint(target, fp)
 
-        with console.status(f"[bold cyan]{feature_file} のハッシュを計算中...[/bold cyan]"):
-            fp = compute_feature_file_hash(target)
+            console.print(f"[bold green]✅ フィンガープリントを書き込みました: {target_path}[/bold green]")
+            console.print(f"[dim]ハッシュ: {fp}[/dim]")
+            console.print()
 
-        write_feature_fingerprint(target, fp)
+        # 2. Doorstop アイテム（.yml ファイル）の場合
+        elif target.exists() and target.suffix == ".yml":
+            item_id = target.stem
+            console.print(f"[bold cyan]Doorstop アイテム {item_id} をレビュー中...[/bold cyan]")
 
-        console.print(f"[bold green]✅ フィンガープリントを書き込みました: {feature_file}[/bold green]")
-        console.print(f"[dim]ハッシュ: {fp}[/dim]")
+            # doorstop review -i <item_id> -f -j <repo_root>
+            cmd = ["doorstop", "review", "-i", item_id, "-f", "-j", str(repo_root)]
+            subprocess.run(cmd, check=True)
+
+            console.print(f"[bold green]✅ アイテム {item_id} をレビューしました[/bold green]")
+            console.print()
+
+        # 3. ファイルパスではないが、アイテム ID の可能性がある場合
+        else:
+            # Doorstop のアイテムマップから ID を探す
+            item_map = get_item_map(repo_root)
+            if target_path in item_map:
+                item_id = target_path
+                console.print(f"[bold cyan]Doorstop アイテム {item_id} をレビュー中...[/bold cyan]")
+
+                cmd = ["doorstop", "review", "-i", item_id, "-f", "-j", str(repo_root)]
+                subprocess.run(cmd, check=True)
+
+                console.print(f"[bold green]✅ アイテム {item_id} をレビューしました[/bold green]")
+                console.print()
+            else:
+                if not target.exists():
+                    console.print(f"[bold red]❌ ターゲットが見つかりません: {target_path}[/bold red]")
+                else:
+                    console.print(f"[bold red]❌ 未対応のファイル形式です: {target_path}[/bold red]")
+                raise typer.Exit(1)
+
+        # レビュー後に監査を実行
+        audit_cmd(
+            feature_dir=feature_dir,
+            repo_root=repo_root,
+            prefix=None,
+            stale_days=90,
+            check_impl=False,
+            extensions=None,
+        )
 
     except typer.Exit:
         raise
@@ -1088,6 +1170,19 @@ def status_cmd(
                     specs_str = ", ".join(specs)
                     table.add_row(fpath, str(info["scenarios"]), file_status, specs_str)
                 console.print(table)
+        except Exception:
+            pass
+
+        # Behave ステップの整合性チェック (status では概要のみ)
+        try:
+            unused_defs, undefined_steps = check_behave_steps(feature_dir)
+            if unused_defs or undefined_steps:
+                console.print("\n[bold magenta]Step Definitions Info:[/bold magenta]")
+                if unused_defs:
+                    console.print(f"  [yellow]⚠️  未使用のステップ定義: {len(unused_defs)} 件[/yellow]")
+                if undefined_steps:
+                    console.print(f"  [red]❌ 未定義のステップ: {len(undefined_steps)} 件[/red]")
+                console.print("  [dim]詳細は `spec-weaver audit` で確認できます。[/dim]")
         except Exception:
             pass
 

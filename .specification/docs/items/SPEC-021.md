@@ -2,7 +2,7 @@
 
 **実装状況**: ✅ implemented
 
-**作成日**: 2026-02-27　|　**更新日**: 2026-03-01
+**作成日**: 2026-02-27　|　**更新日**: 2026-03-02
 
 **上位アイテム**: [REQ-001](REQ-001.md) / **下位アイテム**: [PLAN-003](PLAN-003.md) / **兄弟アイテム**: [SPEC-001](SPEC-001.md), [SPEC-002](SPEC-002.md)
 
@@ -78,11 +78,15 @@ def _extract_scenarios_with_inherited_tags(
 
 - `_extract_tag_map_recursive()`: 本仕様実装後、コアジェネレータに完全に置き換えられ不要となる
 
+**テスト実行結果 (集計)**: -
+
+**テスト実行結果 (個別)**: ✅ 6/6 PASS
+
 ### 🧪 検証シナリオ
 
-- **Featureタグのみが付与されたfeatureファイルでScenarioがタグマップに登録される** — Scenario （[features/data_extraction.feature:55](../features/data_extraction.md)）
-- **Featureタグを継承したエントリのkeywordはScenarioになる** — Scenario （[features/data_extraction.feature:61](../features/data_extraction.md)）
-- **Feature→Rule→Scenarioの多段継承でEffective Tagsが正しく算出される** — Scenario （[features/data_extraction.feature:67](../features/data_extraction.md)）
-- **シナリオ自身のタグと継承タグが共存してEffective Tagsを形成する** — Scenario （[features/data_extraction.feature:74](../features/data_extraction.md)）
-- **Scenario Outlineの全ExamplesタグがEffective Tagsに集約される** — Scenario （[features/data_extraction.feature:81](../features/data_extraction.md)）
-- **プレフィックスフィルタはEffective Tags算出後に適用される** — Scenario （[features/data_extraction.feature:88](../features/data_extraction.md)）
+- ✅ PASS **Featureタグのみが付与されたfeatureファイルでScenarioがタグマップに登録される** — Scenario （[features/data_extraction.feature:55](../features/data_extraction.md)）
+- ✅ PASS **Featureタグを継承したエントリのkeywordはScenarioになる** — Scenario （[features/data_extraction.feature:61](../features/data_extraction.md)）
+- ✅ PASS **Feature→Rule→Scenarioの多段継承でEffective Tagsが正しく算出される** — Scenario （[features/data_extraction.feature:67](../features/data_extraction.md)）
+- ✅ PASS **シナリオ自身のタグと継承タグが共存してEffective Tagsを形成する** — Scenario （[features/data_extraction.feature:74](../features/data_extraction.md)）
+- ✅ PASS **Scenario Outlineの全ExamplesタグがEffective Tagsに集約される** — Scenario （[features/data_extraction.feature:81](../features/data_extraction.md)）
+- ✅ PASS **プレフィックスフィルタはEffective Tags算出後に適用される** — Scenario （[features/data_extraction.feature:88](../features/data_extraction.md)）
