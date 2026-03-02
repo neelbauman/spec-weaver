@@ -6,6 +6,7 @@
 | [build.feature](build.md) | 22 | ✅ reviewed | [QA-001](../items/QA-001.md)<br>[VIS-001](../items/VIS-001.md)<br>[VIS-005](../items/VIS-005.md)<br>[VIS-008](../items/VIS-008.md) |
 | [clear.feature](clear.md) | 3 | ✅ reviewed | [QA-005](../items/QA-005.md) |
 | [data_extraction.feature](data_extraction.md) | 20 | ✅ reviewed | [CORE-001](../items/CORE-001.md)<br>[CORE-002](../items/CORE-002.md) |
+| [dummy_fail.feature](dummy_fail.md) | 0 | 📋 unreviewed | - {: .unreviewed-row } |
 | [impl_link.feature](impl_link.md) | 52 | ✅ reviewed | [QA-003](../items/QA-003.md)<br>[TRC-002](../items/TRC-002.md)<br>[TRC-003](../items/TRC-003.md)<br>[TRC-004](../items/TRC-004.md) |
 | [review.feature](review.md) | 3 | ✅ reviewed | [QA-004](../items/QA-004.md) |
 | [scaffold.feature](scaffold.md) | 11 | ✅ reviewed | [AUT-001](../items/AUT-001.md) |

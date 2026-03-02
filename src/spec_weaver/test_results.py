@@ -6,15 +6,15 @@ Cucumber/Behave互換JSONテスト結果レポートの読み込みと集計ユ�
 
 import json
 from pathlib import Path
-from typing import Dict, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
-# (feature_file_stem, scenario_or_feature_name) -> status
-TestResultMap = Dict[Tuple[str, str], str]
+# (feature_file_stem, scenario_or_feature_name) -> {status: str, error: str}
+TestResultMap = Dict[Tuple[str, str], Dict[str, Any]]
 
 # ステータスの優先度（error/failedを最優先する）
 _STATUS_PRIORITY = {
+    "error": 4,
     "failed": 3,
-    "error": 3,
     "skipped": 2,
     "passed": 1,
     "pending": 0,
@@ -30,13 +30,27 @@ def _scenario_status(steps: list) -> str:
     valid = [s for s in statuses if s]
     if not valid:
         return "undefined"
-    if "failed" in valid or "error" in valid:
+    if "error" in valid:
+        return "error"
+    if "failed" in valid:
         return "failed"
     if "skipped" in valid:
         return "skipped"
     if all(s == "passed" for s in valid):
         return "passed"
     return "undefined"
+
+
+def _extract_error(steps: list) -> Optional[str]:
+    """失敗したステップからエラーメッセージまたはトレースバックを抽出する。"""
+    for step in steps:
+        result = step.get("result", {})
+        if result.get("status") in ("failed", "error"):
+            err = result.get("error_message")
+            if isinstance(err, list):
+                return "\n".join(err)
+            return err
+    return None
 
 
 def load_test_results(results_file: Path) -> TestResultMap:
@@ -60,9 +74,10 @@ def load_test_results(results_file: Path) -> TestResultMap:
         # 明示的な status フィールドがある場合のみ登録する（デフォルト undefined は無視）
         feat_status = feature.get("status")
         if feat_stem and feature_name and feat_status is not None:
-            if feat_status == "error":
-                feat_status = "failed"
-            result_map[(feat_stem, feature_name)] = feat_status
+            result_map[(feat_stem, feature_name)] = {
+                "status": feat_status,
+                "error": _extract_error(feature.get("elements", [])),
+            }
 
         for element in feature.get("elements", []):
             if element.get("type") == "background":
@@ -83,15 +98,16 @@ def load_test_results(results_file: Path) -> TestResultMap:
             if not new_status:
                 new_status = _scenario_status(element.get("steps", []))
 
-            if new_status == "error":
-                new_status = "failed"
-
             key = (stem, scenario_name)
             existing = result_map.get(key)
             if existing is None or (
-                _STATUS_PRIORITY.get(new_status, 0) > _STATUS_PRIORITY.get(existing, -1)
+                _STATUS_PRIORITY.get(new_status, 0)
+                >= _STATUS_PRIORITY.get(existing["status"], -1)
             ):
-                result_map[key] = new_status
+                result_map[key] = {
+                    "status": new_status,
+                    "error": _extract_error(element.get("steps", [])),
+                }
 
     return result_map
 
@@ -99,39 +115,40 @@ def load_test_results(results_file: Path) -> TestResultMap:
 def format_status_badge(status: Optional[str]) -> str:
     if status == "passed":
         return "✅ PASS"
-    elif status in ("failed", "error"):
-        return "✘ FAIL"
+    elif status == "failed":
+        return "🔴 FAIL"
+    elif status == "error":
+        return "❌ ERROR"
     elif status == "skipped":
         return "⏭️ SKIP"
     else:
         return f"⏳ {(status or 'UNKNOWN').upper()}"
 
 
-def result_badge(passed: int, failed: int, total: int) -> str:
-    if total == 0 or (passed + failed == 0):
+def result_badge(passed: int, failed: int, error: int, skipped: int, total: int) -> str:
+    if total == 0:
         return "-"
-    if failed == 0:
-        if passed == total:
-            return f"✅ {passed}/{total} PASS"
-        return f"🟡 {passed}/{total} PASS"
-    if passed == 0:
-        return f"✘ {failed}/{total} FAIL"
-    return f"🟡 {passed}✅ {failed}✘ /{total}"
+    return f"✅ {passed}/{total} PASS, 🔴 {failed}/{total} FAIL, ❌ {error}/{total} ERROR, ⏭️{skipped}/{total} SKIP"
 
 
 def spec_result_summary(
     uid: str, tag_map: dict, test_result_map: TestResultMap
-) -> Tuple[int, int, int]:
+) -> Tuple[int, int, int, int, int]:
     scenarios = tag_map.get(uid, [])
-    passed = failed = 0
+    passed = failed = error = skipped = 0
     for sc in scenarios:
         # ドキュメント側（AST）の名前もstrip()して確実な一致を担保
         key = (Path(sc["file"]).stem, sc["name"].strip())
-        status = test_result_map.get(key)
+        res = test_result_map.get(key)
+        status = res["status"] if res else None
 
         if status == "passed":
             passed += 1
-        elif status in ("failed", "error"):
+        elif status == "failed":
             failed += 1
+        elif status == "error":
+            error += 1
+        elif status == "skipped":
+            skipped += 1
 
-    return (passed, failed, len(scenarios))
+    return (passed, failed, error, skipped, len(scenarios))

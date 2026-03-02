@@ -95,7 +95,7 @@ if (typeof document$ !== "undefined") {
       const rows = Array.prototype.slice.call(tbody.querySelectorAll('tr'));
       const filters = { text: "", dropdowns: {} };
       const multiValueCols = ['親', 'Parent', '子', 'Child', '兄弟', 'Sibling'];
-      const targetCols = multiValueCols.concat(['活性', 'Active', 'レビューステータス', '実装状況', '作成日', '更新日']);
+      const targetCols = multiValueCols.concat(['活性', 'Active', 'Gherkinカバレッジ', 'レビューステータス', '実装状況', '作成日', '更新日']);
 
       const searchInput = document.createElement('input');
       searchInput.className = 'table-search-input';

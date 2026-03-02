@@ -422,6 +422,55 @@ def test_scaffold_cmd_generates_files(tmp_path):
     assert "新規作成" in result.stdout
 
 
+def test_scaffold_cmd_generates_environment_py(tmp_path):
+    """scaffold コマンドで environment.py が生成されること。"""
+    feature_dir = tmp_path / "features"
+    feature_dir.mkdir()
+    (feature_dir / "sample.feature").write_text(SAMPLE_FEATURE_JA, encoding="utf-8")
+
+    out_dir = tmp_path / "steps"
+
+    result = runner.invoke(
+        app,
+        [
+            "scaffold",
+            str(feature_dir),
+            "--out-dir",
+            str(out_dir),
+        ],
+    )
+
+    assert result.exit_code == 0
+    assert (feature_dir / "environment.py").exists()
+    assert "環境設定作成" in result.stdout
+    assert "behave 環境設定" in (feature_dir / "environment.py").read_text()
+
+
+def test_scaffold_cmd_skips_environment_py_if_exists(tmp_path):
+    """environment.py が既に存在する場合、上書きせずにスキップすること。"""
+    feature_dir = tmp_path / "features"
+    feature_dir.mkdir()
+    (feature_dir / "sample.feature").write_text(SAMPLE_FEATURE_JA, encoding="utf-8")
+    env_file = feature_dir / "environment.py"
+    env_file.write_text("existing content", encoding="utf-8")
+
+    out_dir = tmp_path / "steps"
+
+    result = runner.invoke(
+        app,
+        [
+            "scaffold",
+            str(feature_dir),
+            "--out-dir",
+            str(out_dir),
+        ],
+    )
+
+    assert result.exit_code == 0
+    assert "スキップ" in result.stdout
+    assert env_file.read_text() == "existing content"
+
+
 def test_scaffold_cmd_skip_no_diff(tmp_path):
     """既存ファイルと差分がない場合はスキップされること。"""
     feature_dir = tmp_path / "features"

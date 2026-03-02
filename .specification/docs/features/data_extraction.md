@@ -7,7 +7,7 @@
 Doorstop と Gherkin から仕様データとテストタグを正確に抽出する。
 
 ---
-## Scenario: Doorstop APIによる仕様ID集合の取得
+## Scenario: Doorstop APIによる仕様ID集合の取得 {: #line-10 }
 
 - **Given** Doorstopプロジェクトにアクティブな仕様アイテムが存在する
 - **When** 仕様ID集合を取得する
@@ -74,7 +74,7 @@ def then_6823b180(context):
 
 
 ---
-## Scenario: 非アクティブなアイテムの除外
+## Scenario: 非アクティブなアイテムの除外 {: #line-15 }
 
 - **Given** Doorstopプロジェクトに active: false のアイテムが存在する
 - **When** 仕様ID集合を取得する
@@ -141,7 +141,7 @@ def then_99bfaa46(context):
 
 
 ---
-## Scenario: テスト不可能な仕様の除外
+## Scenario: テスト不可能な仕様の除外 {: #line-20 }
 
 - **Given** Doorstopプロジェクトに testable: false のアイテムが存在する
 - **When** 仕様ID集合を取得する
@@ -208,7 +208,7 @@ def then_f3fad2a6(context):
 
 
 ---
-## Scenario: プレフィックスによるフィルタリング
+## Scenario: プレフィックスによるフィルタリング {: #line-25 }
 
 - **Given** DoorstopプロジェクトにREQアイテムとSPECアイテムが混在する
 - **When** プレフィックス "SPEC" で仕様ID集合を取得する
@@ -278,7 +278,7 @@ def then_b5f39418(context):
 
 
 ---
-## Scenario: Gherkin ASTからのタグ抽出
+## Scenario: Gherkin ASTからのタグ抽出 {: #line-32 }
 
 - **Given** Gherkin .feature ファイルに @SPEC-001 タグが付与されている
 - **When** タグ集合を取得する
@@ -345,7 +345,7 @@ def then_e8d01468(context, param0):
 
 
 ---
-## Scenario: Feature・Scenario両レベルのタグ抽出
+## Scenario: Feature・Scenario両レベルのタグ抽出 {: #line-37 }
 
 - **Given** Feature レベルと Scenario レベルに異なるSPECタグが付与されている
 - **When** タグ集合を取得する
@@ -413,7 +413,7 @@ def then_d712dc38(context):
 
 
 ---
-## Scenario: サブディレクトリ内のfeatureファイルの再帰探索
+## Scenario: サブディレクトリ内のfeatureファイルの再帰探索 {: #line-42 }
 
 - **Given** サブディレクトリに .feature ファイルが存在する
 - **When** タグ集合を取得する
@@ -481,7 +481,7 @@ def then_1c0ec472(context):
 
 
 ---
-## Scenario: Gherkin構文エラーの検出
+## Scenario: Gherkin構文エラーの検出 {: #line-47 }
 
 - **Given** 構文的に不正な .feature ファイルが存在する
 - **When** タグ集合を取得する

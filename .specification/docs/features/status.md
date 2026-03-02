@@ -7,7 +7,7 @@
 REQ・SPECの実装ステータスをRichテーブル形式で一覧表示する。
 
 ---
-## Scenario: 全アイテムのステータスを一覧表示する
+## Scenario: 全アイテムのステータスを一覧表示する {: #line-7 }
 
 - **Given** REQ-001 が status: draft、SPEC-001 が status: implemented に設定されている
 - **When** status コマンドを実行する
@@ -106,7 +106,7 @@ def then_9f0d7f01(context, param0):
 
 
 ---
-## Scenario: status 未設定のアイテムは "-" と表示される
+## Scenario: status 未設定のアイテムは "-" と表示される {: #line-14 }
 
 - **Given** SPEC-001 に status フィールドが設定されていない
 - **When** status コマンドを実行する
@@ -191,7 +191,7 @@ def then_5818121f(context, param0):
 
 
 ---
-## Scenario: --filter で特定ステータスに絞り込める
+## Scenario: --filter で特定ステータスに絞り込める {: #line-20 }
 
 - **Given** REQ-001 が status: implemented、REQ-002 が status: draft に設定されている
 - **When** status コマンドを "--filter implemented" オプション付きで実行する
@@ -288,7 +288,7 @@ def then_9fc4e668(context):
 
 
 ---
-## Scenario: --filter に一致するアイテムが存在しない場合に通知される
+## Scenario: --filter に一致するアイテムが存在しない場合に通知される {: #line-27 }
 
 - **Given** すべてのアイテムの status が "draft" に設定されている
 - **When** status コマンドを "--filter implemented" オプション付きで実行する
@@ -366,7 +366,7 @@ def then_897c0cfb(context):
 
 
 ---
-## Scenario: レビューステータスと最終更新日が表示される
+## Scenario: レビューステータスと最終更新日が表示される {: #line-33 }
 
 - **Given** Doorstopのアイテムが存在する
 - **When** status コマンドを実行する

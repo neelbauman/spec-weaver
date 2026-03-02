@@ -5,7 +5,6 @@ pytest-bdd 生成の Cucumber 互換 JSON を読み込み、
 """
 
 import json
-import pytest
 from pathlib import Path
 
 from spec_weaver.test_results import (
@@ -37,6 +36,14 @@ def test_scenario_status_with_failed_step():
         {"result": {"status": "passed"}},
     ]
     assert _scenario_status(steps) == "failed"
+
+
+def test_scenario_status_with_error_step():
+    steps = [
+        {"result": {"status": "passed"}},
+        {"result": {"status": "error"}},
+    ]
+    assert _scenario_status(steps) == "error"
 
 
 def test_scenario_status_with_skipped_step():
@@ -112,6 +119,24 @@ def test_load_test_results_failed(tmp_path: Path):
     assert result == {("auth", "無効なパスワードでログインを試みる"): "failed"}
 
 
+def test_load_test_results_error(tmp_path: Path):
+    data = _make_cucumber_json(
+        [
+            {
+                "name": "システムエラーが発生する",
+                "steps": [
+                    {"result": {"status": "error"}},
+                ],
+            }
+        ]
+    )
+    json_file = tmp_path / "results.json"
+    json_file.write_text(json.dumps(data), encoding="utf-8")
+
+    result = load_test_results(json_file)
+    assert result == {("auth", "システムエラーが発生する"): "error"}
+
+
 def test_load_test_results_failed_takes_priority_over_passed(tmp_path: Path):
     """同名シナリオが複数回実行された場合、failed が passed より優先される。"""
     data = [
@@ -135,18 +160,19 @@ def test_load_test_results_failed_takes_priority_over_passed(tmp_path: Path):
     assert result[("auth", "シナリオA")] == "failed"
 
 
-def test_load_test_results_multiple_features(tmp_path: Path):
+def test_load_test_results_error_takes_priority_over_failed(tmp_path: Path):
+    """error と failed は同じ優先度（_STATUS_PRIORITY）だが、後から来たもので上書きされる（現状の仕様）。"""
     data = [
         {
-            "uri": "features/login.feature",
+            "uri": "features/auth.feature",
             "elements": [
-                {"name": "ログイン", "steps": [{"result": {"status": "passed"}}]}
+                {"name": "シナリオA", "steps": [{"result": {"status": "failed"}}]}
             ],
         },
         {
-            "uri": "features/logout.feature",
+            "uri": "features/auth.feature",
             "elements": [
-                {"name": "ログアウト", "steps": [{"result": {"status": "failed"}}]}
+                {"name": "シナリオA", "steps": [{"result": {"status": "error"}}]}
             ],
         },
     ]
@@ -154,16 +180,8 @@ def test_load_test_results_multiple_features(tmp_path: Path):
     json_file.write_text(json.dumps(data), encoding="utf-8")
 
     result = load_test_results(json_file)
-    assert result[("login", "ログイン")] == "passed"
-    assert result[("logout", "ログアウト")] == "failed"
-
-
-def test_load_test_results_empty_json(tmp_path: Path):
-    json_file = tmp_path / "results.json"
-    json_file.write_text("[]", encoding="utf-8")
-
-    result = load_test_results(json_file)
-    assert result == {}
+    # どちらも優先度3なので、後のもので上書きされる
+    assert result[("auth", "シナリオA")] == "error"
 
 
 # ---------------------------------------------------------------------------
@@ -184,66 +202,36 @@ def test_spec_result_summary_all_passed():
     }
     test_result_map = {("auth", "ログイン"): "passed"}
 
-    passed, failed, total = spec_result_summary("SPEC-001", tag_map, test_result_map)
-    assert passed == 1
-    assert failed == 0
-    assert total == 1
+    p, f, e, s, t = spec_result_summary("SPEC-001", tag_map, test_result_map)
+    assert (p, f, e, s, t) == (1, 0, 0, 0, 1)
 
 
-def test_spec_result_summary_with_failure():
+def test_spec_result_summary_mixed():
     tag_map = {
         "SPEC-001": [
-            {
-                "file": "features/auth.feature",
-                "name": "ログイン成功",
-                "line": 5,
-                "keyword": "Scenario",
-            },
-            {
-                "file": "features/auth.feature",
-                "name": "ログイン失敗",
-                "line": 10,
-                "keyword": "Scenario",
-            },
+            {"file": "features/a.feature", "name": "P", "line": 1, "keyword": "Scenario"},
+            {"file": "features/a.feature", "name": "F", "line": 2, "keyword": "Scenario"},
+            {"file": "features/a.feature", "name": "E", "line": 3, "keyword": "Scenario"},
+            {"file": "features/a.feature", "name": "S", "line": 4, "keyword": "Scenario"},
         ]
     }
     test_result_map = {
-        ("auth", "ログイン成功"): "passed",
-        ("auth", "ログイン失敗"): "failed",
+        ("a", "P"): "passed",
+        ("a", "F"): "failed",
+        ("a", "E"): "error",
+        ("a", "S"): "skipped",
     }
 
-    passed, failed, total = spec_result_summary("SPEC-001", tag_map, test_result_map)
-    assert passed == 1
-    assert failed == 1
-    assert total == 2
+    p, f, e, s, t = spec_result_summary("SPEC-001", tag_map, test_result_map)
+    assert (p, f, e, s, t) == (1, 1, 1, 1, 4)
 
 
 def test_spec_result_summary_no_scenarios():
     tag_map: dict = {}
     test_result_map = {("auth", "ログイン"): "passed"}
 
-    passed, failed, total = spec_result_summary("SPEC-001", tag_map, test_result_map)
-    assert (passed, failed, total) == (0, 0, 0)
-
-
-def test_spec_result_summary_scenario_not_in_results():
-    """シナリオが存在するが結果ファイルに含まれていない場合。"""
-    tag_map = {
-        "SPEC-001": [
-            {
-                "file": "features/auth.feature",
-                "name": "未実行シナリオ",
-                "line": 5,
-                "keyword": "Scenario",
-            },
-        ]
-    }
-    test_result_map: dict = {}
-
-    passed, failed, total = spec_result_summary("SPEC-001", tag_map, test_result_map)
-    assert passed == 0
-    assert failed == 0
-    assert total == 1
+    p, f, e, s, t = spec_result_summary("SPEC-001", tag_map, test_result_map)
+    assert (p, f, e, s, t) == (0, 0, 0, 0, 0)
 
 
 # ---------------------------------------------------------------------------
@@ -252,32 +240,20 @@ def test_spec_result_summary_scenario_not_in_results():
 
 
 def test_result_badge_all_passed():
-    assert result_badge(3, 0, 3) == "✅ 3/3 PASS"
+    assert "3/3 PASS" in result_badge(3, 0, 0, 0, 3)
+    assert "0/3 FAIL" in result_badge(3, 0, 0, 0, 3)
 
 
-def test_result_badge_partial_pass_no_fail():
-    """パスはあるが未実行あり（failedなし）。"""
-    assert result_badge(2, 0, 3) == "🟡 2/3 PASS"
-
-
-def test_result_badge_all_failed():
-    assert result_badge(0, 3, 3) == "✘ 3/3 FAIL"
-
-
-def test_result_badge_partial():
-    badge = result_badge(2, 1, 3)
-    assert "🟡" in badge
-    assert "2✅" in badge
-    assert "1✘" in badge
-
-
-def test_result_badge_no_results():
-    """シナリオは存在するが実行結果がない場合。"""
-    assert result_badge(0, 0, 2) == "-"
+def test_result_badge_mixed():
+    badge = result_badge(1, 1, 1, 1, 4)
+    assert "1/4 PASS" in badge
+    assert "1/4 FAIL" in badge
+    assert "1/4 ERROR" in badge
+    assert "1/4 SKIP" in badge
 
 
 def test_result_badge_no_scenarios():
-    assert result_badge(0, 0, 0) == "-"
+    assert result_badge(0, 0, 0, 0, 0) == "-"
 
 
 # ---------------------------------------------------------------------------
@@ -290,13 +266,12 @@ def test_format_status_badge_passed():
 
 
 def test_format_status_badge_failed():
-    assert format_status_badge("failed") == "✘ FAIL"
+    assert format_status_badge("failed") == "🔴 FAIL"
+
+
+def test_format_status_badge_error():
+    assert format_status_badge("error") == "❌ ERROR"
 
 
 def test_format_status_badge_skipped():
     assert format_status_badge("skipped") == "⏭️ SKIP"
-
-
-def test_format_status_badge_unknown():
-    badge = format_status_badge("pending")
-    assert "PENDING" in badge

@@ -56,7 +56,11 @@ from spec_weaver.test_results import (
     result_badge,
     spec_result_summary,
 )
-from spec_weaver.codegen import generate_test_file, _step_keyword_to_prefix
+from spec_weaver.codegen import (
+    generate_test_file,
+    generate_environment_file,
+    _step_keyword_to_prefix,
+)
 from spec_weaver.step_resolver import StepResolver
 from spec_weaver.impl_scanner import get_ref_files, ImplScanner
 
@@ -616,7 +620,7 @@ def scaffold_cmd(
         help=".feature ファイルが格納されたディレクトリ",
     ),
     out_dir: Path = typer.Option(
-        Path("tests/features"),
+        Path("specification/features/steps"),
         "--out-dir",
         "-o",
         resolve_path=True,
@@ -658,6 +662,24 @@ def scaffold_cmd(
                 return str(p.relative_to(Path.cwd()))
             except ValueError:
                 return str(p)
+
+        # environment.py の生成
+        try:
+            res = generate_environment_file(feature_dir, overwrite=overwrite)
+            if res:
+                out_path, status, _ = res
+                console.print(
+                    f"  [green]✅ 環境設定作成[/green]: {_display_path(out_path)}"
+                )
+                generated += 1
+            elif (feature_dir / "environment.py").exists():
+                console.print(
+                    f"  [dim]⏭️ スキップ[/dim]: {_display_path(feature_dir / 'environment.py')} (存在済み)"
+                )
+                skipped += 1
+        except Exception as e:
+            console.print(f"  [red]❌ 環境設定エラー[/red]: environment.py: {e}")
+            errors += 1
 
         for fpath in feature_files:
             try:
@@ -1342,6 +1364,7 @@ def _run_build(
                 all_items_str=all_items_str,
                 feature_md_map=feature_md_map,
                 node_id=tag_rel,
+                test_result_map=test_result_map,
             )
             out_path.write_text(md_content, encoding="utf-8")
             feature_md_map[tag_rel] = f"../features/{md_rel.as_posix()}"
@@ -1458,35 +1481,6 @@ def _spec_coverage(
     return (1 if scenarios else 0, 1)
 
 
-def _req_coverage(
-    req_uid: str, child_map: dict, all_items_str: dict, tag_map: dict
-) -> tuple[int, int]:
-    """
-    REQの集約カバレッジ: 関連するテスト対象SPECのうち、シナリオが存在するものの割合。
-    Returns: (covered, total)
-    """
-    children = child_map.get(req_uid, [])
-    covered = 0
-    total = 0
-    for child_uid in children:
-        child_item = all_items_str.get(child_uid)
-        if child_item is None:
-            continue
-        c, t = _spec_coverage(child_uid, tag_map, child_item, all_items_str)
-        covered += c
-        total += t
-    return (covered, total)
-
-
-def _coverage_badge(covered: int, total: int) -> str:
-    """カバレッジを絵文字付きの割合文字列で返す。"""
-    if total == 0:
-        return " -"
-    pct = int(covered / total * 100)
-    icon = "🟢" if pct == 100 else ("🟡" if pct >= 50 else "🔴")
-    return f"{icon} {covered}/{total} ({pct}%)"
-
-
 def _scenario_count_badge(uid: str, tag_map: dict, item) -> str:
     """SPEC単体のシナリオ数を直接表示するバッジ。testable=falseなら '-'、0なら🔴、それ以上は🟢。"""
     testable = _get_custom_attribute(item, "testable", True)
@@ -1511,6 +1505,7 @@ def _feature_to_markdown(
     all_items_str: dict | None = None,
     feature_md_map: dict | None = None,
     node_id: str | None = None,
+    test_result_map: Optional[TestResultMap] = None,
 ) -> str:
     """
     .featureファイルをGherkinパーサーで解析し、ブラウザで読みやすいMarkdownに変換する。
@@ -1622,9 +1617,11 @@ def _feature_to_markdown(
             sc_keyword = (sc.get("keyword") or "Scenario").strip()
             sc_tags = [t["name"] for t in sc.get("tags", [])]
             sc_desc = (sc.get("description") or "").strip()
+            sc_line = sc.get("location", {}).get("line", 0)
 
             tag_str = " ".join(f"`{t}`" for t in sc_tags) if sc_tags else ""
-            lines.append(f"---\n## {sc_keyword}: {sc_name}\n")
+            # Add explicit anchor for auto-focusing from item pages
+            lines.append(f"---\n## {sc_keyword}: {sc_name} {{: #line-{sc_line} }}\n")
             if tag_str:
                 lines.append(f"**タグ**: {tag_str}\n")
             if sc_desc:
@@ -1644,6 +1641,13 @@ def _feature_to_markdown(
                     lines.append(
                         "\n<details><summary><b>Step Definitions (Source Code)</b></summary>\n"
                     )
+                    # テスト失敗時のログがあれば表示 (REQ-005)
+                    if test_result_map:
+                        res = test_result_map.get((feature_file.stem, sc_name.strip()))
+                        if res and res.get("error"):
+                            lines.append("#### 📋 Execution Log (Failure)\n")
+                            lines.append(f"```text\n{res['error']}\n```\n")
+
                     for rkw, txt, src in step_codes:
                         lines.append(f"#### {rkw} {txt}\n")
                         lines.append(f"```python\n{src}\n```\n")
@@ -1712,24 +1716,10 @@ def _generate_index_table(
 
         # カバレッジ計算
         # -t あり: テスト結果バッジをカバレッジ列に表示
-        # -t なし: シナリオ数バッジ（子ありは集約割合%、なしはシナリオ数）
+        # -t なし: シナリオ数バッジ
         if has_results:
-            from .test_results import spec_result_summary, result_badge
-
-            if children:
-                cp = cf = ct = 0
-                for child_uid in children:
-                    p, f, t = spec_result_summary(child_uid, tag_map, test_result_map)
-                    cp += p
-                    cf += f
-                    ct += t
-                coverage_col = result_badge(cp, cf, ct)
-            else:
-                p, f, t = spec_result_summary(uid, tag_map, test_result_map)
-                coverage_col = result_badge(p, f, t)
-        elif children:
-            covered, total = _req_coverage(uid, child_map, all_items_str, tag_map)
-            coverage_col = _coverage_badge(covered, total)
+            p, f, e, s, t = spec_result_summary(uid, tag_map, test_result_map)
+            coverage_col = result_badge(p, f, e, s, t)
         else:
             coverage_col = _scenario_count_badge(uid, tag_map, item)
 
@@ -1863,37 +1853,25 @@ def _generate_item_markdown(
         content.append(" / ".join(link_parts) + "\n")
 
     # ---- カバレッジバッジ ----
-    if children:
-        covered, total = _req_coverage(uid, child_map, all_items_str, tag_map)
-        coverage_str = _coverage_badge(covered, total)
-        content.append(f"**テストカバレッジ**: {coverage_str} （下位アイテムの集計）\n")
-
-    # 自身がテスト対象、またはシナリオがある場合
-    if testable or scenarios:
-        coverage_str = _scenario_count_badge(uid, tag_map, item)
+    content.append(
+        f"**テスト対象**: {'Yes' if testable else 'No'}"
+    )
+    if test_result_map is not None:
+        p, f, e, s, t = spec_result_summary(uid, tag_map, test_result_map)
+        summary = result_badge(p, f, e, s, t)
         content.append(
-            f"**テスト対象**: {'Yes' if testable else 'No'}　**個別カバレッジ**: {coverage_str}\n"
+            f" / **テストカバレッジ**: {summary}\n"
         )
 
     # ---- 本文 ----
-    content.append(f"\n### 内容\n\n{item.text}\n")
+    content.append(f"---\n\n{item.text}\n")
 
     # ---- テスト実行結果サマリー ----
     if test_result_map is not None:
-        if children:
-            cp = cf = ct = 0
-            for child_uid in children:
-                p, f, t = spec_result_summary(child_uid, tag_map, test_result_map)
-                cp += p
-                cf += f
-                ct += t
-            summary = result_badge(cp, cf, ct)
-            content.append(f"**テスト実行結果 (集計)**: {summary}\n")
-
         if testable or scenarios:
-            p, f, t = spec_result_summary(uid, tag_map, test_result_map)
-            summary = result_badge(p, f, t)
-            content.append(f"**テスト実行結果 (個別)**: {summary}\n")
+            p, f, e, s, t = spec_result_summary(uid, tag_map, test_result_map)
+            summary = result_badge(p, f, e, s, t)
+            content.append(f"**テスト実行結果**: {summary}\n")
 
     # ---- 検証シナリオ ----
     if scenarios:
@@ -1902,20 +1880,25 @@ def _generate_item_markdown(
             file_path = s["file"]
             md_link = feature_md_map.get(file_path)
             if md_link:
-                loc = f"[{file_path}:{s['line']}]({md_link})"
+                # Append line anchor for auto-focus
+                loc = f"[{file_path}:{s['line']}]({md_link}#line-{s['line']})"
             else:
                 loc = f"`{file_path}:{s['line']}`"
             # テスト結果がある場合はバッジを先頭に付与
             if test_result_map is not None:
-                key = (Path(file_path).stem, s["name"])
-                status = test_result_map.get(key)
+                key = (Path(file_path).stem, s["name"].strip())
+                res = test_result_map.get(key)
+                status = res["status"] if res else None
                 badge = format_status_badge(status) if status is not None else "-"
                 content.append(f"- {badge} **{s['name']}** — {s['keyword']} （{loc}）")
+                # エラーメッセージがあれば表示
+                if res and res.get("error"):
+                    content.append(f"\n```text\n{res['error']}\n```\n")
             else:
                 content.append(f"- **{s['name']}** — {s['keyword']} （{loc}）")
     elif testable:
         content.append(
-            "### 🧪 検証シナリオ\n\n❌ まだ Gherkin シナリオが登録されていません。"
+            "### 🧪 検証シナリオ\n\n❌ Gherkin シナリオが登録されていません。"
         )
 
     return "\n".join(content)

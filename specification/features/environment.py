@@ -3,7 +3,9 @@
 import os
 import shutil
 import tempfile
+import traceback
 from pathlib import Path
+from behave.model_core import Status
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 
@@ -30,3 +32,27 @@ def after_scenario(context, scenario):
     os.chdir(PROJECT_ROOT)
     if hasattr(context, "temp_dir") and context.temp_dir and context.temp_dir.exists():
         shutil.rmtree(context.temp_dir, ignore_errors=True)
+
+
+def after_step(context, step):
+    """ステップ実行後の処理。エラー時に詳細な実行ログを記録する（REQ-005 拡張）。"""
+    if step.status == Status.error:
+        # トレースバックをキャプチャして step.error_message に格納
+        if hasattr(step, "exception") and step.exception:
+            if hasattr(step, "exc_traceback") and step.exc_traceback:
+                # exc_traceback がある場合は完全なトレースバックを取得
+                tb = "".join(
+                    traceback.format_exception(
+                        type(step.exception), step.exception, step.exc_traceback
+                    )
+                )
+                step.error_message = tb
+            else:
+                # 例外のみの場合
+                step.error_message = (
+                    f"{type(step.exception).__name__}: {str(step.exception)}"
+                )
+
+        # JSON フォーマッタに error_message フィールドを出力させるため、
+        # error ステータスを failed に強制する（behave の JSON フォーマッタの制約への対策）
+        step.status = Status.failed

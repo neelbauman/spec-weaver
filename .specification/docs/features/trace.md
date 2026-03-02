@@ -73,7 +73,7 @@ def given_a838a6ff(context):
 
 
 ---
-## Scenario: REQを起点としたトップダウンのツリー表示
+## Scenario: REQを起点としたトップダウンのツリー表示 {: #line-22 }
 
 - **When** `spec-weaver trace REQ-001 -f ./specification/features` を実行する
 - **Then** 終了コードが0である
@@ -85,6 +85,21 @@ def given_a838a6ff(context):
 - **And** "audit.feature" が "SPEC-003" の子ノードとして表示される
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
+
+#### 📋 Execution Log (Failure)
+
+```text
+Traceback (most recent call last):
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
+    match.run(runner.context)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
+    self.func(context, *args, **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "specification/features/steps/step_trace.py", line 27, in given_28140be4
+    raise NotImplementedError('STEP: 以下のREQアイテムが存在する:')
+NotImplementedError: STEP: 以下のREQアイテムが存在する:
+```
 
 #### When `spec-weaver trace REQ-001 -f ./specification/features` を実行する
 
@@ -199,7 +214,7 @@ def then_5c046e43(context, param0, param1):
 
 
 ---
-## Scenario: SPECを起点とした双方向のツリー表示
+## Scenario: SPECを起点とした双方向のツリー表示 {: #line-32 }
 
 - **When** `spec-weaver trace SPEC-003 -f ./specification/features` を実行する
 - **Then** 終了コードが0である
@@ -209,6 +224,21 @@ def then_5c046e43(context, param0, param1):
 - **And** 下位に "audit.feature" のシナリオが表示される
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
+
+#### 📋 Execution Log (Failure)
+
+```text
+Traceback (most recent call last):
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
+    match.run(runner.context)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
+    self.func(context, *args, **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "specification/features/steps/step_trace.py", line 27, in given_28140be4
+    raise NotImplementedError('STEP: 以下のREQアイテムが存在する:')
+NotImplementedError: STEP: 以下のREQアイテムが存在する:
+```
 
 #### When `spec-weaver trace SPEC-003 -f ./specification/features` を実行する
 
@@ -296,7 +326,7 @@ def then_b2f19b22(context, param0):
 
 
 ---
-## Scenario: Gherkin Featureファイルを起点としたボトムアップ表示
+## Scenario: Gherkin Featureファイルを起点としたボトムアップ表示 {: #line-40 }
 
 - **When** `spec-weaver trace audit.feature -f ./specification/features` を実行する
 - **Then** 終了コードが0である
@@ -305,6 +335,21 @@ def then_b2f19b22(context, param0):
 - **And** 出力に "REQ-001" が表示される
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
+
+#### 📋 Execution Log (Failure)
+
+```text
+Traceback (most recent call last):
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
+    match.run(runner.context)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
+    self.func(context, *args, **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "specification/features/steps/step_trace.py", line 27, in given_28140be4
+    raise NotImplementedError('STEP: 以下のREQアイテムが存在する:')
+NotImplementedError: STEP: 以下のREQアイテムが存在する:
+```
 
 #### When `spec-weaver trace audit.feature -f ./specification/features` を実行する
 
@@ -384,7 +429,7 @@ def then_1b9fcb6e(context, param0):
 
 
 ---
-## Scenario: --direction up で上方向のみ探索
+## Scenario: --direction up で上方向のみ探索 {: #line-47 }
 
 - **When** `spec-weaver trace SPEC-003 -f ./specification/features --direction up` を実行する
 - **Then** 終了コードが0である
@@ -393,6 +438,21 @@ def then_1b9fcb6e(context, param0):
 - **And** 出力に "audit.feature" が表示されない
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
+
+#### 📋 Execution Log (Failure)
+
+```text
+Traceback (most recent call last):
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
+    match.run(runner.context)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
+    self.func(context, *args, **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "specification/features/steps/step_trace.py", line 27, in given_28140be4
+    raise NotImplementedError('STEP: 以下のREQアイテムが存在する:')
+NotImplementedError: STEP: 以下のREQアイテムが存在する:
+```
 
 #### When `spec-weaver trace SPEC-003 -f ./specification/features --direction up` を実行する
 
@@ -470,7 +530,7 @@ def then_1c0ce4ff(context, param0):
 
 
 ---
-## Scenario: --direction down で下方向のみ探索
+## Scenario: --direction down で下方向のみ探索 {: #line-54 }
 
 - **When** `spec-weaver trace REQ-001 -f ./specification/features --direction down` を実行する
 - **Then** 終了コードが0である
@@ -479,6 +539,21 @@ def then_1c0ce4ff(context, param0):
 - **And** 出力に "audit.feature" が表示される
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
+
+#### 📋 Execution Log (Failure)
+
+```text
+Traceback (most recent call last):
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
+    match.run(runner.context)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
+    self.func(context, *args, **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "specification/features/steps/step_trace.py", line 27, in given_28140be4
+    raise NotImplementedError('STEP: 以下のREQアイテムが存在する:')
+NotImplementedError: STEP: 以下のREQアイテムが存在する:
+```
 
 #### When `spec-weaver trace REQ-001 -f ./specification/features --direction down` を実行する
 
@@ -558,7 +633,7 @@ def then_1b9fcb6e(context, param0):
 
 
 ---
-## Scenario: --format flat でフラットリスト表示
+## Scenario: --format flat でフラットリスト表示 {: #line-61 }
 
 - **When** `spec-weaver trace REQ-001 -f ./specification/features --format flat` を実行する
 - **Then** 終了コードが0である
@@ -566,6 +641,21 @@ def then_1b9fcb6e(context, param0):
 - **And** 各行に "REQ" または "SPEC" または "TEST" のラベルが含まれる
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
+
+#### 📋 Execution Log (Failure)
+
+```text
+Traceback (most recent call last):
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
+    match.run(runner.context)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
+    self.func(context, *args, **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "specification/features/steps/step_trace.py", line 27, in given_28140be4
+    raise NotImplementedError('STEP: 以下のREQアイテムが存在する:')
+NotImplementedError: STEP: 以下のREQアイテムが存在する:
+```
 
 #### When `spec-weaver trace REQ-001 -f ./specification/features --format flat` を実行する
 
@@ -626,13 +716,28 @@ def then_29017220(context, param0, param1, param2):
 
 
 ---
-## Scenario: 存在しないIDを指定した場合のエラー
+## Scenario: 存在しないIDを指定した場合のエラー {: #line-67 }
 
 - **When** `spec-weaver trace NONEXIST-999 -f ./specification/features` を実行する
 - **Then** 終了コードが1である
 - **And** エラーメッセージに "not found" が含まれる
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
+
+#### 📋 Execution Log (Failure)
+
+```text
+Traceback (most recent call last):
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
+    match.run(runner.context)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
+    self.func(context, *args, **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "specification/features/steps/step_trace.py", line 27, in given_28140be4
+    raise NotImplementedError('STEP: 以下のREQアイテムが存在する:')
+NotImplementedError: STEP: 以下のREQアイテムが存在する:
+```
 
 #### When `spec-weaver trace NONEXIST-999 -f ./specification/features` を実行する
 
@@ -677,7 +782,7 @@ def then_9998fad9(context, param0):
 
 
 ---
-## Scenario: 各ノードにステータスバッジが表示される
+## Scenario: 各ノードにステータスバッジが表示される {: #line-72 }
 
 - **When** `spec-weaver trace REQ-001 -f ./specification/features` を実行する
 - **Then** 終了コードが0である
@@ -685,6 +790,21 @@ def then_9998fad9(context, param0):
 - **And** "SPEC-003" のノードに "implemented" のステータスバッジが表示される
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
+
+#### 📋 Execution Log (Failure)
+
+```text
+Traceback (most recent call last):
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
+    match.run(runner.context)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
+    self.func(context, *args, **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "specification/features/steps/step_trace.py", line 27, in given_28140be4
+    raise NotImplementedError('STEP: 以下のREQアイテムが存在する:')
+NotImplementedError: STEP: 以下のREQアイテムが存在する:
+```
 
 #### When `spec-weaver trace REQ-001 -f ./specification/features` を実行する
 

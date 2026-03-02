@@ -8,7 +8,7 @@ Doorstopの仕様データとGherkinテストを統合した
   MkDocsドキュメントサイトを自動生成する。
 
 ---
-## Scenario: MkDocs設定ファイルの生成
+## Scenario: MkDocs設定ファイルの生成 {: #line-11 }
 
 - **Given** DoorstopプロジェクトとGherkin featureファイルが存在する
 - **When** build コマンドを実行する
@@ -16,6 +16,21 @@ Doorstopの仕様データとGherkinテストを統合した
 - **And** Material テーマが設定されていること
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
+
+#### 📋 Execution Log (Failure)
+
+```text
+Traceback (most recent call last):
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
+    match.run(runner.context)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
+    self.func(context, *args, **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "specification/features/steps/step_build.py", line 18, in given_8a7b1a87
+    raise NotImplementedError('STEP: DoorstopプロジェクトとGherkin featureファイルが存在する')
+NotImplementedError: STEP: DoorstopプロジェクトとGherkin featureファイルが存在する
+```
 
 #### Given DoorstopプロジェクトとGherkin featureファイルが存在する
 
@@ -76,7 +91,7 @@ def then_281c0fa4(context):
 
 
 ---
-## Scenario: 要件一覧ページの生成
+## Scenario: 要件一覧ページの生成 {: #line-17 }
 
 - **Given** DoorstopプロジェクトにREQアイテムが存在する
 - **When** build コマンドを実行する
@@ -85,6 +100,21 @@ def then_281c0fa4(context):
 - **And** 関連仕様への相互リンクが含まれること
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
+
+#### 📋 Execution Log (Failure)
+
+```text
+Traceback (most recent call last):
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
+    match.run(runner.context)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
+    self.func(context, *args, **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "specification/features/steps/step_build.py", line 48, in given_ce6845b7
+    raise NotImplementedError('STEP: DoorstopプロジェクトにREQアイテムが存在する')
+NotImplementedError: STEP: DoorstopプロジェクトにREQアイテムが存在する
+```
 
 #### Given DoorstopプロジェクトにREQアイテムが存在する
 
@@ -157,7 +187,7 @@ def then_ef9d25c2(context):
 
 
 ---
-## Scenario: 仕様一覧ページの生成
+## Scenario: 仕様一覧ページの生成 {: #line-24 }
 
 - **Given** DoorstopプロジェクトにSPECアイテムが存在する
 - **When** build コマンドを実行する
@@ -166,6 +196,21 @@ def then_ef9d25c2(context):
 - **And** 上位要件への相互リンクが含まれること
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
+
+#### 📋 Execution Log (Failure)
+
+```text
+Traceback (most recent call last):
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
+    match.run(runner.context)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
+    self.func(context, *args, **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "specification/features/steps/step_build.py", line 135, in then_9b5808a6
+    raise NotImplementedError('STEP: docs/spec.md が生成されること')
+NotImplementedError: STEP: docs/spec.md が生成されること
+```
 
 #### Given DoorstopプロジェクトにSPECアイテムが存在する
 
@@ -275,7 +320,7 @@ def then_d1af9a65(context):
 
 
 ---
-## Scenario: 個別アイテム詳細ページの生成
+## Scenario: 個別アイテム詳細ページの生成 {: #line-31 }
 
 - **Given** DoorstopプロジェクトにアイテムとGherkinテストが存在する
 - **When** build コマンドを実行する
@@ -285,6 +330,21 @@ def then_d1af9a65(context):
 - **And** 対応するテストシナリオのファイルパスと行番号が含まれること
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
+
+#### 📋 Execution Log (Failure)
+
+```text
+Traceback (most recent call last):
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
+    match.run(runner.context)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
+    self.func(context, *args, **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "specification/features/steps/step_build.py", line 165, in given_73c18566
+    raise NotImplementedError('STEP: DoorstopプロジェクトにアイテムとGherkinテストが存在する')
+NotImplementedError: STEP: DoorstopプロジェクトにアイテムとGherkinテストが存在する
+```
 
 #### Given DoorstopプロジェクトにアイテムとGherkinテストが存在する
 
@@ -370,7 +430,7 @@ def then_ae3c7159(context):
 
 
 ---
-## Scenario: 一覧テーブルのフィルタリング機能
+## Scenario: 一覧テーブルのフィルタリング機能 {: #line-40 }
 
 **タグ**: `@VIS-005`
 
@@ -380,6 +440,21 @@ def then_ae3c7159(context):
 - **And** ID、タイトル、実装ステータス、レベル等の項目で絞り込みが可能であること
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
+
+#### 📋 Execution Log (Failure)
+
+```text
+Traceback (most recent call last):
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
+    match.run(runner.context)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
+    self.func(context, *args, **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "specification/features/steps/step_build.py", line 215, in given_93d749da
+    raise NotImplementedError('STEP: Doorstopプロジェクトにアイテムが存在する')
+NotImplementedError: STEP: Doorstopプロジェクトにアイテムが存在する
+```
 
 #### Given Doorstopプロジェクトにアイテムが存在する
 
@@ -439,7 +514,7 @@ def then_ca03093b(context):
 
 
 ---
-## Scenario: 出力ディレクトリの独立性
+## Scenario: 出力ディレクトリの独立性 {: #line-46 }
 
 - **Given** プロジェクトに既存のドキュメントが存在する
 - **When** build コマンドをデフォルト出力先で実行する
@@ -447,6 +522,21 @@ def then_ca03093b(context):
 - **And** 既存のドキュメントファイルは変更されないこと
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
+
+#### 📋 Execution Log (Failure)
+
+```text
+Traceback (most recent call last):
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
+    match.run(runner.context)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
+    self.func(context, *args, **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "specification/features/steps/step_build.py", line 245, in given_b7341593
+    raise NotImplementedError('STEP: プロジェクトに既存のドキュメントが存在する')
+NotImplementedError: STEP: プロジェクトに既存のドキュメントが存在する
+```
 
 #### Given プロジェクトに既存のドキュメントが存在する
 
@@ -505,13 +595,28 @@ def then_56c968de(context):
 
 
 ---
-## Scenario: カスタム出力ディレクトリの指定
+## Scenario: カスタム出力ディレクトリの指定 {: #line-52 }
 
 - **Given** DoorstopプロジェクトとGherkin featureファイルが存在する
 - **When** build コマンドを --out-dir "./custom_docs" で実行する
 - **Then** "./custom_docs" ディレクトリに出力されること
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
+
+#### 📋 Execution Log (Failure)
+
+```text
+Traceback (most recent call last):
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
+    match.run(runner.context)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
+    self.func(context, *args, **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "specification/features/steps/step_build.py", line 18, in given_8a7b1a87
+    raise NotImplementedError('STEP: DoorstopプロジェクトとGherkin featureファイルが存在する')
+NotImplementedError: STEP: DoorstopプロジェクトとGherkin featureファイルが存在する
+```
 
 #### Given DoorstopプロジェクトとGherkin featureファイルが存在する
 
@@ -558,7 +663,7 @@ def then_32de837a(context, param0):
 
 
 ---
-## Scenario: feature MDページへのバックリンク生成
+## Scenario: feature MDページへのバックリンク生成 {: #line-58 }
 
 **タグ**: `@VIS-008`
 
@@ -627,7 +732,7 @@ def then_3dd5fc62(context, param0):
 
 
 ---
-## Scenario: 複数アイテムを参照するfeatureのバックリンク
+## Scenario: 複数アイテムを参照するfeatureのバックリンク {: #line-65 }
 
 **タグ**: `@VIS-008`
 
@@ -682,7 +787,7 @@ def then_d670dbfb(context, param0, param1, param2):
 
 
 ---
-## Scenario: タグのないfeatureにはバックリンクを表示しない
+## Scenario: タグのないfeatureにはバックリンクを表示しない {: #line-71 }
 
 **タグ**: `@VIS-008`
 
@@ -691,6 +796,21 @@ def then_d670dbfb(context, param0, param1, param2):
 - **Then** 生成されたfeature MDに "関連アイテム" 行が含まれないこと
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
+
+#### 📋 Execution Log (Failure)
+
+```text
+Traceback (most recent call last):
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
+    match.run(runner.context)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
+    self.func(context, *args, **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "specification/features/steps/step_build.py", line 346, in given_486efd83
+    raise NotImplementedError('STEP: どのDoorstopアイテムからも参照されていないfeatureが存在する')
+NotImplementedError: STEP: どのDoorstopアイテムからも参照されていないfeatureが存在する
+```
 
 #### Given どのDoorstopアイテムからも参照されていないfeatureが存在する
 
@@ -737,7 +857,7 @@ def then_7458537c(context, param0):
 
 
 ---
-## Scenario: Suspect Link 警告の一覧テーブル表示
+## Scenario: Suspect Link 警告の一覧テーブル表示 {: #line-77 }
 
 **タグ**: `@QA-001`
 
@@ -747,6 +867,21 @@ def then_7458537c(context, param0):
 - **And** 詳細ページに Suspect Link バナーが表示されること
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
+
+#### 📋 Execution Log (Failure)
+
+```text
+Traceback (most recent call last):
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
+    match.run(runner.context)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
+    self.func(context, *args, **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "specification/features/steps/step_build.py", line 366, in given_5951291a
+    raise NotImplementedError('STEP: アイテムの上位リンク先が変更されている（cleared=false）')
+NotImplementedError: STEP: アイテムの上位リンク先が変更されている（cleared=false）
+```
 
 #### Given アイテムの上位リンク先が変更されている（cleared=false）
 
@@ -808,7 +943,7 @@ def then_b9db4871(context):
 
 
 ---
-## Scenario: Unreviewed Changes 警告の一覧テーブル表示
+## Scenario: Unreviewed Changes 警告の一覧テーブル表示 {: #line-84 }
 
 **タグ**: `@QA-001`
 
@@ -818,6 +953,21 @@ def then_b9db4871(context):
 - **And** 詳細ページに Unreviewed Changes バナーが表示されること
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
+
+#### 📋 Execution Log (Failure)
+
+```text
+Traceback (most recent call last):
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
+    match.run(runner.context)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
+    self.func(context, *args, **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "specification/features/steps/step_build.py", line 398, in given_60830b9f
+    raise NotImplementedError('STEP: アイテム自体に未レビューの変更がある（reviewed=false）')
+NotImplementedError: STEP: アイテム自体に未レビューの変更がある（reviewed=false）
+```
 
 #### Given アイテム自体に未レビューの変更がある（reviewed=false）
 
@@ -879,7 +1029,7 @@ def then_e1fe71d4(context):
 
 
 ---
-## Scenario: 複合警告の表示
+## Scenario: 複合警告の表示 {: #line-91 }
 
 **タグ**: `@QA-001`
 
@@ -888,6 +1038,21 @@ def then_e1fe71d4(context):
 - **Then** 一覧テーブルの行に "{: .suspect-row }" が適用されていること
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
+
+#### 📋 Execution Log (Failure)
+
+```text
+Traceback (most recent call last):
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
+    match.run(runner.context)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
+    self.func(context, *args, **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "specification/features/steps/step_build.py", line 418, in given_89f3d16e
+    raise NotImplementedError('STEP: アイテムに Suspect Link と Unreviewed Changes の両方がある')
+NotImplementedError: STEP: アイテムに Suspect Link と Unreviewed Changes の両方がある
+```
 
 #### Given アイテムに Suspect Link と Unreviewed Changes の両方がある
 
@@ -936,7 +1101,7 @@ def then_011c6eae(context, param0):
 
 
 ---
-## Scenario: 一覧テーブルのGherkinカバレッジ列はシナリオ数を表示すること
+## Scenario: 一覧テーブルのGherkinカバレッジ列はシナリオ数を表示すること {: #line-96 }
 
 - **Given** 2つのシナリオを持つfeatureファイルにタグで紐づいたSPECアイテムが存在する
 - **When** build コマンドを実行する
@@ -1038,7 +1203,7 @@ def then_5b76eb00(context, param0):
 
 
 ---
-## Scenario: 一覧テーブルにレビューステータス列が表示されること
+## Scenario: 一覧テーブルにレビューステータス列が表示されること {: #line-101 }
 
 - **Given** DoorstopプロジェクトにSPECアイテムが存在する
 - **When** build コマンドを実行する
