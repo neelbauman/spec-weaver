@@ -4,10 +4,10 @@ header: |
   scaffold コマンド 差分マージ・非対話モード実装計画
 level: 1.1
 links:
-- SPEC-015: YiLruzlF4hNk_KTHogjxeTyoVpQWzdz1kQ7b38uBVbI=
+- AUT-001: FnmTOZIIA7Vf35CV-yoWSn5nUOY43-qpxJP98jDBnew=
 normative: false
 ref: ''
-reviewed: fBCDh_PPRMAvqbZozgWtwPiCGyi0KSonesZfoZLJCR8=
+reviewed: 9uOEjhKqefb1W8FHXr8n0fa5WHTz1YMIc4TDBGvNTrM=
 status: implemented
 testable: false
 text: |
@@ -18,10 +18,10 @@ text: |
 
   ## タスク一覧
 
-  ### T1: SPEC-015.yml 更新
+  ### T1: AUT-001.yml 更新
   - 依存: なし
   - 完了条件: コマンドIF（--repo-root, --force）、マージ動作、Docstring 仕様が記述されている
-  - 対象: `specification/specs/SPEC-015.yml`
+  - 対象: `specification/specs/AUT-001.yml`
 
   ### T2: scaffold.feature 更新
   - 依存: T1

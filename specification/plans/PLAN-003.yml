@@ -1,19 +1,19 @@
 active: true
 derived: false
 header: |
-  SPEC-021 実装計画：Gherkinタグ継承（Effective Tags）
+  CORE-002 実装計画：Gherkinタグ継承（Effective Tags）
 level: 1.2
 links:
-- SPEC-021: -utqS9RsMQTwM62PKU2opg0cEhzimKdVertu7_C-pjE=
+- CORE-002: eTEKht1I_h9S6wF4F2pVW4dUOyI2ti7EwNBY1aAZIPQ=
 normative: true
 ref: ''
-reviewed: yfzyYQvTSsIEEcRKeGw3daZWy7UL1nfeQ7mvvo7pzLE=
+reviewed: qn2AOlNYDag4gvy6CzBeku-9QQ1g5sx1bvzMWnMS1Ig=
 status: implemented
 testable: false
 text: |
   ## 概要
 
-  SPEC-021「Gherkinタグ継承（Effective Tags）」の実装タスクを分解する。
+  CORE-002「Gherkinタグ継承（Effective Tags）」の実装タスクを分解する。
   規模は中規模（主要変更は gherkin.py の1モジュール）。
 
   ## 実装タスク
@@ -73,25 +73,25 @@ text: |
 
   ### Task 4: BDDステップ定義の更新（scaffold → 肉付け）
 
-  **目的**: data_extraction.feature に追加した @SPEC-021 シナリオのステップ定義を実装する。
+  **目的**: data_extraction.feature に追加した @CORE-002 シナリオのステップ定義を実装する。
 
   **実装内容**:
   - `uv run spec-weaver scaffold ./specification/features --out-dir features/steps` を実行
   - 生成された NotImplementedError を仕様に従って肉付け
 
-  **完了条件**: `uv run behave --no-capture` で @SPEC-021 シナリオが PASS または FAILED（仕様と実装の乖離が可視化されている）
+  **完了条件**: `uv run behave --no-capture` で @CORE-002 シナリオが PASS または FAILED（仕様と実装の乖離が可視化されている）
 
   **依存**: Task 2 の完了
 
   ---
 
-  ### Task 5: SPEC-002 の更新と SPEC-021 のステータス更新
+  ### Task 5: CORE-001 の更新と CORE-002 のステータス更新
 
   **目的**: 仕様書と実装の整合性を保つ。
 
   **実装内容**:
-  - SPEC-002 の text に「タグ継承の詳細は SPEC-021 を参照」旨を追記
-  - SPEC-021 の `status` を `implemented` に更新
+  - CORE-001 の text に「タグ継承の詳細は CORE-002 を参照」旨を追記
+  - CORE-002 の `status` を `implemented` に更新
 
   **完了条件**: `uv run spec-weaver audit ./specification/features` がエラーなし
 

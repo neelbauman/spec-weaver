@@ -1,5 +1,5 @@
 # src/spec_weaver/doorstop.py
-# implements: SPEC-017
+# implements: TRC-002
 
 import os
 import subprocess
@@ -70,9 +70,12 @@ def get_specs(repo_root: Path, prefix: Optional[str] = "SPEC") -> Set[str]:
     return specs
 
 
-def get_item_map(repo_root: Path) -> Dict[str, Any]:
+def get_item_map(repo_root: Path, include_inactive: bool = False) -> Dict[str, Any]:
     """
-    DoorstopのTreeから、すべてのドキュメントのアクティブなアイテムを取得します。
+    DoorstopのTreeから、すべてのドキュメントのアイテムを取得します。
+
+    Args:
+        include_inactive: True の場合、active=false のアイテムも含めて返す。
     """
     original_cwd = os.getcwd()
     os.chdir(repo_root)
@@ -82,9 +85,8 @@ def get_item_map(repo_root: Path) -> Dict[str, Any]:
         item_map: Dict[str, Any] = {}
 
         for doc in tree:
-            # prefixでのフィルタリングを削除し、全ドキュメントを対象にする
             for item in doc:
-                if item.active:
+                if item.active or include_inactive:
                     item_map[str(item.uid)] = item
 
         return item_map

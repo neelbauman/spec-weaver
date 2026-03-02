@@ -2,7 +2,7 @@ active: true
 derived: false
 header: |
   Gherkin BDDテストコードの自動生成と CI/CD 統合
-level: 9.2
+level: 5.0
 links:
 - REQ-001: r8HLD3Bp9ilMNgxhGINfuTj969G6-xvhIcjcnYrl-J0=
 normative: true

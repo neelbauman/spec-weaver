@@ -4,23 +4,23 @@ header: |
   実装ファイルリンク管理機能の実装計画
 level: 1.0
 links:
-- SPEC-017: e2rym9s9flfkCHzKAoZIx_ObixIS20p7qa2izEqL9cM=
-- SPEC-018: KiALrkjdny34oU1P2pPkAC53wjEvznAyP2TYcxjxhnY=
-- SPEC-019: azjeoL4K9UsQcFovSwUyLqeIMVQ-tU35MSwmDiRQMQc=
-- SPEC-020: 9pPxFFhe8YBccnoOweaW8hi_OIGbjWPrFleuz74aeB4=
+- QA-003: R7lU5c_GYfAMywWH7ga7C5bNWLi0BcEk_ct5FCCzLOg=
+- TRC-002: CsNYG2kwoAL2aGQ4OMJZPbq_BdQL1XO9mD52BES64WU=
+- TRC-003: HejBnkVVAXr50mezShqlLJuFqDQgnm2Ll2xq1IrX7wY=
+- TRC-004: taSaPJAOYmNABY3Fq9QzpfuL400jN9dj2MpQSufRkT8=
 normative: true
 ref: ''
-reviewed: u5JY3UQqHlgKW2pR0J-huPTkom_JsQmc2zFS89jV_bo=
+reviewed: E9uSWAQQMNEu96ejH2VT0EZgyTdvF1XoaUWLpteX6Y8=
 status: implemented
 testable: false
 text: |
   ## 概要
   仕様アイテムと実装ファイルのリンク管理機能を実装する計画。
-  SPEC-017〜020 に対応する。
+  TRC-002〜020 に対応する。
 
   ## 実装タスク（実行順）
 
-  ### Task 1: impl_scanner.py の新規作成（SPEC-017, SPEC-018）
+  ### Task 1: impl_scanner.py の新規作成（TRC-002, TRC-003）
   **ファイル**: `src/spec_weaver/impl_scanner.py`
   **内容**:
   - `get_ref_files(item) -> list[str]`:
@@ -31,13 +31,13 @@ text: |
       `.git/`, `__pycache__/`, `.venv/` 等を除外
       extensions が指定された場合はその拡張子のみ対象
 
-  ### Task 2: doorstop.py への ref 読み取り関数追加（SPEC-017）
+  ### Task 2: doorstop.py への ref 読み取り関数追加（TRC-002）
   **ファイル**: `src/spec_weaver/doorstop.py`
   **内容**:
   - impl_scanner.py に get_ref_files を集約するため doorstop.py への追加は最小限とする
   - get_item_map の import を impl_scanner から呼べるよう整理
 
-  ### Task 3: audit コマンドの拡張（SPEC-019）
+  ### Task 3: audit コマンドの拡張（QA-003）
   **ファイル**: `src/spec_weaver/cli.py`
   **追加オプション**:
   - `--check-impl` (bool, default: False): 実装ファイルリンク検証を有効化
@@ -50,7 +50,7 @@ text: |
      b. ref にあってアノテーションなし（⚠️）
      c. アノテーションあって ref なし（⚠️）
 
-  ### Task 4: trace コマンドの拡張（SPEC-020）
+  ### Task 4: trace コマンドの拡張（TRC-004）
   **ファイル**: `src/spec_weaver/cli.py`
   **追加オプション**:
   - `--show-impl` (bool, default: False): 実装ファイルをツリー表示
@@ -95,5 +95,5 @@ text: |
   ## 完了条件
   - uv run pytest tests/ -q が全て通過
   - uv run spec-weaver audit --check-impl ./specification/features が正常終了
-  - uv run spec-weaver trace SPEC-018 -f ./specification/features --show-impl が正常表示
+  - uv run spec-weaver trace TRC-003 -f ./specification/features --show-impl が正常表示
   - uv run spec-weaver audit ./specification/features が従来通り動作

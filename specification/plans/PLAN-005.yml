@@ -4,12 +4,12 @@ header: |
   review/clear コマンドの責務分離と feature ファイル自己証明フィンガープリント
 level: 1.4
 links:
-- SPEC-005: ko9DXrE8njCAf21N2IQW1wLFn08o243gRE4eVAyjr1I=
-- SPEC-024: kqPRum_nwbOox7KsWYvenpLUlrlkaaZy_RrltdKqc2w=
-- SPEC-025: DRRPocYNeGKCLfAJum0LB1xqIggC0p8mn785Gj3jL-M=
+- QA-001: IVjwbWJI8Xga_1LFrHA_SqnpsZ_-MHzjo-w7D9zwEYE=
+- QA-004: zJZ8rKdo5j3CC50cStOQT-dYQz3fw8w45YpbYNLYs6o=
+- QA-005: sF4bXqVCp0C7Q2T3NpRXT26Hdj_FTb7yqGfcnXQcYkU=
 normative: true
 ref: ''
-reviewed: kYi4X0vulNF_CKsmR9nW7x3G_eD0ef9TN7kibg4kYZ0=
+reviewed: o7NBh6bDDyJASnCBE1OWf3p14c8hj5rZ6UxPiJRAZYA=
 testable: false
 text: |
   ## 目的

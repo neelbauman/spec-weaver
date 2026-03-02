@@ -2,7 +2,7 @@ active: true
 derived: false
 header: |
   可視化において、doorstopの任意のプレフィックスを表示できる
-level: 7.0
+level: 3.3
 links:
 - REQ-001: r8HLD3Bp9ilMNgxhGINfuTj969G6-xvhIcjcnYrl-J0=
 normative: true

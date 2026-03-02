@@ -1,27 +1,27 @@
 active: true
 derived: false
 header: |
-  SPEC-022/023 実装計画：セマンティックレビュー機能
+  AUT-003/023 実装計画：セマンティックレビュー機能
 level: 1.3
 links:
-- SPEC-022: ITHr1qip7xGCJLlRj09BuXUN-KdXxrhNTgP9tqjYOHk=
-- SPEC-023: nelFQm1hXj31Q4t768tpgITbcgkqG_0uZ8E6-7wgrkY=
+- AUT-003: yDu2rlGL5UZEauAw03t_ni-Gcr5kHr1I1ZJDTRClHEM=
+- AUT-004: lSGmYpyYcRxfp2yX-bNIIraDSSChXMsYUz667ys4DZw=
 normative: true
 ref: ''
-reviewed: fQzr9om7YWDvpubi7do2V3QKd3kmrcQa6EzHRnvW2Bs=
+reviewed: 1YsNWHqmFUjM0eBq3KAqbLwIJASwaQ4AoeWHzYjp2bs=
 status: implemented
 testable: false
 text: |
   ## 概要
 
-  SPEC-022「review コマンド」・SPEC-023「semantic-review-skill」の実装タスクを分解する。
+  AUT-003「review コマンド」・AUT-004「semantic-review-skill」の実装タスクを分解する。
   規模は大規模（review.py 新規・cli.py 追加・SKILL.md 新規・テスト新規の複数モジュール横断）。
 
   ## 実装タスク
 
   ### Task 1: JSONスキーマ定義（review.py — データ構造）
 
-  **目的**: SPEC-022 §JSONスキーマに従った ReviewFinding・ReviewResult・ReviewReport データクラスを定義する。
+  **目的**: AUT-003 §JSONスキーマに従った ReviewFinding・ReviewResult・ReviewReport データクラスを定義する。
 
   **実装内容**:
   - `src/spec_weaver/review.py` を新規作成
@@ -113,7 +113,7 @@ text: |
   **目的**: `.claude/skills/semantic-review-skill/SKILL.md` を作成し、スキルのプロンプトテンプレートを定義する。
 
   **実装内容**:
-  - トリガーキーワード定義（SPEC-023 §トリガーキーワード参照）
+  - トリガーキーワード定義（AUT-004 §トリガーキーワード参照）
   - CLIモード（JSONのみ）とインタラクティブモード（Markdown）の出力切り替え定義
   - JSONスキーマの例示（schema_version, item_id, findings 構造）
   - finding の severity 基準説明
@@ -150,7 +150,7 @@ text: |
   - 生成された review.feature 対応ステップの `NotImplementedError` を肉付け
   - `claudeコマンドが利用可能/不可能` の Given ステップは環境変数 `CLAUDE_AVAILABLE` で制御
 
-  **完了条件**: `uv run behave --no-capture` で @SPEC-022 シナリオが実行される
+  **完了条件**: `uv run behave --no-capture` で @AUT-003 シナリオが実行される
 
   **依存**: Task 5
 
@@ -158,11 +158,11 @@ text: |
 
   ### Task 9: 仕様ステータス更新
 
-  **目的**: 実装完了後に REQ-013 / SPEC-022 / SPEC-023 のステータスを `implemented` に更新する。
+  **目的**: 実装完了後に REQ-013 / AUT-003 / AUT-004 のステータスを `implemented` に更新する。
 
   **実装内容**:
-  - REQ-013, SPEC-022, SPEC-023 の `status` を `in-progress` → `implemented` に変更
-  - `impl_files` アノテーションが SPEC-022 に記載済みであることを確認
+  - REQ-013, AUT-003, AUT-004 の `status` を `in-progress` → `implemented` に変更
+  - `impl_files` アノテーションが AUT-003 に記載済みであることを確認
   - `uv run spec-weaver audit ./specification/features` がエラーなしで通過することを確認
 
   **完了条件**: `uv run spec-weaver status` で全アイテムが `implemented` 表示になる

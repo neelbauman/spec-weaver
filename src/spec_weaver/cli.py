@@ -1,5 +1,5 @@
 # src/spec_weaver/cli.py
-# implements: SPEC-019, SPEC-020, SPEC-022, SPEC-024, SPEC-025
+# implements: QA-003, TRC-004, AUT-003, QA-004, QA-005
 
 import typer
 import shutil
@@ -88,20 +88,25 @@ def _review_status_badge(item_or_id: str | Any, review_state: Optional[ReviewSta
     return "✅ reviewed"
 
 
-def _compute_feature_file_states(feature_dir: Path) -> dict[str, dict]:
+def _compute_feature_file_states(
+    feature_dir: Path, repo_root: Path | None = None
+) -> dict[str, dict]:
     """
     feature_dir 以下の全 .feature ファイルについて、先頭コメントのハッシュ群を読み取り、
     現在のコンテンツハッシュとともに {相対パス: {"stored": {dict}, "actual_file": hash}} を返す。
-    相対パスは get_tag_map() と同じ基準（feature_dir.parent を起点）で生成する。
+    相対パスは get_tag_map() と同じ基準（repo_root を起点、"./" プレフィックス付き）で生成する。
     """
     from spec_weaver.gherkin import read_stored_fingerprints
+
+    if repo_root is None:
+        repo_root = Path.cwd()
 
     states: dict[str, dict] = {}
     if not feature_dir.is_dir():
         return states
     for f in feature_dir.rglob("*.feature"):
         try:
-            rel = str(f.relative_to(feature_dir.parent))
+            rel = "./" + str(f.relative_to(repo_root))
         except ValueError:
             rel = str(f)
         try:
@@ -217,6 +222,17 @@ def audit_cmd(
             try:
                 specs_in_db = get_specs(repo_root=repo_root, prefix=prefix)
                 all_prefixes = get_all_prefixes(repo_root=repo_root)
+                # 非活性のテスト対象アイテムを別途収集（スキップ通知用）
+                all_items_with_inactive = get_item_map(repo_root=repo_root, include_inactive=True)
+                inactive_testable: set[str] = set()
+                for uid, item in all_items_with_inactive.items():
+                    if item.active:
+                        continue
+                    if prefix and not uid.startswith(prefix):
+                        continue
+                    is_testable = _get_custom_attribute(item, "testable", True)
+                    if is_testable:
+                        inactive_testable.add(uid)
             except Exception as e:
                 console.print(
                     f"[bold red]❌ Doorstopデータの読み込みに失敗しました:[/bold red] {e}"
@@ -255,7 +271,7 @@ def audit_cmd(
                 except Exception:
                     tag_map = {}
 
-                feature_file_states = _compute_feature_file_states(feature_dir)
+                feature_file_states = _compute_feature_file_states(feature_dir, repo_root)
                 review_state = compute_review_state(
                     raw_items, gherkin_fingerprints, tag_map, feature_file_states
                 )
@@ -306,6 +322,17 @@ def audit_cmd(
         orphaned_tags = tags_in_code - specs_in_db
         has_error = False
 
+        if inactive_testable:
+            console.print(
+                "\n[dim]⛔ 非活性のためスキップした仕様 (Inactive Testable Specs):[/dim]"
+            )
+            table = Table(show_header=True, header_style="dim")
+            table.add_column("Spec ID", style="dim")
+            table.add_column("理由", style="dim")
+            for spec in sorted(inactive_testable):
+                table.add_row(spec, "active: false")
+            console.print(table)
+
         if untested_specs:
             has_error = True
             console.print(
@@ -353,7 +380,7 @@ def audit_cmd(
                 if "suspect-with-unreviewed" in status:
                     action = "[bold red]要レビュー[/bold red] (doorstop review / spec-weaver review)"
                 else:
-                    # SPEC-005: Suspect の SPEC のアクションには spec-weaver clear <SPEC_ID> を表示
+                    # QA-001: Suspect の SPEC のアクションには spec-weaver clear <SPEC_ID> を表示
                     action = f"spec-weaver clear {spec}"
                 table.add_row(spec, causes, action)
             for fpath in sorted(suspect_features):
@@ -428,7 +455,7 @@ def audit_cmd(
                     table.add_row(uid, title, updated_at_str, f"{delta}日")
                 console.print(table)
 
-        # --check-impl: 実装ファイルリンク検証（SPEC-019）
+        # --check-impl: 実装ファイルリンク検証（QA-003）
         if check_impl:
             has_error = _run_impl_link_check(
                 raw_items=raw_items,
@@ -484,7 +511,7 @@ def audit_cmd(
 
 
 # ---------------------------------------------------------------------------
-# 実装ファイルリンク検証ヘルパー（SPEC-019）
+# 実装ファイルリンク検証ヘルパー（QA-003）
 # ---------------------------------------------------------------------------
 
 
@@ -697,147 +724,8 @@ def scaffold_cmd(
 
 
 # ---------------------------------------------------------------------------
-# ci コマンド
-# ---------------------------------------------------------------------------
-
-
-@app.command("ci")
-def ci_cmd(
-    feature_dir: Path = typer.Argument(
-        ...,
-        exists=True,
-        resolve_path=True,
-        help=".feature ファイルが格納されたディレクトリ",
-    ),
-    test_dir: Path = typer.Option(
-        Path("tests/features"),
-        "--test-dir",
-        "-d",
-        resolve_path=True,
-        help="テストコード格納先ディレクトリ",
-    ),
-    out_dir: Path = typer.Option(
-        Path(".specification"),
-        "--out-dir",
-        "-o",
-        resolve_path=True,
-        help="build ドキュメント出力先",
-    ),
-    report: Path = typer.Option(
-        Path("test-results.json"),
-        "--report",
-        "-R",
-        resolve_path=True,
-        help="Cucumber 互換 JSON レポート出力先",
-    ),
-    do_scaffold: bool = typer.Option(
-        False,
-        "--scaffold",
-        help="テスト実行前に scaffold を実行する",
-    ),
-    repo_root: Path = typer.Option(
-        Path.cwd(),
-        "--repo-root",
-        "-r",
-        exists=True,
-        resolve_path=True,
-        help="Doorstopのプロジェクトルート",
-    ),
-) -> None:
-    """テスト実行 → Cucumber JSON 生成 → build ドキュメント生成を一気通貫で実行します。"""
-    try:
-        # Step 1: scaffold（オプション）
-        if do_scaffold:
-            console.print(
-                "[bold cyan]📝 Step 1/3: テストコード生成 (scaffold)...[/bold cyan]"
-            )
-            feature_files = sorted(feature_dir.rglob("*.feature"))
-            if feature_files:
-                for fpath in feature_files:
-                    try:
-                        scaffold_result = generate_test_file(
-                            fpath, test_dir, feature_dir, overwrite=True
-                        )
-                        if scaffold_result:
-                            out_path, status, _diff = scaffold_result
-                            console.print(f"  [green]✅ 生成[/green]: {out_path.name}")
-                    except Exception as e:
-                        console.print(
-                            f"  [yellow]⚠️ scaffold スキップ: {fpath.name}: {e}[/yellow]"
-                        )
-            console.print("  [green]✅ scaffold 完了[/green]")
-        else:
-            console.print(
-                "[dim]📝 Step 1/3: scaffold スキップ (--scaffold で有効化)[/dim]"
-            )
-
-        # Step 2: behave 実行
-        console.print(f"[bold cyan]🧪 Step 2/3: behave テスト実行...[/bold cyan]")
-        behave_cmd = [
-            "uv",
-            "run",
-            "behave",
-            str(feature_dir),
-            "-f",
-            "json",
-            "--outfile",
-            str(report),
-        ]
-        console.print(f"  [dim]$ {' '.join(behave_cmd)}[/dim]")
-        result = subprocess.run(behave_cmd, capture_output=True, text=True)
-
-        if result.stdout:
-            console.print(result.stdout)
-        if result.stderr:
-            console.print(f"[dim]{result.stderr}[/dim]")
-
-        test_failed = result.returncode != 0
-        if test_failed:
-            console.print(
-                "[yellow]⚠️ テストに失敗がありますが、ドキュメント生成を継続します。[/yellow]"
-            )
-        else:
-            console.print("  [green]✅ テスト全件 PASS[/green]")
-
-        # Step 3: build
-        console.print(
-            f"[bold cyan]📄 Step 3/3: ドキュメント生成 (build)...[/bold cyan]"
-        )
-        if not report.exists():
-            console.print(
-                f"[yellow]⚠️ レポートファイルが生成されませんでした: {report}[/yellow]"
-            )
-            console.print("[dim]テスト結果なしで build を実行します。[/dim]")
-            build_test_results = None
-        else:
-            build_test_results = report
-
-        # build コマンドのロジックを直接呼び出す
-        _run_build(feature_dir, repo_root, out_dir, build_test_results)
-
-        console.print()
-        if test_failed:
-            console.print(
-                "[bold yellow]⚠️ CI 完了（テスト失敗あり — ドキュメントに FAIL 結果が反映されています）[/bold yellow]"
-            )
-            raise typer.Exit(1)
-        else:
-            console.print("[bold green]✅ CI 完了（全テスト PASS）[/bold green]")
-
-    except typer.Exit:
-        raise
-    except Exception as e:
-        console.print(f"[bold red]❌ CI エラー: {e}[/bold red]")
-        import traceback
-
-        traceback.print_exc()
-        raise typer.Exit(code=1)
-
-
-# ---------------------------------------------------------------------------
 # review コマンド
 # ---------------------------------------------------------------------------
-
 
 @app.command("review")
 def review_cmd(
@@ -868,7 +756,7 @@ def review_cmd(
     """
     指定したアイテムをレビュー済み状態にします。
 
-    - .feature ファイルの場合: フィンガープリントを計算し書き込みます（SPEC-024）。
+    - .feature ファイルの場合: フィンガープリントを計算し書き込みます（QA-004）。
     - Doorstop アイテムの場合: doorstop review コマンドを呼び出します。
     """
     try:
@@ -992,7 +880,7 @@ def clear_cmd(
 ) -> None:
     """
     指定した仕様アイテムの Doorstop YAML の test_fingerprint を現在の Gherkin ハッシュで更新し、
-    Suspect 状態を解除します（SPEC-025）。
+    Suspect 状態を解除します（QA-005）。
 
     .feature ファイルが指定された場合は、ファイル内の全アイテムの test_fingerprint を一括更新します。
     """
@@ -1015,7 +903,7 @@ def clear_cmd(
                 all_fingerprints = get_spec_fingerprints(feature_dir, repo_root, all_prefixes)
 
             tag_map = get_tag_map(feature_dir, repo_root, all_prefixes)
-            feature_file_states = _compute_feature_file_states(feature_dir)
+            feature_file_states = _compute_feature_file_states(feature_dir, repo_root)
             raw_items = get_item_map(repo_root)
             review_state = compute_review_state(
                 {str(uid): it for uid, it in raw_items.items()},
@@ -1078,11 +966,11 @@ def clear_cmd(
                 console.print(f"[bold red]❌ アイテム {item_id} が見つかりません。[/bold red]")
                 raise typer.Exit(1)
 
-            # SPEC-005: suspect-with-unreviewed の状態では clear を実行できない
+            # QA-001: suspect-with-unreviewed の状態では clear を実行できない
             # レビュー状態を計算
             gherkin_fingerprints = get_spec_fingerprints(feature_dir, repo_root, all_prefixes)
             tag_map = get_tag_map(feature_dir, repo_root, all_prefixes)
-            feature_file_states = _compute_feature_file_states(feature_dir)
+            feature_file_states = _compute_feature_file_states(feature_dir, repo_root)
             review_state = compute_review_state(
                 {str(uid): it for uid, it in raw_items.items()},
                 gherkin_fingerprints,
@@ -1177,7 +1065,7 @@ def status_cmd(
     """
     try:
         with console.status("[bold cyan]Doorstopデータを読み込み中...[/bold cyan]"):
-            raw_items = get_item_map(repo_root=repo_root)
+            raw_items = get_item_map(repo_root=repo_root, include_inactive=True)
             all_items_str = {str(uid): item for uid, item in raw_items.items()}
             all_prefixes = get_all_prefixes(repo_root)
 
@@ -1194,7 +1082,7 @@ def status_cmd(
         except Exception:
             tag_map = {}
 
-        feature_file_states = _compute_feature_file_states(feature_dir)
+        feature_file_states = _compute_feature_file_states(feature_dir, repo_root)
         review_state = compute_review_state(
             all_items_str, gherkin_fingerprints, tag_map, feature_file_states
         )
@@ -1214,6 +1102,7 @@ def status_cmd(
             table = Table(title=title, show_header=True, header_style="bold magenta")
             table.add_column("ID", style="bold cyan", no_wrap=True)
             table.add_column("タイトル")
+            table.add_column("活性", no_wrap=True)
             table.add_column("実装ステータス")
             table.add_column("レビューステータス")
             table.add_column("最終更新日", no_wrap=True)
@@ -1223,11 +1112,15 @@ def status_cmd(
                 raw_status = _get_custom_attribute(item, "status", None)
                 if filter_status and str(raw_status or "") != filter_status:
                     continue
+                active_badge = "✅" if item.active else "[dim]⛔ 非活性[/dim]"
                 badge = _impl_status_badge(item)
                 review = _review_status_badge(uid, review_state=review_state)
                 updated = _get_timestamp(item, "updated_at")
                 title_text = (item.header or "").strip()
-                table.add_row(uid, title_text, badge, review, updated)
+                if not item.active:
+                    table.add_row(f"[dim]{uid}[/dim]", f"[dim]{title_text}[/dim]", active_badge, f"[dim]{badge}[/dim]", f"[dim]{review}[/dim]", f"[dim]{updated}[/dim]")
+                else:
+                    table.add_row(uid, title_text, active_badge, badge, review, updated)
                 shown += 1
             if shown > 0:
                 console.print(table)
@@ -1235,7 +1128,7 @@ def status_cmd(
 
         total = 0
         # 優先して表示するプレフィックスの順序
-        for prefix in ["REQ", "SPEC", "DESIGN", "PLAN", "ADR", "RESEARCH"]:
+        for prefix in ["REQ", "SPEC", "CORE", "QA", "VIS", "TRC", "AUT", "DESIGN", "PLAN", "ADR", "RESEARCH"]:
             if prefix in grouped_items:
                 total += _print_status_table(
                     f"ドキュメント: {prefix}", grouped_items.pop(prefix)
@@ -1364,8 +1257,8 @@ def _run_build(
 ) -> None:
     """build コマンドのコアロジック。build / ci の両方から呼ばれる。"""
     with console.status("[bold cyan]データの分析と結合を開始...[/bold cyan]"):
-        # 1. Doorstopから全アイテムと全プレフィックス取得
-        raw_items = get_item_map(repo_root)
+        # 1. Doorstopから全アイテムと全プレフィックス取得（非活性アイテムも含む）
+        raw_items = get_item_map(repo_root, include_inactive=True)
         all_items_str = {str(uid): item for uid, item in raw_items.items()}
         doorstop_tree = get_doorstop_tree(repo_root)
         all_prefixes = {str(doc.prefix) for doc in doorstop_tree}
@@ -1373,7 +1266,7 @@ def _run_build(
         # 2. Gherkinタグマップ取得 (全プレフィックスを対象にする)
         tag_map = get_tag_map(feature_dir, repo_root, all_prefixes)
         gherkin_fingerprints = get_spec_fingerprints(feature_dir, repo_root, all_prefixes)
-        feature_file_states = _compute_feature_file_states(feature_dir)
+        feature_file_states = _compute_feature_file_states(feature_dir, repo_root)
         review_state = compute_review_state(
             all_items_str, gherkin_fingerprints, tag_map, feature_file_states
         )
@@ -1437,7 +1330,7 @@ def _run_build(
             out_path = features_md_dir / md_rel
             out_path.parent.mkdir(parents=True, exist_ok=True)
             try:
-                tag_rel = str(feature_file.relative_to(feature_dir.parent))
+                tag_rel = "./" + str(feature_file.relative_to(repo_root))
             except ValueError:
                 tag_rel = str(feature_file)
             backlinks = feature_backlink_map.get(tag_rel, [])
@@ -1788,14 +1681,14 @@ def _generate_index_table(
     result_col_header = " | テスト結果" if has_results else ""
     result_col_sep = " | :--- " if has_results else ""
 
-    # SPEC-005: 「レビューステータス」列を廃止。ハイライトで表現する。
-    # ID | タイトル | 親 | 子 | 兄弟 | Gherkinカバレッジ | 実装状況 | 作成日 | 更新日
-    header = f"| ID | タイトル | 親 | 子 | 兄弟 | Gherkinカバレッジ | 実装状況 | 作成日 | 更新日{result_col_header} |"
-    sep = f"| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :---{result_col_sep}|"
+    # QA-001: 「レビューステータス」列を廃止。ハイライトで表現する。
+    # ID | タイトル | 活性 | 親 | 子 | 兄弟 | Gherkinカバレッジ | 実装状況 | 作成日 | 更新日
+    header = f"| ID | タイトル | 活性 | 親 | 子 | 兄弟 | Gherkinカバレッジ | 実装状況 | 作成日 | 更新日{result_col_header} |"
+    sep = f"| :--- | :--- | :---: | :--- | :--- | :--- | :--- | :--- | :--- | :---{result_col_sep}|"
 
     lines = [f"# {title}\n", header, sep]
 
-    for uid in sorted(target_items.keys()):
+    for uid in sorted(target_items.keys(), key=lambda u: (target_items[u].level, u)):
         item = target_items[uid]
         testable = _get_custom_attribute(item, "testable", True)
         scenarios = tag_map.get(uid, [])
@@ -1822,13 +1715,17 @@ def _generate_index_table(
         impl_col = _impl_status_badge(item)
         created_col = _get_timestamp(item, "created_at")
         updated_col = _get_timestamp(item, "updated_at")
+        active_col = "✅" if item.active else "⛔"
 
         # 行の組み立て
-        row = f"| [{uid}](items/{uid}.md) | {item.header} | {parents_col} | {children_col} | {siblings_col} | {coverage_col} | {impl_col} | {created_col} | {updated_col}"
+        row = f"| [{uid}](items/{uid}.md) | {item.header} | {active_col} | {parents_col} | {children_col} | {siblings_col} | {coverage_col} | {impl_col} | {created_col} | {updated_col}"
 
         # 状態に応じた行ハイライト (attr_list 拡張用)
-        # SPEC-005: Unreviewedは赤 (.unreviewed-row), Suspectは紫 (.suspect-row)
-        if "unreviewed" in review_status:
+        # QA-001: Unreviewedは赤 (.unreviewed-row), Suspectは紫 (.suspect-row)
+        # 非活性は専用クラス (.inactive-row)
+        if not item.active:
+            row += " {: .inactive-row } |"
+        elif "unreviewed" in review_status:
             row += " {: .unreviewed-row } |"
         elif "suspect" in review_status:
             row += " {: .suspect-row } |"
@@ -1880,6 +1777,18 @@ def _generate_item_markdown(
     children = child_map.get(uid, [])
 
     content: list[str] = [f"# [{uid}] {item.header}\n"]
+
+    # ---- 非活性バナー ----
+    if not item.active:
+        migrated_to = _get_custom_attribute(item, "migrated_to", None)
+        if migrated_to:
+            content.append(
+                f"> 🚫 **非活性 (active: false)**: このアイテムは非活性です。[{migrated_to}]({migrated_to}.md) に移行されました。\n"
+            )
+        else:
+            content.append(
+                "> 🚫 **非活性 (active: false)**: このアイテムは非活性です。\n"
+            )
 
     # ---- 警告バナー ----
     if review_state:
@@ -2055,7 +1964,7 @@ def _format_trace_node(
 
 
 def _add_impl_files_to_node(node, uid: str, impl_map: dict, repo_root: Path) -> None:
-    """実装ファイルノードを Rich Tree ノードに追加する（SPEC-020）。
+    """実装ファイルノードを Rich Tree ノードに追加する（TRC-004）。
 
     ref 由来は 📁、アノテーションのみは 📝、不在ファイルは ❌ で表示。
     """
@@ -2396,7 +2305,7 @@ def trace_cmd(
                     gherkin_fingerprints = get_spec_fingerprints(
                         feature_dir, repo_root, all_prefixes
                     )
-                    feature_file_states = _compute_feature_file_states(feature_dir)
+                    feature_file_states = _compute_feature_file_states(feature_dir, repo_root)
 
                 review_state = compute_review_state(
                     raw_items, gherkin_fingerprints, tag_map, feature_file_states
@@ -2628,7 +2537,7 @@ def _generate_basic_files(
         p_items = [uid for uid in all_items_str if uid.startswith(f"{p}-")]
         if not p_items:
             p_items = [uid for uid in all_items_str if uid.startswith(p)]
-        for uid in sorted(p_items):
+        for uid in sorted(p_items, key=lambda u: (all_items_str[u].level, u)):
             docs_nav_entries += f"      - {uid}: items/{uid}.md\n"
 
     # features/ 以下の .md を動的にナビに追加
@@ -2671,7 +2580,7 @@ markdown_extensions:
 
 
 # ---------------------------------------------------------------------------
-# semantic-review コマンド (SPEC-022)
+# semantic-review コマンド (AUT-003)
 # ---------------------------------------------------------------------------
 
 @app.command("semantic-review")
