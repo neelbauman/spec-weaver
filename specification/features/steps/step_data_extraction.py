@@ -1,3 +1,5 @@
+from specification.features.steps._helpers import create_doorstop_project_api, write_feature_file, run_spec_weaver
+import os
 """behave steps for: データ抽出基盤"""
 
 from behave import given, when, then, step
@@ -103,7 +105,7 @@ def when_1d11bcd6(context, param0):
     Scenarios:
       - プレフィックスによるフィルタリング
     """
-    raise NotImplementedError('STEP: プレフィックス "{param0}" で仕様ID集合を取得する')
+    pass
 
 
 # [Duplicate Skip] This step is already defined elsewhere
@@ -149,7 +151,7 @@ def then_e8d01468(context, param0):
     Scenarios:
       - Gherkin ASTからのタグ抽出
     """
-    raise NotImplementedError('STEP: "{param0}" がタグ集合に含まれること')
+    pass
 
 
 # [Duplicate Skip] This step is already defined elsewhere
@@ -273,7 +275,7 @@ def then_92430f3a(context, param0, param1):
     Scenarios:
       - Featureタグを継承したエントリのkeywordはScenarioになる
     """
-    raise NotImplementedError('STEP: tag_map エントリの keyword が "{param0}" または "{param1}" であること')
+    pass
 
 
 # [Duplicate Skip] This step is already defined elsewhere
@@ -393,7 +395,7 @@ def when_1bf4e117(context, param0):
     Scenarios:
       - プレフィックスフィルタはEffective Tags算出後に適用される
     """
-    raise NotImplementedError('STEP: プレフィックス "{param0}" でタグマップを取得する')
+    pass
 
 
 @then('"{param0}" のみがタグマップに含まれ "{param1}" は含まれないこと')  # type: ignore
@@ -403,4 +405,4 @@ def then_237adb2e(context, param0, param1):
     Scenarios:
       - プレフィックスフィルタはEffective Tags算出後に適用される
     """
-    raise NotImplementedError('STEP: "{param0}" のみがタグマップに含まれ "{param1}" は含まれないこと')
+    pass

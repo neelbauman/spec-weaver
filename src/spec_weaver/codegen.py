@@ -12,14 +12,19 @@ Gherkin .feature ファイルから behave テストコードの雛形を自動�
 Docstring 内の Scenarios セクションを自動更新する。
 """
 
+import ast as python_ast
 import difflib
 import hashlib
 import re
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
 from gherkin.parser import Parser
 from gherkin.token_scanner import TokenScanner
+
+# behave ステップデコレータ名
+STEP_DECORATORS = frozenset({"given", "when", "then", "step"})
 
 
 # ---------------------------------------------------------------------------
@@ -84,7 +89,112 @@ def _escape_docstring(text: str) -> str:
 
 
 # ---------------------------------------------------------------------------
-# AST パース・ステップ収集
+# Python ソース AST 解析
+# ---------------------------------------------------------------------------
+
+
+@dataclass
+class StepFunctionInfo:
+    """既存ステップファイル内の1関数ブロックを表すデータクラス。"""
+
+    name: str  # 関数名（e.g., "given_abc12345"）
+    param_texts: list[str]  # デコレータ引数のステップテキスト
+    source_text: str  # デコレータ〜関数末尾の生テキスト（後続の空行・コメント含む）
+    is_stub: bool  # NotImplementedError('STEP:...') を含むか
+
+
+def _extract_step_params(node: python_ast.FunctionDef) -> list[str]:
+    """FunctionDef のデコレータから behave ステップテキストを抽出する。"""
+    params: list[str] = []
+    for deco in node.decorator_list:
+        if (
+            isinstance(deco, python_ast.Call)
+            and isinstance(deco.func, python_ast.Name)
+            and deco.func.id in STEP_DECORATORS
+            and deco.args
+            and isinstance(deco.args[0], python_ast.Constant)
+            and isinstance(deco.args[0].value, str)
+        ):
+            params.append(deco.args[0].value)
+    return params
+
+
+def _has_stub_raise(node: python_ast.FunctionDef) -> bool:
+    """関数内に raise NotImplementedError('STEP: ...') があるか判定する。"""
+    for child in python_ast.walk(node):
+        if isinstance(child, python_ast.Raise) and child.exc:
+            exc = child.exc
+            if (
+                isinstance(exc, python_ast.Call)
+                and isinstance(exc.func, python_ast.Name)
+                and exc.func.id == "NotImplementedError"
+                and exc.args
+                and isinstance(exc.args[0], python_ast.Constant)
+                and isinstance(exc.args[0].value, str)
+                and exc.args[0].value.startswith("STEP:")
+            ):
+                return True
+    return False
+
+
+def _parse_step_file(content: str) -> tuple[str, list[StepFunctionInfo]]:
+    """
+    Python ステップファイルを AST 解析し、(ヘッダー, [StepFunctionInfo]) に分解する。
+
+    ステップデコレータ (given/when/then/step) を持つトップレベル関数のみを抽出する。
+    関数間のコメント・空行・ヘルパー関数は、直前のステップ関数の source_text に含まれる。
+    構文エラーのあるファイルでは (content, []) を返す（マージ不可）。
+    """
+    try:
+        tree = python_ast.parse(content)
+    except SyntaxError:
+        return content, []
+
+    lines = content.splitlines(keepends=True)
+
+    # トップレベルのステップ関数を収集（デコレータ開始行でソート）
+    step_funcs: list[tuple[python_ast.FunctionDef, list[str], int]] = []
+    for node in python_ast.iter_child_nodes(tree):
+        if isinstance(node, python_ast.FunctionDef):
+            params = _extract_step_params(node)
+            if params:
+                start = (
+                    min(d.lineno for d in node.decorator_list)
+                    if node.decorator_list
+                    else node.lineno
+                )
+                step_funcs.append((node, params, start))
+
+    step_funcs.sort(key=lambda x: x[2])
+
+    if not step_funcs:
+        return content, []
+
+    # ヘッダー: 最初のステップ関数のデコレータ開始行より前
+    header = "".join(lines[: step_funcs[0][2] - 1])
+
+    # 各ステップ関数のブロックを構築
+    infos: list[StepFunctionInfo] = []
+    for i, (node, params, start) in enumerate(step_funcs):
+        if i + 1 < len(step_funcs):
+            end = step_funcs[i + 1][2] - 1  # 次の関数の開始行の前まで
+        else:
+            end = len(lines)  # 最後の関数はファイル末尾まで
+        source_text = "".join(lines[start - 1 : end])
+        infos.append(
+            StepFunctionInfo(
+                name=node.name,
+                param_texts=params,
+                source_text=source_text,
+                is_stub=_has_stub_raise(node),
+            )
+        )
+
+    return header, infos
+
+
+# ---------------------------------------------------------------------------
+# Gherkin AST パース・ステップ収集
 # ---------------------------------------------------------------------------
 
 
@@ -127,24 +237,23 @@ def _collect_existing_steps(
 ) -> set[str]:
     """
     指定ディレクトリ配下の Python ファイルから定義済みの behave ステップ文を収集する。
+    AST 解析により、コメント行のデコレータは自然に無視される。
     exclude_file を指定するとそのファイルは走査対象から除外する。
     """
     existing_steps: set[str] = set()
     if not steps_dir.exists():
         return existing_steps
 
-    pattern = re.compile(r'@(?:given|when|then|step)\s*\(\s*["\'](.*?)["\']\s*\)')
-
     for py_file in steps_dir.glob("*.py"):
         if exclude_file and py_file.resolve() == exclude_file.resolve():
             continue
         try:
             content = py_file.read_text(encoding="utf-8")
-            for line in content.splitlines():
-                if line.lstrip().startswith("#"):
-                    continue  # コメント行をスキップ（Duplicate コメントブロックを除外）
-                for match in pattern.finditer(line):
-                    existing_steps.add(match.group(1))
+            tree = python_ast.parse(content)
+            for node in python_ast.walk(tree):
+                if isinstance(node, python_ast.FunctionDef):
+                    for param_text in _extract_step_params(node):
+                        existing_steps.add(param_text)
         except Exception:
             continue
     return existing_steps
@@ -250,35 +359,6 @@ def _generate_file_content(
 # ---------------------------------------------------------------------------
 
 
-def _split_by_decorators(content: str) -> tuple[str, list[str]]:
-    """
-    ファイル内容を (ヘッダー, [@デコレータ起点のブロックリスト]) に分割する。
-    各ブロックは @ で始まり、次の @ の直前で終わる。
-    """
-    parts = re.split(r"(?m)^(?=@)", content)
-    if len(parts) == 1:
-        return content, []
-    return parts[0], parts[1:]
-
-
-def _get_func_name_from_block(block: str) -> str | None:
-    """デコレータ起点のブロックから関数名を取得する。"""
-    m = re.search(r"^def (\w+)\(", block, re.MULTILINE)
-    return m.group(1) if m else None
-
-
-def _get_param_texts_from_block(block: str) -> list[str]:
-    """ブロック内の全てのデコレータからステップのパラメータテキストを抽出する。"""
-    pattern = re.compile(r'@(?:given|when|then|step)\s*\(\s*["\'](.*?)["\']\s*\)')
-    return pattern.findall(block)
-
-
-def _get_primary_param_text(block: str) -> str | None:
-    """ブロックの最初のデコレータのパラメータテキストを取得する。"""
-    pts = _get_param_texts_from_block(block)
-    return pts[0] if pts else None
-
-
 def _extract_scenarios_from_block(block: str) -> list[str]:
     """ブロック内の Scenarios セクションからシナリオ名のリストを返す。"""
     m = re.search(r"Scenarios:\s*\n((?:\s+- .+\n)*)", block)
@@ -308,7 +388,7 @@ def _add_scenarios_to_block(block: str, new_scenarios: list[str]) -> str:
 def _merge_content(
     existing_content: str,
     ideal_order: list[str],
-    ideal_func_to_block: dict[str, str],
+    ideal_func_to_info: dict[str, StepFunctionInfo],
     duplicate_func_names: set[str] | None = None,
 ) -> str:
     """
@@ -318,31 +398,20 @@ def _merge_content(
     - 新規関数: .feature の出現順（ideal_order）に従い適切な位置に挿入
     - スタブ関数で他ファイルに実装済みのもの: Duplicate コメントブロックへ置き換え
     """
-    header, existing_blocks = _split_by_decorators(existing_content)
+    header, existing_infos = _parse_step_file(existing_content)
 
-    # 既存ブロックを (func_name, block_str) のリストに変換
-    result_pairs: list[tuple[str, str]] = []
+    # 既存ブロックのメタデータを構築
+    result_infos: list[StepFunctionInfo] = list(existing_infos)
     existing_param_texts: dict[str, int] = {}
-    for block in existing_blocks:
-        fname = _get_func_name_from_block(block)
-        if fname:
-            idx = len(result_pairs)
-            result_pairs.append((fname, block))
-            for pt in _get_param_texts_from_block(block):
-                existing_param_texts[pt] = idx
-        elif result_pairs:
-            # 関数名が取れないブロック（コメントアウトされた重複など）は直前ブロックに結合
-            prev_name, prev_block = result_pairs[-1]
-            new_block = prev_block + block
-            result_pairs[-1] = (prev_name, new_block)
-            for pt in _get_param_texts_from_block(block):
-                existing_param_texts[pt] = len(result_pairs) - 1
+    for i, info in enumerate(result_infos):
+        for pt in info.param_texts:
+            existing_param_texts[pt] = i
 
-    result_names = [name for name, _ in result_pairs]
+    result_names = [info.name for info in result_infos]
 
     for i, func_name in enumerate(ideal_order):
-        ideal_block = ideal_func_to_block[func_name]
-        ideal_pt = _get_primary_param_text(ideal_block)
+        ideal_info = ideal_func_to_info[func_name]
+        ideal_pt = ideal_info.param_texts[0] if ideal_info.param_texts else None
 
         match_idx = -1
         if func_name in result_names:
@@ -352,15 +421,20 @@ def _merge_content(
 
         if match_idx != -1:
             # 既存関数: Scenarios セクションを更新
-            matched_func_name = result_pairs[match_idx][0]
-            existing_block = result_pairs[match_idx][1]
-            ideal_scenarios = _extract_scenarios_from_block(ideal_block)
-            existing_scenarios = _extract_scenarios_from_block(existing_block)
+            existing_info = result_infos[match_idx]
+            ideal_scenarios = _extract_scenarios_from_block(ideal_info.source_text)
+            existing_scenarios = _extract_scenarios_from_block(
+                existing_info.source_text
+            )
             missing = [s for s in ideal_scenarios if s not in existing_scenarios]
             if missing:
-                result_pairs[match_idx] = (
-                    matched_func_name,
-                    _add_scenarios_to_block(existing_block, missing),
+                result_infos[match_idx] = StepFunctionInfo(
+                    name=existing_info.name,
+                    param_texts=existing_info.param_texts,
+                    source_text=_add_scenarios_to_block(
+                        existing_info.source_text, missing
+                    ),
+                    is_stub=existing_info.is_stub,
                 )
         else:
             # 新規関数: アンカーを探して挿入位置を決定
@@ -372,25 +446,28 @@ def _merge_content(
                     break
 
             insert_pos = anchor_idx + 1  # アンカーなし(-1)のときは先頭(0)
-            new_block = ideal_func_to_block[func_name]
-            result_pairs.insert(insert_pos, (func_name, new_block))
+            result_infos.insert(insert_pos, ideal_info)
             result_names.insert(insert_pos, func_name)
 
     # 他ファイルに実装済みのスタブを Duplicate コメントブロックへ置き換える
     if duplicate_func_names:
-        for i, (func_name, block) in enumerate(result_pairs):
-            if func_name in duplicate_func_names and re.search(
-                r"raise NotImplementedError\('STEP:", block
-            ):
+        for i, info in enumerate(result_infos):
+            if info.name in duplicate_func_names and info.is_stub:
                 commented = "\n".join(
-                    f"# {line}" for line in block.rstrip("\n").split("\n")
+                    f"# {line}"
+                    for line in info.source_text.rstrip("\n").split("\n")
                 )
-                result_pairs[i] = (
-                    func_name,
-                    f"# [Duplicate Skip] This step is already defined elsewhere\n{commented}\n\n",
+                result_infos[i] = StepFunctionInfo(
+                    name=info.name,
+                    param_texts=info.param_texts,
+                    source_text=(
+                        "# [Duplicate Skip] This step is already defined "
+                        f"elsewhere\n{commented}\n\n"
+                    ),
+                    is_stub=False,
                 )
 
-    return header + "".join(block for _, block in result_pairs)
+    return header + "".join(info.source_text for info in result_infos)
 
 
 # ---------------------------------------------------------------------------
@@ -442,15 +519,12 @@ def generate_test_file(
         feature_name, step_registry, global_existing_steps
     )
 
-    # 仮想新規ファイルから関数順序とブロックを取得
-    _, ideal_blocks = _split_by_decorators(ideal_content)
-    ideal_order: list[str] = []
-    ideal_func_to_block: dict[str, str] = {}
-    for block in ideal_blocks:
-        fname = _get_func_name_from_block(block)
-        if fname:
-            ideal_order.append(fname)
-            ideal_func_to_block[fname] = block
+    # 仮想新規ファイルから関数順序と StepFunctionInfo を取得
+    _, ideal_infos = _parse_step_file(ideal_content)
+    ideal_order: list[str] = [info.name for info in ideal_infos]
+    ideal_func_to_info: dict[str, StepFunctionInfo] = {
+        info.name: info for info in ideal_infos
+    }
 
     # 他ファイルに実装済みのステップ関数名を収集（スタブ→Duplicate コメント変換用）
     duplicate_func_names: set[str] = set()
@@ -461,7 +535,7 @@ def generate_test_file(
 
     existing_content = out_file.read_text(encoding="utf-8")
     new_content = _merge_content(
-        existing_content, ideal_order, ideal_func_to_block, duplicate_func_names
+        existing_content, ideal_order, ideal_func_to_info, duplicate_func_names
     )
 
     if new_content == existing_content:

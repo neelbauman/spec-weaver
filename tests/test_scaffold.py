@@ -15,6 +15,7 @@ from spec_weaver.codegen import (
     _step_keyword_to_prefix,
     _resolve_step_prefixes,
     _collect_existing_steps,
+    _parse_step_file,
     generate_test_file,
 )
 
@@ -742,3 +743,98 @@ def test_merge_stub_replaced_with_duplicate_comment(tmp_path):
     # 他のスタブ（foo操作・foo結果）は残っていること
     assert "@when('foo操作を実行する')" in content
     assert "@then('foo結果が得られること')" in content
+
+
+# ---------------------------------------------------------------------------
+# AST 解析テスト
+# ---------------------------------------------------------------------------
+
+
+def test_collect_existing_steps_multiline_decorator(tmp_path):
+    """複数行にまたがるデコレータからもステップ文を抽出できること。"""
+    steps_dir = tmp_path / "steps"
+    steps_dir.mkdir()
+
+    py_file = steps_dir / "step_multi.py"
+    py_file.write_text(
+        "from behave import given\n\n"
+        "@given(\n"
+        "    '複数行のステップ'\n"
+        ")\n"
+        "def given_multi(context):\n"
+        "    pass\n",
+        encoding="utf-8",
+    )
+
+    result = _collect_existing_steps(steps_dir)
+    assert "複数行のステップ" in result
+
+
+def test_collect_existing_steps_non_step_decorator(tmp_path):
+    """@property 等の非ステップデコレータは無視されること。"""
+    steps_dir = tmp_path / "steps"
+    steps_dir.mkdir()
+
+    py_file = steps_dir / "step_helper.py"
+    py_file.write_text(
+        "from behave import given\n\n"
+        "class Helper:\n"
+        "    @property\n"
+        "    def name(self):\n"
+        "        return 'test'\n\n"
+        "@given('正しいステップ')\n"
+        "def given_correct(context):\n"
+        "    pass\n",
+        encoding="utf-8",
+    )
+
+    result = _collect_existing_steps(steps_dir)
+    assert "正しいステップ" in result
+    assert len(result) == 1
+
+
+def test_parse_step_file_multiple_decorators():
+    """1関数に複数のステップデコレータがある場合、すべて param_texts に含まれること。"""
+    content = (
+        '"""steps"""\n'
+        "from behave import given\n\n"
+        "@given('ステップA')\n"
+        "@given('ステップB')\n"
+        "def given_multi(context):\n"
+        "    pass\n"
+    )
+    header, infos = _parse_step_file(content)
+    assert len(infos) == 1
+    assert infos[0].name == "given_multi"
+    assert "ステップA" in infos[0].param_texts
+    assert "ステップB" in infos[0].param_texts
+
+
+def test_parse_step_file_helper_functions():
+    """ステップデコレータのないヘルパー関数は source_text に含まれ、独立ブロックにならないこと。"""
+    content = (
+        '"""steps"""\n'
+        "from behave import given, when\n\n"
+        "@given('最初のステップ')\n"
+        "def given_first(context):\n"
+        "    pass\n\n"
+        "def helper_func():\n"
+        "    return 42\n\n"
+        "@when('次のステップ')\n"
+        "def when_next(context):\n"
+        "    pass\n"
+    )
+    header, infos = _parse_step_file(content)
+    assert len(infos) == 2
+    assert infos[0].name == "given_first"
+    assert infos[1].name == "when_next"
+    # ヘルパー関数は最初のステップ関数の source_text に含まれる
+    assert "helper_func" in infos[0].source_text
+
+
+def test_parse_step_file_syntax_error():
+    """構文エラーのあるファイルでは (content, []) を返すこと。"""
+    content = "def broken(\n"
+    header, infos = _parse_step_file(content)
+    assert header == content
+    assert infos == []

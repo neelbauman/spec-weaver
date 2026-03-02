@@ -94,28 +94,17 @@ def compute_review_state(
             if actual_fp and expected_fp and actual_fp != expected_fp:
                 state.suspect_causes[tag].add("test_fingerprint mismatch")
 
-    # suspect 伝播（上位方向）
-    for start_node in list(state.unreviewed_nodes) + list(state.suspect_causes.keys()):
-        queue = list(parents[start_node])
-        visited: Set[str] = set()
-        while queue:
-            curr = queue.pop(0)
-            if curr not in visited:
-                visited.add(curr)
-                if curr != start_node:
-                    state.suspect_causes[curr].add(start_node)
-                    queue.extend(parents[curr])
-
-    # suspect 伝播（下位方向）
-    for start_node in list(state.unreviewed_nodes) + list(state.suspect_causes.keys()):
-        queue = list(children[start_node])
-        visited = set()
-        while queue:
-            curr = queue.pop(0)
-            if curr not in visited:
-                visited.add(curr)
-                if curr != start_node:
-                    state.suspect_causes[curr].add(start_node)
-                    queue.extend(children[curr])
+    # suspect 伝播: Doorstop アイテムから直接の子 feature ファイルにのみ伝播する。
+    # Doorstop アイテム間の suspect 伝播は Doorstop のネイティブ cleared 機構で
+    # 既に処理されているため、spec-weaver 側で再帰的に伝播させる必要はない。
+    # 双方向の再帰伝播は、1ノードの suspect が連結グラフ全体に波及するバグを
+    # 引き起こすため行わない。
+    direct_suspects = set(state.suspect_causes.keys()) | state.unreviewed_nodes
+    for node in direct_suspects:
+        if node in all_items:
+            for child in children.get(node, set()):
+                # Doorstop アイテム以外の子（= feature ファイル）にのみ伝播
+                if child not in all_items:
+                    state.suspect_causes[child].add(node)
 
     return state

@@ -36,6 +36,7 @@ from spec_weaver.doorstop import (
     get_all_prefixes,
     get_item_warnings,
     update_item_attribute,
+    clear_doorstop_suspects,
 )
 from spec_weaver.review_state import compute_review_state, ReviewState
 from spec_weaver.gherkin import (
@@ -897,6 +898,14 @@ def clear_cmd(
                         f"✅ [bold]{tag}[/bold] の test_fingerprint を更新しました。 [dim]{fp}[/dim]"
                     )
                     updated_count += 1
+                # Doorstop ネイティブ suspect リンクも解除
+                try:
+                    if clear_doorstop_suspects(repo_root, tag):
+                        console.print(
+                            f"✅ [bold]{tag}[/bold] の Doorstop suspect リンクを解除しました。"
+                        )
+                except Exception:
+                    pass
 
             if updated_count > 0:
                 console.print(
@@ -916,6 +925,18 @@ def clear_cmd(
             console.print(f"[bold green]✅ {item_id} の test_fingerprint を更新しました。[/bold green]")
             console.print(f"[dim]新ハッシュ: {actual_fp}[/dim]")
         else:
+            # Gherkin シナリオがなくても Doorstop suspect リンクの解除は試みる
+            pass
+
+        # Doorstop ネイティブ suspect リンクも解除
+        doorstop_cleared = False
+        try:
+            doorstop_cleared = clear_doorstop_suspects(repo_root, item_id)
+        except Exception:
+            pass
+        if doorstop_cleared:
+            console.print(f"[bold green]✅ {item_id} の Doorstop suspect リンクを解除しました。[/bold green]")
+        elif not actual_fp:
             console.print(
                 f"[bold red]❌ {item_id} に紐づく Gherkin シナリオが見つかりません。[/bold red]"
             )

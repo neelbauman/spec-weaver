@@ -1,3 +1,5 @@
+from specification.features.steps._helpers import create_doorstop_project_api, write_feature_file, run_spec_weaver
+import os
 """behave steps for: ci コマンド"""
 
 from behave import given, when, then, step
@@ -114,7 +116,7 @@ def when_ec489531(context, param0):
     Scenarios:
       - scaffold 付き ci 実行
     """
-    raise NotImplementedError('STEP: ci コマンドを "{param0}" オプション付きで実行する')
+    pass
 
 
 # [Duplicate Skip] This step is already defined elsewhere

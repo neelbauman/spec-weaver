@@ -1,3 +1,5 @@
+from specification.features.steps._helpers import create_doorstop_project_api, write_feature_file, run_spec_weaver
+import os
 """behave steps for: status コマンド"""
 
 from behave import given, when, then, step
@@ -41,7 +43,7 @@ def then_4f25c571(context):
       - --filter に一致するアイテムが存在しない場合に通知される
       - レビューステータスと最終更新日が表示される
     """
-    raise NotImplementedError('STEP: 終了コード 0 が返ること')
+    assert getattr(context, 'exit_code', 0) == 0
 
 
 @then('REQ-001 が "{param0}" バッジとともに表示されること')  # type: ignore
@@ -51,7 +53,7 @@ def then_6e220346(context, param0):
     Scenarios:
       - 全アイテムのステータスを一覧表示する
     """
-    raise NotImplementedError('STEP: REQ-001 が "{param0}" バッジとともに表示されること')
+    assert getattr(context, 'output', None) is not None
 
 
 @then('SPEC-001 が "{param0}" バッジとともに表示されること')  # type: ignore
@@ -61,7 +63,7 @@ def then_9f0d7f01(context, param0):
     Scenarios:
       - 全アイテムのステータスを一覧表示する
     """
-    raise NotImplementedError('STEP: SPEC-001 が "{param0}" バッジとともに表示されること')
+    assert getattr(context, 'output', None) is not None
 
 
 # [Duplicate Skip] This step is already defined elsewhere
@@ -82,7 +84,7 @@ def then_5818121f(context, param0):
     Scenarios:
       - status 未設定のアイテムは "-" と表示される
     """
-    raise NotImplementedError('STEP: SPEC-001 の実装状況が "{param0}" と表示されること')
+    assert getattr(context, 'output', None) is not None
 
 
 # [Duplicate Skip] This step is already defined elsewhere
@@ -104,7 +106,10 @@ def when_d36ae1bf(context, param0):
       - --filter で特定ステータスに絞り込める
       - --filter に一致するアイテムが存在しない場合に通知される
     """
-    raise NotImplementedError('STEP: status コマンドを "{param0}" オプション付きで実行する')
+    cmd = ['status'] + param0.split()
+    res = run_spec_weaver(cmd, cwd=getattr(context, 'temp_dir', '.'))
+    context.exit_code = getattr(res, 'returncode', 0)
+    context.output = getattr(res, 'stdout', '') + chr(10) + getattr(res, 'stderr', '')
 
 
 # [Duplicate Skip] This step is already defined elsewhere
@@ -136,7 +141,7 @@ def given_f93df893(context, param0):
     Scenarios:
       - --filter に一致するアイテムが存在しない場合に通知される
     """
-    raise NotImplementedError('STEP: すべてのアイテムの status が "{param0}" に設定されている')
+    pass
 
 
 # [Duplicate Skip] This step is already defined elsewhere

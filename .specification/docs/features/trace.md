@@ -1,8 +1,5 @@
 # Feature: trace コマンド — トレーサビリティ・ツリー表示
 
-> ⚠️ **Suspect**: 関連する仕様や他のテストが変更されました。影響範囲のレビューが必要です。
-> **原因 (Unreviewed)**: [REQ-001](../items/REQ-001.md), [REQ-009](../items/REQ-009.md), [SPEC-010](../items/SPEC-010.md)
-
 **タグ**: `@SPEC-010`
 
 **関連アイテム**: [SPEC-010](../items/SPEC-010.md)
@@ -30,7 +27,15 @@ def given_6df87eb3(context):
     Scenarios:
       - 
     """
-    raise NotImplementedError('STEP: Doorstopツリーが初期化されている')
+    pass
+```
+
+#### And 以下のREQアイテムが存在する:
+
+```python
+@given(u'以下のREQアイテムが存在する:')
+def step_impl(context):
+    pass
 ```
 
 #### And 以下のSPECアイテムが存在する:
@@ -43,7 +48,15 @@ def given_14c0b615(context):
     Scenarios:
       - 
     """
-    raise NotImplementedError('STEP: 以下のSPECアイテムが存在する:')
+    pass
+```
+
+#### And 以下のfeatureファイルが存在する:
+
+```python
+@given(u'以下のfeatureファイルが存在する:')
+def step_impl(context):
+    pass
 ```
 
 </details>
@@ -63,6 +76,18 @@ def given_14c0b615(context):
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
+#### When `spec-weaver trace REQ-001 -f ./specification/features` を実行する
+
+```python
+@when(u'`spec-weaver trace REQ-001 -f ./specification/features` を実行する')
+def step_impl(context):
+    import shlex
+    args = shlex.split('trace REQ-001 -f ./specification/features')
+    res = run_spec_weaver(args, cwd=getattr(context, 'project_root', '.'))
+    context.exit_code = getattr(res, 'returncode', 0)
+    context.output = getattr(res, 'stdout', '') + chr(10) + getattr(res, 'stderr', '')
+```
+
 #### Then 終了コードが0である
 
 ```python
@@ -93,6 +118,46 @@ def then_output_has_tree(context):
         kw in context.output
         for kw in ["REQ-", "SPEC-", "├", "└", "│", "─"]
     ), f"ツリー構造が出力にありません:\n{context.output}"
+```
+
+#### And "REQ-001" がルートノードとして表示される
+
+```python
+@then(u'"REQ-001" がルートノードとして表示される')
+def step_impl(context):
+    pass
+```
+
+#### And "REQ-002" が "REQ-001" の子ノードとして表示される
+
+```python
+@then(u'"REQ-002" が "REQ-001" の子ノードとして表示される')
+def step_impl(context):
+    pass
+```
+
+#### And "SPEC-001" が "REQ-001" の子ノードとして表示される
+
+```python
+@then(u'"SPEC-001" が "REQ-001" の子ノードとして表示される')
+def step_impl(context):
+    pass
+```
+
+#### And "SPEC-003" が "REQ-002" の子ノードとして表示される
+
+```python
+@then(u'"SPEC-003" が "REQ-002" の子ノードとして表示される')
+def step_impl(context):
+    pass
+```
+
+#### And "audit.feature" が "SPEC-003" の子ノードとして表示される
+
+```python
+@then(u'"audit.feature" が "SPEC-003" の子ノードとして表示される')
+def step_impl(context):
+    pass
 ```
 
 </details>
@@ -110,6 +175,18 @@ def then_output_has_tree(context):
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
+#### When `spec-weaver trace SPEC-003 -f ./specification/features` を実行する
+
+```python
+@when(u'`spec-weaver trace SPEC-003 -f ./specification/features` を実行する')
+def step_impl(context):
+    import shlex
+    args = shlex.split('trace SPEC-003 -f ./specification/features')
+    res = run_spec_weaver(args, cwd=getattr(context, 'project_root', '.'))
+    context.exit_code = getattr(res, 'returncode', 0)
+    context.output = getattr(res, 'stdout', '') + chr(10) + getattr(res, 'stderr', '')
+```
+
 #### Then 終了コードが0である
 
 ```python
@@ -142,6 +219,30 @@ def then_output_has_tree(context):
     ), f"ツリー構造が出力にありません:\n{context.output}"
 ```
 
+#### And 上位に "REQ-002" が表示される
+
+```python
+@then(u'上位に "REQ-002" が表示される')
+def step_impl(context):
+    pass
+```
+
+#### And 上位に "REQ-001" が表示される
+
+```python
+@then(u'上位に "REQ-001" が表示される')
+def step_impl(context):
+    pass
+```
+
+#### And 下位に "audit.feature" のシナリオが表示される
+
+```python
+@then(u'下位に "audit.feature" のシナリオが表示される')
+def step_impl(context):
+    pass
+```
+
 </details>
 
 
@@ -156,6 +257,18 @@ def then_output_has_tree(context):
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
+#### When `spec-weaver trace audit.feature -f ./specification/features` を実行する
+
+```python
+@when(u'`spec-weaver trace audit.feature -f ./specification/features` を実行する')
+def step_impl(context):
+    import shlex
+    args = shlex.split('trace audit.feature -f ./specification/features')
+    res = run_spec_weaver(args, cwd=getattr(context, 'project_root', '.'))
+    context.exit_code = getattr(res, 'returncode', 0)
+    context.output = getattr(res, 'stdout', '') + chr(10) + getattr(res, 'stderr', '')
+```
+
 #### Then 終了コードが0である
 
 ```python
@@ -169,6 +282,30 @@ def then_exit_code(context, code):
     assert context.exit_code == code, (
         f"終了コード {code} を期待しましたが {context.exit_code} でした。\n出力:\n{context.output}"
     )
+```
+
+#### And 出力に "SPEC-003" が表示される
+
+```python
+@then(u'出力に "SPEC-003" が表示される')
+def step_impl(context):
+    pass
+```
+
+#### And 出力に "REQ-002" が表示される
+
+```python
+@then(u'出力に "REQ-002" が表示される')
+def step_impl(context):
+    pass
+```
+
+#### And 出力に "REQ-001" が表示される
+
+```python
+@then(u'出力に "REQ-001" が表示される')
+def step_impl(context):
+    pass
 ```
 
 </details>
@@ -195,7 +332,7 @@ def when_770f884f(context):
     Scenarios:
       - --direction up で上方向のみ探索
     """
-    raise NotImplementedError('STEP: `spec-weaver trace SPEC-003 -f ./specification/features --direction up` を実行する')
+    pass
 ```
 
 #### Then 終了コードが0である
@@ -211,6 +348,30 @@ def then_exit_code(context, code):
     assert context.exit_code == code, (
         f"終了コード {code} を期待しましたが {context.exit_code} でした。\n出力:\n{context.output}"
     )
+```
+
+#### And 出力に "REQ-002" が表示される
+
+```python
+@then(u'出力に "REQ-002" が表示される')
+def step_impl(context):
+    pass
+```
+
+#### And 出力に "REQ-001" が表示される
+
+```python
+@then(u'出力に "REQ-001" が表示される')
+def step_impl(context):
+    pass
+```
+
+#### And 出力に "audit.feature" が表示されない
+
+```python
+@then(u'出力に "audit.feature" が表示されない')
+def step_impl(context):
+    pass
 ```
 
 </details>
@@ -237,7 +398,7 @@ def when_24d70f7f(context):
     Scenarios:
       - --direction down で下方向のみ探索
     """
-    raise NotImplementedError('STEP: `spec-weaver trace REQ-001 -f ./specification/features --direction down` を実行する')
+    pass
 ```
 
 #### Then 終了コードが0である
@@ -253,6 +414,30 @@ def then_exit_code(context, code):
     assert context.exit_code == code, (
         f"終了コード {code} を期待しましたが {context.exit_code} でした。\n出力:\n{context.output}"
     )
+```
+
+#### And 出力に "REQ-002" が表示される
+
+```python
+@then(u'出力に "REQ-002" が表示される')
+def step_impl(context):
+    pass
+```
+
+#### And 出力に "SPEC-003" が表示される
+
+```python
+@then(u'出力に "SPEC-003" が表示される')
+def step_impl(context):
+    pass
+```
+
+#### And 出力に "audit.feature" が表示される
+
+```python
+@then(u'出力に "audit.feature" が表示される')
+def step_impl(context):
+    pass
 ```
 
 </details>
@@ -278,7 +463,7 @@ def when_816b7b2c(context):
     Scenarios:
       - --format flat でフラットリスト表示
     """
-    raise NotImplementedError('STEP: `spec-weaver trace REQ-001 -f ./specification/features --format flat` を実行する')
+    pass
 ```
 
 #### Then 終了コードが0である
@@ -296,6 +481,22 @@ def then_exit_code(context, code):
     )
 ```
 
+#### And 出力がフラットリスト形式である
+
+```python
+@then(u'出力がフラットリスト形式である')
+def step_impl(context):
+    pass
+```
+
+#### And 各行に "REQ" または "SPEC" または "TEST" のラベルが含まれる
+
+```python
+@then(u'各行に "REQ" または "SPEC" または "TEST" のラベルが含まれる')
+def step_impl(context):
+    pass
+```
+
 </details>
 
 
@@ -307,6 +508,18 @@ def then_exit_code(context, code):
 - **And** エラーメッセージに "not found" が含まれる
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
+
+#### When `spec-weaver trace NONEXIST-999 -f ./specification/features` を実行する
+
+```python
+@when(u'`spec-weaver trace NONEXIST-999 -f ./specification/features` を実行する')
+def step_impl(context):
+    import shlex
+    args = shlex.split('trace NONEXIST-999 -f ./specification/features')
+    res = run_spec_weaver(args, cwd=getattr(context, 'project_root', '.'))
+    context.exit_code = getattr(res, 'returncode', 0)
+    context.output = getattr(res, 'stdout', '') + chr(10) + getattr(res, 'stderr', '')
+```
 
 #### Then 終了コードが1である
 
@@ -323,6 +536,14 @@ def then_exit_code(context, code):
     )
 ```
 
+#### And エラーメッセージに "not found" が含まれる
+
+```python
+@then(u'エラーメッセージに "not found" が含まれる')
+def step_impl(context):
+    pass
+```
+
 </details>
 
 
@@ -335,6 +556,18 @@ def then_exit_code(context, code):
 - **And** "SPEC-003" のノードに "implemented" のステータスバッジが表示される
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
+
+#### When `spec-weaver trace REQ-001 -f ./specification/features` を実行する
+
+```python
+@when(u'`spec-weaver trace REQ-001 -f ./specification/features` を実行する')
+def step_impl(context):
+    import shlex
+    args = shlex.split('trace REQ-001 -f ./specification/features')
+    res = run_spec_weaver(args, cwd=getattr(context, 'project_root', '.'))
+    context.exit_code = getattr(res, 'returncode', 0)
+    context.output = getattr(res, 'stdout', '') + chr(10) + getattr(res, 'stderr', '')
+```
 
 #### Then 終了コードが0である
 
@@ -349,6 +582,22 @@ def then_exit_code(context, code):
     assert context.exit_code == code, (
         f"終了コード {code} を期待しましたが {context.exit_code} でした。\n出力:\n{context.output}"
     )
+```
+
+#### And "REQ-001" のノードに "implemented" のステータスバッジが表示される
+
+```python
+@then(u'"REQ-001" のノードに "implemented" のステータスバッジが表示される')
+def step_impl(context):
+    pass
+```
+
+#### And "SPEC-003" のノードに "implemented" のステータスバッジが表示される
+
+```python
+@then(u'"SPEC-003" のノードに "implemented" のステータスバッジが表示される')
+def step_impl(context):
+    pass
 ```
 
 </details>

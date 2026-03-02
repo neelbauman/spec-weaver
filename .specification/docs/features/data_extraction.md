@@ -1,8 +1,5 @@
 # Feature: データ抽出基盤
 
-> ⚠️ **Suspect**: 関連する仕様や他のテストが変更されました。影響範囲のレビューが必要です。
-> **原因 (Unreviewed)**: [REQ-001](../items/REQ-001.md), [REQ-002](../items/REQ-002.md), [SPEC-002](../items/SPEC-002.md), [SPEC-021](../items/SPEC-021.md)
-
 **タグ**: `@SPEC-002`
 
 **関連アイテム**: [SPEC-002](../items/SPEC-002.md) / [SPEC-021](../items/SPEC-021.md)
@@ -16,6 +13,35 @@ Doorstop と Gherkin から仕様データとテストタグを正確に抽出�
 - **When** 仕様ID集合を取得する
 - **Then** アクティブかつtestableな仕様IDのみが返されること
 
+<details><summary><b>Step Definitions (Source Code)</b></summary>
+
+#### Given Doorstopプロジェクトにアクティブな仕様アイテムが存在する
+
+```python
+@given(u'Doorstopプロジェクトにアクティブな仕様アイテムが存在する')
+def step_impl(context):
+    pass
+```
+
+#### When 仕様ID集合を取得する
+
+```python
+@when(u'仕様ID集合を取得する')
+def step_impl(context):
+    pass
+```
+
+#### Then アクティブかつtestableな仕様IDのみが返されること
+
+```python
+@then(u'アクティブかつtestableな仕様IDのみが返されること')
+def step_impl(context):
+    pass
+```
+
+</details>
+
+
 ---
 ## Scenario: 非アクティブなアイテムの除外
 
@@ -23,12 +49,70 @@ Doorstop と Gherkin から仕様データとテストタグを正確に抽出�
 - **When** 仕様ID集合を取得する
 - **Then** 非アクティブなアイテムは結果に含まれないこと
 
+<details><summary><b>Step Definitions (Source Code)</b></summary>
+
+#### Given Doorstopプロジェクトに active: false のアイテムが存在する
+
+```python
+@given(u'Doorstopプロジェクトに active: false のアイテムが存在する')
+def step_impl(context):
+    pass
+```
+
+#### When 仕様ID集合を取得する
+
+```python
+@when(u'仕様ID集合を取得する')
+def step_impl(context):
+    pass
+```
+
+#### Then 非アクティブなアイテムは結果に含まれないこと
+
+```python
+@then(u'非アクティブなアイテムは結果に含まれないこと')
+def step_impl(context):
+    pass
+```
+
+</details>
+
+
 ---
 ## Scenario: テスト不可能な仕様の除外
 
 - **Given** Doorstopプロジェクトに testable: false のアイテムが存在する
 - **When** 仕様ID集合を取得する
 - **Then** testable: false のアイテムは結果に含まれないこと
+
+<details><summary><b>Step Definitions (Source Code)</b></summary>
+
+#### Given Doorstopプロジェクトに testable: false のアイテムが存在する
+
+```python
+@given(u'Doorstopプロジェクトに testable: false のアイテムが存在する')
+def step_impl(context):
+    pass
+```
+
+#### When 仕様ID集合を取得する
+
+```python
+@when(u'仕様ID集合を取得する')
+def step_impl(context):
+    pass
+```
+
+#### Then testable: false のアイテムは結果に含まれないこと
+
+```python
+@then(u'testable: false のアイテムは結果に含まれないこと')
+def step_impl(context):
+    pass
+```
+
+</details>
+
 
 ---
 ## Scenario: プレフィックスによるフィルタリング
@@ -38,6 +122,14 @@ Doorstop と Gherkin から仕様データとテストタグを正確に抽出�
 - **Then** SPECプレフィックスのアイテムのみが返されること
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
+
+#### Given DoorstopプロジェクトにREQアイテムとSPECアイテムが混在する
+
+```python
+@given(u'DoorstopプロジェクトにREQアイテムとSPECアイテムが混在する')
+def step_impl(context):
+    pass
+```
 
 #### When プレフィックス "SPEC" で仕様ID集合を取得する
 
@@ -49,7 +141,15 @@ def when_1d11bcd6(context, param0):
     Scenarios:
       - プレフィックスによるフィルタリング
     """
-    raise NotImplementedError('STEP: プレフィックス "{param0}" で仕様ID集合を取得する')
+    pass
+```
+
+#### Then SPECプレフィックスのアイテムのみが返されること
+
+```python
+@then(u'SPECプレフィックスのアイテムのみが返されること')
+def step_impl(context):
+    pass
 ```
 
 </details>
@@ -64,6 +164,22 @@ def when_1d11bcd6(context, param0):
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
+#### Given Gherkin .feature ファイルに @SPEC-001 タグが付与されている
+
+```python
+@given(u'Gherkin .feature ファイルに @SPEC-001 タグが付与されている')
+def step_impl(context):
+    pass
+```
+
+#### When タグ集合を取得する
+
+```python
+@when(u'タグ集合を取得する')
+def step_impl(context):
+    pass
+```
+
 #### Then "SPEC-001" がタグ集合に含まれること
 
 ```python
@@ -74,7 +190,7 @@ def then_e8d01468(context, param0):
     Scenarios:
       - Gherkin ASTからのタグ抽出
     """
-    raise NotImplementedError('STEP: "{param0}" がタグ集合に含まれること')
+    pass
 ```
 
 </details>
@@ -87,6 +203,35 @@ def then_e8d01468(context, param0):
 - **When** タグ集合を取得する
 - **Then** 両方のレベルのタグがすべて抽出されること
 
+<details><summary><b>Step Definitions (Source Code)</b></summary>
+
+#### Given Feature レベルと Scenario レベルに異なるSPECタグが付与されている
+
+```python
+@given(u'Feature レベルと Scenario レベルに異なるSPECタグが付与されている')
+def step_impl(context):
+    pass
+```
+
+#### When タグ集合を取得する
+
+```python
+@when(u'タグ集合を取得する')
+def step_impl(context):
+    pass
+```
+
+#### Then 両方のレベルのタグがすべて抽出されること
+
+```python
+@then(u'両方のレベルのタグがすべて抽出されること')
+def step_impl(context):
+    pass
+```
+
+</details>
+
+
 ---
 ## Scenario: サブディレクトリ内のfeatureファイルの再帰探索
 
@@ -94,12 +239,70 @@ def then_e8d01468(context, param0):
 - **When** タグ集合を取得する
 - **Then** サブディレクトリ内のタグも含めて抽出されること
 
+<details><summary><b>Step Definitions (Source Code)</b></summary>
+
+#### Given サブディレクトリに .feature ファイルが存在する
+
+```python
+@given(u'サブディレクトリに .feature ファイルが存在する')
+def step_impl(context):
+    pass
+```
+
+#### When タグ集合を取得する
+
+```python
+@when(u'タグ集合を取得する')
+def step_impl(context):
+    pass
+```
+
+#### Then サブディレクトリ内のタグも含めて抽出されること
+
+```python
+@then(u'サブディレクトリ内のタグも含めて抽出されること')
+def step_impl(context):
+    pass
+```
+
+</details>
+
+
 ---
 ## Scenario: Gherkin構文エラーの検出
 
 - **Given** 構文的に不正な .feature ファイルが存在する
 - **When** タグ集合を取得する
 - **Then** ValueError が発生しGherkin構文エラーが報告されること
+
+<details><summary><b>Step Definitions (Source Code)</b></summary>
+
+#### Given 構文的に不正な .feature ファイルが存在する
+
+```python
+@given(u'構文的に不正な .feature ファイルが存在する')
+def step_impl(context):
+    pass
+```
+
+#### When タグ集合を取得する
+
+```python
+@when(u'タグ集合を取得する')
+def step_impl(context):
+    pass
+```
+
+#### Then ValueError が発生しGherkin構文エラーが報告されること
+
+```python
+@then(u'ValueError が発生しGherkin構文エラーが報告されること')
+def step_impl(context):
+    pass
+```
+
+</details>
+
 
 
 ---

@@ -1,9 +1,9 @@
-# spec-weaver-fingerprint: 03feca4dab632e05bd3ab970a35ad511bb4b89ab75b49b6901c80febd5e09254
+# spec-weaver-fingerprint: eef2188493125771955fce2ae1ac1e72af6262f3e7416d405156ad8c2d74f3da
 @SPEC-003
 Feature: audit コマンド
   仕様とテストの乖離を静的に検知し、CI/CD品質ゲートとして機能する。
 
-  Scenario: 完全一致時の監査成功
+  Scenario: 完全一致で、監査が成功する
     Given すべてのtestable仕様に対応するGherkinテストが存在する
     When  audit コマンドを実行する
     Then  終了コード 0 が返ること
@@ -15,11 +15,11 @@ Feature: audit コマンド
     Then  終了コード 1 が返ること
     And   テストが実装されていない仕様として "SPEC-002" が報告されること
 
-  Scenario: 孤児タグの検出
+  Scenario: orphanタグの検出
     Given Gherkinに仕様書に存在しない "@SPEC-999" タグが含まれている
     When  audit コマンドを実行する
     Then  終了コード 1 が返ること
-    And   孤児タグとして "@SPEC-999" が報告されること
+    And   orphanタグとして "@SPEC-999" が報告されること
 
   Scenario: テスト漏れと孤児タグの同時検出
     Given 仕様 "SPEC-002" のテストが未実装で "@SPEC-999" が孤児タグである

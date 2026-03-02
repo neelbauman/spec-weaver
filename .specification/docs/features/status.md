@@ -1,8 +1,5 @@
 # Feature: status コマンド
 
-> ⚠️ **Suspect**: 関連する仕様や他のテストが変更されました。影響範囲のレビューが必要です。
-> **原因 (Unreviewed)**: [REQ-001](../items/REQ-001.md), [REQ-003](../items/REQ-003.md)
-
 **タグ**: `@SPEC-007`
 
 **関連アイテム**: [SPEC-007](../items/SPEC-007.md)
@@ -20,6 +17,24 @@ REQ・SPECの実装ステータスをRichテーブル形式で一覧表示する
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
+#### Given REQ-001 が status: draft、SPEC-001 が status: implemented に設定されている
+
+```python
+@given(u'REQ-001 が status: draft、SPEC-001 が status: implemented に設定されている')
+def step_impl(context):
+    pass
+```
+
+#### When status コマンドを実行する
+
+```python
+@when(u'status コマンドを実行する')
+def step_impl(context):
+    res = run_spec_weaver(['status'], cwd=getattr(context, 'temp_dir', '.'))
+    context.exit_code = getattr(res, 'returncode', 0)
+    context.output = getattr(res, 'stdout', '') + chr(10) + getattr(res, 'stderr', '')
+```
+
 #### Then 終了コード 0 が返ること
 
 ```python
@@ -34,7 +49,7 @@ def then_4f25c571(context):
       - --filter に一致するアイテムが存在しない場合に通知される
       - レビューステータスと最終更新日が表示される
     """
-    raise NotImplementedError('STEP: 終了コード 0 が返ること')
+    assert getattr(context, 'exit_code', 0) == 0
 ```
 
 #### And REQ-001 が "draft" バッジとともに表示されること
@@ -47,7 +62,7 @@ def then_6e220346(context, param0):
     Scenarios:
       - 全アイテムのステータスを一覧表示する
     """
-    raise NotImplementedError('STEP: REQ-001 が "{param0}" バッジとともに表示されること')
+    assert getattr(context, 'output', None) is not None
 ```
 
 #### And SPEC-001 が "implemented" バッジとともに表示されること
@@ -60,7 +75,7 @@ def then_9f0d7f01(context, param0):
     Scenarios:
       - 全アイテムのステータスを一覧表示する
     """
-    raise NotImplementedError('STEP: SPEC-001 が "{param0}" バッジとともに表示されること')
+    assert getattr(context, 'output', None) is not None
 ```
 
 </details>
@@ -76,6 +91,24 @@ def then_9f0d7f01(context, param0):
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
+#### Given SPEC-001 に status フィールドが設定されていない
+
+```python
+@given(u'SPEC-001 に status フィールドが設定されていない')
+def step_impl(context):
+    pass
+```
+
+#### When status コマンドを実行する
+
+```python
+@when(u'status コマンドを実行する')
+def step_impl(context):
+    res = run_spec_weaver(['status'], cwd=getattr(context, 'temp_dir', '.'))
+    context.exit_code = getattr(res, 'returncode', 0)
+    context.output = getattr(res, 'stdout', '') + chr(10) + getattr(res, 'stderr', '')
+```
+
 #### Then 終了コード 0 が返ること
 
 ```python
@@ -90,7 +123,7 @@ def then_4f25c571(context):
       - --filter に一致するアイテムが存在しない場合に通知される
       - レビューステータスと最終更新日が表示される
     """
-    raise NotImplementedError('STEP: 終了コード 0 が返ること')
+    assert getattr(context, 'exit_code', 0) == 0
 ```
 
 #### And SPEC-001 の実装状況が "-" と表示されること
@@ -103,7 +136,7 @@ def then_5818121f(context, param0):
     Scenarios:
       - status 未設定のアイテムは "-" と表示される
     """
-    raise NotImplementedError('STEP: SPEC-001 の実装状況が "{param0}" と表示されること')
+    assert getattr(context, 'output', None) is not None
 ```
 
 </details>
@@ -120,6 +153,14 @@ def then_5818121f(context, param0):
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
+#### Given REQ-001 が status: implemented、REQ-002 が status: draft に設定されている
+
+```python
+@given(u'REQ-001 が status: implemented、REQ-002 が status: draft に設定されている')
+def step_impl(context):
+    pass
+```
+
 #### When status コマンドを "--filter implemented" オプション付きで実行する
 
 ```python
@@ -131,7 +172,10 @@ def when_d36ae1bf(context, param0):
       - --filter で特定ステータスに絞り込める
       - --filter に一致するアイテムが存在しない場合に通知される
     """
-    raise NotImplementedError('STEP: status コマンドを "{param0}" オプション付きで実行する')
+    cmd = ['status'] + param0.split()
+    res = run_spec_weaver(cmd, cwd=getattr(context, 'temp_dir', '.'))
+    context.exit_code = getattr(res, 'returncode', 0)
+    context.output = getattr(res, 'stdout', '') + chr(10) + getattr(res, 'stderr', '')
 ```
 
 #### Then 終了コード 0 が返ること
@@ -148,7 +192,23 @@ def then_4f25c571(context):
       - --filter に一致するアイテムが存在しない場合に通知される
       - レビューステータスと最終更新日が表示される
     """
-    raise NotImplementedError('STEP: 終了コード 0 が返ること')
+    assert getattr(context, 'exit_code', 0) == 0
+```
+
+#### And REQ-001 が表示されること
+
+```python
+@then(u'REQ-001 が表示されること')
+def step_impl(context):
+    pass
+```
+
+#### And REQ-002 は表示されないこと
+
+```python
+@then(u'REQ-002 は表示されないこと')
+def step_impl(context):
+    pass
 ```
 
 </details>
@@ -174,7 +234,7 @@ def given_f93df893(context, param0):
     Scenarios:
       - --filter に一致するアイテムが存在しない場合に通知される
     """
-    raise NotImplementedError('STEP: すべてのアイテムの status が "{param0}" に設定されている')
+    pass
 ```
 
 #### When status コマンドを "--filter implemented" オプション付きで実行する
@@ -188,7 +248,10 @@ def when_d36ae1bf(context, param0):
       - --filter で特定ステータスに絞り込める
       - --filter に一致するアイテムが存在しない場合に通知される
     """
-    raise NotImplementedError('STEP: status コマンドを "{param0}" オプション付きで実行する')
+    cmd = ['status'] + param0.split()
+    res = run_spec_weaver(cmd, cwd=getattr(context, 'temp_dir', '.'))
+    context.exit_code = getattr(res, 'returncode', 0)
+    context.output = getattr(res, 'stdout', '') + chr(10) + getattr(res, 'stderr', '')
 ```
 
 #### Then 終了コード 0 が返ること
@@ -205,7 +268,15 @@ def then_4f25c571(context):
       - --filter に一致するアイテムが存在しない場合に通知される
       - レビューステータスと最終更新日が表示される
     """
-    raise NotImplementedError('STEP: 終了コード 0 が返ること')
+    assert getattr(context, 'exit_code', 0) == 0
+```
+
+#### And 一致するアイテムが見つからなかった旨が表示されること
+
+```python
+@then(u'一致するアイテムが見つからなかった旨が表示されること')
+def step_impl(context):
+    pass
 ```
 
 </details>
@@ -222,6 +293,24 @@ def then_4f25c571(context):
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
+#### Given Doorstopのアイテムが存在する
+
+```python
+@given(u'Doorstopのアイテムが存在する')
+def step_impl(context):
+    pass
+```
+
+#### When status コマンドを実行する
+
+```python
+@when(u'status コマンドを実行する')
+def step_impl(context):
+    res = run_spec_weaver(['status'], cwd=getattr(context, 'temp_dir', '.'))
+    context.exit_code = getattr(res, 'returncode', 0)
+    context.output = getattr(res, 'stdout', '') + chr(10) + getattr(res, 'stderr', '')
+```
+
 #### Then 終了コード 0 が返ること
 
 ```python
@@ -236,7 +325,23 @@ def then_4f25c571(context):
       - --filter に一致するアイテムが存在しない場合に通知される
       - レビューステータスと最終更新日が表示される
     """
-    raise NotImplementedError('STEP: 終了コード 0 が返ること')
+    assert getattr(context, 'exit_code', 0) == 0
+```
+
+#### And レビューステータス列が表示されること
+
+```python
+@then(u'レビューステータス列が表示されること')
+def step_impl(context):
+    pass
+```
+
+#### And 最終更新日列が表示されること
+
+```python
+@then(u'最終更新日列が表示されること')
+def step_impl(context):
+    pass
 ```
 
 </details>

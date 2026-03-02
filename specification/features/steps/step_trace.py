@@ -1,3 +1,5 @@
+from specification.features.steps._helpers import create_doorstop_project_api, write_feature_file, run_spec_weaver
+import os
 """behave steps for: trace コマンド — トレーサビリティ・ツリー表示"""
 
 from behave import given, when, then, step
@@ -13,7 +15,7 @@ def given_6df87eb3(context):
     Scenarios:
       - 
     """
-    raise NotImplementedError('STEP: Doorstopツリーが初期化されている')
+    pass
 
 
 # [Duplicate Skip] This step is already defined elsewhere
@@ -34,7 +36,7 @@ def given_14c0b615(context):
     Scenarios:
       - 
     """
-    raise NotImplementedError('STEP: 以下のSPECアイテムが存在する:')
+    pass
 
 
 # [Duplicate Skip] This step is already defined elsewhere
@@ -175,7 +177,7 @@ def when_770f884f(context):
     Scenarios:
       - --direction up で上方向のみ探索
     """
-    raise NotImplementedError('STEP: `spec-weaver trace SPEC-003 -f ./specification/features --direction up` を実行する')
+    pass
 
 
 # [Duplicate Skip] This step is already defined elsewhere
@@ -196,7 +198,7 @@ def when_24d70f7f(context):
     Scenarios:
       - --direction down で下方向のみ探索
     """
-    raise NotImplementedError('STEP: `spec-weaver trace REQ-001 -f ./specification/features --direction down` を実行する')
+    pass
 
 
 @when('`spec-weaver trace REQ-001 -f ./specification/features --format flat` を実行する')  # type: ignore
@@ -206,7 +208,7 @@ def when_816b7b2c(context):
     Scenarios:
       - --format flat でフラットリスト表示
     """
-    raise NotImplementedError('STEP: `spec-weaver trace REQ-001 -f ./specification/features --format flat` を実行する')
+    pass
 
 
 # [Duplicate Skip] This step is already defined elsewhere

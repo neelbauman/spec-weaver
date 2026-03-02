@@ -1,3 +1,5 @@
+from specification.features.steps._helpers import create_doorstop_project_api, write_feature_file, run_spec_weaver
+import os
 """behave steps for: clear コマンド — Doorstop test_fingerprint 更新"""
 # implements: SPEC-025
 

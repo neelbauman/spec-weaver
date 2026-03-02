@@ -188,3 +188,25 @@ def update_item_attribute(repo_root: Path, item_id: str, key: str, value: Any) -
         item.save()
     finally:
         os.chdir(original_cwd)
+
+
+def clear_doorstop_suspects(repo_root: Path, item_id: str) -> bool:
+    """Doorstop ネイティブの suspect リンクを解除します。
+
+    item.clear() を呼び出して、親アイテムのスタンプを更新します。
+    suspect リンクが存在し解除された場合は True、それ以外は False を返します。
+    """
+    original_cwd = os.getcwd()
+    os.chdir(repo_root)
+    try:
+        tree = doorstop.build()
+        item = tree.find_item(item_id)
+        if not item:
+            return False
+        if not item.cleared:
+            item.clear()
+            item.save()
+            return True
+        return False
+    finally:
+        os.chdir(original_cwd)

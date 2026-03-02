@@ -1,8 +1,5 @@
 # [SPEC-010] trace コマンド — トレーサビリティ・ツリー表示
 
-> ⚠️ **Suspect**: 関連するアイテムやテストが変更されました。影響範囲のレビューが必要です。
-> **原因 (Unreviewed)**: [REQ-001](REQ-001.md), [REQ-009](REQ-009.md), `test_fingerprint mismatch`
-
 **実装状況**: ✅ implemented
 
 **作成日**: 2026-02-26　|　**更新日**: 2026-03-01

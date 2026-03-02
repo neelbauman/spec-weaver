@@ -1,8 +1,5 @@
 # [PLAN-003] SPEC-021 実装計画：Gherkinタグ継承（Effective Tags）
 
-> ⚠️ **Suspect**: 関連するアイテムやテストが変更されました。影響範囲のレビューが必要です。
-> **原因 (Unreviewed)**: [REQ-001](REQ-001.md), [SPEC-021](SPEC-021.md)
-
 **実装状況**: ✅ implemented
 
 **作成日**: 2026-02-27　|　**更新日**: 2026-03-02

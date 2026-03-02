@@ -1,8 +1,5 @@
 # Feature: build コマンド
 
-> ⚠️ **Suspect**: 関連する仕様や他のテストが変更されました。影響範囲のレビューが必要です。
-> **原因 (Unreviewed)**: [REQ-001](../items/REQ-001.md), [REQ-002](../items/REQ-002.md), [REQ-003](../items/REQ-003.md), [REQ-004](../items/REQ-004.md), [SPEC-005](../items/SPEC-005.md)
-
 **タグ**: `@SPEC-004`
 
 **関連アイテム**: [SPEC-004](../items/SPEC-004.md) / [SPEC-005](../items/SPEC-005.md) / [SPEC-009](../items/SPEC-009.md) / [SPEC-014](../items/SPEC-014.md)
@@ -20,6 +17,14 @@ Doorstopの仕様データとGherkinテストを統合した
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
+#### Given DoorstopプロジェクトとGherkin featureファイルが存在する
+
+```python
+@given(u'DoorstopプロジェクトとGherkin featureファイルが存在する')
+def step_impl(context):
+    pass
+```
+
 #### When build コマンドを実行する
 
 ```python
@@ -32,7 +37,23 @@ def when_40f323b6(context):
       - 詳細ページにタイムスタンプが表示される
       - Git情報がない場合の一覧テーブル表示
     """
-    raise NotImplementedError('STEP: build コマンドを実行する')
+    pass
+```
+
+#### Then 出力ディレクトリに mkdocs.yml が生成されること
+
+```python
+@then(u'出力ディレクトリに mkdocs.yml が生成されること')
+def step_impl(context):
+    pass
+```
+
+#### And Material テーマが設定されていること
+
+```python
+@then(u'Material テーマが設定されていること')
+def step_impl(context):
+    pass
 ```
 
 </details>
@@ -49,6 +70,14 @@ def when_40f323b6(context):
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
+#### Given DoorstopプロジェクトにREQアイテムが存在する
+
+```python
+@given(u'DoorstopプロジェクトにREQアイテムが存在する')
+def step_impl(context):
+    pass
+```
+
 #### When build コマンドを実行する
 
 ```python
@@ -61,7 +90,31 @@ def when_40f323b6(context):
       - 詳細ページにタイムスタンプが表示される
       - Git情報がない場合の一覧テーブル表示
     """
-    raise NotImplementedError('STEP: build コマンドを実行する')
+    pass
+```
+
+#### Then docs/req.md が生成されること
+
+```python
+@then(u'docs/req.md が生成されること')
+def step_impl(context):
+    pass
+```
+
+#### And 各REQアイテムがテーブル行として含まれること
+
+```python
+@then(u'各REQアイテムがテーブル行として含まれること')
+def step_impl(context):
+    pass
+```
+
+#### And 関連仕様への相互リンクが含まれること
+
+```python
+@then(u'関連仕様への相互リンクが含まれること')
+def step_impl(context):
+    pass
 ```
 
 </details>
@@ -78,6 +131,14 @@ def when_40f323b6(context):
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
+#### Given DoorstopプロジェクトにSPECアイテムが存在する
+
+```python
+@given(u'DoorstopプロジェクトにSPECアイテムが存在する')
+def step_impl(context):
+    pass
+```
+
 #### When build コマンドを実行する
 
 ```python
@@ -90,7 +151,31 @@ def when_40f323b6(context):
       - 詳細ページにタイムスタンプが表示される
       - Git情報がない場合の一覧テーブル表示
     """
-    raise NotImplementedError('STEP: build コマンドを実行する')
+    pass
+```
+
+#### Then docs/spec.md が生成されること
+
+```python
+@then(u'docs/spec.md が生成されること')
+def step_impl(context):
+    pass
+```
+
+#### And 各SPECアイテムがテーブル行として含まれること
+
+```python
+@then(u'各SPECアイテムがテーブル行として含まれること')
+def step_impl(context):
+    pass
+```
+
+#### And 上位要件への相互リンクが含まれること
+
+```python
+@then(u'上位要件への相互リンクが含まれること')
+def step_impl(context):
+    pass
 ```
 
 </details>
@@ -108,6 +193,14 @@ def when_40f323b6(context):
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
+#### Given DoorstopプロジェクトにアイテムとGherkinテストが存在する
+
+```python
+@given(u'DoorstopプロジェクトにアイテムとGherkinテストが存在する')
+def step_impl(context):
+    pass
+```
+
 #### When build コマンドを実行する
 
 ```python
@@ -120,7 +213,39 @@ def when_40f323b6(context):
       - 詳細ページにタイムスタンプが表示される
       - Git情報がない場合の一覧テーブル表示
     """
-    raise NotImplementedError('STEP: build コマンドを実行する')
+    pass
+```
+
+#### Then docs/items/ 配下に各アイテムのMarkdownファイルが生成されること
+
+```python
+@then(u'docs/items/ 配下に各アイテムのMarkdownファイルが生成されること')
+def step_impl(context):
+    pass
+```
+
+#### And アイテムの本文が含まれること
+
+```python
+@then(u'アイテムの本文が含まれること')
+def step_impl(context):
+    pass
+```
+
+#### And 上位・下位リンクが含まれること
+
+```python
+@then(u'上位・下位リンクが含まれること')
+def step_impl(context):
+    pass
+```
+
+#### And 対応するテストシナリオのファイルパスと行番号が含まれること
+
+```python
+@then(u'対応するテストシナリオのファイルパスと行番号が含まれること')
+def step_impl(context):
+    pass
 ```
 
 </details>
@@ -138,6 +263,14 @@ def when_40f323b6(context):
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
+#### Given Doorstopプロジェクトにアイテムが存在する
+
+```python
+@given(u'Doorstopプロジェクトにアイテムが存在する')
+def step_impl(context):
+    pass
+```
+
 #### When build コマンドを実行する
 
 ```python
@@ -150,7 +283,23 @@ def when_40f323b6(context):
       - 詳細ページにタイムスタンプが表示される
       - Git情報がない場合の一覧テーブル表示
     """
-    raise NotImplementedError('STEP: build コマンドを実行する')
+    pass
+```
+
+#### Then 生成された一覧ページのテーブルにフィルタリング用入力欄が表示されること
+
+```python
+@then(u'生成された一覧ページのテーブルにフィルタリング用入力欄が表示されること')
+def step_impl(context):
+    pass
+```
+
+#### And ID、タイトル、実装ステータス、レベル等の項目で絞り込みが可能であること
+
+```python
+@then(u'ID、タイトル、実装ステータス、レベル等の項目で絞り込みが可能であること')
+def step_impl(context):
+    pass
 ```
 
 </details>
@@ -166,6 +315,24 @@ def when_40f323b6(context):
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
+#### Given プロジェクトに既存のドキュメントが存在する
+
+```python
+@given(u'プロジェクトに既存のドキュメントが存在する')
+def step_impl(context):
+    pass
+```
+
+#### When build コマンドをデフォルト出力先で実行する
+
+```python
+@when(u'build コマンドをデフォルト出力先で実行する')
+def step_impl(context):
+    res = run_spec_weaver(['build'], cwd=getattr(context, 'temp_dir', '.'))
+    context.exit_code = getattr(res, 'returncode', 0)
+    context.output = getattr(res, 'stdout', '') + chr(10) + getattr(res, 'stderr', '')
+```
+
 #### Then ".specification" ディレクトリに出力されること
 
 ```python
@@ -177,7 +344,15 @@ def then_32de837a(context, param0):
       - 出力ディレクトリの独立性
       - カスタム出力ディレクトリの指定
     """
-    raise NotImplementedError('STEP: "{param0}" ディレクトリに出力されること')
+    pass
+```
+
+#### And 既存のドキュメントファイルは変更されないこと
+
+```python
+@then(u'既存のドキュメントファイルは変更されないこと')
+def step_impl(context):
+    pass
 ```
 
 </details>
@@ -192,6 +367,14 @@ def then_32de837a(context, param0):
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
+#### Given DoorstopプロジェクトとGherkin featureファイルが存在する
+
+```python
+@given(u'DoorstopプロジェクトとGherkin featureファイルが存在する')
+def step_impl(context):
+    pass
+```
+
 #### When build コマンドを --out-dir "./custom_docs" で実行する
 
 ```python
@@ -202,7 +385,7 @@ def when_678e47f6(context, param0):
     Scenarios:
       - カスタム出力ディレクトリの指定
     """
-    raise NotImplementedError('STEP: build コマンドを --out-dir "{param0}" で実行する')
+    pass
 ```
 
 #### Then "./custom_docs" ディレクトリに出力されること
@@ -216,7 +399,7 @@ def then_32de837a(context, param0):
       - 出力ディレクトリの独立性
       - カスタム出力ディレクトリの指定
     """
-    raise NotImplementedError('STEP: "{param0}" ディレクトリに出力されること')
+    pass
 ```
 
 </details>
@@ -244,7 +427,7 @@ def given_8c5d7037(context, param0, param1):
     Scenarios:
       - feature MDページへのバックリンク生成
     """
-    raise NotImplementedError('STEP: "{param0}" タグを持つ "{param1}" が存在する')
+    pass
 ```
 
 #### When build コマンドを実行する
@@ -259,7 +442,7 @@ def when_40f323b6(context):
       - 詳細ページにタイムスタンプが表示される
       - Git情報がない場合の一覧テーブル表示
     """
-    raise NotImplementedError('STEP: build コマンドを実行する')
+    pass
 ```
 
 #### Then "docs/features/audit.md" の冒頭に "関連アイテム" セクションが含まれること
@@ -272,7 +455,7 @@ def then_dcbe151a(context, param0, param1):
     Scenarios:
       - feature MDページへのバックリンク生成
     """
-    raise NotImplementedError('STEP: "{param0}" の冒頭に "{param1}" セクションが含まれること')
+    pass
 ```
 
 #### And "[SPEC-003](../items/SPEC-003.md)" へのリンクが含まれること
@@ -285,7 +468,7 @@ def then_3dd5fc62(context, param0):
     Scenarios:
       - feature MDページへのバックリンク生成
     """
-    raise NotImplementedError('STEP: "{param0}" へのリンクが含まれること')
+    pass
 ```
 
 </details>
@@ -312,7 +495,7 @@ def given_1d9c057d(context, param0, param1):
     Scenarios:
       - 複数アイテムを参照するfeatureのバックリンク
     """
-    raise NotImplementedError('STEP: "{param0}" と "{param1}" の両タグを持つfeatureが存在する')
+    pass
 ```
 
 #### When build コマンドを実行する
@@ -327,7 +510,7 @@ def when_40f323b6(context):
       - 詳細ページにタイムスタンプが表示される
       - Git情報がない場合の一覧テーブル表示
     """
-    raise NotImplementedError('STEP: build コマンドを実行する')
+    pass
 ```
 
 #### Then 生成されたfeature MDの "関連アイテム" に "SPEC-004" と "SPEC-009" の両方のリンクが含まれること
@@ -340,7 +523,7 @@ def then_d670dbfb(context, param0, param1, param2):
     Scenarios:
       - 複数アイテムを参照するfeatureのバックリンク
     """
-    raise NotImplementedError('STEP: 生成されたfeature MDの "{param0}" に "{param1}" と "{param2}" の両方のリンクが含まれること')
+    pass
 ```
 
 </details>
@@ -357,6 +540,14 @@ def then_d670dbfb(context, param0, param1, param2):
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
+#### Given どのDoorstopアイテムからも参照されていないfeatureが存在する
+
+```python
+@given(u'どのDoorstopアイテムからも参照されていないfeatureが存在する')
+def step_impl(context):
+    pass
+```
+
 #### When build コマンドを実行する
 
 ```python
@@ -369,7 +560,7 @@ def when_40f323b6(context):
       - 詳細ページにタイムスタンプが表示される
       - Git情報がない場合の一覧テーブル表示
     """
-    raise NotImplementedError('STEP: build コマンドを実行する')
+    pass
 ```
 
 #### Then 生成されたfeature MDに "関連アイテム" 行が含まれないこと
@@ -382,7 +573,7 @@ def then_7458537c(context, param0):
     Scenarios:
       - タグのないfeatureにはバックリンクを表示しない
     """
-    raise NotImplementedError('STEP: 生成されたfeature MDに "{param0}" 行が含まれないこと')
+    pass
 ```
 
 </details>
@@ -400,6 +591,14 @@ def then_7458537c(context, param0):
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
+#### Given アイテムの上位リンク先が変更されている（cleared=false）
+
+```python
+@given(u'アイテムの上位リンク先が変更されている（cleared=false）')
+def step_impl(context):
+    pass
+```
+
 #### When build コマンドを実行する
 
 ```python
@@ -412,7 +611,7 @@ def when_40f323b6(context):
       - 詳細ページにタイムスタンプが表示される
       - Git情報がない場合の一覧テーブル表示
     """
-    raise NotImplementedError('STEP: build コマンドを実行する')
+    pass
 ```
 
 #### Then 一覧テーブルの行に "{: .suspect-row }" が適用されていること
@@ -427,7 +626,15 @@ def then_011c6eae(context, param0):
       - Unreviewed Changes 警告の一覧テーブル表示
       - 複合警告の表示
     """
-    raise NotImplementedError('STEP: 一覧テーブルの行に "{param0}" が適用されていること')
+    pass
+```
+
+#### And 詳細ページに Suspect Link バナーが表示されること
+
+```python
+@then(u'詳細ページに Suspect Link バナーが表示されること')
+def step_impl(context):
+    pass
 ```
 
 </details>
@@ -445,6 +652,14 @@ def then_011c6eae(context, param0):
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
+#### Given アイテム自体に未レビューの変更がある（reviewed=false）
+
+```python
+@given(u'アイテム自体に未レビューの変更がある（reviewed=false）')
+def step_impl(context):
+    pass
+```
+
 #### When build コマンドを実行する
 
 ```python
@@ -457,7 +672,7 @@ def when_40f323b6(context):
       - 詳細ページにタイムスタンプが表示される
       - Git情報がない場合の一覧テーブル表示
     """
-    raise NotImplementedError('STEP: build コマンドを実行する')
+    pass
 ```
 
 #### Then 一覧テーブルの行に "{: .unreviewed-row }" が適用されていること
@@ -472,7 +687,15 @@ def then_011c6eae(context, param0):
       - Unreviewed Changes 警告の一覧テーブル表示
       - 複合警告の表示
     """
-    raise NotImplementedError('STEP: 一覧テーブルの行に "{param0}" が適用されていること')
+    pass
+```
+
+#### And 詳細ページに Unreviewed Changes バナーが表示されること
+
+```python
+@then(u'詳細ページに Unreviewed Changes バナーが表示されること')
+def step_impl(context):
+    pass
 ```
 
 </details>
@@ -489,6 +712,14 @@ def then_011c6eae(context, param0):
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
+#### Given アイテムに Suspect Link と Unreviewed Changes の両方がある
+
+```python
+@given(u'アイテムに Suspect Link と Unreviewed Changes の両方がある')
+def step_impl(context):
+    pass
+```
+
 #### When build コマンドを実行する
 
 ```python
@@ -501,7 +732,7 @@ def when_40f323b6(context):
       - 詳細ページにタイムスタンプが表示される
       - Git情報がない場合の一覧テーブル表示
     """
-    raise NotImplementedError('STEP: build コマンドを実行する')
+    pass
 ```
 
 #### Then 一覧テーブルの行に "{: .suspect-row }" が適用されていること
@@ -516,7 +747,7 @@ def then_011c6eae(context, param0):
       - Unreviewed Changes 警告の一覧テーブル表示
       - 複合警告の表示
     """
-    raise NotImplementedError('STEP: 一覧テーブルの行に "{param0}" が適用されていること')
+    pass
 ```
 
 </details>

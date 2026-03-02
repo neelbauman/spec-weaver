@@ -1,11 +1,11 @@
 # [SPEC-003] audit コマンド仕様
 
 > ⚠️ **Suspect**: 関連するアイテムやテストが変更されました。影響範囲のレビューが必要です。
-> **原因 (Unreviewed)**: [REQ-001](REQ-001.md), [REQ-002](REQ-002.md)
+> **原因 (Unreviewed)**: `test_fingerprint mismatch`
 
 **実装状況**: ✅ implemented
 
-**作成日**: 2026-02-26　|　**更新日**: 2026-03-01
+**作成日**: 2026-02-26　|　**更新日**: 2026-03-02
 
 **上位アイテム**: [REQ-002](REQ-002.md) / **兄弟アイテム**: [SPEC-002](SPEC-002.md), [SPEC-013](SPEC-013.md)
 
@@ -36,7 +36,7 @@
 
 ### 🧪 検証シナリオ
 
-- **完全一致時の監査成功** — Scenario （[features/audit.feature:6](../features/audit.md)）
+- **完全一致で、監査が成功する** — Scenario （[features/audit.feature:6](../features/audit.md)）
 - **テスト漏れの検出** — Scenario （[features/audit.feature:12](../features/audit.md)）
 - **孤児タグの検出** — Scenario （[features/audit.feature:18](../features/audit.md)）
 - **テスト漏れと孤児タグの同時検出** — Scenario （[features/audit.feature:24](../features/audit.md)）
