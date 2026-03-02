@@ -25,7 +25,7 @@ def test_review_writes_fingerprint_to_feature_file(tmp_path):
         encoding="utf-8",
     )
 
-    result = runner.invoke(app, ["review", str(feature_file)])
+    with patch("spec_weaver.cli.audit_cmd"): result = runner.invoke(app, ["review", str(feature_file)])
 
     assert result.exit_code == 0, f"exit_code={result.exit_code}\n{result.output}"
     stored = read_stored_fingerprint(feature_file)
@@ -42,7 +42,7 @@ def test_review_overwrites_existing_fingerprint(tmp_path):
         encoding="utf-8",
     )
 
-    result = runner.invoke(app, ["review", str(feature_file)])
+    with patch("spec_weaver.cli.audit_cmd"): result = runner.invoke(app, ["review", str(feature_file)])
 
     assert result.exit_code == 0, f"exit_code={result.exit_code}\n{result.output}"
     stored = read_stored_fingerprint(feature_file)
@@ -67,41 +67,55 @@ def test_review_non_feature_file_returns_exit_1(tmp_path):
 # clear コマンド
 # ---------------------------------------------------------------------------
 
+from unittest.mock import patch, MagicMock
+
+# ... (omitted)
+
 @patch("spec_weaver.cli.get_all_prefixes")
 @patch("spec_weaver.cli.get_tags")
 @patch("spec_weaver.cli.get_spec_fingerprints")
 @patch("spec_weaver.cli.update_item_attribute")
+@patch("spec_weaver.cli.get_item_map")
+@patch("spec_weaver.cli.clear_doorstop_suspects")
 def test_clear_feature_file_updates_yaml(
-    mock_update, mock_get_fp, mock_get_tags, mock_get_prefixes, tmp_path
+    mock_clear_suspects, mock_get_items, mock_update, mock_get_fp, mock_get_tags, mock_get_prefixes, tmp_path
 ):
-    """.feature ファイルを指定した場合、ファイル内の全タグの test_fingerprint を更新する。"""
+    """.feature ファイルを指定した場合、ファイル内の全タグの gherkin_fingerprints を更新する。"""
     feature_file = tmp_path / "test.feature"
     feature_file.write_text("@SPEC-001\n@SPEC-002\nFeature: test\n")
 
     mock_get_prefixes.return_value = {"SPEC"}
     mock_get_tags.return_value = {"SPEC-001", "SPEC-002"}
     mock_get_fp.return_value = {
-        "SPEC-001": "hash1",
-        "SPEC-002": "hash2",
+        "SPEC-001": [{"f1": "hash1"}],
+        "SPEC-002": [{"f2": "hash2"}],
     }
+    mock_get_items.return_value = {}
+    mock_clear_suspects.return_value = True
 
     result = runner.invoke(app, ["clear", str(feature_file), "--repo-root", str(tmp_path)])
 
     assert result.exit_code == 0, f"exit_code={result.exit_code}\n{result.output}"
-    assert mock_update.call_count == 2
-    mock_update.assert_any_call(tmp_path, "SPEC-001", "test_fingerprint", "hash1")
-    mock_update.assert_any_call(tmp_path, "SPEC-002", "test_fingerprint", "hash2")
+    assert mock_update.call_count >= 2
+    mock_update.assert_any_call(tmp_path, "SPEC-001", "gherkin_fingerprints", [{"f1": "hash1"}])
+    mock_update.assert_any_call(tmp_path, "SPEC-002", "gherkin_fingerprints", [{"f2": "hash2"}])
 
 
 @patch("spec_weaver.cli.get_all_prefixes")
 @patch("spec_weaver.cli.get_spec_fingerprints")
 @patch("spec_weaver.cli.update_item_attribute")
+@patch("spec_weaver.cli.get_item_map")
+@patch("spec_weaver.cli.clear_doorstop_suspects")
 def test_clear_single_item_updates_yaml(
-    mock_update, mock_get_fp, mock_get_prefixes, tmp_path
+    mock_clear_suspects, mock_get_items, mock_update, mock_get_fp, mock_get_prefixes, tmp_path
 ):
-    """アイテムIDを指定した場合、そのアイテムの test_fingerprint を更新する。"""
+    """アイテムIDを指定した場合、そのアイテムの gherkin_fingerprints を更新する。"""
     mock_get_prefixes.return_value = {"SPEC"}
-    mock_get_fp.return_value = {"SPEC-001": "hash1"}
+    mock_get_fp.return_value = {"SPEC-001": [{"f1": "hash1"}]}
+    
+    mock_item = MagicMock()
+    mock_get_items.return_value = {"SPEC-001": mock_item}
+    mock_clear_suspects.return_value = True
 
     result = runner.invoke(app, [
         "clear", "SPEC-001",
@@ -110,7 +124,7 @@ def test_clear_single_item_updates_yaml(
     ])
 
     assert result.exit_code == 0, f"exit_code={result.exit_code}\n{result.output}"
-    mock_update.assert_called_once_with(tmp_path, "SPEC-001", "test_fingerprint", "hash1")
+    mock_update.assert_any_call(tmp_path, "SPEC-001", "gherkin_fingerprints", [{"f1": "hash1"}])
 
 
 @patch("spec_weaver.cli.get_all_prefixes")

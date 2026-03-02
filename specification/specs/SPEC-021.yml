@@ -1,5 +1,8 @@
 active: true
 derived: false
+gherkin_fingerprints:
+- ./specification/features/data_extraction.feature: |
+    5c2a81c2c65d34eea85b92937f2ae406193e27c44f94c9c8cf1afbbb75212f58
 header: |
   Gherkinタグ継承（Effective Tags）
 impl_files:

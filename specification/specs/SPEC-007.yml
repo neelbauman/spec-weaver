@@ -1,5 +1,8 @@
 active: true
 derived: false
+gherkin_fingerprints:
+- ./specification/features/status.feature: |
+    e433d975289a8ad796e2b7f9d85c911cbc644a2c4b03cf1435f7afc5e9e091c2
 header: |
   実装ステータス管理
 level: 4

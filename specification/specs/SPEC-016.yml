@@ -1,5 +1,8 @@
 active: true
 derived: false
+gherkin_fingerprints:
+- ./specification/features/ci.feature: |
+    2ffa59697b2732ad985507ce7a570547e58d2b4e9f584ae7b97c787edd32f256
 header: |
   CI/CD パイプライン統合 — テスト実行・結果反映の自動化
 level: 3.16

@@ -1,5 +1,8 @@
 active: true
 derived: false
+gherkin_fingerprints:
+- ./specification/features/trace.feature: |
+    b23e9a2b6fea9f30387da33160dcf6ecfc8ca8a1e67ba09e7abc812922fd01b0
 header: |
   trace コマンド — トレーサビリティ・ツリー表示
 level: 10.0

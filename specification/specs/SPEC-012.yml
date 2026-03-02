@@ -1,5 +1,8 @@
 active: true
 derived: false
+gherkin_fingerprints:
+- ./specification/features/timestamp.feature: |
+    17ab2ac14157f2f376897a6f75ecf9ae1045329cbdaf4b73dd926dec83f6fd5f
 header: |
   build コマンドにおけるタイムスタンプ表示
 level: 10.2

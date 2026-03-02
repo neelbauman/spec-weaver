@@ -1,6 +1,9 @@
 active: true
 created_at: '2026-02-26'
 derived: false
+gherkin_fingerprints:
+- ./specification/features/build.feature: |
+    4b3fd643efc1116117ab8b9174a7d795caa05e46a0f014a977559536689172c0
 header: |
   feature MDページのバックリンク生成
 level: 3.14

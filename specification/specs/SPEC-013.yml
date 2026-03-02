@@ -1,5 +1,8 @@
 active: true
 derived: false
+gherkin_fingerprints:
+- ./specification/features/timestamp.feature: |
+    02387c22b53dab99ee616928a478a8033921a31c6cd535262638d7e14c747d38
 header: |
   タイムスタンプ鮮度の監査チェック
 level: 10.3

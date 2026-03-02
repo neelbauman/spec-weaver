@@ -1,5 +1,8 @@
 active: true
 derived: false
+gherkin_fingerprints:
+- ./specification/features/review.feature: |
+    131b01bcbcb2e275b268da61dc1c8b25ee650b735b8f35d27f111099bfc7ad60
 header: |
   review コマンド — .feature ファイルへのフィンガープリント書き込み
 impl_files:

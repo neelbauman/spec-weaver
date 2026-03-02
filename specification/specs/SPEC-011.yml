@@ -1,5 +1,8 @@
 active: true
 derived: false
+gherkin_fingerprints:
+- ./specification/features/timestamp.feature: |
+    dfc7dc567fae311e6160c3091a82177fc1b2b708b098dab64aca6aba7f39faf3
 header: |
   タイムスタンプ・カスタム属性の定義
 level: 10.1

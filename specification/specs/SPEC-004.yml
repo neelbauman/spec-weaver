@@ -1,5 +1,8 @@
 active: true
 derived: false
+gherkin_fingerprints:
+- ./specification/features/build.feature: |
+    02794a9ea57b6f1709b0d834334f45347b9bbeabf42033ed237bc582b3be58d5
 header: |
   build コマンド仕様
 level: 3.0

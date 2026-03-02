@@ -46,6 +46,7 @@ from spec_weaver.gherkin import (
     compute_feature_file_hash,
     read_stored_fingerprint,
     write_feature_fingerprint,
+    write_feature_fingerprints,
 )
 from spec_weaver.behave import check_behave_steps
 from spec_weaver.test_results import (
@@ -87,13 +88,15 @@ def _review_status_badge(item_or_id: str | Any, review_state: Optional[ReviewSta
     return "✅ reviewed"
 
 
-def _compute_feature_file_states(feature_dir: Path) -> dict[str, bool]:
+def _compute_feature_file_states(feature_dir: Path) -> dict[str, dict]:
     """
-    feature_dir 以下の全 .feature ファイルについて、先頭コメントのハッシュと
-    現在のコンテンツハッシュを比較し、{相対パス: is_unreviewed} を返す。
+    feature_dir 以下の全 .feature ファイルについて、先頭コメントのハッシュ群を読み取り、
+    現在のコンテンツハッシュとともに {相対パス: {"stored": {dict}, "actual_file": hash}} を返す。
     相対パスは get_tag_map() と同じ基準（feature_dir.parent を起点）で生成する。
     """
-    states: dict[str, bool] = {}
+    from spec_weaver.gherkin import read_stored_fingerprints
+
+    states: dict[str, dict] = {}
     if not feature_dir.is_dir():
         return states
     for f in feature_dir.rglob("*.feature"):
@@ -102,11 +105,11 @@ def _compute_feature_file_states(feature_dir: Path) -> dict[str, bool]:
         except ValueError:
             rel = str(f)
         try:
-            stored = read_stored_fingerprint(f)
+            stored = read_stored_fingerprints(f)
             current = compute_feature_file_hash(f)
-            states[rel] = (stored != current)
+            states[rel] = {"stored": stored, "actual_file": current}
         except Exception:
-            states[rel] = True  # 読み取り失敗は未レビュー扱い
+            states[rel] = {"stored": {}, "actual_file": None}  # 読み取り失敗は未レビュー扱い
     return states
 
 
@@ -227,7 +230,7 @@ def audit_cmd(
                 # 検索対象のプレフィックスを決定
                 search_prefixes = {prefix} if prefix else all_prefixes
                 tags_in_code = get_tags(
-                    features_dir=feature_dir, prefixes=search_prefixes
+                    features_dir=feature_dir, repo_root=repo_root, prefixes=search_prefixes
                 )
             except ValueError as e:
                 console.print(
@@ -242,13 +245,13 @@ def audit_cmd(
                 try:
                     search_prefixes = {prefix} if prefix else all_prefixes
                     gherkin_fingerprints = get_spec_fingerprints(
-                        feature_dir, search_prefixes
+                        feature_dir, repo_root, search_prefixes
                     )
                 except Exception:
                     gherkin_fingerprints = {}
 
                 try:
-                    tag_map = get_tag_map(feature_dir, search_prefixes)
+                    tag_map = get_tag_map(feature_dir, repo_root, search_prefixes)
                 except Exception:
                     tag_map = {}
 
@@ -265,7 +268,7 @@ def audit_cmd(
                         continue
 
                     status = review_state.get_status(uid)
-                    if "unreviewed" in status:
+                    if uid in review_state.unreviewed_nodes:
                         unreviewed_specs.add(uid)
                     if "suspect" in status:
                         suspect_specs[uid] = review_state.suspect_causes.get(uid, set())
@@ -284,7 +287,7 @@ def audit_cmd(
 
                 for fpath in feature_to_specs:
                     fstatus = review_state.get_status(fpath)
-                    if "unreviewed" in fstatus:
+                    if fpath in review_state.unreviewed_nodes:
                         unreviewed_features.add(fpath)
                     if "suspect" in fstatus:
                         suspect_features[fpath] = review_state.suspect_causes.get(fpath, set())
@@ -335,8 +338,24 @@ def audit_cmd(
             table.add_column("原因アイテム", style="dim")
             table.add_column("アクション", style="dim")
             for spec in sorted(suspect_specs):
-                causes = ", ".join(sorted(suspect_specs[spec])) or "不明"
-                table.add_row(spec, causes, "影響範囲を確認し、必要に応じて修正")
+                # 原因アイテム（原因となった ID やファイル名）を表示
+                causes_list = []
+                for c in suspect_specs[spec]:
+                    if c == "Doorstop native suspect link":
+                        # 親アイテムを特定
+                        parents = review_state.parents.get(spec, set())
+                        causes_list.extend(sorted(list(parents)))
+                    else:
+                        causes_list.append(c)
+                causes = ", ".join(causes_list) or "不明"
+                
+                status = review_state.get_status(spec)
+                if "suspect-with-unreviewed" in status:
+                    action = "[bold red]要レビュー[/bold red] (doorstop review / spec-weaver review)"
+                else:
+                    # SPEC-005: Suspect の SPEC のアクションには spec-weaver clear <SPEC_ID> を表示
+                    action = f"spec-weaver clear {spec}"
+                table.add_row(spec, causes, action)
             for fpath in sorted(suspect_features):
                 fname = Path(fpath).name
                 causes = ", ".join(sorted(suspect_features[fpath])) or "不明"
@@ -859,11 +878,36 @@ def review_cmd(
         if target.exists() and target.suffix == ".feature":
             with console.status(f"[bold cyan]{target_path} のハッシュを計算中...[/bold cyan]"):
                 fp = compute_feature_file_hash(target)
+                
+                # 関連する Doorstop アイテムのスタンプを取得
+                all_prefixes = get_all_prefixes(repo_root)
+                tag_map = get_tag_map(feature_dir, repo_root, all_prefixes)
+                raw_items = get_item_map(repo_root)
+                
+                linked_tags = set()
+                try:
+                    rel_target = str(target.relative_to(feature_dir.parent))
+                except ValueError:
+                    rel_target = str(target)
+                    
+                for tag, scenarios in tag_map.items():
+                    for s in scenarios:
+                        if Path(s["file"]).resolve() == target.resolve():
+                            linked_tags.add(tag)
+                            break
+                            
+                item_fps = {}
+                for tag in linked_tags:
+                    if tag in raw_items:
+                        item = raw_items[tag]
+                        item_fps[tag] = item.stamp() if hasattr(item, "stamp") else ""
 
-            write_feature_fingerprint(target, fp)
+            write_feature_fingerprints(target, fp, item_fps)
 
             console.print(f"[bold green]✅ フィンガープリントを書き込みました: {target_path}[/bold green]")
             console.print(f"[dim]ハッシュ: {fp}[/dim]")
+            if item_fps:
+                console.print(f"[dim]関連アイテム: {', '.join(item_fps.keys())}[/dim]")
             console.print()
 
         # 2. Doorstop アイテム（.yml ファイル）の場合
@@ -959,7 +1003,7 @@ def clear_cmd(
         if item_path.suffix == ".feature" and item_path.exists():
             all_prefixes = get_all_prefixes(repo_root)
             with console.status(f"[bold cyan]{item_id} に含まれる仕様IDを特定中...[/bold cyan]"):
-                tags_in_file = get_tags(item_path, all_prefixes)
+                tags_in_file = get_tags(item_path, repo_root, all_prefixes)
 
             if not tags_in_file:
                 console.print(
@@ -968,16 +1012,46 @@ def clear_cmd(
                 raise typer.Exit(1)
 
             with console.status("[bold cyan]フィンガープリントを計算中...[/bold cyan]"):
-                all_fingerprints = get_spec_fingerprints(feature_dir, all_prefixes)
+                all_fingerprints = get_spec_fingerprints(feature_dir, repo_root, all_prefixes)
+
+            tag_map = get_tag_map(feature_dir, repo_root, all_prefixes)
+            feature_file_states = _compute_feature_file_states(feature_dir)
+            raw_items = get_item_map(repo_root)
+            review_state = compute_review_state(
+                {str(uid): it for uid, it in raw_items.items()},
+                all_fingerprints,
+                tag_map,
+                feature_file_states,
+            )
 
             updated_count = 0
             for tag in sorted(tags_in_file):
-                fp = all_fingerprints.get(tag)
-                if fp:
-                    with console.status(f"[bold cyan]{tag} の YAML を更新中...[/bold cyan]"):
-                        update_item_attribute(repo_root, tag, "test_fingerprint", fp)
+                status = review_state.get_status(tag)
+                if tag in review_state.unreviewed_nodes:
                     console.print(
-                        f"✅ [bold]{tag}[/bold] の test_fingerprint を更新しました。 [dim]{fp}[/dim]"
+                        f"⚠️ [bold yellow]{tag}[/bold yellow] は未レビューです。スキップします。"
+                    )
+                    continue
+                
+                if "suspect-with-unreviewed" in status:
+                    console.print(
+                        f"⚠️ [bold yellow]{tag}[/bold yellow] は上位アイテムが未レビューです。スキップします。"
+                    )
+                    continue
+
+                fps = all_fingerprints.get(tag)
+                if fps:
+                    with console.status(f"[bold cyan]{tag} の YAML を更新中...[/bold cyan]"):
+                        # 新しい gherkin_fingerprints 属性をセット
+                        update_item_attribute(repo_root, tag, "gherkin_fingerprints", fps)
+                        # 旧属性を削除
+                        try:
+                            delete_item_attribute(repo_root, tag, "test_fingerprint")
+                        except Exception:
+                            pass
+
+                    console.print(
+                        f"✅ [bold]{tag}[/bold] の gherkin_fingerprints を更新しました。"
                     )
                     updated_count += 1
                 # Doorstop ネイティブ suspect リンクも解除
@@ -991,21 +1065,54 @@ def clear_cmd(
 
             if updated_count > 0:
                 console.print(
-                    f"\n[bold green]✨ 合計 {updated_count} 個のアイテムの test_fingerprint を更新しました。[/bold green]"
+                    f"\n[bold green]✨ 合計 {updated_count} 個のアイテムの gherkin_fingerprints を更新しました。[/bold green]"
                 )
             return
 
         # アイテムID が指定された場合
         with console.status(f"[bold cyan]{item_id} の Gherkin フィンガープリントを計算中...[/bold cyan]"):
             all_prefixes = get_all_prefixes(repo_root)
-            fingerprints = get_spec_fingerprints(feature_dir, all_prefixes)
-            actual_fp = fingerprints.get(item_id)
+            raw_items = get_item_map(repo_root)
+            item = raw_items.get(item_id)
+            if not item:
+                console.print(f"[bold red]❌ アイテム {item_id} が見つかりません。[/bold red]")
+                raise typer.Exit(1)
 
-        if actual_fp:
+            # SPEC-005: suspect-with-unreviewed の状態では clear を実行できない
+            # レビュー状態を計算
+            gherkin_fingerprints = get_spec_fingerprints(feature_dir, repo_root, all_prefixes)
+            tag_map = get_tag_map(feature_dir, repo_root, all_prefixes)
+            feature_file_states = _compute_feature_file_states(feature_dir)
+            review_state = compute_review_state(
+                {str(uid): it for uid, it in raw_items.items()},
+                gherkin_fingerprints,
+                tag_map,
+                feature_file_states,
+            )
+
+            status = review_state.get_status(item_id)
+            if item_id in review_state.unreviewed_nodes:
+                console.print(
+                    f"[bold red]❌ {item_id} は未レビューです。レビュー（doorstop review {item_id} / spec-weaver review {item_id}）してから clear を実行してください。[/bold red]"
+                )
+                raise typer.Exit(1)
+            
+            if "suspect-with-unreviewed" in status:
+                console.print(
+                    f"[bold red]❌ {item_id} は上位アイテムが未レビューです。上位アイテムを先にレビューしてから clear を実行してください。[/bold red]"
+                )
+                raise typer.Exit(1)
+
+            actual_fps = gherkin_fingerprints.get(item_id)
+
+        if actual_fps:
             with console.status(f"[bold cyan]{item_id} の YAML を更新中...[/bold cyan]"):
-                update_item_attribute(repo_root, item_id, "test_fingerprint", actual_fp)
-            console.print(f"[bold green]✅ {item_id} の test_fingerprint を更新しました。[/bold green]")
-            console.print(f"[dim]新ハッシュ: {actual_fp}[/dim]")
+                update_item_attribute(repo_root, item_id, "gherkin_fingerprints", actual_fps)
+                try:
+                    delete_item_attribute(repo_root, item_id, "test_fingerprint")
+                except Exception:
+                    pass
+            console.print(f"[bold green]✅ {item_id} の gherkin_fingerprints を更新しました。[/bold green]")
         else:
             # Gherkin シナリオがなくても Doorstop suspect リンクの解除は試みる
             pass
@@ -1018,7 +1125,7 @@ def clear_cmd(
             pass
         if doorstop_cleared:
             console.print(f"[bold green]✅ {item_id} の Doorstop suspect リンクを解除しました。[/bold green]")
-        elif not actual_fp:
+        elif not actual_fps:
             console.print(
                 f"[bold red]❌ {item_id} に紐づく Gherkin シナリオが見つかりません。[/bold red]"
             )
@@ -1078,12 +1185,12 @@ def status_cmd(
             "[bold cyan]Gherkinのフィンガープリントを計算中...[/bold cyan]"
         ):
             try:
-                gherkin_fingerprints = get_spec_fingerprints(feature_dir, all_prefixes)
+                gherkin_fingerprints = get_spec_fingerprints(feature_dir, repo_root, all_prefixes)
             except Exception:
                 gherkin_fingerprints = {}
 
         try:
-            tag_map = get_tag_map(feature_dir, all_prefixes)
+            tag_map = get_tag_map(feature_dir, repo_root, all_prefixes)
         except Exception:
             tag_map = {}
 
@@ -1140,7 +1247,7 @@ def status_cmd(
 
         # Gherkin Featureファイルのステータス表示
         try:
-            tag_map = get_tag_map(feature_dir, all_prefixes)
+            tag_map = get_tag_map(feature_dir, repo_root, all_prefixes)
             feature_files = {}
             for uid, scenarios in tag_map.items():
                 for sc in scenarios:
@@ -1264,8 +1371,8 @@ def _run_build(
         all_prefixes = {str(doc.prefix) for doc in doorstop_tree}
 
         # 2. Gherkinタグマップ取得 (全プレフィックスを対象にする)
-        tag_map = get_tag_map(feature_dir, all_prefixes)
-        gherkin_fingerprints = get_spec_fingerprints(feature_dir, all_prefixes)
+        tag_map = get_tag_map(feature_dir, repo_root, all_prefixes)
+        gherkin_fingerprints = get_spec_fingerprints(feature_dir, repo_root, all_prefixes)
         feature_file_states = _compute_feature_file_states(feature_dir)
         review_state = compute_review_state(
             all_items_str, gherkin_fingerprints, tag_map, feature_file_states
@@ -1681,9 +1788,10 @@ def _generate_index_table(
     result_col_header = " | テスト結果" if has_results else ""
     result_col_sep = " | :--- " if has_results else ""
 
-    # ID | タイトル | 親 | 子 | 兄弟 | レビューステータス | Gherkinカバレッジ | 実装状況 | 作成日 | 更新日
-    header = f"| ID | タイトル | 親 | 子 | 兄弟 | レビューステータス | Gherkinカバレッジ | 実装状況 | 作成日 | 更新日{result_col_header} |"
-    sep = f"| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :---{result_col_sep}|"
+    # SPEC-005: 「レビューステータス」列を廃止。ハイライトで表現する。
+    # ID | タイトル | 親 | 子 | 兄弟 | Gherkinカバレッジ | 実装状況 | 作成日 | 更新日
+    header = f"| ID | タイトル | 親 | 子 | 兄弟 | Gherkinカバレッジ | 実装状況 | 作成日 | 更新日{result_col_header} |"
+    sep = f"| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :---{result_col_sep}|"
 
     lines = [f"# {title}\n", header, sep]
 
@@ -1710,20 +1818,22 @@ def _generate_index_table(
             covered, total = _spec_coverage(uid, tag_map, item, all_items_str)
             coverage_col = _coverage_badge(covered, total)
 
-        review_col = _review_status_badge(uid, review_state=review_state)
+        review_status = _review_status_badge(uid, review_state=review_state)
         impl_col = _impl_status_badge(item)
         created_col = _get_timestamp(item, "created_at")
         updated_col = _get_timestamp(item, "updated_at")
 
         # 行の組み立て
-        row = f"| [{uid}](items/{uid}.md) | {item.header} | {parents_col} | {children_col} | {siblings_col} | {review_col} | {coverage_col} | {impl_col} | {created_col} | {updated_col}"
+        row = f"| [{uid}](items/{uid}.md) | {item.header} | {parents_col} | {children_col} | {siblings_col} | {coverage_col} | {impl_col} | {created_col} | {updated_col}"
 
         # 状態に応じた行ハイライト (attr_list 拡張用)
-        # unreviewedが含まれる場合は紫、suspectが含まれる場合は赤
-        if "unreviewed" in review_col:
+        # SPEC-005: Unreviewedは赤 (.unreviewed-row), Suspectは紫 (.suspect-row)
+        if "unreviewed" in review_status:
             row += " {: .unreviewed-row } |"
-        elif "suspect" in review_col:
+        elif "suspect" in review_status:
             row += " {: .suspect-row } |"
+        else:
+            row += " |"
 
         if has_results:
             from .test_results import spec_result_summary, result_badge
@@ -1931,10 +2041,14 @@ def _collect_all_ancestors(
     return visited
 
 
-def _format_trace_node(uid: str, item, is_origin: bool = False) -> str:
+def _format_trace_node(
+    uid: str, item, is_origin: bool = False, review_state: Optional[ReviewState] = None
+) -> str:
     """Rich マークアップ付きのノードラベル文字列を返す。"""
     header = (item.header or "").strip() if item else ""
-    badge = _impl_status_badge(item) if item else "-"
+    impl_badge = _impl_status_badge(item) if item else "-"
+    review_badge = _review_status_badge(item or uid, review_state)
+    badge = f"{impl_badge} / {review_badge}"
     if is_origin:
         return f"[bold yellow]★[/bold yellow] [bold]{uid}[/bold] {header} {badge}"
     return f"[bold cyan]{uid}[/bold cyan] {header} {badge}"
@@ -1965,6 +2079,7 @@ def _add_descendants_to_rich_node(
     visited: set,
     impl_map: dict | None = None,
     repo_root: Path | None = None,
+    review_state: Optional[ReviewState] = None,
 ) -> None:
     """子アイテム・Gherkinシナリオを再帰的にRich Treeノードへ追加する。"""
     # Gherkinシナリオをファイル別にグループ化して追加
@@ -1975,7 +2090,11 @@ def _add_descendants_to_rich_node(
             fname = Path(sc["file"]).name
             file_scenarios.setdefault(fname, []).append(sc)
         for fname, scs in sorted(file_scenarios.items()):
-            feature_node = node.add(f"🥒 {fname}")
+            # get_tag_map で使っているキー（相対パス）を使ってレビューステータスを取得
+            # シナリオの１つ目からファイルパスを復元する
+            rel_path = scs[0]["file"]
+            review_badge = _review_status_badge(rel_path, review_state)
+            feature_node = node.add(f"🥒 {fname} {review_badge}")
             for sc in scs:
                 feature_node.add(f"Scenario: {sc['name']}")
 
@@ -1988,7 +2107,7 @@ def _add_descendants_to_rich_node(
         if child_uid in visited:
             continue
         child_item = all_items.get(child_uid)
-        label = _format_trace_node(child_uid, child_item)
+        label = _format_trace_node(child_uid, child_item, review_state=review_state)
         child_node = node.add(label)
         new_visited = set(visited)
         new_visited.add(child_uid)
@@ -2001,6 +2120,7 @@ def _add_descendants_to_rich_node(
             new_visited,
             impl_map=impl_map,
             repo_root=repo_root,
+            review_state=review_state,
         )
 
 
@@ -2016,6 +2136,7 @@ def _add_focused_path(
     expand_at_origin: bool = True,
     impl_map: dict | None = None,
     repo_root: Path | None = None,
+    review_state: Optional[ReviewState] = None,
 ) -> None:
     """祖先からoriginまでのパスを辿り、originで全子孫を展開する（expand_at_origin=True 時）。"""
     if current_uid == origin_uid:
@@ -2029,6 +2150,7 @@ def _add_focused_path(
                 set(visited),
                 impl_map=impl_map,
                 repo_root=repo_root,
+                review_state=review_state,
             )
         return
 
@@ -2038,7 +2160,9 @@ def _add_focused_path(
             continue
         child_item = all_items.get(child_uid)
         is_origin = child_uid == origin_uid
-        label = _format_trace_node(child_uid, child_item, is_origin=is_origin)
+        label = _format_trace_node(
+            child_uid, child_item, is_origin=is_origin, review_state=review_state
+        )
         child_node = node.add(label)
         new_visited = set(visited)
         new_visited.add(child_uid)
@@ -2054,6 +2178,7 @@ def _add_focused_path(
             expand_at_origin,
             impl_map=impl_map,
             repo_root=repo_root,
+            review_state=review_state,
         )
 
 
@@ -2065,12 +2190,15 @@ def _build_trace_rich_tree(
     direction: str,
     impl_map: dict | None = None,
     repo_root: Path | None = None,
+    review_state: Optional[ReviewState] = None,
 ):
     """トレースツリーを構築して返す。複数ルート祖先がある場合はリストで返す。"""
     origin_item = all_items.get(origin_uid)
 
     if direction == "down":
-        label = _format_trace_node(origin_uid, origin_item, is_origin=True)
+        label = _format_trace_node(
+            origin_uid, origin_item, is_origin=True, review_state=review_state
+        )
         tree = Tree(label)
         _add_descendants_to_rich_node(
             tree,
@@ -2081,6 +2209,7 @@ def _build_trace_rich_tree(
             {origin_uid},
             impl_map=impl_map,
             repo_root=repo_root,
+            review_state=review_state,
         )
         return tree
 
@@ -2088,7 +2217,9 @@ def _build_trace_rich_tree(
     ancestors = _collect_all_ancestors(origin_uid, all_items)
     if not ancestors:
         # 祖先なし: origin 自身がルート
-        label = _format_trace_node(origin_uid, origin_item, is_origin=True)
+        label = _format_trace_node(
+            origin_uid, origin_item, is_origin=True, review_state=review_state
+        )
         tree = Tree(label)
         if direction == "both":
             _add_descendants_to_rich_node(
@@ -2100,6 +2231,7 @@ def _build_trace_rich_tree(
                 {origin_uid},
                 impl_map=impl_map,
                 repo_root=repo_root,
+                review_state=review_state,
             )
         return tree
 
@@ -2122,7 +2254,7 @@ def _build_trace_rich_tree(
     trees = []
     for root_uid in sorted(root_ancestors):
         root_item = all_items.get(root_uid)
-        label = _format_trace_node(root_uid, root_item)
+        label = _format_trace_node(root_uid, root_item, review_state=review_state)
         tree = Tree(label)
         _add_focused_path(
             tree,
@@ -2136,6 +2268,7 @@ def _build_trace_rich_tree(
             expand_at_origin,
             impl_map=impl_map,
             repo_root=repo_root,
+            review_state=review_state,
         )
         trees.append(tree)
 
@@ -2143,7 +2276,11 @@ def _build_trace_rich_tree(
 
 
 def _trace_flat_output(
-    origin_uid: str, all_items_str: dict, child_map: dict, direction: str
+    origin_uid: str,
+    all_items_str: dict,
+    child_map: dict,
+    direction: str,
+    review_state: Optional[ReviewState] = None,
 ) -> None:
     """flat形式でトレース結果をテーブル表示する。"""
     all_relevant: set[str] = set()
@@ -2165,12 +2302,14 @@ def _trace_flat_output(
     table.add_column("ID", style="bold cyan")
     table.add_column("タイトル")
     table.add_column("実装ステータス")
+    table.add_column("レビューステータス")
     for uid in sorted(all_relevant):
         item = all_items_str.get(uid)
         prefix = _get_uid_prefix(uid)
         header = (item.header or "").strip() if item else ""
-        badge = _impl_status_badge(item) if item else "-"
-        table.add_row(prefix, uid, header, badge)
+        impl_badge = _impl_status_badge(item) if item else "-"
+        review_badge = _review_status_badge(item or uid, review_state)
+        table.add_row(prefix, uid, header, impl_badge, review_badge)
     console.print(table)
 
 
@@ -2245,7 +2384,25 @@ def trace_cmd(
             tag_map: dict = {}
             if feature_dir is not None:
                 all_prefixes = get_all_prefixes(repo_root)
-                tag_map = get_tag_map(feature_dir, all_prefixes)
+                tag_map = get_tag_map(feature_dir, repo_root, all_prefixes)
+
+            # review_state 構築
+            review_state: Optional[ReviewState] = None
+            try:
+                all_prefixes = get_all_prefixes(repo_root)
+                gherkin_fingerprints = {}
+                feature_file_states = None
+                if feature_dir:
+                    gherkin_fingerprints = get_spec_fingerprints(
+                        feature_dir, repo_root, all_prefixes
+                    )
+                    feature_file_states = _compute_feature_file_states(feature_dir)
+
+                review_state = compute_review_state(
+                    raw_items, gherkin_fingerprints, tag_map, feature_file_states
+                )
+            except Exception:
+                pass
 
             # impl_map 構築（--show-impl 時のみ）
             impl_map: dict[str, set[str]] = {}
@@ -2294,7 +2451,9 @@ def trace_cmd(
 
         # 出力
         if output_format == "flat":
-            _trace_flat_output(origin_uid, all_items_str, child_map, direction)
+            _trace_flat_output(
+                origin_uid, all_items_str, child_map, direction, review_state=review_state
+            )
         else:
             result = _build_trace_rich_tree(
                 origin_uid,
@@ -2304,6 +2463,7 @@ def trace_cmd(
                 direction,
                 impl_map=impl_map if show_impl else None,
                 repo_root=repo_root if show_impl else None,
+                review_state=review_state,
             )
             if isinstance(result, list):
                 for tree in result:

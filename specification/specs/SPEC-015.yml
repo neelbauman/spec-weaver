@@ -1,5 +1,8 @@
 active: true
 derived: false
+gherkin_fingerprints:
+- ./specification/features/scaffold.feature: |
+    70791a8012582a2b5aed53a74b13b3e639541f9ac7331f8c681ad36efb43c8ca
 header: |
   scaffold コマンド —  behave テストコード自動生成
 level: 3.15

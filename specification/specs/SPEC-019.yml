@@ -1,5 +1,8 @@
 active: true
 derived: false
+gherkin_fingerprints:
+- ./specification/features/impl_link.feature: |
+    41dcbf4a7faa415e07ef63246c95e474b424447dfdad377e0db239885ff3b30f
 header: |
   audit コマンドへの実装ファイルリンク検証の追加
 impl_files:

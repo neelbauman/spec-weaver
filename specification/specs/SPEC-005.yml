@@ -1,5 +1,10 @@
 active: true
 derived: false
+gherkin_fingerprints:
+- ./specification/features/audit.feature: |
+    eae01d58417bdd1898c9bfadff292060601184842689193d33cb5a84ff45dee8
+- ./specification/features/build.feature: |
+    c78c8aeb49c42b2b5dda0512d95b3008cb75368b52c30cbcd520c2269e4bd4db
 header: |
   Suspect（変更波及）対応
 level: 2.1
@@ -7,10 +12,8 @@ links:
 - REQ-004: KXm5cZc2wXUhF29d-4lpSPbclfjN4ruCBIwDvWX93tg=
 normative: true
 ref: ''
-reviewed: xmxdF423te804bo83vrpB6-_7NF3hxmYLZ3-Bu5lwNw=
+reviewed: yxWjzdWfdpNvinFXypkHKPXq2fCdKmNAJGMmC27qmao=
 status: implemented
-test_fingerprint: |
-  2ca5b83eec248bb45804fe9ac13e768198ff28693de6c44136b0d1bbf8c6720f
 testable: true
 text: |
   ## 概要
@@ -20,12 +23,16 @@ text: |
 
   ### 処理
   - Doorstop APIの `item.cleared`（suspect link 検出）および `item.reviewed`（未レビュー変更検出）属性を評価すること
+    - item.reviewed is true and item.cleared is true, then review status is **reviewed**
+    - item.reviewed is true and item.cleared is false, and related items is reviewed,  then review status is **suspect-with-reviewed**
+    - item.reviewed is true and item.cleared is false, and related items have unreviewed ones,  then review status is **suspect-with-unreviewed**
+    - item.reviewed is false and item.cleared is true, then review status is **unreviewed**
+    - item.reviewed is false and item.cleared is false, and related items is reviewed,  then review status is **unreviewed, suspect-with-reviewed**
+    - item.reviewed is false and item.cleared is false, and related items have unreviewed ones,  then review status is **unreviewed, suspect-with-unreviewed**
   - `audit` コマンド実行時に Suspect Link / Unreviewed Changes を分離して警告出力すること
   - `build` コマンド実行時に一覧テーブルの行ハイライト（Suspectは紫、Unreviewedは赤）および詳細ページに警告バナーを動的に付与すること
-  - Doorstop アイテムに加え、`.feature` ファイルも Suspect / Unreviewed の対象とする:
-    - Suspect: 対応 SPEC が未レビュー状態になった場合、その SPEC にタグ付けされた
-      `.feature` ファイルも Suspect として audit テーブルに報告する
-    - Unreviewed: `.feature` ファイル先頭の `# spec-weaver-fingerprint:` コメントが
+  - Doorstop アイテムに加え、`.feature` ファイルも Unreviewed の対象とする:
+    - Unreviewed:
       存在しない、または現在のファイル内容のハッシュと一致しない場合、
       その `.feature` ファイルを Unreviewed として audit テーブルに報告する
 
@@ -35,10 +42,15 @@ text: |
      （コメント行自体はハッシュ計算から除外する）
   3. 保存されたハッシュと現在のハッシュを比較し、不一致 or コメント未存在 → Unreviewed
 
-  ### Doorstop アイテムの Suspect 判定ロジック（test_fingerprint）
-  - SPEC YAML の `test_fingerprint` と、現在の Gherkin タグ付きシナリオのハッシュを比較する
-  - 不一致の場合、その SPEC アイテムを Suspect として報告する
-  - `spec-weaver clear <SPEC_ID>` を実行することで `test_fingerprint` が更新され Suspect が解除される
+  ### Doorstop アイテムの Suspect 判定ロジック（gherkin_fingerprints）
+  - SPEC YAML の `gherkin_fingerprints`（リスト）と、現在の Gherkin タグ付きシナリオのハッシュ（ファイル単位）を比較する
+  - 不一致の場合、またはリスト内のファイルパスと現在のタグマップが不整合な場合、その SPEC アイテムを Suspect として報告する
+  - Suspect 状態はレビュー状態（reviewed）に応じて以下の2種類に分類される：
+    - **suspect-with-unreviewed**: アイテムが Suspect かつ `reviewed:
+      この状態では `spec-weaver clear` を実行できない。まず `doorstop review` または `spec-weaver review` でレビューを完了させる必要がある。
+    - **suspect-with-reviewed**: アイテムが Suspect かつ `reviewed:
+      この状態でのみ `spec-weaver clear` による Suspect 解除が可能となる。
+  - `spec-weaver clear <SPEC_ID>` を実行することで `gherkin_fingerprints` が更新され Suspect が解除される
 
   ### 出力・結果
   - audit の警告出力: Suspect Link テーブル（変更された上位アイテムとアクションを表示）、Unreviewed Changes テーブル（対象 ID とアクションを表示）

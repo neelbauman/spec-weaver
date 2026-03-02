@@ -1,20 +1,23 @@
 active: true
 derived: false
+gherkin_fingerprints:
+- ./specification/features/clear.feature: |
+    dcb4876da876208a14c7521cb84eea0f54f9cb8c41962501df2bc9d8827d8b43
 header: |
-  clear コマンド — Doorstop test_fingerprint 更新
+  clear コマンド — Doorstop gherkin_fingerprints 更新
+impl_files:
+- src/spec_weaver/cli.py
 level: 20.5
 links:
 - REQ-004: KXm5cZc2wXUhF29d-4lpSPbclfjN4ruCBIwDvWX93tg=
 normative: true
 ref: ''
-reviewed: _QbPT_3tH6s9w-QqiKepp2rpCSZ2GwTYd41B2ct3h4Q=
-impl_files:
-- src/spec_weaver/cli.py
+reviewed: kFpUXikpmvsWjUZezz9cYJesvTTg2P0yNCwKSskfGYQ=
 status: implemented
 testable: true
 text: |
   ## 概要
-  Doorstop アイテムの `test_fingerprint` を現在の Gherkin 内容のハッシュで更新し、
+  Doorstop アイテムの `gherkin_fingerprints`（リスト形式）を現在の Gherkin 内容のハッシュで更新し、
   Suspect 状態を解除する `clear` コマンドの仕様。
 
   ## コマンド形式
@@ -35,13 +38,13 @@ text: |
   ## 処理
 
   ### アイテムID が指定された場合
-  1. 指定アイテムに紐づく Gherkin シナリオのフィンガープリント（SHA-256）を計算する。
-  2. 該当する Doorstop YAML の `test_fingerprint` フィールドを新しいハッシュ値で上書きする。
-  3. 更新したアイテム ID とハッシュ値をコンソールに表示する。
+  1. 指定アイテムに紐づく Gherkin シナリオのフィンガープリント（SHA-256）をファイル単位で計算する。
+  2. 該当する Doorstop YAML の `gherkin_fingerprints` フィールドを新しいハッシュ値リストで上書きする。
+  3. 更新したアイテム ID とハッシュ値リストをコンソールに表示する。
 
   ### `.feature` ファイルが指定された場合
   1. ファイル内の全仕様 ID タグを収集する。
-  2. 各アイテムについて上記と同じ `test_fingerprint` 更新を実行する。
+  2. 各アイテムについて上記と同じ `gherkin_fingerprints` 更新を実行する。
   3. 更新件数をコンソールに表示する。
 
   ## 出力
