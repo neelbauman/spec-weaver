@@ -24,10 +24,18 @@ class MockDoorstopDocument:
 def test_get_specs_filtering(mock_chdir, mock_build, tmp_path):
     # Doorstopのツリーをシミュレート
     items = [
-        MockDoorstopItem("SPEC-001", "SPEC", active=True, testable=True),     # 抽出されるべき
-        MockDoorstopItem("SPEC-002", "SPEC", active=False, testable=True),    # 削除済み(active=False)なので除外
-        MockDoorstopItem("SPEC-003", "SPEC", active=True, testable=False),    # テスト不要(testable=False)なので除外
-        MockDoorstopItem("REQ-001", "REQ", active=True, testable=True),       # プレフィックス違いなので除外
+        MockDoorstopItem(
+            "SPEC-001", "SPEC", active=True, testable=True
+        ),  # 抽出されるべき
+        MockDoorstopItem(
+            "SPEC-002", "SPEC", active=False, testable=True
+        ),  # 削除済み(active=False)なので除外
+        MockDoorstopItem(
+            "SPEC-003", "SPEC", active=True, testable=False
+        ),  # テスト不要(testable=False)なので除外
+        MockDoorstopItem(
+            "REQ-001", "REQ", active=True, testable=True
+        ),  # プレフィックス違いなので除外
     ]
     mock_build.return_value = [MockDoorstopDocument(items)]
 
@@ -41,8 +49,10 @@ def test_get_specs_filtering(mock_chdir, mock_build, tmp_path):
 # get_item_warnings / is_suspect テスト
 # ---------------------------------------------------------------------------
 
+
 class MockWarningItem:
     """cleared / reviewed を制御可能な Mock Item。"""
+
     def __init__(self, cleared=True, reviewed=True, links=None):
         self._cleared = cleared
         self._reviewed = reviewed
@@ -95,8 +105,10 @@ def test_get_item_warnings_both():
 
 def test_get_item_warnings_fallback():
     """属性が存在しない場合のフォールバック"""
+
     class EmptyItem:
         pass
+
     w = get_item_warnings(EmptyItem())
     assert w.has_any_warning is False
 

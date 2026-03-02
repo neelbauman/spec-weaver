@@ -9,6 +9,8 @@ normative: true
 ref: ''
 reviewed: J6P-Se92LhMk2tg5vdC-OoCCabl-wvrwY629qjehlRc=
 status: implemented
+test_fingerprint: |
+  2c9c2fe36b1b44164b7bda63a3611ef797844087af5fc523df042c9be9a989bc
 testable: true
 text: |
   ## 概要

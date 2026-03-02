@@ -1,8 +1,11 @@
 # [SPEC-007] 実装ステータス管理
 
+> ⚠️ **Suspect**: 関連するアイテムやテストが変更されました。影響範囲のレビューが必要です。
+> **原因 (Unreviewed)**: [status.feature](../features/status.md)
+
 **実装状況**: ✅ implemented
 
-**作成日**: 2026-02-26　|　**更新日**: 2026-02-26
+**作成日**: 2026-02-26　|　**更新日**: 2026-03-01
 
 **上位アイテム**: [REQ-006](REQ-006.md)
 
@@ -29,7 +32,9 @@ DoorstopのYAMLファイルに `status` キーを追記することで、実装�
 
 ### 2. status コマンド
 `spec-weaver status` コマンドにより、全アイテムのステータスを一覧表示する。
-- **表示**: ID / タイトル / 実装ステータス（絵文字バッジ付き）
+- **表示**: ID / タイトル / 実装ステータス（絵文字バッジ付き）/ レビューステータス / 最終更新日
+- **レビューステータス**: Doorstopの `reviewed` / `cleared` 属性を評価し `⚠️ suspect` / `📋 unreviewed` / `✅ reviewed` を表示
+- **最終更新日**: Gitの最終コミット日付を優先し、未取得時は YAML の `updated_at` 属性にフォールバック。どちらもない場合は `-` を表示
 - **フィルタリング**: `--filter` オプションで特定ステータスのみを表示可能
 
 ### 3. build コマンドへの統合
@@ -37,7 +42,7 @@ DoorstopのYAMLファイルに `status` キーを追記することで、実装�
 - **一覧ページ**: テーブルに「実装状況」列を追加
 - **詳細ページ**: カバレッジ情報の直前に `**実装状況**: <バッジ>` を表示
 
-**テスト実行結果 (個別)**: ✅ 4/4 PASS
+**テスト実行結果 (個別)**: ✅ 5/5 PASS
 
 ### 🧪 検証シナリオ
 
@@ -45,3 +50,4 @@ DoorstopのYAMLファイルに `status` キーを追記することで、実装�
 - ✅ PASS **status 未設定のアイテムは "-" と表示される** — Scenario （[features/status.feature:12](../features/status.md)）
 - ✅ PASS **--filter で特定ステータスに絞り込める** — Scenario （[features/status.feature:18](../features/status.md)）
 - ✅ PASS **--filter に一致するアイテムが存在しない場合に通知される** — Scenario （[features/status.feature:25](../features/status.md)）
+- ✅ PASS **レビューステータスと最終更新日が表示される** — Scenario （[features/status.feature:31](../features/status.md)）

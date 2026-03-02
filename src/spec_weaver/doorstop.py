@@ -17,9 +17,11 @@ from spec_weaver.impl_scanner import get_ref_files as get_ref_files  # noqa: F40
 # バリデーション警告
 # ---------------------------------------------------------------------------
 
+
 @dataclass
 class ItemWarnings:
     """Doorstop バリデーション警告"""
+
     has_suspect_links: bool = False
     has_unreviewed_changes: bool = False
     suspect_link_targets: list[str] = field(default_factory=list)
@@ -54,6 +56,7 @@ def get_item_warnings(item: Any) -> ItemWarnings:
         pass
     return w
 
+
 def get_specs(repo_root: Path, prefix: Optional[str] = "SPEC") -> Set[str]:
     """監査用：アクティブな仕様IDの集合を取得します。"""
     item_map = get_item_map(repo_root)
@@ -66,13 +69,14 @@ def get_specs(repo_root: Path, prefix: Optional[str] = "SPEC") -> Set[str]:
                 specs.add(uid_str)
     return specs
 
+
 def get_item_map(repo_root: Path) -> Dict[str, Any]:
     """
     DoorstopのTreeから、すべてのドキュメントのアクティブなアイテムを取得します。
     """
     original_cwd = os.getcwd()
     os.chdir(repo_root)
-    
+
     try:
         tree = doorstop.build()
         item_map: Dict[str, Any] = {}
@@ -87,6 +91,7 @@ def get_item_map(repo_root: Path) -> Dict[str, Any]:
     finally:
         os.chdir(original_cwd)
 
+
 def _get_custom_attribute(item: Any, key: str, default: Any = None) -> Any:
     """
     DoorstopのItemは内部的に __getattr__ や get メソッドで
@@ -99,6 +104,7 @@ def _get_custom_attribute(item: Any, key: str, default: Any = None) -> Any:
     except AttributeError:
         return getattr(item, key, default)
 
+
 def _get_git_file_date(file_path: str, mode: str = "latest") -> str | None:
     """Git履歴からファイルの日付を YYYY-MM-DD で取得する。
 
@@ -107,11 +113,20 @@ def _get_git_file_date(file_path: str, mode: str = "latest") -> str | None:
     Git 外や未コミットファイルでは None を返す。
     """
     try:
+        cwd = os.path.dirname(os.path.abspath(file_path))
         if mode == "first":
-            cmd = ["git", "log", "--follow", "--format=%aI", "--diff-filter=A", "--", file_path]
+            cmd = [
+                "git",
+                "log",
+                "--follow",
+                "--format=%aI",
+                "--diff-filter=A",
+                "--",
+                file_path,
+            ]
         else:
             cmd = ["git", "log", "-1", "--format=%aI", "--", file_path]
-        result = subprocess.run(cmd, capture_output=True, text=True, timeout=5)
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=5, cwd=cwd)
         if result.returncode == 0 and result.stdout.strip():
             line = result.stdout.strip().splitlines()[0]
             return line[:10]  # YYYY-MM-DD
@@ -123,6 +138,7 @@ def _get_git_file_date(file_path: str, mode: str = "latest") -> str | None:
 def is_suspect(item: Any) -> bool:
     """後方互換ラッパー: いずれかの警告がある場合 True を返す。"""
     return get_item_warnings(item).has_any_warning
+
 
 def get_doorstop_tree(repo_root: Path):
     """Doorstopのツリーオブジェクトをそのまま返す（ドキュメント階層の走査用）。"""
@@ -155,5 +171,20 @@ def get_all_items(repo_root: Path) -> Dict[str, Any]:
                 if item.active:
                     all_items[str(item.uid)] = item
         return all_items
+    finally:
+        os.chdir(original_cwd)
+
+
+def update_item_attribute(repo_root: Path, item_id: str, key: str, value: Any) -> None:
+    """指定したアイテムのカスタム属性を更新し、YAMLに保存します。"""
+    original_cwd = os.getcwd()
+    os.chdir(repo_root)
+    try:
+        tree = doorstop.build()
+        item = tree.find_item(item_id)
+        if not item:
+            raise ValueError(f"Item not found: {item_id}")
+        item.set(key, value)
+        item.save()
     finally:
         os.chdir(original_cwd)

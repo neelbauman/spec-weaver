@@ -3,6 +3,7 @@
 
 import typer
 import shutil
+
 try:
     from importlib import resources
 except ImportError:
@@ -25,8 +26,19 @@ import subprocess
 import sys
 from datetime import date as _date
 
-from spec_weaver.doorstop import get_item_map, get_doorstop_tree, _get_custom_attribute, _get_git_file_date, get_specs, is_suspect, get_all_prefixes, get_item_warnings
-from spec_weaver.gherkin import get_tag_map, get_tags
+from spec_weaver.doorstop import (
+    get_item_map,
+    get_doorstop_tree,
+    _get_custom_attribute,
+    _get_git_file_date,
+    get_specs,
+    is_suspect,
+    get_all_prefixes,
+    get_item_warnings,
+    update_item_attribute,
+)
+from spec_weaver.review_state import compute_review_state, ReviewState
+from spec_weaver.gherkin import get_tag_map, get_tags, get_spec_fingerprints
 from spec_weaver.test_results import (
     TestResultMap,
     format_status_badge,
@@ -43,10 +55,10 @@ from spec_weaver.impl_scanner import get_ref_files, ImplScanner
 # ---------------------------------------------------------------------------
 
 IMPL_STATUS_BADGE: dict[str, str] = {
-    "draft":       "📝 draft",
+    "draft": "📝 draft",
     "in-progress": "🚧 in-progress",
     "implemented": "✅ implemented",
-    "deprecated":  "🗑️ deprecated",
+    "deprecated": "🗑️ deprecated",
 }
 
 
@@ -58,13 +70,11 @@ def _impl_status_badge(item) -> str:
     return IMPL_STATUS_BADGE.get(str(status), f"{status}")
 
 
-def _review_status_badge(item) -> str:
-    """Doorstopのレビューステータスをバッジ文字列に変換する。"""
-    warnings = get_item_warnings(item)
-    if warnings.has_suspect_links:
-        return "⚠️ suspect"
-    if warnings.has_unreviewed_changes:
-        return "📋 unreviewed"
+def _review_status_badge(item_or_id: str | Any, review_state: Optional[ReviewState] = None) -> str:
+    """DoorstopのレビューステータスまたはGherkin Featureのステータスをバッジ文字列に変換する。"""
+    if review_state:
+        uid = str(getattr(item_or_id, "uid", item_or_id))
+        return review_state.get_status(uid)
     return "✅ reviewed"
 
 
@@ -107,6 +117,7 @@ def _is_file_dirty(file_path: Path, repo_root: Path) -> bool:
 # ---------------------------------------------------------------------------
 # audit コマンド
 # ---------------------------------------------------------------------------
+
 
 @app.command("audit")
 def audit_cmd(
@@ -165,39 +176,70 @@ def audit_cmd(
     )
 
     try:
-        with console.status("[bold cyan]Doorstopの仕様データベースを構築中...[/bold cyan]"):
+        with console.status(
+            "[bold cyan]Doorstopの仕様データベースを構築中...[/bold cyan]"
+        ):
             try:
                 specs_in_db = get_specs(repo_root=repo_root, prefix=prefix)
                 all_prefixes = get_all_prefixes(repo_root=repo_root)
             except Exception as e:
-                console.print(f"[bold red]❌ Doorstopデータの読み込みに失敗しました:[/bold red] {e}")
+                console.print(
+                    f"[bold red]❌ Doorstopデータの読み込みに失敗しました:[/bold red] {e}"
+                )
                 raise typer.Exit(code=1)
 
-        with console.status("[bold cyan]Gherkinのフィーチャーファイルを解析中...[/bold cyan]"):
+        with console.status(
+            "[bold cyan]Gherkinのフィーチャーファイルを解析中...[/bold cyan]"
+        ):
             try:
                 # 検索対象のプレフィックスを決定
                 search_prefixes = {prefix} if prefix else all_prefixes
-                tags_in_code = get_tags(features_dir=feature_dir, prefixes=search_prefixes)
+                tags_in_code = get_tags(
+                    features_dir=feature_dir, prefixes=search_prefixes
+                )
             except ValueError as e:
-                console.print(f"[bold red]❌ Gherkinファイルのパースに失敗しました:[/bold red] {e}")
+                console.print(
+                    f"[bold red]❌ Gherkinファイルのパースに失敗しました:[/bold red] {e}"
+                )
                 raise typer.Exit(code=1)
 
         with console.status("[bold cyan]Suspect状態の仕様を確認中...[/bold cyan]"):
             try:
                 raw_items = get_item_map(repo_root=repo_root)
-                suspect_link_specs: dict[str, list[str]] = {}
+                # Gherkin フィンガープリントを取得
+                try:
+                    search_prefixes = {prefix} if prefix else all_prefixes
+                    gherkin_fingerprints = get_spec_fingerprints(
+                        feature_dir, search_prefixes
+                    )
+                except Exception:
+                    gherkin_fingerprints = {}
+
+                try:
+                    tag_map = get_tag_map(feature_dir, search_prefixes)
+                except Exception:
+                    tag_map = {}
+
+                review_state = compute_review_state(raw_items, gherkin_fingerprints, tag_map)
+
+                suspect_specs: dict[str, set[str]] = {}
                 unreviewed_specs: set[str] = set()
+
                 for uid, item in raw_items.items():
                     if prefix and not uid.startswith(prefix):
                         continue
-                    w = get_item_warnings(item)
-                    if w.has_suspect_links:
-                        suspect_link_specs[uid] = w.suspect_link_targets
-                    if w.has_unreviewed_changes:
+
+                    status = review_state.get_status(uid)
+                    if "unreviewed" in status:
                         unreviewed_specs.add(uid)
+                    if "suspect" in status:
+                        suspect_specs[uid] = review_state.suspect_causes.get(uid, set())
+
             except Exception as e:
-                console.print(f"[bold red]❌ Suspect状態の確認に失敗しました:[/bold red] {e}")
-                suspect_link_specs = {}
+                console.print(
+                    f"[bold red]❌ Suspect状態の確認に失敗しました:[/bold red] {e}"
+                )
+                suspect_specs = {}
                 unreviewed_specs = set()
 
         untested_specs = specs_in_db - tags_in_code
@@ -206,7 +248,9 @@ def audit_cmd(
 
         if untested_specs:
             has_error = True
-            console.print("\n[bold red]❌ テストが実装されていない仕様 (Untested Specs):[/bold red]")
+            console.print(
+                "\n[bold red]❌ テストが実装されていない仕様 (Untested Specs):[/bold red]"
+            )
             table = Table(show_header=True, header_style="bold magenta")
             table.add_column("Missing Spec ID", style="dim")
             for spec in sorted(untested_specs):
@@ -215,33 +259,39 @@ def audit_cmd(
 
         if orphaned_tags:
             has_error = True
-            console.print("\n[bold yellow]⚠️ 仕様書に存在しない孤児タグ (Orphaned Tags):[/bold yellow]")
+            console.print(
+                "\n[bold yellow]⚠️ 仕様書に存在しない孤児タグ (Orphaned Tags):[/bold yellow]"
+            )
             table = Table(show_header=True, header_style="bold magenta")
             table.add_column("Orphaned Tag", style="dim")
             for tag in sorted(orphaned_tags):
                 table.add_row(f"@{tag}")
             console.print(table)
 
-        if suspect_link_specs:
+        if suspect_specs:
             has_error = True
-            console.print("\n[bold yellow]⚠️ Suspect Link — 上位アイテムが変更されています:[/bold yellow]")
+            console.print(
+                "\n[bold yellow]⚠️ Suspect — 関連アイテムが変更されています:[/bold yellow]"
+            )
             table = Table(show_header=True, header_style="bold magenta")
             table.add_column("Spec ID", style="dim")
-            table.add_column("変更された上位アイテム", style="dim")
+            table.add_column("原因アイテム", style="dim")
             table.add_column("アクション", style="dim")
-            for spec in sorted(suspect_link_specs):
-                targets = ", ".join(suspect_link_specs[spec]) or "(全リンク)"
-                table.add_row(spec, targets, "doorstop clear / レビュー後に clear")
+            for spec in sorted(suspect_specs):
+                causes = ", ".join(sorted(suspect_specs[spec])) or "不明"
+                table.add_row(spec, causes, "影響範囲を確認し、必要に応じて修正")
             console.print(table)
 
         if unreviewed_specs:
             has_error = True
-            console.print("\n[bold yellow]📋 Unreviewed Changes — 未レビューの変更があります:[/bold yellow]")
+            console.print(
+                "\n[bold yellow]📋 Unreviewed Changes — 未レビューの変更があります:[/bold yellow]"
+            )
             table = Table(show_header=True, header_style="bold magenta")
             table.add_column("Spec ID", style="dim")
             table.add_column("アクション", style="dim")
             for spec in sorted(unreviewed_specs):
-                table.add_row(spec, "doorstop review / 内容を確認してレビュー")
+                table.add_row(spec, "doorstop review / または spec-weaver review")
             console.print(table)
 
         # stale チェック（終了コードには影響しない）
@@ -302,19 +352,24 @@ def audit_cmd(
             )
             raise typer.Exit(code=0)
         else:
-            console.print("\n[bold red]監査が失敗しました。仕様とテストの乖離を修正してください。[/bold red]")
+            console.print(
+                "\n[bold red]監査が失敗しました。仕様とテストの乖離を修正してください。[/bold red]"
+            )
             raise typer.Exit(code=1)
 
     except typer.Exit:
         raise
     except Exception as e:
-        console.print(f"\n[bold white on red] 予期せぬ致命的なエラーが発生しました: {e} [/bold white on red]")
+        console.print(
+            f"\n[bold white on red] 予期せぬ致命的なエラーが発生しました: {e} [/bold white on red]"
+        )
         raise typer.Exit(code=1)
 
 
 # ---------------------------------------------------------------------------
 # 実装ファイルリンク検証ヘルパー（SPEC-019）
 # ---------------------------------------------------------------------------
+
 
 def _parse_extensions(extensions: Optional[str]) -> list[str] | None:
     """カンマ区切り拡張子文字列をリストに変換する。None または空の場合は None を返す。"""
@@ -331,9 +386,13 @@ def _run_impl_link_check(
     has_error: bool,
 ) -> bool:
     """実装ファイルリンクの検証を実行し、問題があれば出力する。has_error を更新して返す。"""
-    console.print("\n[bold blue]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/bold blue]")
+    console.print(
+        "\n[bold blue]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/bold blue]"
+    )
     console.print("[bold blue]🔗 実装ファイルリンクの検証[/bold blue]")
-    console.print("[bold blue]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/bold blue]")
+    console.print(
+        "[bold blue]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/bold blue]"
+    )
 
     with console.status("[bold cyan]実装ファイルをスキャン中...[/bold cyan]"):
         scanner = ImplScanner()
@@ -353,9 +412,9 @@ def _run_impl_link_check(
     if prefix:
         all_spec_ids = {sid for sid in all_spec_ids if sid.startswith(prefix)}
 
-    broken_refs: list[tuple[str, str]] = []       # (spec_id, path) — ファイル不在
-    ref_only: list[tuple[str, str]] = []           # (spec_id, path) — ref のみ
-    annotation_only: list[tuple[str, str]] = []    # (spec_id, path) — annotation のみ
+    broken_refs: list[tuple[str, str]] = []  # (spec_id, path) — ファイル不在
+    ref_only: list[tuple[str, str]] = []  # (spec_id, path) — ref のみ
+    annotation_only: list[tuple[str, str]] = []  # (spec_id, path) — annotation のみ
 
     for spec_id in sorted(all_spec_ids):
         refs = set(ref_map.get(spec_id, []))
@@ -375,7 +434,9 @@ def _run_impl_link_check(
         has_error = True
         console.print("\n[bold red]❌ 存在しないファイルへの ref:[/bold red]")
         for spec_id, path_str in broken_refs:
-            console.print(f"   [cyan]{spec_id}[/cyan] → [dim]{path_str}[/dim] [red](not found)[/red]")
+            console.print(
+                f"   [cyan]{spec_id}[/cyan] → [dim]{path_str}[/dim] [red](not found)[/red]"
+            )
 
     if ref_only:
         console.print("\n[bold yellow]⚠️  ref のみ（アノテーションなし）:[/bold yellow]")
@@ -390,7 +451,9 @@ def _run_impl_link_check(
     if not broken_refs and not ref_only and not annotation_only:
         console.print("\n[bold green]✅ リンク検証 完了 — 乖離なし[/bold green]")
     else:
-        console.print("\n[bold yellow]⚠️  リンク検証 完了 — 上記の乖離を確認してください[/bold yellow]")
+        console.print(
+            "\n[bold yellow]⚠️  リンク検証 完了 — 上記の乖離を確認してください[/bold yellow]"
+        )
 
     return has_error
 
@@ -398,6 +461,7 @@ def _run_impl_link_check(
 # ---------------------------------------------------------------------------
 # scaffold コマンド
 # ---------------------------------------------------------------------------
+
 
 @app.command("scaffold")
 def scaffold_cmd(
@@ -436,7 +500,9 @@ def scaffold_cmd(
     try:
         feature_files = sorted(feature_dir.rglob("*.feature"))
         if not feature_files:
-            console.print("[yellow]⚠️ .feature ファイルが見つかりませんでした。[/yellow]")
+            console.print(
+                "[yellow]⚠️ .feature ファイルが見つかりませんでした。[/yellow]"
+            )
             raise typer.Exit(0)
 
         generated = 0
@@ -467,7 +533,9 @@ def scaffold_cmd(
                             skipped += 1
                             continue
 
-                result = generate_test_file(fpath, out_dir, feature_dir, overwrite=overwrite)
+                result = generate_test_file(
+                    fpath, out_dir, feature_dir, overwrite=overwrite
+                )
 
                 if result is None:
                     console.print(
@@ -477,10 +545,16 @@ def scaffold_cmd(
                 else:
                     out_path, status, diff_text = result
                     if status == "created":
-                        console.print(f"  [green]✅ 新規作成[/green]: {_display_path(out_path)}")
+                        console.print(
+                            f"  [green]✅ 新規作成[/green]: {_display_path(out_path)}"
+                        )
                     else:
-                        console.print(f"\n  [blue]🔄 差分更新[/blue]: {_display_path(out_path)}")
-                        console.print(Syntax(diff_text, "diff", theme="monokai", padding=(0, 2)))
+                        console.print(
+                            f"\n  [blue]🔄 差分更新[/blue]: {_display_path(out_path)}"
+                        )
+                        console.print(
+                            Syntax(diff_text, "diff", theme="monokai", padding=(0, 2))
+                        )
                         console.print()
                     generated += 1
 
@@ -508,6 +582,7 @@ def scaffold_cmd(
 # ---------------------------------------------------------------------------
 # ci コマンド
 # ---------------------------------------------------------------------------
+
 
 @app.command("ci")
 def ci_cmd(
@@ -556,7 +631,9 @@ def ci_cmd(
     try:
         # Step 1: scaffold（オプション）
         if do_scaffold:
-            console.print("[bold cyan]📝 Step 1/3: テストコード生成 (scaffold)...[/bold cyan]")
+            console.print(
+                "[bold cyan]📝 Step 1/3: テストコード生成 (scaffold)...[/bold cyan]"
+            )
             feature_files = sorted(feature_dir.rglob("*.feature"))
             if feature_files:
                 for fpath in feature_files:
@@ -567,18 +644,26 @@ def ci_cmd(
                         if scaffold_result:
                             console.print(f"  [green]✅ 生成[/green]: {fpath.name}")
                     except Exception as e:
-                        console.print(f"  [yellow]⚠️ scaffold スキップ: {fpath.name}: {e}[/yellow]")
+                        console.print(
+                            f"  [yellow]⚠️ scaffold スキップ: {fpath.name}: {e}[/yellow]"
+                        )
             console.print("  [green]✅ scaffold 完了[/green]")
         else:
-            console.print("[dim]📝 Step 1/3: scaffold スキップ (--scaffold で有効化)[/dim]")
+            console.print(
+                "[dim]📝 Step 1/3: scaffold スキップ (--scaffold で有効化)[/dim]"
+            )
 
         # Step 2: behave 実行
         console.print(f"[bold cyan]🧪 Step 2/3: behave テスト実行...[/bold cyan]")
         behave_cmd = [
-            "uv", "run", "behave",
+            "uv",
+            "run",
+            "behave",
             str(feature_dir),
-            "-f", "json",
-            "--outfile", str(report),
+            "-f",
+            "json",
+            "--outfile",
+            str(report),
         ]
         console.print(f"  [dim]$ {' '.join(behave_cmd)}[/dim]")
         result = subprocess.run(behave_cmd, capture_output=True, text=True)
@@ -590,14 +675,20 @@ def ci_cmd(
 
         test_failed = result.returncode != 0
         if test_failed:
-            console.print("[yellow]⚠️ テストに失敗がありますが、ドキュメント生成を継続します。[/yellow]")
+            console.print(
+                "[yellow]⚠️ テストに失敗がありますが、ドキュメント生成を継続します。[/yellow]"
+            )
         else:
             console.print("  [green]✅ テスト全件 PASS[/green]")
 
         # Step 3: build
-        console.print(f"[bold cyan]📄 Step 3/3: ドキュメント生成 (build)...[/bold cyan]")
+        console.print(
+            f"[bold cyan]📄 Step 3/3: ドキュメント生成 (build)...[/bold cyan]"
+        )
         if not report.exists():
-            console.print(f"[yellow]⚠️ レポートファイルが生成されませんでした: {report}[/yellow]")
+            console.print(
+                f"[yellow]⚠️ レポートファイルが生成されませんでした: {report}[/yellow]"
+            )
             console.print("[dim]テスト結果なしで build を実行します。[/dim]")
             build_test_results = None
         else:
@@ -608,7 +699,9 @@ def ci_cmd(
 
         console.print()
         if test_failed:
-            console.print("[bold yellow]⚠️ CI 完了（テスト失敗あり — ドキュメントに FAIL 結果が反映されています）[/bold yellow]")
+            console.print(
+                "[bold yellow]⚠️ CI 完了（テスト失敗あり — ドキュメントに FAIL 結果が反映されています）[/bold yellow]"
+            )
             raise typer.Exit(1)
         else:
             console.print("[bold green]✅ CI 完了（全テスト PASS）[/bold green]")
@@ -618,13 +711,124 @@ def ci_cmd(
     except Exception as e:
         console.print(f"[bold red]❌ CI エラー: {e}[/bold red]")
         import traceback
+
         traceback.print_exc()
         raise typer.Exit(code=1)
 
 
 # ---------------------------------------------------------------------------
+# review コマンド
+# ---------------------------------------------------------------------------
+
+
+@app.command("review")
+def review_cmd(
+    item_id: str = typer.Argument(
+        ..., help="レビュー完了としてフィンガープリントを更新するアイテムID、または .feature ファイルパス"
+    ),
+    feature_dir: Path = typer.Option(
+        Path("specification/features"),
+        "--feature-dir",
+        "-f",
+        help="Gherkinの .feature ファイルが格納されているディレクトリのパス",
+        exists=True,
+        file_okay=False,
+        dir_okay=True,
+        resolve_path=True,
+    ),
+    repo_root: Path = typer.Option(
+        Path.cwd(),
+        "--repo-root",
+        "-r",
+        help="Doorstopのプロジェクトルート",
+        exists=True,
+        file_okay=False,
+        dir_okay=True,
+        resolve_path=True,
+    ),
+) -> None:
+    """
+    指定したアイテム、または .feature ファイル内の全アイテムの Gherkin フィンガープリントを最新の状態に更新し、レビュー済みとみなします。
+    注意: この操作により YAML が書き換えられるため、Doorstop 本体の reviewed 状態はリセットされます。
+    """
+    try:
+        item_path = Path(item_id)
+        if item_path.suffix == ".feature" and item_path.exists():
+            # .feature ファイルが指定された場合
+            all_prefixes = get_all_prefixes(repo_root)
+            with console.status(
+                f"[bold cyan]{item_id} に含まれる仕様IDを特定中...[/bold cyan]"
+            ):
+                tags_in_file = get_tags(item_path, all_prefixes)
+
+            if not tags_in_file:
+                console.print(
+                    f"[bold yellow]⚠️ {item_id} に紐づく仕様IDが見つかりませんでした。[/bold yellow]"
+                )
+                raise typer.Exit(1)
+
+            with console.status(
+                f"[bold cyan]全フィンガープリントを計算中...[/bold cyan]"
+            ):
+                all_fingerprints = get_spec_fingerprints(feature_dir, all_prefixes)
+
+            updated_count = 0
+            sorted_tags = sorted(list(tags_in_file))
+            for tag in sorted_tags:
+                fp = all_fingerprints.get(tag)
+                if fp:
+                    with console.status(f"[bold cyan]{tag} の YAML を更新中...[/bold cyan]"):
+                        update_item_attribute(repo_root, tag, "test_fingerprint", fp)
+                    console.print(
+                        f"✅ [bold]{tag}[/bold] のフィンガープリントを更新しました。 [dim]{fp}[/dim]"
+                    )
+                    updated_count += 1
+
+            if updated_count > 0:
+                console.print(
+                    f"\n[bold green]✨ 合計 {updated_count} 個のアイテムのフィンガープリントを更新しました。[/bold green]"
+                )
+                console.print(
+                    f"[bold yellow]💡 次は Doorstop 本体のレビューを実行してください:[/bold yellow]"
+                )
+                console.print(f"   doorstop review {' '.join(sorted_tags)}")
+            return
+
+        # 従来通りの ID 指定の場合
+        with console.status(
+            f"[bold cyan]{item_id} の Gherkin フィンガープリントを計算中...[/bold cyan]"
+        ):
+            all_prefixes = get_all_prefixes(repo_root)
+            fingerprints = get_spec_fingerprints(feature_dir, all_prefixes)
+            actual_fp = fingerprints.get(item_id)
+
+        if not actual_fp:
+            console.print(
+                f"[bold yellow]⚠️ {item_id} に紐づく Gherkin シナリオが見つかりませんでした。[/bold yellow]"
+            )
+            raise typer.Exit(1)
+
+        with console.status(f"[bold cyan]{item_id} の YAML を更新中...[/bold cyan]"):
+            update_item_attribute(repo_root, item_id, "test_fingerprint", actual_fp)
+
+        console.print(
+            f"[bold green]✅ {item_id} のフィンガープリントを更新しました。[/bold green]"
+        )
+        console.print(f"[dim]新ハッシュ: {actual_fp}[/dim]")
+        console.print(
+            f"\n[bold yellow]💡 次は Doorstop 本体のレビューを実行してください:[/bold yellow]"
+        )
+        console.print(f"   doorstop review {item_id}")
+
+    except Exception as e:
+        console.print(f"[bold red]❌ review エラー: {e}[/bold red]")
+        raise typer.Exit(1)
+
+
+# ---------------------------------------------------------------------------
 # status コマンド
 # ---------------------------------------------------------------------------
+
 
 @app.command("status")
 def status_cmd(
@@ -638,10 +842,20 @@ def status_cmd(
         dir_okay=True,
         resolve_path=True,
     ),
+    feature_dir: Path = typer.Option(
+        Path("specification/features"),
+        "--feature-dir",
+        "-f",
+        help="Gherkinの .feature ファイルが格納されているディレクトリのパス",
+        exists=True,
+        file_okay=False,
+        dir_okay=True,
+        resolve_path=True,
+    ),
     filter_status: Optional[str] = typer.Option(
         None,
         "--filter",
-        "-f",
+        "-F",
         help="表示するステータスで絞り込む（draft / in-progress / implemented / deprecated）",
     ),
 ) -> None:
@@ -652,11 +866,35 @@ def status_cmd(
         with console.status("[bold cyan]Doorstopデータを読み込み中...[/bold cyan]"):
             raw_items = get_item_map(repo_root=repo_root)
             all_items_str = {str(uid): item for uid, item in raw_items.items()}
+            all_prefixes = get_all_prefixes(repo_root)
 
-        req_items = {uid: item for uid, item in all_items_str.items() if uid.startswith("REQ")}
-        spec_items = {uid: item for uid, item in all_items_str.items() if uid.startswith("SPEC")}
+        with console.status(
+            "[bold cyan]Gherkinのフィンガープリントを計算中...[/bold cyan]"
+        ):
+            try:
+                gherkin_fingerprints = get_spec_fingerprints(feature_dir, all_prefixes)
+            except Exception:
+                gherkin_fingerprints = {}
+
+        try:
+            tag_map = get_tag_map(feature_dir, all_prefixes)
+        except Exception:
+            tag_map = {}
+
+        review_state = compute_review_state(all_items_str, gherkin_fingerprints, tag_map)
+
+        # プレフィックスごとにアイテムをグループ化
+        grouped_items: dict[str, dict] = {p: {} for p in all_prefixes}
+        for uid, item in all_items_str.items():
+            prefix = _get_uid_prefix(uid)
+            if prefix in grouped_items:
+                grouped_items[prefix][uid] = item
+            else:
+                grouped_items.setdefault("OTHER", {})[uid] = item
 
         def _print_status_table(title: str, items: dict) -> int:
+            if not items:
+                return 0
             table = Table(title=title, show_header=True, header_style="bold magenta")
             table.add_column("ID", style="bold cyan", no_wrap=True)
             table.add_column("タイトル")
@@ -670,7 +908,7 @@ def status_cmd(
                 if filter_status and str(raw_status or "") != filter_status:
                     continue
                 badge = _impl_status_badge(item)
-                review = _review_status_badge(item)
+                review = _review_status_badge(uid, review_state=review_state)
                 updated = _get_timestamp(item, "updated_at")
                 title_text = (item.header or "").strip()
                 table.add_row(uid, title_text, badge, review, updated)
@@ -679,13 +917,58 @@ def status_cmd(
                 console.print(table)
             return shown
 
-        req_shown = _print_status_table("要件 (REQ)", req_items)
-        spec_shown = _print_status_table("仕様 (SPEC)", spec_items)
+        total = 0
+        # 優先して表示するプレフィックスの順序
+        for prefix in ["REQ", "SPEC", "DESIGN", "PLAN", "ADR", "RESEARCH"]:
+            if prefix in grouped_items:
+                total += _print_status_table(
+                    f"ドキュメント: {prefix}", grouped_items.pop(prefix)
+                )
 
-        total = req_shown + spec_shown
+        # 残りのプレフィックスを表示
+        for prefix, items in sorted(grouped_items.items()):
+            total += _print_status_table(f"ドキュメント: {prefix}", items)
+
+        # Gherkin Featureファイルのステータス表示
+        try:
+            tag_map = get_tag_map(feature_dir, all_prefixes)
+            feature_files = {}
+            for uid, scenarios in tag_map.items():
+                for sc in scenarios:
+                    file_path = sc["file"]
+                    if file_path not in feature_files:
+                        feature_files[file_path] = {"scenarios": 0, "specs": set()}
+                    feature_files[file_path]["scenarios"] += 1
+                    feature_files[file_path]["specs"].add(uid)
+
+            if (
+                feature_files and not filter_status
+            ):  # filter_status がある場合はfeatureはステータスを持たないので除外する
+                table = Table(
+                    title="振る舞い仕様 (Gherkin Features)",
+                    show_header=True,
+                    header_style="bold green",
+                )
+                table.add_column("ファイルパス", style="bold cyan")
+                table.add_column("シナリオ数", justify="right")
+                table.add_column("レビューステータス")
+                table.add_column("関連仕様ID")
+                for fpath in sorted(feature_files.keys()):
+                    info = feature_files[fpath]
+                    specs = sorted(info["specs"])
+                    
+                    file_status = review_state.get_status(fpath)
+                    specs_str = ", ".join(specs)
+                    table.add_row(fpath, str(info["scenarios"]), file_status, specs_str)
+                console.print(table)
+        except Exception:
+            pass
+
         if total == 0:
             if filter_status:
-                console.print(f"[yellow]ステータス '{filter_status}' に一致するアイテムが見つかりませんでした。[/yellow]")
+                console.print(
+                    f"[yellow]ステータス '{filter_status}' に一致するアイテムが見つかりませんでした。[/yellow]"
+                )
             else:
                 console.print("[yellow]アイテムが見つかりませんでした。[/yellow]")
         else:
@@ -703,12 +986,22 @@ def status_cmd(
 # build コマンド
 # ---------------------------------------------------------------------------
 
+
 @app.command()
 def build(
     feature_dir: Path = typer.Argument(..., exists=True, resolve_path=True),
-    repo_root: Path = typer.Option(Path.cwd(), "--repo-root", "-r", exists=True, resolve_path=True),
-    out_dir: Path = typer.Option(Path(".specification"), "--out-dir", "-o", resolve_path=True),
-    prefix: str = typer.Option("SPEC", "--prefix", "-p", help="Gherkinタグとして主に扱うデフォルトプレフィックス"),
+    repo_root: Path = typer.Option(
+        Path.cwd(), "--repo-root", "-r", exists=True, resolve_path=True
+    ),
+    out_dir: Path = typer.Option(
+        Path(".specification"), "--out-dir", "-o", resolve_path=True
+    ),
+    prefix: str = typer.Option(
+        "SPEC",
+        "--prefix",
+        "-p",
+        help="Gherkinタグとして主に扱うデフォルトプレフィックス",
+    ),
     test_results_file: Path = typer.Option(
         None,
         "--test-results",
@@ -728,6 +1021,7 @@ def build(
     except Exception as e:
         console.print(f"[bold red]❌ ビルドエラー: {e}[/bold red]")
         import traceback
+
         traceback.print_exc()
         raise typer.Exit(1)
 
@@ -749,6 +1043,8 @@ def _run_build(
 
         # 2. Gherkinタグマップ取得 (全プレフィックスを対象にする)
         tag_map = get_tag_map(feature_dir, all_prefixes)
+        gherkin_fingerprints = get_spec_fingerprints(feature_dir, all_prefixes)
+        review_state = compute_review_state(all_items_str, gherkin_fingerprints, tag_map)
 
         # feature_path -> 関連アイテムUID一覧（バックリンク用）
         _backlink_sets: dict[str, set[str]] = {}
@@ -783,7 +1079,9 @@ def _run_build(
                     f"[bold cyan]📊 テスト結果を読み込みました: {len(test_result_map)} シナリオ[/bold cyan]"
                 )
             except Exception as e:
-                console.print(f"[bold red]❌ テスト結果の読み込みに失敗しました: {e}[/bold red]")
+                console.print(
+                    f"[bold red]❌ テスト結果の読み込みに失敗しました: {e}[/bold red]"
+                )
                 raise typer.Exit(1)
 
     # 出力ディレクトリ準備
@@ -798,7 +1096,7 @@ def _run_build(
     # feature_dir と同じ階層、またはその下の steps/ を探す
     # behave は feature_dir/steps をデフォルトで探す
     step_resolver.load_steps(feature_dir / "steps")
-    
+
     feature_md_map: dict[str, str] = {}
     for feature_file in feature_dir.rglob("*.feature"):
         try:
@@ -811,17 +1109,34 @@ def _run_build(
             except ValueError:
                 tag_rel = str(feature_file)
             backlinks = feature_backlink_map.get(tag_rel, [])
-            md_content = _feature_to_markdown(feature_file, backlinks=backlinks, step_resolver=step_resolver)
+            md_content = _feature_to_markdown(
+                feature_file,
+                backlinks=backlinks,
+                step_resolver=step_resolver,
+                review_state=review_state,
+                all_items_str=all_items_str,
+                feature_md_map=feature_md_map,
+                node_id=tag_rel,
+            )
             out_path.write_text(md_content, encoding="utf-8")
             feature_md_map[tag_rel] = f"../features/{md_rel.as_posix()}"
         except Exception as e:
-            console.print(f"[yellow]⚠️ feature変換スキップ: {feature_file}: {e}[/yellow]")
+            console.print(
+                f"[yellow]⚠️ feature変換スキップ: {feature_file}: {e}[/yellow]"
+            )
 
     # 7. 個別アイテムページ (items/*.md)
     for uid, item in all_items_str.items():
         content = _generate_item_markdown(
-            uid, item, all_items_str, child_map, sibling_map, tag_map, feature_md_map,
+            uid,
+            item,
+            all_items_str,
+            child_map,
+            sibling_map,
+            tag_map,
+            feature_md_map,
             test_result_map=test_result_map,
+            review_state=review_state,
         )
         (items_dir / f"{uid}.md").write_text(content, encoding="utf-8")
 
@@ -829,34 +1144,57 @@ def _run_build(
     prefix_to_file = {}
     for doc in doorstop_tree:
         p = str(doc.prefix)
-        doc_items = {uid: item for uid, item in all_items_str.items() if uid.startswith(p + "-")}
+        doc_items = {
+            uid: item for uid, item in all_items_str.items() if uid.startswith(p + "-")
+        }
         # プレフィックスが完全に一致する場合（ハイフンなし）も考慮が必要な場合があるが、Doorstopの標準はハイフン区切り
         if not doc_items:
-            doc_items = {uid: item for uid, item in all_items_str.items() if uid.startswith(p)}
+            doc_items = {
+                uid: item for uid, item in all_items_str.items() if uid.startswith(p)
+            }
 
         filename = f"{p.lower()}.md"
         table = _generate_index_table(
-            f"ドキュメント: {p}", doc_items, all_items_str, child_map, sibling_map, tag_map,
+            f"ドキュメント: {p}",
+            doc_items,
+            all_items_str,
+            child_map,
+            sibling_map,
+            tag_map,
             test_result_map=test_result_map,
+            review_state=review_state,
         )
         (docs_dir / filename).write_text(table, encoding="utf-8")
         prefix_to_file[p] = filename
 
     # 9. index.md と mkdocs.yml
     _generate_basic_files(
-        docs_dir, out_dir, repo_root.name, feature_md_map,
-        all_items_str, child_map, tag_map, doorstop_tree, prefix_to_file
+        docs_dir,
+        out_dir,
+        repo_root.name,
+        feature_md_map,
+        all_items_str,
+        child_map,
+        tag_map,
+        doorstop_tree,
+        prefix_to_file,
+        review_state,
     )
 
     console.print(f"[bold green]✅ ビルド成功！ [white]{out_dir}[/white][/bold green]")
+    try:
+        display_path = out_dir.relative_to(Path.cwd())
+    except ValueError:
+        display_path = out_dir
     console.print(
-        f"閲覧: [bold magenta]mkdocs serve -f {out_dir.relative_to(Path.cwd())}/mkdocs.yml[/bold magenta]"
+        f"閲覧: [bold magenta]mkdocs serve -f {display_path}/mkdocs.yml[/bold magenta]"
     )
 
 
 # ---------------------------------------------------------------------------
 # ヘルパー: 兄弟マップ計算
 # ---------------------------------------------------------------------------
+
 
 def _compute_sibling_map(all_items_str: dict, child_map: dict) -> dict[str, list[str]]:
     """同じ親（リンク先）を持ち、かつ同じプレフィックスを持つアイテムを兄弟として計算する。"""
@@ -880,7 +1218,10 @@ def _compute_sibling_map(all_items_str: dict, child_map: dict) -> dict[str, list
 # ヘルパー: カバレッジ計算
 # ---------------------------------------------------------------------------
 
-def _spec_coverage(uid: str, tag_map: dict, item, all_items_str: dict) -> tuple[int, int]:
+
+def _spec_coverage(
+    uid: str, tag_map: dict, item, all_items_str: dict
+) -> tuple[int, int]:
     """
     SPEC単体のカバレッジを返す。
     Returns: (covered_scenario_count, 1) ただしnot testableなら(0, 0)
@@ -892,7 +1233,9 @@ def _spec_coverage(uid: str, tag_map: dict, item, all_items_str: dict) -> tuple[
     return (1 if scenarios else 0, 1)
 
 
-def _req_coverage(req_uid: str, child_map: dict, all_items_str: dict, tag_map: dict) -> tuple[int, int]:
+def _req_coverage(
+    req_uid: str, child_map: dict, all_items_str: dict, tag_map: dict
+) -> tuple[int, int]:
     """
     REQの集約カバレッジ: 関連するテスト対象SPECのうち、シナリオが存在するものの割合。
     Returns: (covered, total)
@@ -923,10 +1266,15 @@ def _coverage_badge(covered: int, total: int) -> str:
 # ヘルパー: Gherkin → Markdown 変換
 # ---------------------------------------------------------------------------
 
+
 def _feature_to_markdown(
     feature_file: Path,
     backlinks: list[str] | None = None,
-    step_resolver: Optional[StepResolver] = None
+    step_resolver: Optional[StepResolver] = None,
+    review_state: Optional[ReviewState] = None,
+    all_items_str: dict | None = None,
+    feature_md_map: dict | None = None,
+    node_id: str | None = None,
 ) -> str:
     """
     .featureファイルをGherkinパーサーで解析し、ブラウザで読みやすいMarkdownに変換する。
@@ -934,6 +1282,11 @@ def _feature_to_markdown(
     """
     from gherkin.parser import Parser
     from gherkin.token_scanner import TokenScanner
+
+    if all_items_str is None:
+        all_items_str = {}
+    if feature_md_map is None:
+        feature_md_map = {}
 
     with open(feature_file, "r", encoding="utf-8") as f:
         raw = f.read()
@@ -947,6 +1300,34 @@ def _feature_to_markdown(
     feature_tags = [t["name"] for t in feature_node.get("tags", [])]
 
     lines: list[str] = [f"# Feature: {feature_name}\n"]
+
+    # ---- 警告バナー ----
+    if review_state and node_id:
+        status = review_state.get_status(node_id)
+        if "unreviewed" in status:
+            lines.append(
+                "> 📋 **Unreviewed Changes**: このフィーチャーファイル自体に未レビューの変更があります。レビュー後に `review` コマンドで更新してください。\n"
+            )
+        if "suspect" in status:
+            causes = review_state.suspect_causes.get(node_id, set())
+            cause_links = []
+            for c in causes:
+                if c in all_items_str:
+                    cause_links.append(f"[{c}](../items/{c}.md)")
+                else:
+                    # Feature file
+                    md_link = feature_md_map.get(c)
+                    if md_link:
+                        # From features/ to features/
+                        name = Path(c).name
+                        cause_links.append(f"[{name}]({Path(md_link).name})")
+                    else:
+                        cause_links.append(f"`{c}`")
+            
+            causes_str = ", ".join(sorted(cause_links)) if causes else "不明"
+            lines.append(
+                f"> ⚠️ **Suspect**: 関連する仕様や他のテストが変更されました。影響範囲のレビューが必要です。\n> **原因 (Unreviewed)**: {causes_str}\n"
+            )
 
     if feature_tags:
         lines.append("**タグ**: " + " ".join(f"`{t}`" for t in feature_tags) + "\n")
@@ -981,7 +1362,7 @@ def _feature_to_markdown(
             resolved_steps = _resolve_step_prefixes(bg.get("steps", []))
             for res_kw, raw_kw, text in resolved_steps:
                 lines.append(f"- **{raw_kw}** {text}")
-            
+
             if step_resolver:
                 step_codes = []
                 for res_kw, raw_kw, text in resolved_steps:
@@ -989,7 +1370,9 @@ def _feature_to_markdown(
                     if step_def:
                         step_codes.append((raw_kw, text, step_def.source))
                 if step_codes:
-                    lines.append("\n<details><summary><b>Step Definitions (Source Code)</b></summary>\n")
+                    lines.append(
+                        "\n<details><summary><b>Step Definitions (Source Code)</b></summary>\n"
+                    )
                     for rkw, txt, src in step_codes:
                         lines.append(f"#### {rkw} {txt}\n")
                         lines.append(f"```python\n{src}\n```\n")
@@ -1022,7 +1405,9 @@ def _feature_to_markdown(
                     if step_def:
                         step_codes.append((raw_kw, text, step_def.source))
                 if step_codes:
-                    lines.append("\n<details><summary><b>Step Definitions (Source Code)</b></summary>\n")
+                    lines.append(
+                        "\n<details><summary><b>Step Definitions (Source Code)</b></summary>\n"
+                    )
                     for rkw, txt, src in step_codes:
                         lines.append(f"#### {rkw} {txt}\n")
                         lines.append(f"```python\n{src}\n```\n")
@@ -1055,9 +1440,16 @@ def _feature_to_markdown(
 # ヘルパー: 一覧ページ生成
 # ---------------------------------------------------------------------------
 
+
 def _generate_index_table(
-    title, target_items, all_items_str, child_map, sibling_map, tag_map,
+    title,
+    target_items,
+    all_items_str,
+    child_map,
+    sibling_map,
+    tag_map,
     test_result_map: "TestResultMap | None" = None,
+    review_state: Optional[ReviewState] = None,
 ):
     """一覧ページのテーブルMarkdownを生成。"""
     has_results = test_result_map is not None
@@ -1068,7 +1460,7 @@ def _generate_index_table(
     header = f"| ID | タイトル | 親 | 子 | 兄弟 | レビューステータス | Gherkinカバレッジ | 実装状況 | 作成日 | 更新日{result_col_header} |"
     sep = f"| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :---{result_col_sep}|"
 
-    lines = [ f"# {title}\n", header, sep ]
+    lines = [f"# {title}\n", header, sep]
 
     for uid in sorted(target_items.keys()):
         item = target_items[uid]
@@ -1093,7 +1485,7 @@ def _generate_index_table(
             covered, total = _spec_coverage(uid, tag_map, item, all_items_str)
             coverage_col = _coverage_badge(covered, total)
 
-        review_col = _review_status_badge(item)
+        review_col = _review_status_badge(uid, review_state=review_state)
         impl_col = _impl_status_badge(item)
         created_col = _get_timestamp(item, "created_at")
         updated_col = _get_timestamp(item, "updated_at")
@@ -1102,20 +1494,23 @@ def _generate_index_table(
         row = f"| [{uid}](items/{uid}.md) | {item.header} | {parents_col} | {children_col} | {siblings_col} | {review_col} | {coverage_col} | {impl_col} | {created_col} | {updated_col}"
 
         # 状態に応じた行ハイライト (attr_list 拡張用)
-        warnings = get_item_warnings(item)
-        if warnings.has_suspect_links:
-            row += " {: .suspect-row } |"
-        elif warnings.has_unreviewed_changes:
+        # unreviewedが含まれる場合は紫、suspectが含まれる場合は赤
+        if "unreviewed" in review_col:
             row += " {: .unreviewed-row } |"
+        elif "suspect" in review_col:
+            row += " {: .suspect-row } |"
 
         if has_results:
             from .test_results import spec_result_summary, result_badge
+
             if children:
                 cp = cf = ct = 0
                 for child_uid in children:
                     # 子がSPEC相当（テストを持つ可能性があるもの）であれば集計
                     p, f, t = spec_result_summary(child_uid, tag_map, test_result_map)
-                    cp += p; cf += f; ct += t
+                    cp += p
+                    cf += f
+                    ct += t
                 res_badge = result_badge(cp, cf, ct)
             else:
                 p, f, t = spec_result_summary(uid, tag_map, test_result_map)
@@ -1132,9 +1527,17 @@ def _generate_index_table(
 # ヘルパー: 個別詳細ページ生成
 # ---------------------------------------------------------------------------
 
+
 def _generate_item_markdown(
-    uid, item, all_items_str, child_map, sibling_map, tag_map, feature_md_map,
+    uid,
+    item,
+    all_items_str,
+    child_map,
+    sibling_map,
+    tag_map,
+    feature_md_map,
     test_result_map: "TestResultMap | None" = None,
+    review_state: Optional[ReviewState] = None,
 ):
     """個別詳細Markdownを生成（兄弟リンク・カバレッジ割合・featureリンク付き）。"""
     testable = _get_custom_attribute(item, "testable", True)
@@ -1144,15 +1547,31 @@ def _generate_item_markdown(
     content: list[str] = [f"# [{uid}] {item.header}\n"]
 
     # ---- 警告バナー ----
-    warnings = get_item_warnings(item)
-    if warnings.has_suspect_links:
-        targets = ", ".join(f"[{t}]({t}.md)" for t in warnings.suspect_link_targets)
-        if targets:
-            content.append(f"> ⚠️ **Suspect Link**: 上位アイテム ({targets}) が変更されました。リンクのレビューが必要です。\n")
-        else:
-            content.append("> ⚠️ **Suspect Link**: 上位アイテムが変更されました。リンクのレビューが必要です。\n")
-    if warnings.has_unreviewed_changes:
-        content.append("> 📋 **Unreviewed Changes**: このアイテム自体に未レビューの変更があります。\n")
+    if review_state:
+        status = review_state.get_status(uid)
+        if "unreviewed" in status:
+            content.append(
+                "> 📋 **Unreviewed Changes**: このアイテム自体または関連するテストに未レビューの変更があります。\n"
+            )
+        if "suspect" in status:
+            causes = review_state.suspect_causes.get(uid, set())
+            cause_links = []
+            for c in causes:
+                if c in all_items_str:
+                    cause_links.append(f"[{c}]({c}.md)")
+                else:
+                    # Feature file
+                    # We can try to make a link if it's in feature_md_map
+                    md_link = feature_md_map.get(c)
+                    if md_link:
+                        cause_links.append(f"[{Path(c).name}]({md_link})")
+                    else:
+                        cause_links.append(f"`{c}`")
+                        
+            causes_str = ", ".join(sorted(cause_links)) if causes else "不明"
+            content.append(
+                f"> ⚠️ **Suspect**: 関連するアイテムやテストが変更されました。影響範囲のレビューが必要です。\n> **原因 (Unreviewed)**: {causes_str}\n"
+            )
 
     # ---- 実装ステータス ----
     impl_badge = _impl_status_badge(item)
@@ -1170,18 +1589,24 @@ def _generate_item_markdown(
     if item.links:
         parents = [str(l) for l in item.links if str(l) in all_items_str]
         if parents:
-            link_parts.append(f"**上位アイテム**: {', '.join(f'[{p}]({p}.md)' for p in parents)}")
+            link_parts.append(
+                f"**上位アイテム**: {', '.join(f'[{p}]({p}.md)' for p in parents)}"
+            )
 
     # 子関係
     if children:
         valid_children = [c for c in children if c in all_items_str]
         if valid_children:
-            link_parts.append(f"**下位アイテム**: {', '.join(f'[{c}]({c}.md)' for c in valid_children)}")
+            link_parts.append(
+                f"**下位アイテム**: {', '.join(f'[{c}]({c}.md)' for c in valid_children)}"
+            )
 
     # 兄弟関係
     siblings = sibling_map.get(uid, [])
     if siblings:
-        sibling_links = ", ".join(f"[{s}]({s}.md)" for s in siblings if s in all_items_str)
+        sibling_links = ", ".join(
+            f"[{s}]({s}.md)" for s in siblings if s in all_items_str
+        )
         if sibling_links:
             link_parts.append(f"**兄弟アイテム**: {sibling_links}")
 
@@ -1193,12 +1618,14 @@ def _generate_item_markdown(
         covered, total = _req_coverage(uid, child_map, all_items_str, tag_map)
         coverage_str = _coverage_badge(covered, total)
         content.append(f"**テストカバレッジ**: {coverage_str} （下位アイテムの集計）\n")
-    
+
     # 自身がテスト対象、またはシナリオがある場合
     if testable or scenarios:
         covered, total = _spec_coverage(uid, tag_map, item, all_items_str)
         coverage_str = _coverage_badge(covered, total)
-        content.append(f"**テスト対象**: {'Yes' if testable else 'No'}　**個別カバレッジ**: {coverage_str}\n")
+        content.append(
+            f"**テスト対象**: {'Yes' if testable else 'No'}　**個別カバレッジ**: {coverage_str}\n"
+        )
 
     # ---- 本文 ----
     content.append(f"\n### 内容\n\n{item.text}\n")
@@ -1209,10 +1636,12 @@ def _generate_item_markdown(
             cp = cf = ct = 0
             for child_uid in children:
                 p, f, t = spec_result_summary(child_uid, tag_map, test_result_map)
-                cp += p; cf += f; ct += t
+                cp += p
+                cf += f
+                ct += t
             summary = result_badge(cp, cf, ct)
             content.append(f"**テスト実行結果 (集計)**: {summary}\n")
-        
+
         if testable or scenarios:
             p, f, t = spec_result_summary(uid, tag_map, test_result_map)
             summary = result_badge(p, f, t)
@@ -1237,7 +1666,9 @@ def _generate_item_markdown(
             else:
                 content.append(f"- **{s['name']}** — {s['keyword']} （{loc}）")
     elif testable:
-        content.append("### 🧪 検証シナリオ\n\n❌ まだ Gherkin シナリオが登録されていません。")
+        content.append(
+            "### 🧪 検証シナリオ\n\n❌ まだ Gherkin シナリオが登録されていません。"
+        )
 
     return "\n".join(content)
 
@@ -1246,9 +1677,10 @@ def _generate_item_markdown(
 # ヘルパー: UID → ドキュメントプレフィックス変換
 # ---------------------------------------------------------------------------
 
+
 def _get_uid_prefix(uid: str) -> str:
     """'REQ-001' → 'REQ'、'AUTH-REQ-001' → 'AUTH-REQ'"""
-    m = re.match(r'^(.*)-\d+$', uid)
+    m = re.match(r"^(.*)-\d+$", uid)
     return m.group(1) if m else uid
 
 
@@ -1256,7 +1688,10 @@ def _get_uid_prefix(uid: str) -> str:
 # trace コマンド用ヘルパー
 # ---------------------------------------------------------------------------
 
-def _collect_all_ancestors(uid: str, all_items: dict, visited: set | None = None) -> set[str]:
+
+def _collect_all_ancestors(
+    uid: str, all_items: dict, visited: set | None = None
+) -> set[str]:
     """指定UIDの全祖先UIDの集合を返す（uid自身は含まない）。循環参照を visited で防止。"""
     if visited is None:
         visited = set()
@@ -1297,8 +1732,14 @@ def _add_impl_files_to_node(node, uid: str, impl_map: dict, repo_root: Path) -> 
 
 
 def _add_descendants_to_rich_node(
-    node, uid: str, all_items: dict, child_map: dict, tag_map: dict, visited: set,
-    impl_map: dict | None = None, repo_root: Path | None = None,
+    node,
+    uid: str,
+    all_items: dict,
+    child_map: dict,
+    tag_map: dict,
+    visited: set,
+    impl_map: dict | None = None,
+    repo_root: Path | None = None,
 ) -> None:
     """子アイテム・Gherkinシナリオを再帰的にRich Treeノードへ追加する。"""
     # Gherkinシナリオをファイル別にグループ化して追加
@@ -1327,23 +1768,42 @@ def _add_descendants_to_rich_node(
         new_visited = set(visited)
         new_visited.add(child_uid)
         _add_descendants_to_rich_node(
-            child_node, child_uid, all_items, child_map, tag_map, new_visited,
-            impl_map=impl_map, repo_root=repo_root,
+            child_node,
+            child_uid,
+            all_items,
+            child_map,
+            tag_map,
+            new_visited,
+            impl_map=impl_map,
+            repo_root=repo_root,
         )
 
 
 def _add_focused_path(
-    node, current_uid: str, origin_uid: str, on_path: set[str],
-    all_items: dict, child_map: dict, tag_map: dict, visited: set,
+    node,
+    current_uid: str,
+    origin_uid: str,
+    on_path: set[str],
+    all_items: dict,
+    child_map: dict,
+    tag_map: dict,
+    visited: set,
     expand_at_origin: bool = True,
-    impl_map: dict | None = None, repo_root: Path | None = None,
+    impl_map: dict | None = None,
+    repo_root: Path | None = None,
 ) -> None:
     """祖先からoriginまでのパスを辿り、originで全子孫を展開する（expand_at_origin=True 時）。"""
     if current_uid == origin_uid:
         if expand_at_origin:
             _add_descendants_to_rich_node(
-                node, current_uid, all_items, child_map, tag_map, set(visited),
-                impl_map=impl_map, repo_root=repo_root,
+                node,
+                current_uid,
+                all_items,
+                child_map,
+                tag_map,
+                set(visited),
+                impl_map=impl_map,
+                repo_root=repo_root,
             )
         return
 
@@ -1352,21 +1812,34 @@ def _add_focused_path(
         if child_uid not in on_path or child_uid in visited:
             continue
         child_item = all_items.get(child_uid)
-        is_origin = (child_uid == origin_uid)
+        is_origin = child_uid == origin_uid
         label = _format_trace_node(child_uid, child_item, is_origin=is_origin)
         child_node = node.add(label)
         new_visited = set(visited)
         new_visited.add(child_uid)
         _add_focused_path(
-            child_node, child_uid, origin_uid, on_path,
-            all_items, child_map, tag_map, new_visited, expand_at_origin,
-            impl_map=impl_map, repo_root=repo_root,
+            child_node,
+            child_uid,
+            origin_uid,
+            on_path,
+            all_items,
+            child_map,
+            tag_map,
+            new_visited,
+            expand_at_origin,
+            impl_map=impl_map,
+            repo_root=repo_root,
         )
 
 
 def _build_trace_rich_tree(
-    origin_uid: str, all_items: dict, child_map: dict, tag_map: dict, direction: str,
-    impl_map: dict | None = None, repo_root: Path | None = None,
+    origin_uid: str,
+    all_items: dict,
+    child_map: dict,
+    tag_map: dict,
+    direction: str,
+    impl_map: dict | None = None,
+    repo_root: Path | None = None,
 ):
     """トレースツリーを構築して返す。複数ルート祖先がある場合はリストで返す。"""
     origin_item = all_items.get(origin_uid)
@@ -1375,8 +1848,14 @@ def _build_trace_rich_tree(
         label = _format_trace_node(origin_uid, origin_item, is_origin=True)
         tree = Tree(label)
         _add_descendants_to_rich_node(
-            tree, origin_uid, all_items, child_map, tag_map, {origin_uid},
-            impl_map=impl_map, repo_root=repo_root,
+            tree,
+            origin_uid,
+            all_items,
+            child_map,
+            tag_map,
+            {origin_uid},
+            impl_map=impl_map,
+            repo_root=repo_root,
         )
         return tree
 
@@ -1388,13 +1867,19 @@ def _build_trace_rich_tree(
         tree = Tree(label)
         if direction == "both":
             _add_descendants_to_rich_node(
-                tree, origin_uid, all_items, child_map, tag_map, {origin_uid},
-                impl_map=impl_map, repo_root=repo_root,
+                tree,
+                origin_uid,
+                all_items,
+                child_map,
+                tag_map,
+                {origin_uid},
+                impl_map=impl_map,
+                repo_root=repo_root,
             )
         return tree
 
     on_path = ancestors | {origin_uid}
-    expand_at_origin = (direction == "both")
+    expand_at_origin = direction == "both"
 
     # ルート祖先を特定: 祖先集合の中でさらに祖先を持たないもの
     root_ancestors: set[str] = set()
@@ -1403,7 +1888,9 @@ def _build_trace_rich_tree(
         if anc_item is None:
             root_ancestors.add(anc_uid)
             continue
-        parents_in_ancestors = [str(link) for link in anc_item.links if str(link) in ancestors]
+        parents_in_ancestors = [
+            str(link) for link in anc_item.links if str(link) in ancestors
+        ]
         if not parents_in_ancestors:
             root_ancestors.add(anc_uid)
 
@@ -1413,27 +1900,39 @@ def _build_trace_rich_tree(
         label = _format_trace_node(root_uid, root_item)
         tree = Tree(label)
         _add_focused_path(
-            tree, root_uid, origin_uid, on_path,
-            all_items, child_map, tag_map, {root_uid}, expand_at_origin,
-            impl_map=impl_map, repo_root=repo_root,
+            tree,
+            root_uid,
+            origin_uid,
+            on_path,
+            all_items,
+            child_map,
+            tag_map,
+            {root_uid},
+            expand_at_origin,
+            impl_map=impl_map,
+            repo_root=repo_root,
         )
         trees.append(tree)
 
     return trees if len(trees) > 1 else trees[0]
 
 
-def _trace_flat_output(origin_uid: str, all_items_str: dict, child_map: dict, direction: str) -> None:
+def _trace_flat_output(
+    origin_uid: str, all_items_str: dict, child_map: dict, direction: str
+) -> None:
     """flat形式でトレース結果をテーブル表示する。"""
     all_relevant: set[str] = set()
     if direction in ("up", "both"):
         all_relevant.update(_collect_all_ancestors(origin_uid, all_items_str))
     all_relevant.add(origin_uid)
     if direction in ("down", "both"):
+
         def _collect_descendants(uid: str, collected: set) -> None:
             for child_uid in child_map.get(uid, []):
                 if child_uid not in collected:
                     collected.add(child_uid)
                     _collect_descendants(child_uid, collected)
+
         _collect_descendants(origin_uid, all_relevant)
 
     table = Table(show_header=True, header_style="bold magenta")
@@ -1454,25 +1953,41 @@ def _trace_flat_output(origin_uid: str, all_items_str: dict, child_map: dict, di
 # trace コマンド
 # ---------------------------------------------------------------------------
 
+
 @app.command("trace")
 def trace_cmd(
-    item_id: str = typer.Argument(..., help="探索起点ID (例: REQ-001, SPEC-003, audit.feature)"),
+    item_id: str = typer.Argument(
+        ..., help="探索起点ID (例: REQ-001, SPEC-003, audit.feature)"
+    ),
     feature_dir: Optional[Path] = typer.Option(
-        None, "--feature-dir", "-f",
+        None,
+        "--feature-dir",
+        "-f",
         help="Gherkin .featureファイルディレクトリ (direction=down/both で使用)",
-        exists=True, file_okay=False, dir_okay=True, resolve_path=True,
+        exists=True,
+        file_okay=False,
+        dir_okay=True,
+        resolve_path=True,
     ),
     repo_root: Path = typer.Option(
-        Path.cwd(), "--repo-root", "-r",
+        Path.cwd(),
+        "--repo-root",
+        "-r",
         help="Doorstopリポジトリのルート",
-        exists=True, file_okay=False, dir_okay=True, resolve_path=True,
+        exists=True,
+        file_okay=False,
+        dir_okay=True,
+        resolve_path=True,
     ),
     direction: str = typer.Option(
-        "both", "--direction", "-d",
+        "both",
+        "--direction",
+        "-d",
         help="探索方向: up / down / both (デフォルト: both)",
     ),
     output_format: str = typer.Option(
-        "tree", "--format",
+        "tree",
+        "--format",
         help="出力形式: tree (デフォルト) / flat",
     ),
     show_impl: bool = typer.Option(
@@ -1539,12 +2054,16 @@ def trace_cmd(
                 if found_uid:
                     break
             if found_uid is None:
-                console.print(f"[bold red]❌ Error: Item '{item_id}' not found[/bold red]")
+                console.print(
+                    f"[bold red]❌ Error: Item '{item_id}' not found[/bold red]"
+                )
                 raise typer.Exit(1)
             origin_uid = found_uid
         else:
             if item_id not in all_items_str:
-                console.print(f"[bold red]❌ Error: Item '{item_id}' not found[/bold red]")
+                console.print(
+                    f"[bold red]❌ Error: Item '{item_id}' not found[/bold red]"
+                )
                 raise typer.Exit(1)
             origin_uid = item_id
 
@@ -1553,7 +2072,11 @@ def trace_cmd(
             _trace_flat_output(origin_uid, all_items_str, child_map, direction)
         else:
             result = _build_trace_rich_tree(
-                origin_uid, all_items_str, child_map, tag_map, direction,
+                origin_uid,
+                all_items_str,
+                child_map,
+                tag_map,
+                direction,
                 impl_map=impl_map if show_impl else None,
                 repo_root=repo_root if show_impl else None,
             )
@@ -1573,6 +2096,7 @@ def trace_cmd(
 # ---------------------------------------------------------------------------
 # ヘルパー: 階層ツリー生成
 # ---------------------------------------------------------------------------
+
 
 def _build_hierarchy_tree(doorstop_tree, prefix_to_file: dict) -> str:
     """
@@ -1595,7 +2119,9 @@ def _build_hierarchy_tree(doorstop_tree, prefix_to_file: dict) -> str:
             lines.append(f"{indent}- **{prefix}**")
 
         # 子ドキュメントを再帰的に描画
-        for child_tree in sorted(tree_node.children, key=lambda t: str(t.document.prefix)):
+        for child_tree in sorted(
+            tree_node.children, key=lambda t: str(t.document.prefix)
+        ):
             render_tree_node(child_tree, depth + 1)
 
     render_tree_node(doorstop_tree, 0)
@@ -1605,6 +2131,7 @@ def _build_hierarchy_tree(doorstop_tree, prefix_to_file: dict) -> str:
 # ---------------------------------------------------------------------------
 # ヘルパー: index.md と mkdocs.yml 生成
 # ---------------------------------------------------------------------------
+
 
 def _generate_basic_files(
     docs_dir: Path,
@@ -1616,12 +2143,13 @@ def _generate_basic_files(
     tag_map: dict,
     doorstop_tree,
     prefix_to_file: dict,
+    review_state: Optional[ReviewState] = None,
 ) -> None:
     """index.md と mkdocs.yml を生成。"""
     # index.md
     index_path = docs_dir / "index.md"
     tree_md = _build_hierarchy_tree(doorstop_tree, prefix_to_file)
-    
+
     doc_links = "\n".join(f"- [{p}]({f})" for p, f in sorted(prefix_to_file.items()))
 
     index_content = (
@@ -1638,12 +2166,48 @@ def _generate_basic_files(
 
     # features/ に index.md がなければ生成
     features_index = docs_dir / "features" / "index.md"
-    feature_links = "\n".join(
-        f"- [{Path(tag_rel).name}]({Path(md_url).name})"
-        for tag_rel, md_url in sorted(feature_md_map.items())
-    )
+    
+    feature_files = {}
+    for tag, scenarios in tag_map.items():
+        for s in scenarios:
+            file_path = s["file"]
+            if file_path not in feature_files:
+                feature_files[file_path] = {"scenarios": 0, "specs": set()}
+            feature_files[file_path]["scenarios"] += 1
+            feature_files[file_path]["specs"].add(tag)
+
+    table_lines = [
+        "| ファイル | シナリオ数 | レビューステータス | 関連仕様ID |",
+        "| :--- | :---: | :--- | :--- |"
+    ]
+    
+    for tag_rel, md_url in sorted(feature_md_map.items()):
+        info = feature_files.get(tag_rel, {"scenarios": 0, "specs": set()})
+        scenarios_count = info["scenarios"]
+        specs = sorted(info["specs"])
+        
+        # Use review_state if passed, else default to reviewed
+        if review_state:
+            file_status = review_state.get_status(tag_rel)
+        else:
+            file_status = "✅ reviewed"
+
+        specs_str = "<br>".join(f"[{s}](../items/{s}.md)" for s in specs) or "-"
+        
+        row = f"| [{Path(tag_rel).name}]({Path(md_url).name}) | {scenarios_count} | {file_status} | {specs_str}"
+        if "unreviewed" in file_status:
+            row += " {: .unreviewed-row } |"
+        elif "suspect" in file_status:
+            row += " {: .suspect-row } |"
+        else:
+            row += " |"
+            
+        table_lines.append(row)
+
+    feature_table = "\n".join(table_lines)
+    
     features_index.write_text(
-        f"# 振る舞い仕様一覧 (Gherkin Features)\n\n{feature_links or '（まだフィーチャーファイルがありません）'}\n",
+        f"# 振る舞い仕様一覧 (Gherkin Features)\n\n{feature_table}\n",
         encoding="utf-8",
     )
 
@@ -1656,15 +2220,19 @@ def _generate_basic_files(
     # テンプレートファイルを探索してコピー
     # importlib.resources.files は Python 3.9+ で利用可能
     template_root = resources.files("spec_weaver") / "templates"
-    
+
     js_src = template_root / "javascripts" / "custom-table-filter.js"
     css_src = template_root / "stylesheets" / "extra.css"
 
     if js_src.exists():
-        (js_dir / "custom-table-filter.js").write_text(js_src.read_text(encoding="utf-8"), encoding="utf-8")
-    
+        (js_dir / "custom-table-filter.js").write_text(
+            js_src.read_text(encoding="utf-8"), encoding="utf-8"
+        )
+
     if css_src.exists():
-        (css_dir / "extra.css").write_text(css_src.read_text(encoding="utf-8"), encoding="utf-8")
+        (css_dir / "extra.css").write_text(
+            css_src.read_text(encoding="utf-8"), encoding="utf-8"
+        )
 
     # mkdocs.yml
     # 各ドキュメントをナビに追加

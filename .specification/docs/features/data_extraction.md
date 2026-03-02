@@ -1,5 +1,7 @@
 # Feature: データ抽出基盤
 
+> 📋 **Unreviewed Changes**: このフィーチャーファイル自体に未レビューの変更があります。レビュー後に `review` コマンドで更新してください。
+
 **タグ**: `@SPEC-002`
 
 **関連アイテム**: [SPEC-002](../items/SPEC-002.md) / [SPEC-021](../items/SPEC-021.md)
@@ -18,33 +20,52 @@ Doorstop と Gherkin から仕様データとテストタグを正確に抽出�
 #### Given Doorstopプロジェクトにアクティブな仕様アイテムが存在する
 
 ```python
-@given('Doorstopプロジェクトにアクティブな仕様アイテムが存在する')
+@given("Doorstopプロジェクトにアクティブな仕様アイテムが存在する")  # type: ignore
 def given_a04781e9(context):
-    """Doorstopプロジェクトにアクティブな仕様アイテムが存在する"""
-    import subprocess
-    from helpers import setup_doorstop, create_feature_file, run_cli
-    setup_doorstop(context)
-    subprocess.run(['doorstop', 'add', 'SPEC'], cwd=context.temp_dir, check=True)
+    """Doorstopプロジェクトにアクティブな仕様アイテムが存在する
+
+    Scenarios:
+      - Doorstop APIによる仕様ID集合の取得
+    """
+    context.repo_root = context.temp_dir / "repo"
+    create_doorstop_project_api(
+        context.repo_root,
+        req_items=[{"header": "要件A", "testable": False}],
+        spec_items=[{"header": "仕様A", "testable": True}],
+    )
 ```
 
 #### When 仕様ID集合を取得する
 
 ```python
-@when('仕様ID集合を取得する')
+@when("仕様ID集合を取得する")  # type: ignore
 def when_e56707cb(context):
-    """仕様ID集合を取得する"""
+    """仕様ID集合を取得する
+
+    Scenarios:
+      - Doorstop APIによる仕様ID集合の取得
+      - 非アクティブなアイテムの除外
+      - テスト不可能な仕様の除外
+    """
     from spec_weaver.doorstop import get_specs
-    from pathlib import Path
-    context.spec_ids = get_specs(Path(context.temp_dir), prefix=None)
+
+    context.value = get_specs(repo_root=context.repo_root)
 ```
 
 #### Then アクティブかつtestableな仕様IDのみが返されること
 
 ```python
-@then('アクティブかつtestableな仕様IDのみが返されること')
+@then("アクティブかつtestableな仕様IDのみが返されること")  # type: ignore
 def then_6823b180(context):
-    """アクティブかつtestableな仕様IDのみが返されること"""
-    assert 'SPEC-001' in context.spec_ids
+    """アクティブかつtestableな仕様IDのみが返されること
+
+    Scenarios:
+      - Doorstop APIによる仕様ID集合の取得
+    """
+    specs = context.value
+    assert len(specs) >= 1
+    for uid in specs:
+        assert not uid.startswith("REQ")
 ```
 
 </details>
@@ -62,40 +83,52 @@ def then_6823b180(context):
 #### Given Doorstopプロジェクトに active: false のアイテムが存在する
 
 ```python
-@given('Doorstopプロジェクトに active: false のアイテムが存在する')
+@given("Doorstopプロジェクトに active: false のアイテムが存在する")  # type: ignore
 def given_dccca3dc(context):
-    """Doorstopプロジェクトに active: false のアイテムが存在する"""
-    import subprocess, os, re
-    from helpers import setup_doorstop, create_feature_file, run_cli
-    setup_doorstop(context)
-    subprocess.run(['doorstop', 'add', 'SPEC'], cwd=context.temp_dir, check=True)
-    path = os.path.join(context.temp_dir, 'specs', 'SPEC-001.yml')
-    with open(path, 'r', encoding='utf-8') as f:
-        content = f.read()
-    # Replace active: true or active: True with active: false
-    content = re.sub(r'active:\s*(true|True)', 'active: false', content)
-    with open(path, 'w', encoding='utf-8') as f:
-        f.write(content)
+    """Doorstopプロジェクトに active: false のアイテムが存在する
+
+    Scenarios:
+      - 非アクティブなアイテムの除外
+    """
+    context.repo_root = context.temp_dir / "repo"
+    create_doorstop_project_api(
+        context.repo_root,
+        spec_items=[
+            {"header": "アクティブ", "testable": True, "active": True},
+            {"header": "非アクティブ", "testable": True, "active": False},
+        ],
+    )
+    context.inactive_uid = "SPEC-002"
 ```
 
 #### When 仕様ID集合を取得する
 
 ```python
-@when('仕様ID集合を取得する')
+@when("仕様ID集合を取得する")  # type: ignore
 def when_e56707cb(context):
-    """仕様ID集合を取得する"""
+    """仕様ID集合を取得する
+
+    Scenarios:
+      - Doorstop APIによる仕様ID集合の取得
+      - 非アクティブなアイテムの除外
+      - テスト不可能な仕様の除外
+    """
     from spec_weaver.doorstop import get_specs
-    from pathlib import Path
-    context.spec_ids = get_specs(Path(context.temp_dir), prefix=None)
+
+    context.value = get_specs(repo_root=context.repo_root)
 ```
 
 #### Then 非アクティブなアイテムは結果に含まれないこと
 
 ```python
-@then('非アクティブなアイテムは結果に含まれないこと')
+@then("非アクティブなアイテムは結果に含まれないこと")  # type: ignore
 def then_99bfaa46(context):
-    """非アクティブなアイテムは結果に含まれないこと"""
-    assert 'SPEC-001' not in context.spec_ids
+    """非アクティブなアイテムは結果に含まれないこと
+
+    Scenarios:
+      - 非アクティブなアイテムの除外
+    """
+    assert context.inactive_uid not in context.value
 ```
 
 </details>
@@ -113,36 +146,52 @@ def then_99bfaa46(context):
 #### Given Doorstopプロジェクトに testable: false のアイテムが存在する
 
 ```python
-@given('Doorstopプロジェクトに testable: false のアイテムが存在する')
+@given("Doorstopプロジェクトに testable: false のアイテムが存在する")  # type: ignore
 def given_d534a041(context):
-    """Doorstopプロジェクトに testable: false のアイテムが存在する"""
-    import subprocess, os
-    from helpers import setup_doorstop, create_feature_file, run_cli
-    setup_doorstop(context)
-    subprocess.run(['doorstop', 'add', 'SPEC'], cwd=context.temp_dir, check=True)
-    path = os.path.join(context.temp_dir, 'specs', 'SPEC-001.yml')
-    with open(path, 'a', encoding='utf-8') as f:
-        f.write('testable: false\n')
+    """Doorstopプロジェクトに testable: false のアイテムが存在する
+
+    Scenarios:
+      - テスト不可能な仕様の除外
+    """
+    context.repo_root = context.temp_dir / "repo"
+    create_doorstop_project_api(
+        context.repo_root,
+        spec_items=[
+            {"header": "テスト可能", "testable": True},
+            {"header": "テスト不可", "testable": False},
+        ],
+    )
+    context.nontestable_uid = "SPEC-002"
 ```
 
 #### When 仕様ID集合を取得する
 
 ```python
-@when('仕様ID集合を取得する')
+@when("仕様ID集合を取得する")  # type: ignore
 def when_e56707cb(context):
-    """仕様ID集合を取得する"""
+    """仕様ID集合を取得する
+
+    Scenarios:
+      - Doorstop APIによる仕様ID集合の取得
+      - 非アクティブなアイテムの除外
+      - テスト不可能な仕様の除外
+    """
     from spec_weaver.doorstop import get_specs
-    from pathlib import Path
-    context.spec_ids = get_specs(Path(context.temp_dir), prefix=None)
+
+    context.value = get_specs(repo_root=context.repo_root)
 ```
 
 #### Then testable: false のアイテムは結果に含まれないこと
 
 ```python
-@then('testable: false のアイテムは結果に含まれないこと')
+@then("testable: false のアイテムは結果に含まれないこと")  # type: ignore
 def then_f3fad2a6(context):
-    """testable: false のアイテムは結果に含まれないこと"""
-    assert 'SPEC-001' not in context.spec_ids
+    """testable: false のアイテムは結果に含まれないこと
+
+    Scenarios:
+      - テスト不可能な仕様の除外
+    """
+    assert context.nontestable_uid not in context.value
 ```
 
 </details>
@@ -160,35 +209,49 @@ def then_f3fad2a6(context):
 #### Given DoorstopプロジェクトにREQアイテムとSPECアイテムが混在する
 
 ```python
-@given('DoorstopプロジェクトにREQアイテムとSPECアイテムが混在する')
+@given("DoorstopプロジェクトにREQアイテムとSPECアイテムが混在する")  # type: ignore
 def given_7f8e9c65(context):
-    """DoorstopプロジェクトにREQアイテムとSPECアイテムが混在する"""
-    import subprocess
-    from helpers import setup_doorstop, create_feature_file, run_cli
-    setup_doorstop(context, prefixes=['REQ', 'SPEC'])
-    subprocess.run(['doorstop', 'add', 'REQ'], cwd=context.temp_dir, check=True)
-    subprocess.run(['doorstop', 'add', 'SPEC'], cwd=context.temp_dir, check=True)
+    """DoorstopプロジェクトにREQアイテムとSPECアイテムが混在する
+
+    Scenarios:
+      - プレフィックスによるフィルタリング
+    """
+    context.repo_root = context.temp_dir / "repo"
+    create_doorstop_project_api(
+        context.repo_root,
+        req_items=[{"header": "要件", "testable": True}],
+        spec_items=[{"header": "仕様", "testable": True}],
+    )
 ```
 
 #### When プレフィックス "SPEC" で仕様ID集合を取得する
 
 ```python
-@when('プレフィックス "{param0}" で仕様ID集合を取得する')
-def when_1d11bcd6(context, param0):
-    """プレフィックスで仕様ID集合を取得する"""
+@when('プレフィックス "{prefix}" で仕様ID集合を取得する')  # type: ignore
+def when_1d11bcd6(context, prefix):
+    """プレフィックス "SPEC" で仕様ID集合を取得する
+
+    Scenarios:
+      - プレフィックスによるフィルタリング
+    """
     from spec_weaver.doorstop import get_specs
-    from pathlib import Path
-    context.spec_ids = get_specs(Path(context.temp_dir), prefix=param0)
+
+    context.value = get_specs(repo_root=context.repo_root, prefix=prefix)
 ```
 
 #### Then SPECプレフィックスのアイテムのみが返されること
 
 ```python
-@then('SPECプレフィックスのアイテムのみが返されること')
+@then("SPECプレフィックスのアイテムのみが返されること")  # type: ignore
 def then_b5f39418(context):
-    """SPECプレフィックスのアイテムのみが返されること"""
-    assert 'SPEC-001' in context.spec_ids
-    assert 'REQ-001' not in context.spec_ids
+    """SPECプレフィックスのアイテムのみが返されること
+
+    Scenarios:
+      - プレフィックスによるフィルタリング
+    """
+    for uid in context.value:
+        assert uid.startswith("SPEC")
+    assert any(uid.startswith("SPEC") for uid in context.value)
 ```
 
 </details>
@@ -206,37 +269,53 @@ def then_b5f39418(context):
 #### Given Gherkin .feature ファイルに @SPEC-001 タグが付与されている
 
 ```python
-@given('Gherkin .feature ファイルに @SPEC-001 タグが付与されている')
+@given("Gherkin .feature ファイルに @SPEC-001 タグが付与されている")  # type: ignore
 def given_b830a393(context):
-    """Gherkin .feature ファイルに @SPEC-001 タグが付与されている"""
-    from helpers import setup_doorstop, create_feature_file, run_cli
-    create_feature_file(context, 'test.feature', '@SPEC-001\nFeature: Test\n  Scenario: Test\n    Given test')
+    """Gherkin .feature ファイルに @SPEC-001 タグが付与されている
+
+    Scenarios:
+      - Gherkin ASTからのタグ抽出
+    """
+    context.feature_dir = context.temp_dir / "features"
+    write_feature_file(
+        context.feature_dir / "test.feature", minimal_feature("@SPEC-001")
+    )
 ```
 
 #### When タグ集合を取得する
 
 ```python
-@when('タグ集合を取得する')
+@when("タグ集合を取得する")  # type: ignore
 def when_a12b8a55(context):
-    """タグ集合を取得する"""
+    """タグ集合を取得する
+
+    Scenarios:
+      - Gherkin ASTからのタグ抽出
+      - Feature・Scenario両レベルのタグ抽出
+      - サブディレクトリ内のfeatureファイルの再帰探索
+      - Gherkin構文エラーの検出
+    """
     from spec_weaver.gherkin import get_tags
-    from pathlib import Path
-    import os
-    feature_dir = Path(context.temp_dir) / 'features'
+
     try:
-        # get_tags returns a set of tag names (without @)
-        context.tags = get_tags(feature_dir)
-    except Exception as e:
-        context.exc = e
+        context.value = get_tags(features_dir=context.feature_dir)
+        context.error = None
+    except ValueError as e:
+        context.error = e
+        context.value = set()
 ```
 
 #### Then "SPEC-001" がタグ集合に含まれること
 
 ```python
-@then('"{param0}" がタグ集合に含まれること')
-def then_e8d01468(context, param0):
-    """タグ集合に含まれること"""
-    assert param0 in context.tags
+@then('"{spec_id}" がタグ集合に含まれること')  # type: ignore
+def then_e8d01468(context, spec_id):
+    """ "SPEC-001" がタグ集合に含まれること
+
+    Scenarios:
+      - Gherkin ASTからのタグ抽出
+    """
+    assert spec_id in context.value
 ```
 
 </details>
@@ -254,38 +333,64 @@ def then_e8d01468(context, param0):
 #### Given Feature レベルと Scenario レベルに異なるSPECタグが付与されている
 
 ```python
-@given('Feature レベルと Scenario レベルに異なるSPECタグが付与されている')
+@given("Feature レベルと Scenario レベルに異なるSPECタグが付与されている")  # type: ignore
 def given_07def24f(context):
-    """Feature レベルと Scenario レベルに異なるSPECタグが付与されている"""
-    from helpers import setup_doorstop, create_feature_file, run_cli
-    create_feature_file(context, 'test.feature', '@SPEC-001\nFeature: Test\n  @SPEC-002\n  Scenario: Test\n    Given test')
+    """Feature レベルと Scenario レベルに異なるSPECタグが付与されている
+
+    Scenarios:
+      - Feature・Scenario両レベルのタグ抽出
+    """
+    context.feature_dir = context.temp_dir / "features"
+    write_feature_file(
+        context.feature_dir / "dual.feature",
+        """\
+@SPEC-010
+Feature: デュアルタグテスト
+
+  @SPEC-011
+  Scenario: シナリオレベルのタグ
+    Given テスト
+    When  実行
+    Then  確認
+""",
+    )
 ```
 
 #### When タグ集合を取得する
 
 ```python
-@when('タグ集合を取得する')
+@when("タグ集合を取得する")  # type: ignore
 def when_a12b8a55(context):
-    """タグ集合を取得する"""
+    """タグ集合を取得する
+
+    Scenarios:
+      - Gherkin ASTからのタグ抽出
+      - Feature・Scenario両レベルのタグ抽出
+      - サブディレクトリ内のfeatureファイルの再帰探索
+      - Gherkin構文エラーの検出
+    """
     from spec_weaver.gherkin import get_tags
-    from pathlib import Path
-    import os
-    feature_dir = Path(context.temp_dir) / 'features'
+
     try:
-        # get_tags returns a set of tag names (without @)
-        context.tags = get_tags(feature_dir)
-    except Exception as e:
-        context.exc = e
+        context.value = get_tags(features_dir=context.feature_dir)
+        context.error = None
+    except ValueError as e:
+        context.error = e
+        context.value = set()
 ```
 
 #### Then 両方のレベルのタグがすべて抽出されること
 
 ```python
-@then('両方のレベルのタグがすべて抽出されること')
+@then("両方のレベルのタグがすべて抽出されること")  # type: ignore
 def then_d712dc38(context):
-    """両方のレベルのタグがすべて抽出されること"""
-    assert 'SPEC-001' in context.tags
-    assert 'SPEC-002' in context.tags
+    """両方のレベルのタグがすべて抽出されること
+
+    Scenarios:
+      - Feature・Scenario両レベルのタグ抽出
+    """
+    assert "SPEC-010" in context.value
+    assert "SPEC-011" in context.value
 ```
 
 </details>
@@ -303,39 +408,53 @@ def then_d712dc38(context):
 #### Given サブディレクトリに .feature ファイルが存在する
 
 ```python
-@given('サブディレクトリに .feature ファイルが存在する')
+@given("サブディレクトリに .feature ファイルが存在する")  # type: ignore
 def given_1427ca58(context):
-    """サブディレクトリに .feature ファイルが存在する"""
-    import os
-    os.makedirs(os.path.join(context.temp_dir, 'features', 'sub'), exist_ok=True)
-    with open(os.path.join(context.temp_dir, 'features', 'sub', 'sub.feature'), 'w', encoding='utf-8') as f:
-        f.write('@SPEC-003\nFeature: Sub\n  Scenario: Sub\n    Given sub')
+    """サブディレクトリに .feature ファイルが存在する
+
+    Scenarios:
+      - サブディレクトリ内のfeatureファイルの再帰探索
+    """
+    context.feature_dir = context.temp_dir / "features"
+    write_feature_file(
+        context.feature_dir / "subdir" / "nested.feature", minimal_feature("@SPEC-099")
+    )
 ```
 
 #### When タグ集合を取得する
 
 ```python
-@when('タグ集合を取得する')
+@when("タグ集合を取得する")  # type: ignore
 def when_a12b8a55(context):
-    """タグ集合を取得する"""
+    """タグ集合を取得する
+
+    Scenarios:
+      - Gherkin ASTからのタグ抽出
+      - Feature・Scenario両レベルのタグ抽出
+      - サブディレクトリ内のfeatureファイルの再帰探索
+      - Gherkin構文エラーの検出
+    """
     from spec_weaver.gherkin import get_tags
-    from pathlib import Path
-    import os
-    feature_dir = Path(context.temp_dir) / 'features'
+
     try:
-        # get_tags returns a set of tag names (without @)
-        context.tags = get_tags(feature_dir)
-    except Exception as e:
-        context.exc = e
+        context.value = get_tags(features_dir=context.feature_dir)
+        context.error = None
+    except ValueError as e:
+        context.error = e
+        context.value = set()
 ```
 
 #### Then サブディレクトリ内のタグも含めて抽出されること
 
 ```python
-@then('サブディレクトリ内のタグも含めて抽出されること')
+@then("サブディレクトリ内のタグも含めて抽出されること")  # type: ignore
 def then_1c0ec472(context):
-    """サブディレクトリ内のタグも含めて抽出されること"""
-    assert 'SPEC-003' in context.tags
+    """サブディレクトリ内のタグも含めて抽出されること
+
+    Scenarios:
+      - サブディレクトリ内のfeatureファイルの再帰探索
+    """
+    assert "SPEC-099" in context.value
 ```
 
 </details>
@@ -353,38 +472,54 @@ def then_1c0ec472(context):
 #### Given 構文的に不正な .feature ファイルが存在する
 
 ```python
-@given('構文的に不正な .feature ファイルが存在する')
+@given("構文的に不正な .feature ファイルが存在する")  # type: ignore
 def given_540458bc(context):
-    """構文的に不正な .feature ファイルが存在する"""
-    from helpers import setup_doorstop, create_feature_file, run_cli
-    create_feature_file(context, 'invalid.feature', 'Feature Test')
+    """構文的に不正な .feature ファイルが存在する
+
+    Scenarios:
+      - Gherkin構文エラーの検出
+    """
+    context.feature_dir = context.temp_dir / "features"
+    write_feature_file(
+        context.feature_dir / "bad.feature", "この行は Gherkin ではない\n  壊れた構文\n"
+    )
 ```
 
 #### When タグ集合を取得する
 
 ```python
-@when('タグ集合を取得する')
+@when("タグ集合を取得する")  # type: ignore
 def when_a12b8a55(context):
-    """タグ集合を取得する"""
+    """タグ集合を取得する
+
+    Scenarios:
+      - Gherkin ASTからのタグ抽出
+      - Feature・Scenario両レベルのタグ抽出
+      - サブディレクトリ内のfeatureファイルの再帰探索
+      - Gherkin構文エラーの検出
+    """
     from spec_weaver.gherkin import get_tags
-    from pathlib import Path
-    import os
-    feature_dir = Path(context.temp_dir) / 'features'
+
     try:
-        # get_tags returns a set of tag names (without @)
-        context.tags = get_tags(feature_dir)
-    except Exception as e:
-        context.exc = e
+        context.value = get_tags(features_dir=context.feature_dir)
+        context.error = None
+    except ValueError as e:
+        context.error = e
+        context.value = set()
 ```
 
 #### Then ValueError が発生しGherkin構文エラーが報告されること
 
 ```python
-@then('ValueError が発生しGherkin構文エラーが報告されること')
+@then("ValueError が発生しGherkin構文エラーが報告されること")  # type: ignore
 def then_c5d0b4fe(context):
-    """ValueError が発生しGherkin構文エラーが報告されること"""
-    assert hasattr(context, 'exc')
-    assert context.exc is not None
+    """ValueError が発生しGherkin構文エラーが報告されること
+
+    Scenarios:
+      - Gherkin構文エラーの検出
+    """
+    assert context.error is not None
+    assert isinstance(context.error, ValueError)
 ```
 
 </details>

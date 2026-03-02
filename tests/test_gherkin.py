@@ -5,7 +5,8 @@ from spec_weaver.gherkin import get_tag_map, get_tags
 def test_get_tags_success(tmp_path):
     # 正常なGherkinファイルを作成
     feature_file = tmp_path / "valid.feature"
-    feature_file.write_text("""
+    feature_file.write_text(
+        """
 @SPEC-001
 Feature: User Login
   @SPEC-002
@@ -13,18 +14,23 @@ Feature: User Login
     Given a user
     When they login
     Then it works
-    """, encoding="utf-8")
+    """,
+        encoding="utf-8",
+    )
 
     # サブディレクトリにもファイルを作成（再帰探索のテスト）
     sub_dir = tmp_path / "sub"
     sub_dir.mkdir()
     sub_feature = sub_dir / "sub.feature"
-    sub_feature.write_text("""
+    sub_feature.write_text(
+        """
 Feature: Sub feature
   @SPEC-003 @other-tag
   Scenario: Sub scenario
     Given something
-    """, encoding="utf-8")
+    """,
+        encoding="utf-8",
+    )
 
     # 実行と検証
     tags = get_tags(tmp_path, prefix="SPEC")
@@ -37,10 +43,13 @@ Feature: Sub feature
 def test_get_tags_syntax_error(tmp_path):
     # 文法エラーのある（Feature宣言すらない）真に無効なGherkinファイルを作成
     invalid_file = tmp_path / "invalid.feature"
-    invalid_file.write_text("""
+    invalid_file.write_text(
+        """
 This is completely invalid Gherkin.
 いきなりプレーンテキストを書くことは許されません。
-    """, encoding="utf-8")
+    """,
+        encoding="utf-8",
+    )
 
     # 構文エラー時に ValueError が送出されることを検証
     with pytest.raises(ValueError, match="Gherkin構文エラー"):
@@ -55,14 +64,17 @@ def test_feature_tag_inherited_by_scenario(tmp_path):
     SPEC-021: Featureレベルのタグのみが付与され、Scenarioにタグがない場合、
     そのScenarioがFeatureタグに紐付けられること。
     """
-    (tmp_path / "inherit.feature").write_text("""
+    (tmp_path / "inherit.feature").write_text(
+        """
 @SPEC-100
 Feature: 継承テスト Feature
   Scenario: タグなしシナリオ
     Given 何かが存在する
     When  アクションを実行する
     Then  結果が返ること
-    """, encoding="utf-8")
+    """,
+        encoding="utf-8",
+    )
 
     tag_map = get_tag_map(tmp_path, prefixes="SPEC")
 
@@ -79,7 +91,8 @@ def test_feature_rule_scenario_multilevel_inheritance(tmp_path):
     SPEC-021: Feature→Rule→Scenarioの多段継承で、
     ScenarioはFeatureタグとRuleタグの両方に紐付けられること。
     """
-    (tmp_path / "multilevel.feature").write_text("""
+    (tmp_path / "multilevel.feature").write_text(
+        """
 @SPEC-200
 Feature: 多段継承テスト
 
@@ -89,7 +102,9 @@ Feature: 多段継承テスト
       Given セットアップ
       When  アクション
       Then  検証
-    """, encoding="utf-8")
+    """,
+        encoding="utf-8",
+    )
 
     tag_map = get_tag_map(tmp_path, prefixes="SPEC")
 
@@ -107,7 +122,8 @@ def test_direct_and_inherited_tags_coexist(tmp_path):
     SPEC-021: Scenarioに直接タグがある場合、継承タグと共存して
     Effective Tagsを形成すること（和集合）。
     """
-    (tmp_path / "coexist.feature").write_text("""
+    (tmp_path / "coexist.feature").write_text(
+        """
 @SPEC-300
 Feature: 直接タグと継承タグの共存テスト
 
@@ -116,7 +132,9 @@ Feature: 直接タグと継承タグの共存テスト
     Given 前提
     When  操作
     Then  確認
-    """, encoding="utf-8")
+    """,
+        encoding="utf-8",
+    )
 
     tag_map = get_tag_map(tmp_path, prefixes="SPEC")
 
@@ -134,7 +152,8 @@ def test_scenario_outline_examples_tags_aggregated(tmp_path):
     SPEC-021: Scenario Outlineの場合、全ExamplesテーブルのタグがEffective Tagsに集約され、
     Scenario Outline自身のタグと合わせて1エントリとして登録されること。
     """
-    (tmp_path / "outline.feature").write_text("""
+    (tmp_path / "outline.feature").write_text(
+        """
 @SPEC-400
 Feature: ScenarioOutline Effective Tagsテスト
 
@@ -151,7 +170,9 @@ Feature: ScenarioOutline Effective Tagsテスト
     Examples: 拡張ケース
       | 値 | 期待値 |
       | 5  | 10     |
-    """, encoding="utf-8")
+    """,
+        encoding="utf-8",
+    )
 
     tag_map = get_tag_map(tmp_path, prefixes="SPEC")
 
@@ -174,7 +195,8 @@ def test_prefix_filter_applied_after_effective_tags(tmp_path):
     REQタグをFeatureに、SPECタグをScenarioに付与した場合、
     prefix="SPEC" で取得した場合はSPECタグのみが返されること。
     """
-    (tmp_path / "prefix.feature").write_text("""
+    (tmp_path / "prefix.feature").write_text(
+        """
 @REQ-001
 Feature: プレフィックスフィルタテスト
 
@@ -183,7 +205,9 @@ Feature: プレフィックスフィルタテスト
     Given 前提
     When  操作
     Then  確認
-    """, encoding="utf-8")
+    """,
+        encoding="utf-8",
+    )
 
     tag_map = get_tag_map(tmp_path, prefixes="SPEC")
 

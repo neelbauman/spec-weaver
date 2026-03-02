@@ -20,15 +20,23 @@ from typing import Any
 #   (slash) implements: SPEC-001, SPEC-002
 #   (dash) implements: SPEC-001
 _ANNOTATION_RE = re.compile(
-    r'^\s*(?:#|//|--)\s*implements:\s*(.+)',
+    r"^\s*(?:#|//|--)\s*implements:\s*(.+)",
     re.IGNORECASE,
 )
 
 # 有効な Doorstop ID 形式: 大文字アルファベット + ハイフン + 数字（例: SPEC-001, REQ-012）
-_VALID_ID_RE = re.compile(r'^[A-Z][A-Z0-9_-]*-\d+$')
+_VALID_ID_RE = re.compile(r"^[A-Z][A-Z0-9_-]*-\d+$")
 
 # スキャン除外ディレクトリ
-_EXCLUDE_DIRS = {".git", "__pycache__", ".venv", "venv", "node_modules", ".mypy_cache", ".ruff_cache"}
+_EXCLUDE_DIRS = {
+    ".git",
+    "__pycache__",
+    ".venv",
+    "venv",
+    "node_modules",
+    ".mypy_cache",
+    ".ruff_cache",
+}
 
 
 def get_ref_files(item: Any) -> list[str]:

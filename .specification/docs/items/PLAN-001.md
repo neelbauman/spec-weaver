@@ -1,10 +1,13 @@
 # [PLAN-001] 実装ファイルリンク管理機能の実装計画
 
+> ⚠️ **Suspect**: 関連するアイテムやテストが変更されました。影響範囲のレビューが必要です。
+> **原因 (Unreviewed)**: [SPEC-020](SPEC-020.md), `Doorstop native suspect link`
+
 **実装状況**: ✅ implemented
 
-**作成日**: 2026-02-27　|　**更新日**: 2026-02-27
+**作成日**: 2026-02-27　|　**更新日**: 2026-03-01
 
-**上位アイテム**: [SPEC-017](SPEC-017.md), [SPEC-018](SPEC-018.md), [SPEC-019](SPEC-019.md), [SPEC-020](SPEC-020.md)
+**上位アイテム**: [SPEC-017](SPEC-017.md), [SPEC-018](SPEC-018.md), [SPEC-019](SPEC-019.md), [SPEC-020](SPEC-020.md) / **兄弟アイテム**: [PLAN-004](PLAN-004.md)
 
 
 ### 内容

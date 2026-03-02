@@ -3,11 +3,13 @@
 from pathlib import Path
 from spec_weaver.step_resolver import StepResolver
 
+
 def test_step_resolver_load_and_resolve(tmp_path):
     steps_dir = tmp_path / "steps"
     steps_dir.mkdir()
     step_file = steps_dir / "test_steps.py"
-    step_file.write_text("""
+    step_file.write_text(
+        """
 from behave import given, when, then
 
 @given('a user "{user}" exists')
@@ -17,7 +19,9 @@ def step_impl(context, user):
 @when('I login as "{user}"')
 def step_impl(context, user):
     print(f"Logging in as {user}")
-""", encoding="utf-8")
+""",
+        encoding="utf-8",
+    )
 
     resolver = StepResolver()
     resolver.load_steps(steps_dir)
@@ -28,7 +32,7 @@ def step_impl(context, user):
     step_def = resolver.resolve_step("Given", 'a user "admin" exists')
     assert step_def is not None
     assert step_def.keyword == "given"
-    assert 'def step_impl(context, user):' in step_def.source
+    assert "def step_impl(context, user):" in step_def.source
 
     # Match When
     step_def = resolver.resolve_step("When", 'I login as "admin"')
@@ -39,17 +43,21 @@ def step_impl(context, user):
     # No match
     assert resolver.resolve_step("Then", "nothing matches") is None
 
+
 def test_step_resolver_loose_matching(tmp_path):
     steps_dir = tmp_path / "steps"
     steps_dir.mkdir()
     step_file = steps_dir / "test_steps.py"
-    step_file.write_text("""
+    step_file.write_text(
+        """
 from behave import step
 
 @step('a generic step')
 def step_impl(context):
     pass
-""", encoding="utf-8")
+""",
+        encoding="utf-8",
+    )
 
     resolver = StepResolver()
     resolver.load_steps(steps_dir)

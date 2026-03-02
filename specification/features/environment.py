@@ -1,28 +1,32 @@
+"""behave 環境設定: シナリオごとの共通 setup / teardown。"""
+
 import os
 import shutil
 import tempfile
-import subprocess
-import sys
-from behave import fixture, use_fixture
+from pathlib import Path
 
-# Add src and features/steps to sys.path
-base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
-sys.path.insert(0, os.path.join(base_dir, "src"))
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "steps"))
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 
-@fixture
-def workspace(context):
-    context.temp_dir = tempfile.mkdtemp()
-    context.cwd = os.getcwd()
-    os.chdir(context.temp_dir)
-    # Initialize git repo as doorstop requires it
-    subprocess.run(["git", "init"], capture_output=True)
-    yield context.temp_dir
-    os.chdir(context.cwd)
-    shutil.rmtree(context.temp_dir)
 
 def before_scenario(context, scenario):
-    use_fixture(workspace, context)
-    context.stdout = None
-    context.stderr = None
+    """各シナリオ開始前にテスト用一時ディレクトリを用意する。"""
+    context.project_root = PROJECT_ROOT
+    context.temp_dir = Path(tempfile.mkdtemp(prefix="sw_test_"))
+    context.repo_root = None  # ステップで設定
+    context.feature_dir = None  # ステップで設定
+    context.out_dir = None  # ステップで設定
+    context.result = None  # subprocess.CompletedProcess
     context.exit_code = None
+    context.output = ""
+    # 単体テスト用
+    context.item = None
+    context.value = None
+    context.error = None
+    context.items_dir = None
+
+
+def after_scenario(context, scenario):
+    """各シナリオ終了後に一時ファイルを削除し、作業ディレクトリを戻す。"""
+    os.chdir(PROJECT_ROOT)
+    if hasattr(context, "temp_dir") and context.temp_dir and context.temp_dir.exists():
+        shutil.rmtree(context.temp_dir, ignore_errors=True)

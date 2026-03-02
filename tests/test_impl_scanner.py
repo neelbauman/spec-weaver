@@ -20,10 +20,13 @@ runner = CliRunner()
 # get_ref_files のテスト（SPEC-017）
 # ---------------------------------------------------------------------------
 
+
 def _make_item(impl_files_value):
     """impl_files カスタム属性に指定値を持つモックアイテムを作成する。"""
     item = MagicMock()
-    item.get = lambda key, default=None: impl_files_value if key == "impl_files" else default
+    item.get = lambda key, default=None: (
+        impl_files_value if key == "impl_files" else default
+    )
     return item
 
 
@@ -60,6 +63,7 @@ def test_get_ref_files_list_with_empty_strings():
 # ---------------------------------------------------------------------------
 # ImplScanner のテスト（SPEC-018）
 # ---------------------------------------------------------------------------
+
 
 def test_scan_single_id(tmp_path):
     """単一IDのアノテーションを正しく抽出できる。"""
@@ -149,6 +153,7 @@ def test_scan_relative_path(tmp_path):
 # audit --check-impl のテスト（SPEC-019）
 # ---------------------------------------------------------------------------
 
+
 def _make_audit_item(uid: str, impl_files=None, status="implemented", testable=True):
     """audit テスト用の Doorstop アイテムモック。impl_files カスタム属性を持つ。"""
     item = MagicMock()
@@ -187,15 +192,23 @@ def test_check_impl_broken_ref(tmp_path):
         patch("spec_weaver.cli.get_all_prefixes", return_value={"SPEC"}),
         patch("spec_weaver.cli.get_tags", return_value=set()),
         patch("spec_weaver.cli.get_item_map", return_value=items),
-        patch("spec_weaver.cli.get_item_warnings", return_value=MagicMock(
-            has_suspect_links=False, has_unreviewed_changes=False
-        )),
+        patch(
+            "spec_weaver.cli.get_item_warnings",
+            return_value=MagicMock(
+                has_suspect_links=False, has_unreviewed_changes=False
+            ),
+        ),
     ):
-        result = runner.invoke(app, [
-            "audit", str(feat_dir),
-            "--repo-root", str(tmp_path),
-            "--check-impl",
-        ])
+        result = runner.invoke(
+            app,
+            [
+                "audit",
+                str(feat_dir),
+                "--repo-root",
+                str(tmp_path),
+                "--check-impl",
+            ],
+        )
 
     assert "not found" in result.output
     assert "nonexistent.py" in result.output
@@ -215,14 +228,22 @@ def test_check_impl_disabled_by_default(tmp_path):
         patch("spec_weaver.cli.get_all_prefixes", return_value={"SPEC"}),
         patch("spec_weaver.cli.get_tags", return_value=set()),
         patch("spec_weaver.cli.get_item_map", return_value=items),
-        patch("spec_weaver.cli.get_item_warnings", return_value=MagicMock(
-            has_suspect_links=False, has_unreviewed_changes=False
-        )),
+        patch(
+            "spec_weaver.cli.get_item_warnings",
+            return_value=MagicMock(
+                has_suspect_links=False, has_unreviewed_changes=False
+            ),
+        ),
     ):
-        result = runner.invoke(app, [
-            "audit", str(feat_dir),
-            "--repo-root", str(tmp_path),
-        ])
+        result = runner.invoke(
+            app,
+            [
+                "audit",
+                str(feat_dir),
+                "--repo-root",
+                str(tmp_path),
+            ],
+        )
 
     assert "実装ファイルリンクの検証" not in result.output
 
@@ -230,6 +251,7 @@ def test_check_impl_disabled_by_default(tmp_path):
 # ---------------------------------------------------------------------------
 # trace --show-impl のテスト（SPEC-020）
 # ---------------------------------------------------------------------------
+
 
 def _make_trace_item(uid, header=None, link_uids=None, impl_files=None):
     """trace テスト用の Doorstop アイテムモック。"""
@@ -267,12 +289,18 @@ def test_show_impl_file_shown_in_tree(tmp_path):
 
     from rich.console import Console
     from io import StringIO
+
     buf = StringIO()
     con = Console(file=buf, highlight=False)
 
     result = _build_trace_rich_tree(
-        "SPEC-001", items, child_map, tag_map, "both",
-        impl_map=impl_map, repo_root=tmp_path,
+        "SPEC-001",
+        items,
+        child_map,
+        tag_map,
+        "both",
+        impl_map=impl_map,
+        repo_root=tmp_path,
     )
     con.print(result)
     output = buf.getvalue()
@@ -287,12 +315,18 @@ def test_show_impl_not_shown_without_flag():
 
     from rich.console import Console
     from io import StringIO
+
     buf = StringIO()
     con = Console(file=buf, highlight=False)
 
     result = _build_trace_rich_tree(
-        "SPEC-001", items, child_map, tag_map, "both",
-        impl_map=None, repo_root=None,
+        "SPEC-001",
+        items,
+        child_map,
+        tag_map,
+        "both",
+        impl_map=None,
+        repo_root=None,
     )
     con.print(result)
     output = buf.getvalue()

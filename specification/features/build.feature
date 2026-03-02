@@ -12,14 +12,14 @@ Feature: build コマンド
   Scenario: 要件一覧ページの生成
     Given DoorstopプロジェクトにREQアイテムが存在する
     When  build コマンドを実行する
-    Then  docs/requirements.md が生成されること
+    Then  docs/req.md が生成されること
     And   各REQアイテムがテーブル行として含まれること
     And   関連仕様への相互リンクが含まれること
 
   Scenario: 仕様一覧ページの生成
     Given DoorstopプロジェクトにSPECアイテムが存在する
     When  build コマンドを実行する
-    Then  docs/specifications.md が生成されること
+    Then  docs/spec.md が生成されること
     And   各SPECアイテムがテーブル行として含まれること
     And   上位要件への相互リンクが含まれること
 

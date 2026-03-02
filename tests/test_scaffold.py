@@ -122,14 +122,14 @@ def test_step_keyword_to_prefix():
 
 def test_escape_string_double_quotes():
     """ダブルクオーテーションが <...> に変換されること。"""
-    assert _escape_string('hello "world"') == 'hello <world>'
-    assert _escape_string('no quotes') == 'no quotes'
-    assert _escape_string('"⚠️ Suspect"') == '<⚠️ Suspect>'
+    assert _escape_string('hello "world"') == "hello <world>"
+    assert _escape_string("no quotes") == "no quotes"
+    assert _escape_string('"⚠️ Suspect"') == "<⚠️ Suspect>"
 
 
 def test_escape_string_backslash():
     """バックスラッシュが正しくエスケープされること。"""
-    assert _escape_string('path\\to\\file') == 'path\\\\to\\\\file'
+    assert _escape_string("path\\to\\file") == "path\\\\to\\\\file"
 
 
 def test_generate_test_file_with_quotes(tmp_path):
@@ -154,8 +154,8 @@ def test_generate_test_file_with_quotes(tmp_path):
     assert '"{param0}"' in content
     assert '"{param1}"' in content
     # オリジナルのステップ文が Docstring に保持されていること
-    assert '⚠️ Suspect' in content
-    assert '📋 Unreviewed' in content
+    assert "⚠️ Suspect" in content
+    assert "📋 Unreviewed" in content
 
 
 def test_resolve_step_prefixes_and_but():
@@ -353,12 +353,15 @@ def test_generate_test_file_merge_scenarios_update(tmp_path):
     assert first is not None
 
     # 新しいシナリオCを追加（共有ステップを再利用）
-    extended = SAMPLE_FEATURE_SHARED_STEPS + """\
+    extended = (
+        SAMPLE_FEATURE_SHARED_STEPS
+        + """\
   Scenario: シナリオC
     Given 共通の前提条件がある
     When  操作Cを実行する
     Then  結果Cが得られること
 """
+    )
     feature_file.write_text(extended, encoding="utf-8")
     result = generate_test_file(feature_file, out_dir, feature_dir)
 
@@ -403,10 +406,15 @@ def test_scaffold_cmd_generates_files(tmp_path):
 
     out_dir = tmp_path / "tests"
 
-    result = runner.invoke(app, [
-        "scaffold", str(feature_dir),
-        "--out-dir", str(out_dir),
-    ])
+    result = runner.invoke(
+        app,
+        [
+            "scaffold",
+            str(feature_dir),
+            "--out-dir",
+            str(out_dir),
+        ],
+    )
 
     assert result.exit_code == 0
     assert (out_dir / "step_sample.py").exists()
@@ -426,7 +434,9 @@ def test_scaffold_cmd_skip_no_diff(tmp_path):
     original_content = (out_dir / "step_sample.py").read_text()
 
     # 2回目: 差分なし → スキップ
-    result = runner.invoke(app, ["scaffold", str(feature_dir), "--out-dir", str(out_dir)])
+    result = runner.invoke(
+        app, ["scaffold", str(feature_dir), "--out-dir", str(out_dir)]
+    )
 
     assert result.exit_code == 0
     assert "スキップ" in result.stdout
@@ -446,7 +456,9 @@ def test_scaffold_cmd_merge_diff_display(tmp_path):
 
     # 2回目: 新規ステップ追加でマージ
     feature_file.write_text(SAMPLE_FEATURE_EXTENDED, encoding="utf-8")
-    result = runner.invoke(app, ["scaffold", str(feature_dir), "--out-dir", str(out_dir)])
+    result = runner.invoke(
+        app, ["scaffold", str(feature_dir), "--out-dir", str(out_dir)]
+    )
 
     assert result.exit_code == 0
     assert "差分更新" in result.stdout
@@ -458,10 +470,15 @@ def test_scaffold_cmd_no_features(tmp_path):
     feature_dir = tmp_path / "features"
     feature_dir.mkdir()
 
-    result = runner.invoke(app, [
-        "scaffold", str(feature_dir),
-        "--out-dir", str(tmp_path / "tests"),
-    ])
+    result = runner.invoke(
+        app,
+        [
+            "scaffold",
+            str(feature_dir),
+            "--out-dir",
+            str(tmp_path / "tests"),
+        ],
+    )
 
     assert result.exit_code == 0
     assert "見つかりません" in result.stdout
@@ -483,10 +500,16 @@ def test_scaffold_cmd_dirty_prompt_cancel(mock_dirty, tmp_path):
     mock_dirty.return_value = True
 
     # "n" を入力してキャンセル
-    result = runner.invoke(app, [
-        "scaffold", str(feature_dir),
-        "--out-dir", str(out_dir),
-    ], input="n\n")
+    result = runner.invoke(
+        app,
+        [
+            "scaffold",
+            str(feature_dir),
+            "--out-dir",
+            str(out_dir),
+        ],
+        input="n\n",
+    )
 
     assert result.exit_code == 0
     assert "スキップ" in result.stdout
@@ -511,11 +534,16 @@ def test_scaffold_cmd_force_skips_prompt(mock_dirty, tmp_path):
     mock_dirty.return_value = True
     feature_file.write_text(SAMPLE_FEATURE_EXTENDED, encoding="utf-8")
 
-    result = runner.invoke(app, [
-        "scaffold", str(feature_dir),
-        "--out-dir", str(out_dir),
-        "--force",
-    ])
+    result = runner.invoke(
+        app,
+        [
+            "scaffold",
+            str(feature_dir),
+            "--out-dir",
+            str(out_dir),
+            "--force",
+        ],
+    )
 
     assert result.exit_code == 0
     # プロンプトなしでマージが実行されていること（差分更新 or 新規作成）
@@ -545,13 +573,21 @@ def test_ci_cmd_full_flow(mock_build, mock_subprocess, tmp_path):
     mock_subprocess.return_value = MagicMock(returncode=0, stdout="passed", stderr="")
     report_path.write_text("[]", encoding="utf-8")
 
-    result = runner.invoke(app, [
-        "ci", str(feature_dir),
-        "--test-dir", str(test_dir),
-        "--out-dir", str(tmp_path / "out"),
-        "--report", str(report_path),
-        "--repo-root", str(tmp_path),
-    ])
+    result = runner.invoke(
+        app,
+        [
+            "ci",
+            str(feature_dir),
+            "--test-dir",
+            str(test_dir),
+            "--out-dir",
+            str(tmp_path / "out"),
+            "--report",
+            str(report_path),
+            "--repo-root",
+            str(tmp_path),
+        ],
+    )
 
     assert mock_subprocess.called
     assert mock_build.called
@@ -573,12 +609,19 @@ def test_ci_cmd_test_failure_continues_build(mock_build, mock_subprocess, tmp_pa
     mock_subprocess.return_value = MagicMock(returncode=1, stdout="1 failed", stderr="")
     report_path.write_text("[]", encoding="utf-8")
 
-    result = runner.invoke(app, [
-        "ci", str(feature_dir),
-        "--test-dir", str(test_dir),
-        "--report", str(report_path),
-        "--repo-root", str(tmp_path),
-    ])
+    result = runner.invoke(
+        app,
+        [
+            "ci",
+            str(feature_dir),
+            "--test-dir",
+            str(test_dir),
+            "--report",
+            str(report_path),
+            "--repo-root",
+            str(tmp_path),
+        ],
+    )
 
     assert mock_build.called
     assert "テストに失敗があります" in result.stdout
@@ -599,13 +642,20 @@ def test_ci_cmd_with_scaffold(mock_build, mock_subprocess, tmp_path):
     mock_subprocess.return_value = MagicMock(returncode=0, stdout="passed", stderr="")
     report_path.write_text("[]", encoding="utf-8")
 
-    result = runner.invoke(app, [
-        "ci", str(feature_dir),
-        "--test-dir", str(test_dir),
-        "--report", str(report_path),
-        "--scaffold",
-        "--repo-root", str(tmp_path),
-    ])
+    result = runner.invoke(
+        app,
+        [
+            "ci",
+            str(feature_dir),
+            "--test-dir",
+            str(test_dir),
+            "--report",
+            str(report_path),
+            "--scaffold",
+            "--repo-root",
+            str(tmp_path),
+        ],
+    )
 
     assert (test_dir / "step_sample.py").exists()
 
@@ -683,7 +733,8 @@ def test_merge_stub_replaced_with_duplicate_comment(tmp_path):
     assert "[Duplicate Skip]" in content
     # Active な @given('共有ステップがある') はないこと（コメント行以外には存在しない）
     active_given_lines = [
-        line for line in content.splitlines()
+        line
+        for line in content.splitlines()
         if "@given('共有ステップがある')" in line and not line.lstrip().startswith("#")
     ]
     assert not active_given_lines, f"Active @given が残っている: {active_given_lines}"
