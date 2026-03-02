@@ -78,6 +78,8 @@ def _extract_scenarios_with_inherited_tags(
 
 - `_extract_tag_map_recursive()`: 本仕様実装後、コアジェネレータに完全に置き換えられ不要となる
 
+**テスト実行結果 (個別)**: -
+
 ### 🧪 検証シナリオ
 
 ❌ まだ Gherkin シナリオが登録されていません。

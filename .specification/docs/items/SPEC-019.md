@@ -59,6 +59,8 @@ spec-weaver audit <feature-dir> [OPTIONS]
 ### 既存動作への影響
 `--check-impl` が指定されない場合、既存の audit 動作は一切変わらない。
 
+**テスト実行結果 (個別)**: -
+
 ### 🧪 検証シナリオ
 
 ❌ まだ Gherkin シナリオが登録されていません。

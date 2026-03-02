@@ -1689,12 +1689,10 @@ def _generate_index_table(
 ):
     """一覧ページのテーブルMarkdownを生成。"""
     has_results = test_result_map is not None
-    result_col_header = " | テスト結果" if has_results else ""
-    result_col_sep = " | :--- " if has_results else ""
 
-    # ID | タイトル | 活性 | 親 | 子 | 兄弟 | Gherkinカバレッジ | レビュー | 実装状況 | 作成日 | 更新日
-    header = f"| ID | タイトル | 活性 | 親 | 子 | 兄弟 | Gherkinカバレッジ | レビュー | 実装状況 | 作成日 | 更新日{result_col_header} |"
-    sep = f"| :--- | :--- | :---: | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :---{result_col_sep}|"
+    # ID | タイトル | 活性 | 親 | 子 | 兄弟 | Gherkinカバレッジ | レビューステータス | 実装状況 | 作成日 | 更新日
+    header = "| ID | タイトル | 活性 | 親 | 子 | 兄弟 | Gherkinカバレッジ | レビューステータス | 実装状況 | 作成日 | 更新日 |"
+    sep = "| :--- | :--- | :---: | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |"
 
     lines = [f"# {title}\n", header, sep]
 
@@ -1713,8 +1711,23 @@ def _generate_index_table(
         siblings_col = "<br>".join(f"[{s}](items/{s}.md)" for s in siblings) or "-"
 
         # カバレッジ計算
-        # 子がいる場合は集約カバレッジ（割合%）、いない場合はシナリオ数を直接表示
-        if children:
+        # -t あり: テスト結果バッジをカバレッジ列に表示
+        # -t なし: シナリオ数バッジ（子ありは集約割合%、なしはシナリオ数）
+        if has_results:
+            from .test_results import spec_result_summary, result_badge
+
+            if children:
+                cp = cf = ct = 0
+                for child_uid in children:
+                    p, f, t = spec_result_summary(child_uid, tag_map, test_result_map)
+                    cp += p
+                    cf += f
+                    ct += t
+                coverage_col = result_badge(cp, cf, ct)
+            else:
+                p, f, t = spec_result_summary(uid, tag_map, test_result_map)
+                coverage_col = result_badge(p, f, t)
+        elif children:
             covered, total = _req_coverage(uid, child_map, all_items_str, tag_map)
             coverage_col = _coverage_badge(covered, total)
         else:
@@ -1740,23 +1753,6 @@ def _generate_index_table(
             row += " {: .suspect-row } |"
         else:
             row += " |"
-
-        if has_results:
-            from .test_results import spec_result_summary, result_badge
-
-            if children:
-                cp = cf = ct = 0
-                for child_uid in children:
-                    # 子がSPEC相当（テストを持つ可能性があるもの）であれば集計
-                    p, f, t = spec_result_summary(child_uid, tag_map, test_result_map)
-                    cp += p
-                    cf += f
-                    ct += t
-                res_badge = result_badge(cp, cf, ct)
-            else:
-                p, f, t = spec_result_summary(uid, tag_map, test_result_map)
-                res_badge = result_badge(p, f, t)
-            row += f" {res_badge} |"
 
         lines.append(row)
 

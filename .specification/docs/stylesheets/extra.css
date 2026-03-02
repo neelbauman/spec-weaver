@@ -1,6 +1,6 @@
 /* DataTables styling adjustment for Material theme */
 
-table.processed-table{
+table.processed-table {
     width: 1500px;
     max-width: 3000px;
     border-bottom: 1px solid var(--md-typeset-table-color) !important;
@@ -12,6 +12,10 @@ select {
 }
 
 /* Row highlighting for suspect and unreviewed items */
+table.processed-table td,
+table.processed-table th {
+    border-bottom: 1px solid var(--md-typeset-table-color);
+}
 tr:has(.unreviewed-row) {
     background-color: rgba(255, 0, 0, 0.15) !important;
 }

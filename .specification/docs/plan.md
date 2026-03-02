@@ -1,7 +1,7 @@
 # ドキュメント: PLAN
 
-| ID | タイトル | 活性 | 親 | 子 | 兄弟 | Gherkinカバレッジ | レビュー | 実装状況 | 作成日 | 更新日 |
-| :--- | :--- | :---: | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :---|
+| ID | タイトル | 活性 | 親 | 子 | 兄弟 | Gherkinカバレッジ | レビューステータス | 実装状況 | 作成日 | 更新日 |
+| :--- | :--- | :---: | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | [PLAN-001](items/PLAN-001.md) | 実装ファイルリンク管理機能の実装計画 | ✅ | [QA-003](items/QA-003.md)<br>[TRC-002](items/TRC-002.md)<br>[TRC-003](items/TRC-003.md)<br>[TRC-004](items/TRC-004.md) | - | - | - | ✅ reviewed | ✅ implemented | 2026-02-27 | 2026-03-03 |
 | [PLAN-002](items/PLAN-002.md) | scaffold コマンド 差分マージ・非対話モード実装計画 | ✅ | [AUT-001](items/AUT-001.md) | - | - | - | ✅ reviewed | ✅ implemented | 2026-02-27 | 2026-03-03 |
 | [PLAN-003](items/PLAN-003.md) | CORE-002 実装計画：Gherkinタグ継承（Effective Tags） | ✅ | [CORE-002](items/CORE-002.md) | - | - | - | ✅ reviewed | ✅ implemented | 2026-02-27 | 2026-03-03 |

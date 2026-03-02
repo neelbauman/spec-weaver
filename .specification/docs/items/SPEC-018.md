@@ -52,6 +52,8 @@
 ### 実装モジュール
 `src/spec_weaver/impl_scanner.py` に `ImplScanner` クラスとして実装する。
 
+**テスト実行結果 (個別)**: -
+
 ### 🧪 検証シナリオ
 
 ❌ まだ Gherkin シナリオが登録されていません。

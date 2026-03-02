@@ -58,6 +58,8 @@ DoorstopのSuspect機能を活用した変更波及の検知と可視化の仕�
 - build の一覧テーブル: Suspect状態の行を紫色、Unreviewed状態の行を赤色でハイライト表示する。従来の状態列は廃止する。
 - build の詳細ページ: Suspect Link バナー（対象リンク付き）、Unreviewed Changes バナーを表示
 
+**テスト実行結果 (個別)**: -
+
 ### 🧪 検証シナリオ
 
 ❌ まだ Gherkin シナリオが登録されていません。
