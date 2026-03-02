@@ -642,7 +642,8 @@ def ci_cmd(
                             fpath, test_dir, feature_dir, overwrite=True
                         )
                         if scaffold_result:
-                            console.print(f"  [green]✅ 生成[/green]: {fpath.name}")
+                            out_path, status, _diff = scaffold_result
+                            console.print(f"  [green]✅ 生成[/green]: {out_path.name}")
                     except Exception as e:
                         console.print(
                             f"  [yellow]⚠️ scaffold スキップ: {fpath.name}: {e}[/yellow]"
@@ -748,9 +749,20 @@ def review_cmd(
     ),
 ) -> None:
     """
-    指定したアイテム、または .feature ファイル内の全アイテムの Gherkin フィンガープリントを最新の状態に更新し、レビュー済みとみなします。
-    注意: この操作により YAML が書き換えられるため、Doorstop 本体の reviewed 状態はリセットされます。
+    指定したアイテム（REQ/SPEC など）、または .feature ファイル内の全アイテムをレビュー済みにします。
+
+    Gherkin シナリオが紐づいている場合は test_fingerprint を更新してから doorstop review を実行します。
+    Gherkin シナリオがない場合（testable: false など）は doorstop review のみ実行します。
     """
+    def _doorstop_review(*ids: str) -> None:
+        """doorstop review を実行して Doorstop 本体のレビュー状態を更新する。"""
+        for uid in ids:
+            with console.status(f"[bold cyan]doorstop review {uid} を実行中...[/bold cyan]"):
+                result = subprocess.run(["doorstop", "review", uid], capture_output=True, text=True)
+            if result.returncode != 0:
+                raise RuntimeError(result.stderr.strip() or f"doorstop review {uid} が終了コード {result.returncode} で失敗しました")
+            console.print(f"[bold green]✅ Doorstop レビュー完了: {uid}[/bold green]")
+
     try:
         item_path = Path(item_id)
         if item_path.suffix == ".feature" and item_path.exists():
@@ -788,13 +800,11 @@ def review_cmd(
                 console.print(
                     f"\n[bold green]✨ 合計 {updated_count} 個のアイテムのフィンガープリントを更新しました。[/bold green]"
                 )
-                console.print(
-                    f"[bold yellow]💡 次は Doorstop 本体のレビューを実行してください:[/bold yellow]"
-                )
-                console.print(f"   doorstop review {' '.join(sorted_tags)}")
+            _doorstop_review(*sorted_tags)
             return
 
-        # 従来通りの ID 指定の場合
+        # ID 指定の場合: Gherkin フィンガープリントがあれば更新してから doorstop review、
+        # なければ（testable: false など）doorstop review のみ実行する
         with console.status(
             f"[bold cyan]{item_id} の Gherkin フィンガープリントを計算中...[/bold cyan]"
         ):
@@ -802,23 +812,19 @@ def review_cmd(
             fingerprints = get_spec_fingerprints(feature_dir, all_prefixes)
             actual_fp = fingerprints.get(item_id)
 
-        if not actual_fp:
+        if actual_fp:
+            with console.status(f"[bold cyan]{item_id} の YAML を更新中...[/bold cyan]"):
+                update_item_attribute(repo_root, item_id, "test_fingerprint", actual_fp)
             console.print(
-                f"[bold yellow]⚠️ {item_id} に紐づく Gherkin シナリオが見つかりませんでした。[/bold yellow]"
+                f"[bold green]✅ {item_id} のフィンガープリントを更新しました。[/bold green]"
             )
-            raise typer.Exit(1)
+            console.print(f"[dim]新ハッシュ: {actual_fp}[/dim]")
+        else:
+            console.print(
+                f"[dim]{item_id} に紐づく Gherkin シナリオはありません。Doorstop レビューのみ実行します。[/dim]"
+            )
 
-        with console.status(f"[bold cyan]{item_id} の YAML を更新中...[/bold cyan]"):
-            update_item_attribute(repo_root, item_id, "test_fingerprint", actual_fp)
-
-        console.print(
-            f"[bold green]✅ {item_id} のフィンガープリントを更新しました。[/bold green]"
-        )
-        console.print(f"[dim]新ハッシュ: {actual_fp}[/dim]")
-        console.print(
-            f"\n[bold yellow]💡 次は Doorstop 本体のレビューを実行してください:[/bold yellow]"
-        )
-        console.print(f"   doorstop review {item_id}")
+        _doorstop_review(item_id)
 
     except Exception as e:
         console.print(f"[bold red]❌ review エラー: {e}[/bold red]")

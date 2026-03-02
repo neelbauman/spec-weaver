@@ -2,7 +2,7 @@
 # implements: SPEC-022
 
 import json
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 
 from behave import given, when, then, step
 from typer.testing import CliRunner
@@ -15,6 +15,18 @@ from spec_weaver.review import (
 )
 
 _runner = CliRunner()
+
+
+def _invoke_review(context, args, *, doorstop_returncode=0, doorstop_stderr=""):
+    """spec-weaver review を doorstop subprocess をモックして実行する。"""
+    mock_proc = MagicMock()
+    mock_proc.returncode = doorstop_returncode
+    mock_proc.stderr = doorstop_stderr
+    with patch("spec_weaver.cli.subprocess.run", return_value=mock_proc):
+        result = _runner.invoke(app, args)
+    context.exit_code = result.exit_code
+    context.stdout = result.output
+    context.stderr = ""
 
 # ======================================================================
 # ヘルパー
@@ -83,22 +95,26 @@ def given_ddd4e2bc(context, param0):
 
 @given('"{param0}" に紐づく Gherkin シナリオが存在する')  # type: ignore
 def given_efa9578a(context, param0):
-    """"SPEC-003" に紐づく Gherkin シナリオが存在する
+    """"SPEC-003" に紐づく Gherkin シナリオが存在する（audit.feature にタグが存在するので前提条件として設定不要）"""
+    context.target_item_id = param0
 
-    Scenarios:
-      - アイテムIDを指定してフィンガープリントを更新できる
-    """
-    raise NotImplementedError('STEP: "{param0}" に紐づく Gherkin シナリオが存在する')
+
+@given('"{param0}" に紐づく Gherkin シナリオが存在しない')  # type: ignore
+def given_no_gherkin_scenario(context, param0):
+    """"REQ-013" に紐づく Gherkin シナリオが存在しない（testable: false のため前提条件として設定不要）"""
+    context.target_item_id = param0
 
 
 @when('`spec-weaver review SPEC-003 --feature-dir ./specification/features` を実行する')  # type: ignore
 def when_6ec2fe45(context):
-    """`spec-weaver review SPEC-003 --feature-dir ./specification/features` を実行する
+    """`spec-weaver review SPEC-003 --feature-dir ./specification/features` を実行する"""
+    _invoke_review(context, ["review", "SPEC-003", "--feature-dir", "./specification/features"])
 
-    Scenarios:
-      - アイテムIDを指定してフィンガープリントを更新できる
-    """
-    raise NotImplementedError('STEP: `spec-weaver review SPEC-003 --feature-dir ./specification/features` を実行する')
+
+@when('`spec-weaver review REQ-013 --feature-dir ./specification/features` を実行する')  # type: ignore
+def when_review_req013(context):
+    """`spec-weaver review REQ-013 --feature-dir ./specification/features` を実行する"""
+    _invoke_review(context, ["review", "REQ-013", "--feature-dir", "./specification/features"])
 
 
 # [Duplicate Skip] common_steps.py の @then('終了コードが{code:d}である') で処理される
@@ -107,86 +123,64 @@ def when_6ec2fe45(context):
 
 @then('"{param0}" の YAML に test_fingerprint が書き込まれる')  # type: ignore
 def then_7cec042b(context, param0):
-    """"SPEC-003" の YAML に test_fingerprint が書き込まれる
-
-    Scenarios:
-      - アイテムIDを指定してフィンガープリントを更新できる
-    """
-    raise NotImplementedError('STEP: "{param0}" の YAML に test_fingerprint が書き込まれる')
+    """"SPEC-003" の YAML に test_fingerprint が書き込まれる"""
+    assert "フィンガープリントを更新しました" in context.stdout, (
+        f"Expected fingerprint update message in output. Output: {context.stdout}"
+    )
 
 
-@then('次のアクションとして "{param0}" が案内される')  # type: ignore
-def then_82a5615a(context, param0):
-    """次のアクションとして "doorstop review SPEC-003" が案内される
-
-    Scenarios:
-      - アイテムIDを指定してフィンガープリントを更新できる
-    """
-    raise NotImplementedError('STEP: 次のアクションとして "{param0}" が案内される')
+@then('Doorstop のレビューが自動実行される')  # type: ignore
+def then_doorstop_review_executed(context):
+    """Doorstop のレビューが自動実行される"""
+    assert "Doorstop レビュー完了" in context.stdout, (
+        f"Expected 'Doorstop レビュー完了' in output. Output: {context.stdout}"
+    )
 
 
 @given('"{param0}" ファイルに複数の仕様IDタグが含まれる')  # type: ignore
 def given_dfa4c4a3(context, param0):
-    """".feature" ファイルに複数の仕様IDタグが含まれる
-
-    Scenarios:
-      - .feature ファイルを指定して複数アイテムをまとめて更新できる
-    """
-    raise NotImplementedError('STEP: "{param0}" ファイルに複数の仕様IDタグが含まれる')
+    """".feature" ファイルに複数の仕様IDタグが含まれる（audit.feature は SPEC-003/SPEC-005 を含むので前提条件として設定不要）"""
+    pass
 
 
 @when('`spec-weaver review specification/features/audit.feature --feature-dir ./specification/features` を実行する')  # type: ignore
 def when_c942f8a5(context):
-    """`spec-weaver review specification/features/audit.feature --feature-dir ./specification/features` を実行する
-
-    Scenarios:
-      - .feature ファイルを指定して複数アイテムをまとめて更新できる
-    """
-    raise NotImplementedError('STEP: `spec-weaver review specification/features/audit.feature --feature-dir ./specification/features` を実行する')
+    """`spec-weaver review specification/features/audit.feature --feature-dir ./specification/features` を実行する"""
+    _invoke_review(context, [
+        "review", "specification/features/audit.feature",
+        "--feature-dir", "./specification/features",
+    ])
 
 
 @then('ファイル内の各アイテムの test_fingerprint が更新される')  # type: ignore
 def then_f939cd9e(context):
-    """ファイル内の各アイテムの test_fingerprint が更新される
-
-    Scenarios:
-      - .feature ファイルを指定して複数アイテムをまとめて更新できる
-    """
-    raise NotImplementedError('STEP: ファイル内の各アイテムの test_fingerprint が更新される')
+    """ファイル内の各アイテムの test_fingerprint が更新される"""
+    assert "フィンガープリントを更新しました" in context.stdout, (
+        f"Expected fingerprint update message in output. Output: {context.stdout}"
+    )
 
 
 @then('更新件数が表示される')  # type: ignore
 def then_b31aa65d(context):
-    """更新件数が表示される
-
-    Scenarios:
-      - .feature ファイルを指定して複数アイテムをまとめて更新できる
-    """
-    raise NotImplementedError('STEP: 更新件数が表示される')
+    """更新件数が表示される"""
+    assert "合計" in context.stdout and "個のアイテムのフィンガープリントを更新しました" in context.stdout, (
+        f"Expected update count message in output. Output: {context.stdout}"
+    )
 
 
 @when('`spec-weaver review SPEC-999` を実行する')  # type: ignore
 def when_dabe30ab(context):
-    """`spec-weaver review SPEC-999` を実行する
-
-    Scenarios:
-      - 紐づく Gherkin シナリオが存在しないアイテムを指定するとエラーになる
-    """
-    raise NotImplementedError('STEP: `spec-weaver review SPEC-999` を実行する')
+    """`spec-weaver review SPEC-999` を実行する（存在しないIDなので doorstop が失敗する）"""
+    _invoke_review(
+        context,
+        ["review", "SPEC-999"],
+        doorstop_returncode=1,
+        doorstop_stderr="ERROR: no item with UID: SPEC-999",
+    )
 
 
 # [Duplicate Skip] common_steps.py の @then('終了コードが{code:d}である') で処理される
 # @then('終了コードが1である')  # type: ignore
-
-
-@then('警告メッセージが表示される')  # type: ignore
-def then_a11d14f9(context):
-    """警告メッセージが表示される
-
-    Scenarios:
-      - 紐づく Gherkin シナリオが存在しないアイテムを指定するとエラーになる
-    """
-    raise NotImplementedError('STEP: 警告メッセージが表示される')
 @given('レビュー結果に severity "{param0}" のfindingが含まれる')  # type: ignore
 def given_7d56eddc(context, param0):
     """レビュー結果に severity "high" のfindingが含まれる
