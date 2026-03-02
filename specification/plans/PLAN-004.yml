@@ -1,74 +1,191 @@
 active: true
 derived: false
 header: |
-  Gherkin-Doorstop 状態管理の拡張（suspect / unreviewed）
-level: 4.0
+  SPEC-022/023 実装計画：セマンティックレビュー機能
+level: 1.3
 links:
-- SPEC-002: 4aI-LBDgpBzfNQBsdDxDLx2FyZvE3p1QmBDfcBdYu4k=
-- SPEC-017: dorE4wCm0-ha894qzUi-ooVFKB-D9pcLFFgRGWIKIQg=
-- SPEC-021: -utqS9RsMQTwM62PKU2opg0cEhzimKdVertu7_C-pjE=
+- SPEC-022: IUzV_GhEzhG2du6zMK1mH8V4fZfL2aGRK6JVLNtFzu0=
+- SPEC-023: nelFQm1hXj31Q4t768tpgITbcgkqG_0uZ8E6-7wgrkY=
 normative: true
 ref: ''
-reviewed: NI7Hpzh_Uw0pE0WdAIXC0TzTM9iuUylS1OyaTopOx2s=
-status: in-progress
+reviewed: fQzr9om7YWDvpubi7do2V3QKd3kmrcQa6EzHRnvW2Bs=
+status: draft
 testable: false
 text: |
   ## 概要
-  Doorstopの `suspect` / `unreviewed` 状態管理を、Gherkin `.feature` ファイルと
-  Doorstopアイテムの間の関係性にまで拡張する計画。
 
-  ## 目的
-  - `.feature` ファイル（テスト/実装）が変更されたら、対応する SPEC を `unreviewed` にする
-  - SPEC が `unreviewed` なら、対応する `.feature` シナリオを `suspect` とみなす
+  SPEC-022「review コマンド」・SPEC-023「semantic-review-skill」の実装タスクを分解する。
+  規模は大規模（review.py 新規・cli.py 追加・SKILL.md 新規・テスト新規の複数モジュール横断）。
 
-  ## 実装タスク（実行順）
+  ## 実装タスク
 
-  ### Task 1: Gherkin フィンガープリント計算の実装
-  **ファイル**: `src/spec_weaver/gherkin.py`
-  **内容**:
-  - `get_spec_fingerprints(features_dir, prefixes) -> dict[str, str]`
-    各 SPEC ID に対して、紐づく全シナリオの内容（名前、ステップ、Examples）を
-    結合してハッシュ化し、`{spec_id: hash}` のマップを返す。
-  - ハッシュ計算には安定性のため、シナリオをファイルパス・行番号でソートしてから処理する。
+  ### Task 1: JSONスキーマ定義（review.py — データ構造）
 
-  ### Task 2: Doorstop アイテムへの属性追加・更新ユーティリティ
-  **ファイル**: `src/spec_weaver/doorstop.py`
-  **内容**:
-  - `update_item_attribute(repo_root, item_id, key, value)`
-    指定したアイテムの YAML にカスタム属性を書き込む。
-    Doorstop の API を使用して、ファイルへの保存まで行う。
+  **目的**: SPEC-022 §JSONスキーマに従った ReviewFinding・ReviewResult・ReviewReport データクラスを定義する。
 
-  ### Task 3: audit コマンドの拡張（フィンガープリント検証）
-  **ファイル**: `src/spec_weaver/cli.py`
-  **内容**:
-  - `audit` 実行時に Gherkin の実フィンガープリントを計算。
-  - SPEC アイテムの `test_fingerprint` 属性と比較。
-  - 差分がある場合、`[Gherkin Unreviewed]` として警告を表示し、終了コード 1 を返す。
-  - SPEC が `unreviewed` (reviewed: False) の場合、`[Gherkin Suspect]` として警告を表示。
+  **実装内容**:
+  - `src/spec_weaver/review.py` を新規作成
+  - `ReviewFinding(kind, severity, title, detail, location)` dataclass
+  - `ReviewResult(schema_version, item_id, item_title, reviewed_files, findings, summary)` dataclass
+  - `ReviewReport(schema_version, items, summary)` dataclass（--all 用集約）
+  - severity 比較用ヘルパー `severity_gte(a, b)` / `SEVERITY_ORDER`
 
-  ### Task 4: review コマンドの新規追加
-  **ファイル**: `src/spec_weaver/cli.py`
-  **内容**:
-  - `spec-weaver review <ITEM_ID>`
-    指定したアイテムの `test_fingerprint` を、現在の Gherkin の内容に基づいて更新する。
-    これにより Doorstop の `reviewed` 状態もリセット（False）される。
+  **完了条件**: `from spec_weaver.review import ReviewFinding, ReviewResult` が import できる
 
-  ### Task 5: status コマンドの表示拡張
-  **ファイル**: `src/spec_weaver/cli.py`
-  **内容**:
-  - レビューステータス列に、フィンガープリントの不一致も反映する。
-    - `📋 test-unreviewed`: Gherkin 側が変更されている
-    - `⚠️ test-suspect`: SPEC 側が変更されている
+  **依存**: なし
 
-  ### Task 6: テストの追加
-  **ファイル**: `tests/test_review_state.py`（新規）
-  **内容**:
-  - フィンガープリント計算の安定性テスト。
-  - feature 変更後の audit での検知テスト。
-  - review コマンド実行後の YAML 更新テスト。
+  ---
 
-  ## 完了条件
-  - `.feature` を編集して `spec-weaver audit` を実行すると警告が出る。
-  - `spec-weaver review SPEC-XXX` を実行すると、YAML の `test_fingerprint` が更新される。
-  - その後 `doorstop status` で対象アイテムが `unreviewed` になっている。
-  - `spec-weaver status` で詳細なステータスが表示される。
+  ### Task 2: ファイル収集ロジック（review.py — collect_files）
+
+  **目的**: アイテムIDから仕様・Gherkin・実装コードのパスを収集する `collect_review_files` 関数を実装する。
+
+  **実装内容**:
+  - `collect_review_files(item_id, feature_dir, repo_root) -> dict[str, list[Path]]`
+    - Doorstop YAML パスを `get_item_map` で取得
+    - `get_tag_map` で対応 .feature ファイルを取得
+    - steps/ 配下のステップ定義ファイルを feature ファイルと同ディレクトリから探索
+    - `ImplScanner` + `get_ref_files` で実装ファイルを取得
+  - 返り値: `{"spec": [...], "feature": [...], "steps": [...], "impl": [...]}`
+
+  **完了条件**: 既存 SPEC-003 に対して正しく 3 種類以上のファイルが返る
+
+  **依存**: Task 1
+
+  ---
+
+  ### Task 3: Claudeプロンプト生成と呼び出し（review.py — run_claude）
+
+  **目的**: プロンプトを組み立てて `claude -p` を subprocess で呼び出し、結果 JSON を解析する関数を実装する。
+
+  **実装内容**:
+  - `build_review_prompt(item_id, item_title, files_dict) -> str`
+    - SKILL.md に記述するプロンプトテンプレートを参照
+    - 「純粋なJSONのみで出力」指示を含む
+  - `run_claude_review(item_id, feature_dir, repo_root) -> ReviewResult`
+    - `collect_review_files` でファイル収集
+    - `--file <path>` 形式で各ファイルを渡す
+    - stdout 末尾の JSON ブロックを抽出し `ReviewResult` に変換
+    - `claude` バイナリが見つからない場合は `FileNotFoundError` を raise
+
+  **完了条件**: モックを使ったユニットテストで JSON 抽出ロジックが正常動作する
+
+  **依存**: Task 2
+
+  ---
+
+  ### Task 4: 並列実行ロジック（review.py — run_all）
+
+  **目的**: `--all` 時に全アイテムを `ThreadPoolExecutor` で並列レビューする `run_all_reviews` 関数を実装する。
+
+  **実装内容**:
+  - `run_all_reviews(feature_dir, repo_root, max_workers) -> ReviewReport`
+    - `get_item_map` で全アイテム取得
+    - `ThreadPoolExecutor(max_workers=max_workers)` で並列実行
+    - 各結果を集約して `ReviewReport` を返す
+    - 個別タスクの失敗は findings に `severity=high` の error として記録
+
+  **完了条件**: max_workers=1 でのモックテストが通る
+
+  **依存**: Task 3
+
+  ---
+
+  ### Task 5: CLIコマンド追加（cli.py — review_cmd）
+
+  **目的**: `spec-weaver review` CLI コマンドを `cli.py` に追加する。
+
+  **実装内容**:
+  - `@app.command("review")` デコレータで `review_cmd` を定義
+  - 引数: `--item`, `--all`, `--feature-dir`, `--output`, `--min-severity`, `--fail-on`, `--max-workers`
+  - `--item` と `--all` の排他チェック（どちらもなければエラー）
+  - 出力: text モードは Rich Markdown / json モードは `json.dumps`
+  - 終了コード制御: `--fail-on` に従って `raise typer.Exit(code=1)`
+
+  **完了条件**: `spec-weaver review --help` が正常表示される
+
+  **依存**: Task 3, Task 4
+
+  ---
+
+  ### Task 6: semantic-review-skill の SKILL.md 作成
+
+  **目的**: `.claude/skills/semantic-review-skill/SKILL.md` を作成し、スキルのプロンプトテンプレートを定義する。
+
+  **実装内容**:
+  - トリガーキーワード定義（SPEC-023 §トリガーキーワード参照）
+  - CLIモード（JSONのみ）とインタラクティブモード（Markdown）の出力切り替え定義
+  - JSONスキーマの例示（schema_version, item_id, findings 構造）
+  - finding の severity 基準説明
+
+  **完了条件**: ファイルが作成されており、プロンプトテンプレートとして妥当な内容が記述されている
+
+  **依存**: Task 1（スキーマ定義参照）
+
+  ---
+
+  ### Task 7: ユニットテスト（tests/test_review.py）
+
+  **目的**: review.py の各関数をモックを使って pytest でテストする。
+
+  **テストケース**:
+  1. `severity_gte` の正確な比較（high >= medium, low < high 等）
+  2. `collect_review_files` でアイテム不存在時に ValueError が raise される
+  3. `run_claude_review` で claude バイナリが見つからない場合に適切なエラーが返る
+  4. JSON 抽出ロジック: 非JSON 行を含む stdout から末尾 JSON を正しく抽出できる
+  5. `--min-severity` フィルタが正しく動作する
+
+  **完了条件**: `uv run pytest tests/test_review.py -q` がすべて PASS
+
+  **依存**: Task 3, Task 4
+
+  ---
+
+  ### Task 8: BDDステップ定義（specification/features/steps/ — review シナリオ）
+
+  **目的**: `review.feature` の各シナリオに対応するステップ定義を実装する。
+
+  **実装内容**:
+  - `uv run spec-weaver scaffold ./specification/features --out-dir features/steps` を実行
+  - 生成された review.feature 対応ステップの `NotImplementedError` を肉付け
+  - `claudeコマンドが利用可能/不可能` の Given ステップは環境変数 `CLAUDE_AVAILABLE` で制御
+
+  **完了条件**: `uv run behave --no-capture` で @SPEC-022 シナリオが実行される
+
+  **依存**: Task 5
+
+  ---
+
+  ### Task 9: 仕様ステータス更新
+
+  **目的**: 実装完了後に REQ-013 / SPEC-022 / SPEC-023 のステータスを `implemented` に更新する。
+
+  **実装内容**:
+  - REQ-013, SPEC-022, SPEC-023 の `status` を `in-progress` → `implemented` に変更
+  - `impl_files` アノテーションが SPEC-022 に記載済みであることを確認
+  - `uv run spec-weaver audit ./specification/features` がエラーなしで通過することを確認
+
+  **完了条件**: `uv run spec-weaver status` で全アイテムが `implemented` 表示になる
+
+  **依存**: Task 5〜8 の完了
+
+  ## タスク実行順序
+
+  ```
+  Task 1 (データ構造定義)
+    └── Task 2 (ファイル収集)
+          └── Task 3 (Claude呼び出し)
+                ├── Task 4 (並列実行)   ─┐
+                └── Task 6 (SKILL.md)    │
+                                         │
+  Task 5 (CLI コマンド) ──────────────────┤
+    └── Task 8 (BDD ステップ定義)         │
+                                         │
+  Task 7 (ユニットテスト) ────────────────┘
+    └── Task 9 (ステータス更新)
+  ```
+
+  ## 並列実行可能なタスク
+
+  - Task 6 (SKILL.md) は Task 1 完了後に Task 3 と並列で進められる
+  - Task 7 (ユニットテスト) は Task 3 完了後に Task 4/5 と並列で進められる

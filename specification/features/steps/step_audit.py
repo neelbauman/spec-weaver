@@ -80,37 +80,6 @@ def when_20ad7547(context):
     _run_audit(context)
 
 
-@then("終了コード 0 が返ること")  # type: ignore
-def then_4f25c571(context):
-    """終了コード 0 が返ること
-
-    Scenarios:
-      - 完全一致時の監査成功
-    """
-    assert context.exit_code == 0, (
-        f"終了コード {context.exit_code} (期待: 0)\n{context.output}"
-    )
-
-
-@then("成功メッセージが表示されること")  # type: ignore
-def then_f7642361(context):
-    """成功メッセージが表示されること
-
-    Scenarios:
-      - 完全一致時の監査成功
-    """
-    assert any(
-        kw in context.output for kw in ["✅", "成功", "All", "Pass", "OK", "0 missing"]
-    ), f"成功メッセージが見当たりません:\n{context.output}"
-
-
-@given('testable な仕様 "{spec_id}" に対応するGherkinテストが存在しない')  # type: ignore
-def given_03339ad7(context, spec_id):
-    """testable な仕様 "SPEC-002" に対応するGherkinテストが存在しない
-
-    Scenarios:
-      - テスト漏れの検出
-    """
     # SPEC-001 (testable=False), SPEC-002 (testable=True, 未カバー)
     context.repo_root = context.temp_dir / "repo"
     create_doorstop_project_api(
