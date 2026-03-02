@@ -2,8 +2,6 @@
 
 **タグ**: `@SPEC-017` `@SPEC-018` `@SPEC-019` `@SPEC-020`
 
-**関連アイテム**: [SPEC-017](../items/SPEC-017.md) / [SPEC-018](../items/SPEC-018.md) / [SPEC-019](../items/SPEC-019.md) / [SPEC-020](../items/SPEC-020.md)
-
 DoorstopのYAML impl_files カスタム属性とコードアノテーションを組み合わせて、
   仕様と実装ファイルの双方向トレーサビリティを実現する。
 

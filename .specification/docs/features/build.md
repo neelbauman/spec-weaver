@@ -2,8 +2,6 @@
 
 **タグ**: `@SPEC-004`
 
-**関連アイテム**: [SPEC-004](../items/SPEC-004.md) / [SPEC-005](../items/SPEC-005.md) / [SPEC-009](../items/SPEC-009.md) / [SPEC-014](../items/SPEC-014.md)
-
 Doorstopの仕様データとGherkinテストを統合した
   MkDocsドキュメントサイトを自動生成する。
 

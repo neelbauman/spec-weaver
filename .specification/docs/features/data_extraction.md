@@ -2,8 +2,6 @@
 
 **タグ**: `@SPEC-002`
 
-**関連アイテム**: [SPEC-002](../items/SPEC-002.md) / [SPEC-021](../items/SPEC-021.md)
-
 Doorstop と Gherkin から仕様データとテストタグを正確に抽出する。
 
 ---

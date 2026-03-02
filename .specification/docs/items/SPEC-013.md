@@ -1,10 +1,13 @@
 # [SPEC-013] タイムスタンプ鮮度の監査チェック
 
+> ⚠️ **Suspect**: 関連するアイテムやテストが変更されました。影響範囲のレビューが必要です。
+> **原因 (Unreviewed)**: `./specification/features/timestamp.feature`
+
 **実装状況**: ✅ implemented
 
 **作成日**: 2026-02-26　|　**更新日**: 2026-03-02
 
-**上位アイテム**: [REQ-002](REQ-002.md), [REQ-010](REQ-010.md) / **兄弟アイテム**: [SPEC-002](SPEC-002.md), [SPEC-003](SPEC-003.md), [SPEC-011](SPEC-011.md), [SPEC-012](SPEC-012.md)
+**上位アイテム**: [REQ-002](REQ-002.md), [REQ-010](REQ-010.md) / **兄弟アイテム**: [SPEC-002](SPEC-002.md), [SPEC-011](SPEC-011.md), [SPEC-012](SPEC-012.md)
 
 **テスト対象**: Yes　**個別カバレッジ**: 🟢 1/1 (100%)
 
@@ -57,12 +60,10 @@ stale アイテムが検出された場合、既存の監査結果テーブル�
 - stale アイテムの検出のみでは終了コードを非ゼロにしない（警告扱い）。
 - 既存の監査エラー（テスト漏れ・孤児タグ・Suspect）とは独立した報告とする。
 
-**テスト実行結果 (個別)**: ✅ 5/5 PASS
-
 ### 🧪 検証シナリオ
 
-- ✅ PASS **stale アイテムの検出（Git履歴ベース）** — Scenario （[features/timestamp.feature:57](../features/timestamp.md)）
-- ✅ PASS **閾値内のアイテムは stale と判定されない** — Scenario （[features/timestamp.feature:65](../features/timestamp.md)）
-- ✅ PASS **Git情報もupdated_atもないアイテムは stale 判定の対象外** — Scenario （[features/timestamp.feature:71](../features/timestamp.md)）
-- ✅ PASS **deprecated アイテムは stale 判定の対象外** — Scenario （[features/timestamp.feature:77](../features/timestamp.md)）
-- ✅ PASS **--stale-days 0 で鮮度チェックを無効化** — Scenario （[features/timestamp.feature:84](../features/timestamp.md)）
+- **stale アイテムの検出（Git履歴ベース）** — Scenario （`./specification/features/timestamp.feature:57`）
+- **閾値内のアイテムは stale と判定されない** — Scenario （`./specification/features/timestamp.feature:65`）
+- **Git情報もupdated_atもないアイテムは stale 判定の対象外** — Scenario （`./specification/features/timestamp.feature:71`）
+- **deprecated アイテムは stale 判定の対象外** — Scenario （`./specification/features/timestamp.feature:77`）
+- **--stale-days 0 で鮮度チェックを無効化** — Scenario （`./specification/features/timestamp.feature:84`）

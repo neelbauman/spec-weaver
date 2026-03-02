@@ -1,5 +1,8 @@
 # [SPEC-010] trace コマンド — トレーサビリティ・ツリー表示
 
+> ⚠️ **Suspect**: 関連するアイテムやテストが変更されました。影響範囲のレビューが必要です。
+> **原因 (Unreviewed)**: `./specification/features/trace.feature`
+
 **実装状況**: ✅ implemented
 
 **作成日**: 2026-02-26　|　**更新日**: 2026-03-02
@@ -99,15 +102,13 @@ REQ-001 仕様と実装のトレーサビリティ保証 ✅ implemented
 - Doorstopツリーが未初期化の場合: `Error: No Doorstop tree found` を表示して終了コード1
 - .feature ディレクトリが存在しない場合: 警告を出しつつDoorstopアイテムのみ表示
 
-**テスト実行結果 (個別)**: ✅ 8/8 PASS
-
 ### 🧪 検証シナリオ
 
-- ✅ PASS **REQを起点としたトップダウンのツリー表示** — Scenario （[features/trace.feature:21](../features/trace.md)）
-- ✅ PASS **SPECを起点とした双方向のツリー表示** — Scenario （[features/trace.feature:31](../features/trace.md)）
-- ✅ PASS **Gherkin Featureファイルを起点としたボトムアップ表示** — Scenario （[features/trace.feature:39](../features/trace.md)）
-- ✅ PASS **--direction up で上方向のみ探索** — Scenario （[features/trace.feature:46](../features/trace.md)）
-- ✅ PASS **--direction down で下方向のみ探索** — Scenario （[features/trace.feature:53](../features/trace.md)）
-- ✅ PASS **--format flat でフラットリスト表示** — Scenario （[features/trace.feature:60](../features/trace.md)）
-- ✅ PASS **存在しないIDを指定した場合のエラー** — Scenario （[features/trace.feature:66](../features/trace.md)）
-- ✅ PASS **各ノードにステータスバッジが表示される** — Scenario （[features/trace.feature:71](../features/trace.md)）
+- **REQを起点としたトップダウンのツリー表示** — Scenario （`./specification/features/trace.feature:21`）
+- **SPECを起点とした双方向のツリー表示** — Scenario （`./specification/features/trace.feature:31`）
+- **Gherkin Featureファイルを起点としたボトムアップ表示** — Scenario （`./specification/features/trace.feature:39`）
+- **--direction up で上方向のみ探索** — Scenario （`./specification/features/trace.feature:46`）
+- **--direction down で下方向のみ探索** — Scenario （`./specification/features/trace.feature:53`）
+- **--format flat でフラットリスト表示** — Scenario （`./specification/features/trace.feature:60`）
+- **存在しないIDを指定した場合のエラー** — Scenario （`./specification/features/trace.feature:66`）
+- **各ノードにステータスバッジが表示される** — Scenario （`./specification/features/trace.feature:71`）

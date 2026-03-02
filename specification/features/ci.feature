@@ -1,4 +1,5 @@
 # spec-weaver-fingerprint: 283aa0282d1c19b1bc130d2e18405561a84e83c1b6f10a4a382da9597b25529d
+# spec-weaver-fingerprint-SPEC-016: gASW5wMaDKZis4PQkfA4jgoesvwYa6hKWx21741Y9jg=
 @SPEC-016
 Feature: ci コマンド
   テスト実行からドキュメント生成までを一気通貫で実行する。

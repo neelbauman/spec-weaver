@@ -1,10 +1,13 @@
 # [SPEC-002] データ抽出基盤
 
+> ⚠️ **Suspect**: 関連するアイテムやテストが変更されました。影響範囲のレビューが必要です。
+> **原因 (Unreviewed)**: `./specification/features/data_extraction.feature`
+
 **実装状況**: ✅ implemented
 
 **作成日**: 2026-02-26　|　**更新日**: 2026-03-02
 
-**上位アイテム**: [REQ-001](REQ-001.md), [REQ-002](REQ-002.md) / **兄弟アイテム**: [SPEC-001](SPEC-001.md), [SPEC-003](SPEC-003.md), [SPEC-013](SPEC-013.md), [SPEC-021](SPEC-021.md)
+**上位アイテム**: [REQ-001](REQ-001.md), [REQ-002](REQ-002.md) / **兄弟アイテム**: [SPEC-001](SPEC-001.md), [SPEC-013](SPEC-013.md), [SPEC-021](SPEC-021.md)
 
 **テスト対象**: Yes　**個別カバレッジ**: 🟢 1/1 (100%)
 
@@ -50,21 +53,19 @@ sequenceDiagram
 - UIの色やライセンス表記など「自動テスト不可能な仕様」を監査の対象外（スキップ扱い）
   として処理すること
 
-**テスト実行結果 (個別)**: ✅ 14/14 PASS
-
 ### 🧪 検証シナリオ
 
-- ✅ PASS **Doorstop APIによる仕様ID集合の取得** — Scenario （[features/data_extraction.feature:8](../features/data_extraction.md)）
-- ✅ PASS **非アクティブなアイテムの除外** — Scenario （[features/data_extraction.feature:13](../features/data_extraction.md)）
-- ✅ PASS **テスト不可能な仕様の除外** — Scenario （[features/data_extraction.feature:18](../features/data_extraction.md)）
-- ✅ PASS **プレフィックスによるフィルタリング** — Scenario （[features/data_extraction.feature:23](../features/data_extraction.md)）
-- ✅ PASS **Gherkin ASTからのタグ抽出** — Scenario （[features/data_extraction.feature:30](../features/data_extraction.md)）
-- ✅ PASS **Feature・Scenario両レベルのタグ抽出** — Scenario （[features/data_extraction.feature:35](../features/data_extraction.md)）
-- ✅ PASS **サブディレクトリ内のfeatureファイルの再帰探索** — Scenario （[features/data_extraction.feature:40](../features/data_extraction.md)）
-- ✅ PASS **Gherkin構文エラーの検出** — Scenario （[features/data_extraction.feature:45](../features/data_extraction.md)）
-- ✅ PASS **Featureタグのみが付与されたfeatureファイルでScenarioがタグマップに登録される** — Scenario （[features/data_extraction.feature:55](../features/data_extraction.md)）
-- ✅ PASS **Featureタグを継承したエントリのkeywordはScenarioになる** — Scenario （[features/data_extraction.feature:61](../features/data_extraction.md)）
-- ✅ PASS **Feature→Rule→Scenarioの多段継承でEffective Tagsが正しく算出される** — Scenario （[features/data_extraction.feature:67](../features/data_extraction.md)）
-- ✅ PASS **シナリオ自身のタグと継承タグが共存してEffective Tagsを形成する** — Scenario （[features/data_extraction.feature:74](../features/data_extraction.md)）
-- ✅ PASS **Scenario Outlineの全ExamplesタグがEffective Tagsに集約される** — Scenario （[features/data_extraction.feature:81](../features/data_extraction.md)）
-- ✅ PASS **プレフィックスフィルタはEffective Tags算出後に適用される** — Scenario （[features/data_extraction.feature:88](../features/data_extraction.md)）
+- **Doorstop APIによる仕様ID集合の取得** — Scenario （`./specification/features/data_extraction.feature:8`）
+- **非アクティブなアイテムの除外** — Scenario （`./specification/features/data_extraction.feature:13`）
+- **テスト不可能な仕様の除外** — Scenario （`./specification/features/data_extraction.feature:18`）
+- **プレフィックスによるフィルタリング** — Scenario （`./specification/features/data_extraction.feature:23`）
+- **Gherkin ASTからのタグ抽出** — Scenario （`./specification/features/data_extraction.feature:30`）
+- **Feature・Scenario両レベルのタグ抽出** — Scenario （`./specification/features/data_extraction.feature:35`）
+- **サブディレクトリ内のfeatureファイルの再帰探索** — Scenario （`./specification/features/data_extraction.feature:40`）
+- **Gherkin構文エラーの検出** — Scenario （`./specification/features/data_extraction.feature:45`）
+- **Featureタグのみが付与されたfeatureファイルでScenarioがタグマップに登録される** — Scenario （`./specification/features/data_extraction.feature:55`）
+- **Featureタグを継承したエントリのkeywordはScenarioになる** — Scenario （`./specification/features/data_extraction.feature:61`）
+- **Feature→Rule→Scenarioの多段継承でEffective Tagsが正しく算出される** — Scenario （`./specification/features/data_extraction.feature:67`）
+- **シナリオ自身のタグと継承タグが共存してEffective Tagsを形成する** — Scenario （`./specification/features/data_extraction.feature:74`）
+- **Scenario Outlineの全ExamplesタグがEffective Tagsに集約される** — Scenario （`./specification/features/data_extraction.feature:81`）
+- **プレフィックスフィルタはEffective Tags算出後に適用される** — Scenario （`./specification/features/data_extraction.feature:88`）

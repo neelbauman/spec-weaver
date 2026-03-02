@@ -13,7 +13,7 @@ Feature: Test Feature
 """)
     
     # Execute: call get_tag_map with a single file
-    tag_map = get_tag_map(feature_file, prefixes={"SPEC"})
+    tag_map = get_tag_map(feature_file, tmp_path, prefixes={"SPEC"})
     
     # Verify: tag_map should contain tags from the file
     assert "SPEC-001" in tag_map
@@ -29,7 +29,7 @@ def test_get_tag_map_with_directory(tmp_path):
     (feature_dir / "test2.feature").write_text("@SPEC-002\nFeature: F2\nScenario: S2\nGiven g2")
     
     # Execute: call get_tag_map with a directory
-    tag_map = get_tag_map(feature_dir, prefixes={"SPEC"})
+    tag_map = get_tag_map(feature_dir, tmp_path, prefixes={"SPEC"})
     
     # Verify: tag_map should contain tags from both files
     assert "SPEC-001" in tag_map

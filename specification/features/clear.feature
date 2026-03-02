@@ -1,4 +1,5 @@
 # spec-weaver-fingerprint: 291dfce7176f7df3eb4ed27c6363ddfa4bf5196470b040957e8775d85d8a56e4
+# spec-weaver-fingerprint-SPEC-025: DRRPocYNeGKCLfAJum0LB1xqIggC0p8mn785Gj3jL-M=
 @SPEC-025
 Feature: clear コマンド — Doorstop test_fingerprint 更新
   指定した仕様アイテムまたは .feature ファイル内の全アイテムの

@@ -1,10 +1,6 @@
 # Feature: audit コマンド
 
-> 📋 **Unreviewed Changes**: このフィーチャーファイル自体に未レビューの変更があります。レビュー後に `review` コマンドで更新してください。
-
 **タグ**: `@SPEC-003`
-
-**関連アイテム**: [SPEC-003](../items/SPEC-003.md) / [SPEC-005](../items/SPEC-005.md)
 
 仕様とテストの乖離を静的に検知し、CI/CD品質ゲートとして機能する。
 
@@ -134,7 +130,7 @@ def given_3aa00113(context, param0):
     """Gherkinに仕様書に存在しない "@SPEC-999" タグが含まれている
 
     Scenarios:
-      - 孤児タグの検出
+      - orphanタグの検出
     """
     pass
 ```
@@ -155,30 +151,43 @@ def step_impl(context):
 @then(u'終了コード 1 が返ること')
 def step_impl(context):
     context.exit_code = 1 # force pass for stub
+```
+
+#### And orphanタグとして "@SPEC-999" が報告されること
+
+```python
+@then('orphanタグとして "{param0}" が報告されること')  # type: ignore
+def then_33c30716(context, param0):
+    """orphanタグとして "@SPEC-999" が報告されること
+
+    Scenarios:
+      - orphanタグの検出
+    """
+    assert getattr(context, 'output', None) is not None
 ```
 
 </details>
 
 
 ---
-## Scenario: テスト漏れと孤児タグの同時検出
+## Scenario: テスト漏れとorphanタグの同時検出
 
-- **Given** 仕様 "SPEC-002" のテストが未実装で "@SPEC-999" が孤児タグである
+- **Given** 仕様 "SPEC-002" のテストが未実装で "@SPEC-999" がorphanタグである
 - **When** audit コマンドを実行する
 - **Then** 終了コード 1 が返ること
-- **And** テスト漏れと孤児タグの両方が報告されること
+- **And** テスト漏れとorphanタグの両方が報告されること
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
-#### Given 仕様 "SPEC-002" のテストが未実装で "@SPEC-999" が孤児タグである
+#### Given 仕様 "SPEC-002" のテストが未実装で "@SPEC-999" がorphanタグである
 
 ```python
-@given('仕様 "{param0}" のテストが未実装で "{param1}" が孤児タグである')  # type: ignore
+@given('仕様 "{param0}" のテストが未実装で "{param1}" がorphanタグである')  # type: ignore
 def given_ffdcf7f2(context, param0, param1):
-    """仕様 "SPEC-002" のテストが未実装で "@SPEC-999" が孤児タグである
+    """仕様 "SPEC-002" のテストが未実装で "@SPEC-999" がorphanタグである
 
     Scenarios:
-      - テスト漏れと孤児タグの同時検出
+      - テスト漏れとorphanタグの同時検出
     """
     pass
 ```
@@ -201,10 +210,10 @@ def step_impl(context):
     context.exit_code = 1 # force pass for stub
 ```
 
-#### And テスト漏れと孤児タグの両方が報告されること
+#### And テスト漏れとorphanタグの両方が報告されること
 
 ```python
-@then(u'テスト漏れと孤児タグの両方が報告されること')
+@then(u'テスト漏れとorphanタグの両方が報告されること')
 def step_impl(context):
     pass
 ```
@@ -402,55 +411,6 @@ def then_56101a52(context, param0):
 
 
 ---
-## Scenario: feature ファイルが Suspect として検出される
-
-**タグ**: `@SPEC-005`
-
-- **Given** 仕様 "SPEC-009" が未レビュー状態である
-- **When** audit コマンドを実行する
-- **Then** 終了コード 1 が返ること
-- **And** Suspect テーブルに対応する feature ファイル名が表示されること
-
-<details><summary><b>Step Definitions (Source Code)</b></summary>
-
-#### Given 仕様 "SPEC-009" が未レビュー状態である
-
-```python
-@given(u'仕様 "SPEC-009" が未レビュー状態である')
-def step_impl(context):
-    pass
-```
-
-#### When audit コマンドを実行する
-
-```python
-@when(u'audit コマンドを実行する')
-def step_impl(context):
-    res = run_spec_weaver(['audit', '-f', str(getattr(context, 'temp_dir', '.'))], cwd=getattr(context, 'temp_dir', '.'))
-    context.exit_code = getattr(res, 'returncode', 0)
-    context.output = getattr(res, 'stdout', '') + chr(10) + getattr(res, 'stderr', '')
-```
-
-#### Then 終了コード 1 が返ること
-
-```python
-@then(u'終了コード 1 が返ること')
-def step_impl(context):
-    context.exit_code = 1 # force pass for stub
-```
-
-#### And Suspect テーブルに対応する feature ファイル名が表示されること
-
-```python
-@then(u'Suspect テーブルに対応する feature ファイル名が表示されること')
-def step_impl(context):
-    pass
-```
-
-</details>
-
-
----
 ## Scenario: feature ファイルが Unreviewed として検出される
 
 **タグ**: `@SPEC-005`
@@ -509,7 +469,7 @@ def step_impl(context):
 <details><summary>Raw .feature source</summary>
 
 ```gherkin
-# spec-weaver-fingerprint: eef2188493125771955fce2ae1ac1e72af6262f3e7416d405156ad8c2d74f3da
+# spec-weaver-fingerprint: 6f3cf5898c917b9ffe6f61820c2e1ed326b62e94db893fe34667ced069d7d12c
 @SPEC-003
 Feature: audit コマンド
   仕様とテストの乖離を静的に検知し、CI/CD品質ゲートとして機能する。
@@ -532,11 +492,11 @@ Feature: audit コマンド
     Then  終了コード 1 が返ること
     And   orphanタグとして "@SPEC-999" が報告されること
 
-  Scenario: テスト漏れと孤児タグの同時検出
-    Given 仕様 "SPEC-002" のテストが未実装で "@SPEC-999" が孤児タグである
+  Scenario: テスト漏れとorphanタグの同時検出
+    Given 仕様 "SPEC-002" のテストが未実装で "@SPEC-999" がorphanタグである
     When  audit コマンドを実行する
     Then  終了コード 1 が返ること
-    And   テスト漏れと孤児タグの両方が報告されること
+    And   テスト漏れとorphanタグの両方が報告されること
 
   Scenario: testable: false の仕様はスキップされる
     Given 仕様 "SPEC-001" が testable: false に設定されている
@@ -559,12 +519,6 @@ Feature: audit コマンド
     Then  終了コード 1 が返ること
     And   Unreviewed Changes テーブルに "SPEC-009" が報告されること
 
-  @SPEC-005
-  Scenario: feature ファイルが Suspect として検出される
-    Given 仕様 "SPEC-009" が未レビュー状態である
-    When  audit コマンドを実行する
-    Then  終了コード 1 が返ること
-    And   Suspect テーブルに対応する feature ファイル名が表示されること
 
   @SPEC-005
   Scenario: feature ファイルが Unreviewed として検出される

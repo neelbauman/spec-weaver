@@ -1,5 +1,8 @@
 # [SPEC-009] 一覧テーブルのフィルタリング機能
 
+> ⚠️ **Suspect**: 関連するアイテムやテストが変更されました。影響範囲のレビューが必要です。
+> **原因 (Unreviewed)**: `./specification/features/build.feature`
+
 **実装状況**: ✅ implemented
 
 **作成日**: 2026-02-26　|　**更新日**: 2026-03-01
@@ -27,8 +30,6 @@
 - 親、子、兄弟、状態、作成日については、ドロップダウンなどによる選択形式のフィルタとする。
 - 実装に使用するJavaScriptおよびCSSは、独立したソースファイルとして管理し、ビルド時に配布ディレクトリへ自動配置する。
 
-**テスト実行結果 (個別)**: ✅ 1/1 PASS
-
 ### 🧪 検証シナリオ
 
-- ✅ PASS **一覧テーブルのフィルタリング機能** — Scenario （[features/build.feature:36](../features/build.md)）
+- **一覧テーブルのフィルタリング機能** — Scenario （`./specification/features/build.feature:36`）

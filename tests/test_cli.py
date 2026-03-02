@@ -102,7 +102,7 @@ def test_audit_suspect_specs(
     assert result.exit_code == 1
     assert "Suspect" in result.stdout
     assert "SPEC-002" in result.stdout
-    assert "影響範囲を確認" in result.stdout
+    assert "spec-weaver clear SPEC-002" in result.stdout
 
 
 @patch("spec_weaver.cli.get_all_prefixes")
@@ -198,3 +198,38 @@ def test_status_unset_shows_dash(
     assert result.exit_code == 0
     assert "SPEC-001" in result.stdout
     assert "-" in result.stdout
+
+
+# ---------------------------------------------------------------------------
+# clear コマンドのテスト
+# ---------------------------------------------------------------------------
+
+
+@patch("spec_weaver.cli.get_tag_map")
+@patch("spec_weaver.cli.get_spec_fingerprints")
+@patch("spec_weaver.cli.get_all_prefixes")
+@patch("spec_weaver.cli.get_item_map")
+def test_clear_blocks_suspect_with_unreviewed(
+    mock_get_item_map, mock_get_all_prefixes, mock_get_fp, mock_get_tag_map, tmp_path
+):
+    """上位アイテムが未レビュー（suspect-with-unreviewed）の場合、clear をブロックする。"""
+    mock_get_all_prefixes.return_value = {"REQ", "SPEC"}
+    
+    # REQ-001 (unreviewed) -> SPEC-001 (suspect)
+    req_item = _make_mock_item("REQ-001")
+    req_item.reviewed = False
+    
+    spec_item = _make_mock_item("SPEC-001", suspect=True)
+    spec_item.links = ["REQ-001"]
+    
+    mock_get_item_map.return_value = {
+        "REQ-001": req_item,
+        "SPEC-001": spec_item,
+    }
+    mock_get_fp.return_value = {}
+    mock_get_tag_map.return_value = {}
+
+    result = runner.invoke(app, ["clear", "SPEC-001", "--repo-root", str(tmp_path)])
+
+    assert result.exit_code == 1
+    assert "上位アイテムが未レビューです" in result.stdout

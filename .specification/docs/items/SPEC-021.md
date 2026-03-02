@@ -1,5 +1,8 @@
 # [SPEC-021] Gherkinタグ継承（Effective Tags）
 
+> ⚠️ **Suspect**: 関連するアイテムやテストが変更されました。影響範囲のレビューが必要です。
+> **原因 (Unreviewed)**: `./specification/features/data_extraction.feature`
+
 **実装状況**: ✅ implemented
 
 **作成日**: 2026-02-27　|　**更新日**: 2026-03-02
@@ -78,15 +81,11 @@ def _extract_scenarios_with_inherited_tags(
 
 - `_extract_tag_map_recursive()`: 本仕様実装後、コアジェネレータに完全に置き換えられ不要となる
 
-**テスト実行結果 (集計)**: -
-
-**テスト実行結果 (個別)**: ✅ 6/6 PASS
-
 ### 🧪 検証シナリオ
 
-- ✅ PASS **Featureタグのみが付与されたfeatureファイルでScenarioがタグマップに登録される** — Scenario （[features/data_extraction.feature:55](../features/data_extraction.md)）
-- ✅ PASS **Featureタグを継承したエントリのkeywordはScenarioになる** — Scenario （[features/data_extraction.feature:61](../features/data_extraction.md)）
-- ✅ PASS **Feature→Rule→Scenarioの多段継承でEffective Tagsが正しく算出される** — Scenario （[features/data_extraction.feature:67](../features/data_extraction.md)）
-- ✅ PASS **シナリオ自身のタグと継承タグが共存してEffective Tagsを形成する** — Scenario （[features/data_extraction.feature:74](../features/data_extraction.md)）
-- ✅ PASS **Scenario Outlineの全ExamplesタグがEffective Tagsに集約される** — Scenario （[features/data_extraction.feature:81](../features/data_extraction.md)）
-- ✅ PASS **プレフィックスフィルタはEffective Tags算出後に適用される** — Scenario （[features/data_extraction.feature:88](../features/data_extraction.md)）
+- **Featureタグのみが付与されたfeatureファイルでScenarioがタグマップに登録される** — Scenario （`./specification/features/data_extraction.feature:55`）
+- **Featureタグを継承したエントリのkeywordはScenarioになる** — Scenario （`./specification/features/data_extraction.feature:61`）
+- **Feature→Rule→Scenarioの多段継承でEffective Tagsが正しく算出される** — Scenario （`./specification/features/data_extraction.feature:67`）
+- **シナリオ自身のタグと継承タグが共存してEffective Tagsを形成する** — Scenario （`./specification/features/data_extraction.feature:74`）
+- **Scenario Outlineの全ExamplesタグがEffective Tagsに集約される** — Scenario （`./specification/features/data_extraction.feature:81`）
+- **プレフィックスフィルタはEffective Tags算出後に適用される** — Scenario （`./specification/features/data_extraction.feature:88`）

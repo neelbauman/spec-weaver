@@ -190,6 +190,22 @@ def update_item_attribute(repo_root: Path, item_id: str, key: str, value: Any) -
         os.chdir(original_cwd)
 
 
+def delete_item_attribute(repo_root: Path, item_id: str, key: str) -> None:
+    """指定したアイテムのカスタム属性を削除し、YAMLに保存します。"""
+    original_cwd = os.getcwd()
+    os.chdir(repo_root)
+    try:
+        tree = doorstop.build()
+        item = tree.find_item(item_id)
+        if not item:
+            raise ValueError(f"Item not found: {item_id}")
+        if key in item.data:
+            del item.data[key]
+            item.save()
+    finally:
+        os.chdir(original_cwd)
+
+
 def clear_doorstop_suspects(repo_root: Path, item_id: str) -> bool:
     """Doorstop ネイティブの suspect リンクを解除します。
 

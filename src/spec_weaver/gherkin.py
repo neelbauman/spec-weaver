@@ -18,27 +18,36 @@ TagMap = Dict[str, List[ScenarioInfo]]
 
 
 def get_spec_fingerprints(
-    features_dir: Path, prefixes: Set[str] | str = "SPEC"
-) -> Dict[str, str]:
+    features_dir: Path, repo_root: Path, prefixes: Set[str] | str = "SPEC"
+) -> Dict[str, List[Dict[str, str]]]:
     """
-    各仕様IDに対して、紐づく全シナリオのフィンガープリントを結合・ハッシュ化したものを返します。
+    各仕様IDに対して、紐づく全シナリオのフィンガープリントをファイルごとにハッシュ化したリストを返します。
+    形式: {"SPEC-001": [{"./specification/features/audit.feature": "hash1"}, ...]}
     """
     import hashlib
 
-    tag_map = get_tag_map(features_dir, prefixes)
-    fingerprints = {}
+    tag_map = get_tag_map(features_dir, repo_root, prefixes)
+    result = {}
 
     for tag, scenarios in tag_map.items():
-        # 安定性のためにファイルパスと行番号でソート
-        sorted_scenarios = sorted(scenarios, key=lambda s: (s["file"], s["line"]))
-        combined = "".join(s["fingerprint"] for s in sorted_scenarios)
-        fingerprints[tag] = hashlib.sha256(combined.encode("utf-8")).hexdigest()
+        # scenarios in tag_map already have "file" (relative path to repo_root)
+        scenarios_by_file = defaultdict(list)
+        for s in scenarios:
+            scenarios_by_file[s["file"]].append(s)
 
-    return fingerprints
+        file_fingerprints = []
+        for file_path in sorted(scenarios_by_file.keys()):
+            scs = sorted(scenarios_by_file[file_path], key=lambda x: x["line"])
+            combined = "".join(x["fingerprint"] for x in scs)
+            file_hash = hashlib.sha256(combined.encode("utf-8")).hexdigest()
+            file_fingerprints.append({file_path: file_hash})
+        result[tag] = file_fingerprints
+
+    return result
 
 
 def get_tag_map(
-    features_dir: Path, prefixes: Set[str] | str = "SPEC", **kwargs
+    features_dir: Path, repo_root: Path, prefixes: Set[str] | str = "SPEC", **kwargs
 ) -> TagMap:
     """
     指定ディレクトリ以下の .feature ファイルを解析し、
@@ -82,9 +91,9 @@ def get_tag_map(
             # テキストをトークン化し、AST（抽象構文木）辞書に変換
             ast = parser.parse(TokenScanner(content))
 
-            # ファイルパスは、ターミナルやMarkdown上で見やすいように相対パスに変換
+            # ファイルパスは repo_root からの相対パスに変換 (./ から始める)
             try:
-                rel_path = str(feature_file.relative_to(features_dir.parent))
+                rel_path = "./" + str(feature_file.relative_to(repo_root))
             except ValueError:
                 rel_path = str(feature_file)
 
@@ -272,38 +281,67 @@ def compute_feature_file_hash(feature_file: Path) -> str:
     return hashlib.sha256(combined.encode("utf-8")).hexdigest()
 
 
-def read_stored_fingerprint(feature_file: Path) -> Optional[str]:
+def read_stored_fingerprints(feature_file: Path) -> Dict[str, str]:
     """
-    .feature ファイルの先頭行から spec-weaver-fingerprint コメントを読み取り、
-    ハッシュ値を返します。コメントがない場合は None を返します。
+    .feature ファイルの先頭から spec-weaver-fingerprint および
+    関連アイテムのフィンガープリント（# spec-weaver-fingerprint-<ID>: <hash>）
+    を読み取り、辞書として返します。
+    ファイル自身のハッシュは空文字キー ("") に格納します。
     """
+    fps = {}
     try:
         with open(feature_file, "r", encoding="utf-8") as f:
-            first_line = f.readline()
-        if first_line.startswith(_FINGERPRINT_PREFIX):
-            return first_line[len(_FINGERPRINT_PREFIX):].strip()
+            for line in f:
+                if line.startswith(_FINGERPRINT_PREFIX):
+                    fps[""] = line[len(_FINGERPRINT_PREFIX):].strip()
+                elif line.startswith("# spec-weaver-fingerprint-"):
+                    parts = line.split(":", 1)
+                    if len(parts) == 2:
+                        key = parts[0][len("# spec-weaver-fingerprint-"):].strip()
+                        val = parts[1].strip()
+                        fps[key] = val
+                else:
+                    break
     except OSError:
         pass
-    return None
+    return fps
 
 
-def write_feature_fingerprint(feature_file: Path, fingerprint: str) -> None:
+def read_stored_fingerprint(feature_file: Path) -> Optional[str]:
+    """後方互換性用ラッパー"""
+    return read_stored_fingerprints(feature_file).get("")
+
+
+def write_feature_fingerprints(feature_file: Path, file_fingerprint: str, item_fingerprints: Dict[str, str] = None) -> None:
     """
-    .feature ファイルの先頭に spec-weaver-fingerprint コメントを書き込みます。
-    既存のコメントがある場合は上書きします。
+    .feature ファイルの先頭に spec-weaver-fingerprint コメントと、
+    関連アイテムのフィンガープリントを書き込みます。
     """
+    if item_fingerprints is None:
+        item_fingerprints = {}
+
     with open(feature_file, "r", encoding="utf-8") as f:
         lines = f.readlines()
 
-    comment_line = f"{_FINGERPRINT_PREFIX}{fingerprint}\n"
+    # 既存のフィンガープリント行を削除
+    while lines and (lines[0].startswith(_FINGERPRINT_PREFIX) or lines[0].startswith("# spec-weaver-fingerprint-")):
+        lines.pop(0)
 
-    if lines and lines[0].startswith(_FINGERPRINT_PREFIX):
-        lines[0] = comment_line
-    else:
-        lines.insert(0, comment_line)
+    # 新しいフィンガープリント行を作成
+    new_lines = [f"{_FINGERPRINT_PREFIX}{file_fingerprint}\n"]
+    for tag in sorted(item_fingerprints.keys()):
+        if item_fingerprints[tag]:
+            new_lines.append(f"# spec-weaver-fingerprint-{tag}: {item_fingerprints[tag]}\n")
+
+    lines = new_lines + lines
 
     with open(feature_file, "w", encoding="utf-8") as f:
         f.writelines(lines)
+
+
+def write_feature_fingerprint(feature_file: Path, fingerprint: str) -> None:
+    """後方互換性用ラッパー"""
+    write_feature_fingerprints(feature_file, fingerprint)
 
 
 def _get_scenario_hash_content(scenario: Any) -> str:
@@ -323,11 +361,11 @@ def _get_scenario_hash_content(scenario: Any) -> str:
 
 
 def get_tags(
-    features_dir: Path, prefixes: Set[str] | str = "SPEC", **kwargs
+    features_dir: Path, repo_root: Path, prefixes: Set[str] | str = "SPEC", **kwargs
 ) -> Set[str]:
     """
     (後方互換性・監査用)
     仕様IDの文字列の集合（Set）のみを返します。auditコマンド等の差分検知で使用します。
     """
-    tag_map = get_tag_map(features_dir, prefixes, **kwargs)
+    tag_map = get_tag_map(features_dir, repo_root, prefixes, **kwargs)
     return set(tag_map.keys())

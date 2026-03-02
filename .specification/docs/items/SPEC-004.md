@@ -1,5 +1,8 @@
 # [SPEC-004] build コマンド仕様
 
+> ⚠️ **Suspect**: 関連するアイテムやテストが変更されました。影響範囲のレビューが必要です。
+> **原因 (Unreviewed)**: `./specification/features/build.feature`
+
 **実装状況**: ✅ implemented
 
 **作成日**: 2026-02-26　|　**更新日**: 2026-03-01
@@ -32,20 +35,18 @@
 - `docs/{prefix}.md`: 各ドキュメントの一覧テーブル（例: `req.md`, `spec.md`）。相互リンク付き。
 - `docs/items/{ID}.md`: 各アイテムの詳細ページ（本文、上位/下位リンク、テストファイルパス）
 
-**テスト実行結果 (個別)**: ✅ 13/13 PASS
-
 ### 🧪 検証シナリオ
 
-- ✅ PASS **MkDocs設定ファイルの生成** — Scenario （[features/build.feature:7](../features/build.md)）
-- ✅ PASS **要件一覧ページの生成** — Scenario （[features/build.feature:13](../features/build.md)）
-- ✅ PASS **仕様一覧ページの生成** — Scenario （[features/build.feature:20](../features/build.md)）
-- ✅ PASS **個別アイテム詳細ページの生成** — Scenario （[features/build.feature:27](../features/build.md)）
-- ✅ PASS **一覧テーブルのフィルタリング機能** — Scenario （[features/build.feature:36](../features/build.md)）
-- ✅ PASS **出力ディレクトリの独立性** — Scenario （[features/build.feature:42](../features/build.md)）
-- ✅ PASS **カスタム出力ディレクトリの指定** — Scenario （[features/build.feature:48](../features/build.md)）
-- ✅ PASS **feature MDページへのバックリンク生成** — Scenario （[features/build.feature:54](../features/build.md)）
-- ✅ PASS **複数アイテムを参照するfeatureのバックリンク** — Scenario （[features/build.feature:61](../features/build.md)）
-- ✅ PASS **タグのないfeatureにはバックリンクを表示しない** — Scenario （[features/build.feature:67](../features/build.md)）
-- ✅ PASS **Suspect Link 警告の一覧テーブル表示** — Scenario （[features/build.feature:73](../features/build.md)）
-- ✅ PASS **Unreviewed Changes 警告の一覧テーブル表示** — Scenario （[features/build.feature:80](../features/build.md)）
-- ✅ PASS **複合警告の表示** — Scenario （[features/build.feature:87](../features/build.md)）
+- **MkDocs設定ファイルの生成** — Scenario （`./specification/features/build.feature:7`）
+- **要件一覧ページの生成** — Scenario （`./specification/features/build.feature:13`）
+- **仕様一覧ページの生成** — Scenario （`./specification/features/build.feature:20`）
+- **個別アイテム詳細ページの生成** — Scenario （`./specification/features/build.feature:27`）
+- **一覧テーブルのフィルタリング機能** — Scenario （`./specification/features/build.feature:36`）
+- **出力ディレクトリの独立性** — Scenario （`./specification/features/build.feature:42`）
+- **カスタム出力ディレクトリの指定** — Scenario （`./specification/features/build.feature:48`）
+- **feature MDページへのバックリンク生成** — Scenario （`./specification/features/build.feature:54`）
+- **複数アイテムを参照するfeatureのバックリンク** — Scenario （`./specification/features/build.feature:61`）
+- **タグのないfeatureにはバックリンクを表示しない** — Scenario （`./specification/features/build.feature:67`）
+- **Suspect Link 警告の一覧テーブル表示** — Scenario （`./specification/features/build.feature:73`）
+- **Unreviewed Changes 警告の一覧テーブル表示** — Scenario （`./specification/features/build.feature:80`）
+- **複合警告の表示** — Scenario （`./specification/features/build.feature:87`）

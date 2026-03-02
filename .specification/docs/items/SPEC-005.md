@@ -1,5 +1,10 @@
 # [SPEC-005] Suspect（変更波及）対応
 
+> 📋 **Unreviewed Changes**: このアイテム自体または関連するテストに未レビューの変更があります。
+
+> ⚠️ **Suspect**: 関連するアイテムやテストが変更されました。影響範囲のレビューが必要です。
+> **原因 (Unreviewed)**: `./specification/features/audit.feature`, `./specification/features/build.feature`
+
 **実装状況**: ✅ implemented
 
 **作成日**: 2026-02-26　|　**更新日**: 2026-03-02
@@ -20,12 +25,16 @@ DoorstopのSuspect機能を活用した変更波及の検知と可視化の仕�
 
 ### 処理
 - Doorstop APIの `item.cleared`（suspect link 検出）および `item.reviewed`（未レビュー変更検出）属性を評価すること
+  - item.reviewed is true and item.cleared is true, then review status is **reviewed**
+  - item.reviewed is true and item.cleared is false, and related items is reviewed,  then review status is **suspect-with-reviewed**
+  - item.reviewed is true and item.cleared is false, and related items have unreviewed ones,  then review status is **suspect-with-unreviewed**
+  - item.reviewed is false and item.cleared is true, then review status is **unreviewed**
+  - item.reviewed is false and item.cleared is false, and related items is reviewed,  then review status is **unreviewed, suspect-with-reviewed**
+  - item.reviewed is false and item.cleared is false, and related items have unreviewed ones,  then review status is **unreviewed, suspect-with-unreviewed**
 - `audit` コマンド実行時に Suspect Link / Unreviewed Changes を分離して警告出力すること
 - `build` コマンド実行時に一覧テーブルの行ハイライト（Suspectは紫、Unreviewedは赤）および詳細ページに警告バナーを動的に付与すること
-- Doorstop アイテムに加え、`.feature` ファイルも Suspect / Unreviewed の対象とする:
-  - Suspect: 対応 SPEC が未レビュー状態になった場合、その SPEC にタグ付けされた
-    `.feature` ファイルも Suspect として audit テーブルに報告する
-  - Unreviewed: `.feature` ファイル先頭の `# spec-weaver-fingerprint:` コメントが
+- Doorstop アイテムに加え、`.feature` ファイルも Unreviewed の対象とする:
+  - Unreviewed:
     存在しない、または現在のファイル内容のハッシュと一致しない場合、
     その `.feature` ファイルを Unreviewed として audit テーブルに報告する
 
@@ -35,10 +44,15 @@ DoorstopのSuspect機能を活用した変更波及の検知と可視化の仕�
    （コメント行自体はハッシュ計算から除外する）
 3. 保存されたハッシュと現在のハッシュを比較し、不一致 or コメント未存在 → Unreviewed
 
-### Doorstop アイテムの Suspect 判定ロジック（test_fingerprint）
-- SPEC YAML の `test_fingerprint` と、現在の Gherkin タグ付きシナリオのハッシュを比較する
-- 不一致の場合、その SPEC アイテムを Suspect として報告する
-- `spec-weaver clear <SPEC_ID>` を実行することで `test_fingerprint` が更新され Suspect が解除される
+### Doorstop アイテムの Suspect 判定ロジック（gherkin_fingerprints）
+- SPEC YAML の `gherkin_fingerprints`（リスト）と、現在の Gherkin タグ付きシナリオのハッシュ（ファイル単位）を比較する
+- 不一致の場合、またはリスト内のファイルパスと現在のタグマップが不整合な場合、その SPEC アイテムを Suspect として報告する
+- Suspect 状態はレビュー状態（reviewed）に応じて以下の2種類に分類される：
+  - **suspect-with-unreviewed**: アイテムが Suspect かつ `reviewed:
+    この状態では `spec-weaver clear` を実行できない。まず `doorstop review` または `spec-weaver review` でレビューを完了させる必要がある。
+  - **suspect-with-reviewed**: アイテムが Suspect かつ `reviewed:
+    この状態でのみ `spec-weaver clear` による Suspect 解除が可能となる。
+- `spec-weaver clear <SPEC_ID>` を実行することで `gherkin_fingerprints` が更新され Suspect が解除される
 
 ### 出力・結果
 - audit の警告出力: Suspect Link テーブル（変更された上位アイテムとアクションを表示）、Unreviewed Changes テーブル（対象 ID とアクションを表示）
@@ -49,16 +63,11 @@ DoorstopのSuspect機能を活用した変更波及の検知と可視化の仕�
 - build の一覧テーブル: Suspect状態の行を紫色、Unreviewed状態の行を赤色でハイライト表示する。従来の状態列は廃止する。
 - build の詳細ページ: Suspect Link バナー（対象リンク付き）、Unreviewed Changes バナーを表示
 
-**テスト実行結果 (集計)**: -
-
-**テスト実行結果 (個別)**: ✅ 5/7 PASS
-
 ### 🧪 検証シナリオ
 
-- ✅ PASS **Suspect Link 警告の一覧テーブル表示** — Scenario （[features/build.feature:73](../features/build.md)）
-- ✅ PASS **Unreviewed Changes 警告の一覧テーブル表示** — Scenario （[features/build.feature:80](../features/build.md)）
-- ✅ PASS **複合警告の表示** — Scenario （[features/build.feature:87](../features/build.md)）
-- ✅ PASS **Suspect Link の検出** — Scenario （[features/audit.feature:37](../features/audit.md)）
-- ✅ PASS **Unreviewed Changes の検出** — Scenario （[features/audit.feature:45](../features/audit.md)）
-- - **feature ファイルが Suspect として検出される** — Scenario （[features/audit.feature:52](../features/audit.md)）
-- - **feature ファイルが Unreviewed として検出される** — Scenario （[features/audit.feature:59](../features/audit.md)）
+- **Suspect Link 警告の一覧テーブル表示** — Scenario （`./specification/features/build.feature:73`）
+- **Unreviewed Changes 警告の一覧テーブル表示** — Scenario （`./specification/features/build.feature:80`）
+- **複合警告の表示** — Scenario （`./specification/features/build.feature:87`）
+- **Suspect Link の検出** — Scenario （`./specification/features/audit.feature:37`）
+- **Unreviewed Changes の検出** — Scenario （`./specification/features/audit.feature:45`）
+- **feature ファイルが Unreviewed として検出される** — Scenario （`./specification/features/audit.feature:53`）

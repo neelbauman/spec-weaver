@@ -42,15 +42,6 @@ def step_impl(context):
     pass
 
 
-@given(u'仕様 "SPEC-009" が未レビュー状態である')
-def step_impl(context):
-    pass
-
-
-@then(u'Suspect テーブルに対応する feature ファイル名が表示されること')
-def step_impl(context):
-    pass
-
 
 @then(u'Unreviewed テーブルに対応する feature ファイル名が表示されること')
 def step_impl(context):

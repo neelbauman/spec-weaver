@@ -1,4 +1,5 @@
 # spec-weaver-fingerprint: 800e543e22e3ca019b5ccbd6efea879aa5ea3dbb2a3afafc7f4e63db24015318
+# spec-weaver-fingerprint-SPEC-010: hBJQt8GgHtcO_w_LWvgQDsEVyjFEMZMMJxYhZBKwhPY=
 @SPEC-010
 Feature: trace コマンド — トレーサビリティ・ツリー表示
   任意のアイテム（REQ・SPEC・Gherkin）を起点として、

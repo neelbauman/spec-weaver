@@ -1,5 +1,8 @@
 # [SPEC-014] feature MDページのバックリンク生成
 
+> ⚠️ **Suspect**: 関連するアイテムやテストが変更されました。影響範囲のレビューが必要です。
+> **原因 (Unreviewed)**: `./specification/features/build.feature`
+
 **実装状況**: ✅ implemented
 
 **作成日**: 2026-02-26　|　**更新日**: 2026-03-01
@@ -38,10 +41,8 @@ Gherkinのfeatureファイルにはタグ（`@SPEC-003` 等）で仕様IDが紐�
 - 複数アイテムが同一featureを参照する場合、全UIDのリンクが「/」区切りで表示されること
 - どのアイテムにも参照されていないfeatureにはバックリンク行が表示されないこと
 
-**テスト実行結果 (個別)**: ✅ 3/3 PASS
-
 ### 🧪 検証シナリオ
 
-- ✅ PASS **feature MDページへのバックリンク生成** — Scenario （[features/build.feature:54](../features/build.md)）
-- ✅ PASS **複数アイテムを参照するfeatureのバックリンク** — Scenario （[features/build.feature:61](../features/build.md)）
-- ✅ PASS **タグのないfeatureにはバックリンクを表示しない** — Scenario （[features/build.feature:67](../features/build.md)）
+- **feature MDページへのバックリンク生成** — Scenario （`./specification/features/build.feature:54`）
+- **複数アイテムを参照するfeatureのバックリンク** — Scenario （`./specification/features/build.feature:61`）
+- **タグのないfeatureにはバックリンクを表示しない** — Scenario （`./specification/features/build.feature:67`）

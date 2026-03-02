@@ -1,4 +1,8 @@
 # spec-weaver-fingerprint: 4d1abc0d24ab84d4b44873ab7fcc439c3e9951bd4046244b1bef9e31f22ac785
+# spec-weaver-fingerprint-SPEC-004: 7U9xqeigRlGvB6tAUHnX6B87VymQZBElCddcDDoHKno=
+# spec-weaver-fingerprint-SPEC-005: ko9DXrE8njCAf21N2IQW1wLFn08o243gRE4eVAyjr1I=
+# spec-weaver-fingerprint-SPEC-009: KYgAAoNS9HaRaWh-1RokApiYtsiviZjsBtDjVjMZdc0=
+# spec-weaver-fingerprint-SPEC-014: 2NaavnhCDILEa_GR51DcPxcGgajBiAhsND2Dn0OA4Xo=
 @SPEC-004
 Feature: build コマンド
   Doorstopの仕様データとGherkinテストを統合した

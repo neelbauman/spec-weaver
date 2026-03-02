@@ -33,7 +33,7 @@ Feature: Sub feature
     )
 
     # 実行と検証
-    tags = get_tags(tmp_path, prefix="SPEC")
+    tags = get_tags(tmp_path, tmp_path, prefix="SPEC")
 
     # SPEC-001 (Feature→Scenario継承), SPEC-002 (Scenario直接), SPEC-003 (Sub-dir) が抽出されるべき
     assert tags == {"SPEC-001", "SPEC-002", "SPEC-003"}
@@ -53,7 +53,7 @@ This is completely invalid Gherkin.
 
     # 構文エラー時に ValueError が送出されることを検証
     with pytest.raises(ValueError, match="Gherkin構文エラー"):
-        get_tags(tmp_path, prefix="SPEC")
+        get_tags(tmp_path, tmp_path, prefix="SPEC")
 
 
 # --- SPEC-021: Gherkinタグ継承（Effective Tags）テスト ---
@@ -76,7 +76,7 @@ Feature: 継承テスト Feature
         encoding="utf-8",
     )
 
-    tag_map = get_tag_map(tmp_path, prefixes="SPEC")
+    tag_map = get_tag_map(tmp_path, tmp_path, prefixes="SPEC")
 
     assert "SPEC-100" in tag_map
     scenarios = tag_map["SPEC-100"]
@@ -106,7 +106,7 @@ Feature: 多段継承テスト
         encoding="utf-8",
     )
 
-    tag_map = get_tag_map(tmp_path, prefixes="SPEC")
+    tag_map = get_tag_map(tmp_path, tmp_path, prefixes="SPEC")
 
     # FeatureタグSPEC-200 がRule配下のScenarioに継承されること
     assert "SPEC-200" in tag_map
@@ -136,7 +136,7 @@ Feature: 直接タグと継承タグの共存テスト
         encoding="utf-8",
     )
 
-    tag_map = get_tag_map(tmp_path, prefixes="SPEC")
+    tag_map = get_tag_map(tmp_path, tmp_path, prefixes="SPEC")
 
     # 継承タグSPEC-300 → シナリオに紐付けられること
     assert "SPEC-300" in tag_map
@@ -174,7 +174,7 @@ Feature: ScenarioOutline Effective Tagsテスト
         encoding="utf-8",
     )
 
-    tag_map = get_tag_map(tmp_path, prefixes="SPEC")
+    tag_map = get_tag_map(tmp_path, tmp_path, prefixes="SPEC")
 
     # Feature継承タグSPEC-400 → ScenarioOutlineに紐付けられること
     assert "SPEC-400" in tag_map
@@ -209,7 +209,7 @@ Feature: プレフィックスフィルタテスト
         encoding="utf-8",
     )
 
-    tag_map = get_tag_map(tmp_path, prefixes="SPEC")
+    tag_map = get_tag_map(tmp_path, tmp_path, prefixes="SPEC")
 
     # SPEC-500 はフィルタを通過して登録されること
     assert "SPEC-500" in tag_map

@@ -9,16 +9,43 @@ class ReviewState:
         self.suspect_causes: Dict[str, Set[str]] = defaultdict(set)
         # uid/path that are directly unreviewed
         self.unreviewed_nodes: Set[str] = set()
+        # uid/path -> set of parent uids/paths
+        self.parents: Dict[str, Set[str]] = defaultdict(set)
 
     def get_status(self, node_id: str) -> str:
+        is_unreviewed = node_id in self.unreviewed_nodes
+        causes = self.suspect_causes.get(node_id, set())
+        is_suspect = bool(causes)
+
+        # SPEC-005: Check if any related items are unreviewed
+        has_unreviewed_related = False
+        
+        # 1. Check direct parents (for Doorstop native suspect)
+        for p in self.parents.get(node_id, set()):
+            if p in self.unreviewed_nodes:
+                has_unreviewed_related = True
+                break
+        
+        # 2. Check causes that are themselves node IDs
+        if not has_unreviewed_related:
+            for cause in causes:
+                if cause in self.unreviewed_nodes:
+                    has_unreviewed_related = True
+                    break
+        
         statuses = []
-        if node_id in self.unreviewed_nodes:
+        if is_unreviewed:
             statuses.append("📋 unreviewed")
-        if self.suspect_causes.get(node_id):
-            statuses.append("⚠️ suspect")
+
+        if is_suspect:
+            if has_unreviewed_related:
+                statuses.append("⚠️ suspect-with-unreviewed")
+            else:
+                statuses.append("⚠️ suspect-with-reviewed")
 
         if not statuses:
             return "✅ reviewed"
+
         return " / ".join(statuses)
 
 
@@ -40,7 +67,6 @@ def compute_review_state(
     """
     state = ReviewState()
 
-    parents: Dict[str, Set[str]] = defaultdict(set)
     children: Dict[str, Set[str]] = defaultdict(set)
 
     # Doorstop アイテム間のリンク
@@ -49,15 +75,15 @@ def compute_review_state(
         for link in getattr(item, "links", []):
             parent_uid = str(link)
             if parent_uid in all_items:
-                parents[uid_str].add(parent_uid)
+                state.parents[uid_str].add(parent_uid)
                 children[parent_uid].add(uid_str)
 
-    # feature ファイルと SPEC の親子関係
+    # feature ファイルと SPEC の親子関係 (SPEC -> Feature)
     for tag, scenarios in tag_map.items():
         if tag in all_items:
             for s in scenarios:
                 fpath = s["file"]
-                parents[fpath].add(tag)
+                state.parents[fpath].add(tag)
                 children[tag].add(fpath)
 
     # Doorstop アイテムの unreviewed / native suspect 検出
@@ -75,43 +101,74 @@ def compute_review_state(
         except Exception:
             pass
 
-    # feature ファイルの unreviewed 判定（ファイル先頭コメントのハッシュ比較）
+    # feature ファイルの unreviewed 判定と suspect 判定
     if feature_file_states is not None:
-        for fpath, is_unreviewed in feature_file_states.items():
-            if is_unreviewed:
-                state.unreviewed_nodes.add(fpath)
-
-    # SPEC の suspect 判定（test_fingerprint と現在の Gherkin ハッシュの比較）
-    for tag, actual_fp in gherkin_fingerprints.items():
-        if tag in all_items:
-            item = all_items[tag]
-            expected_fp = getattr(item, "test_fingerprint", None)
-            if expected_fp is None and hasattr(item, "get"):
-                expected_fp = item.get("test_fingerprint")
-            if expected_fp and isinstance(expected_fp, str):
-                expected_fp = expected_fp.strip()
-
-            if actual_fp and expected_fp and actual_fp != expected_fp:
-                state.suspect_causes[tag].add("test_fingerprint mismatch")
-
-    # suspect 伝播: Doorstop アイテムから直接の子 feature ファイルにのみ伝播する。
-    # Doorstop アイテム間の suspect 伝播は Doorstop のネイティブ cleared 機構で
-    # 既に処理されているため、spec-weaver 側で再帰的に伝播させる必要はない。
-    # 双方向の再帰伝播は、1ノードの suspect が連結グラフ全体に波及するバグを
-    # 引き起こすため行わない。
-    direct_suspects = set(state.suspect_causes.keys()) | state.unreviewed_nodes
-    for node in direct_suspects:
-        if node in all_items:
-            # node が suspect になっている理由が "test_fingerprint mismatch" のみの場合、
-            # これは子である feature ファイルの変更が原因であるため、
-            # feature ファイルへ suspect を伝播（逆流）させない。
-            causes = state.suspect_causes.get(node, set())
-            if causes == {"test_fingerprint mismatch"} and node not in state.unreviewed_nodes:
+        for fpath, data in feature_file_states.items():
+            # 古い形式 (bool) の場合は後方互換性のためフォールバック
+            if isinstance(data, bool):
+                if data:
+                    state.unreviewed_nodes.add(fpath)
                 continue
 
-            for child in children.get(node, set()):
-                # Doorstop アイテム以外の子（= feature ファイル）にのみ伝播
-                if child not in all_items:
-                    state.suspect_causes[child].add(node)
+            stored_fps = data.get("stored", {})
+            actual_file = data.get("actual_file")
+
+            if stored_fps.get("") != actual_file or actual_file is None:
+                state.unreviewed_nodes.add(fpath)
+
+            for tag, stored_stamp in stored_fps.items():
+                if not tag:
+                    continue
+                if tag in all_items:
+                    actual_stamp = all_items[tag].stamp() if hasattr(all_items[tag], "stamp") else None
+                    if actual_stamp and stored_stamp != actual_stamp:
+                        state.suspect_causes[fpath].add(tag)
+
+    # SPEC の suspect 判定（gherkin_fingerprints と現在の Gherkin ハッシュの比較）
+    for tag, actual_fps in gherkin_fingerprints.items():
+        if tag in all_items:
+            item = all_items[tag]
+            expected_fps = getattr(item, "gherkin_fingerprints", None)
+            if expected_fps is None and hasattr(item, "get"):
+                expected_fps = item.get("gherkin_fingerprints")
+
+            if expected_fps is not None:
+                # Strip newlines from expected fingerprints
+                stripped_expected_fps = []
+                for d in expected_fps:
+                    stripped_expected_fps.append({k: v.strip() for k, v in d.items()})
+                
+                if actual_fps != stripped_expected_fps:
+                    # SPEC-005: どのファイルが変更されたかを原因として記録する
+                    actual_dict = {list(d.keys())[0]: list(d.values())[0] for d in actual_fps}
+                    expected_dict = {list(d.keys())[0]: list(d.values())[0] for d in stripped_expected_fps}
+                    
+                    changed_files = set()
+                    for f, h in actual_dict.items():
+                        if expected_dict.get(f) != h:
+                            changed_files.add(f)
+                    for f in expected_dict:
+                        if f not in actual_dict:
+                            changed_files.add(f)
+                    
+                    if changed_files:
+                        state.suspect_causes[tag].update(changed_files)
+                    else:
+                        state.suspect_causes[tag].add("gherkin_fingerprints mismatch")
+            else:
+                # 従来の test_fingerprint 判定 (フォールバック)
+                expected_fp = getattr(item, "test_fingerprint", None)
+                if expected_fp is None and hasattr(item, "get"):
+                    expected_fp = item.get("test_fingerprint")
+                
+                if expected_fp and isinstance(expected_fp, str):
+                    expected_fp = expected_fp.strip()
+                    import hashlib
+                    combined = "".join(list(d.values())[0] for d in actual_fps)
+                    actual_fp_single = hashlib.sha256(combined.encode("utf-8")).hexdigest()
+                    
+                    if actual_fp_single != expected_fp:
+                        state.suspect_causes[tag].add("test_fingerprint mismatch")
 
     return state
+

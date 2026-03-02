@@ -1,4 +1,5 @@
 # spec-weaver-fingerprint: 6b53cf78ccd167d8a82ddbd5b5f2e7a694ad6ba14dbe956b7fc1209dc02ad749
+# spec-weaver-fingerprint-SPEC-024: kqPRum_nwbOox7KsWYvenpLUlrlkaaZy_RrltdKqc2w=
 @SPEC-024
 Feature: review コマンド — .feature ファイルへのフィンガープリント書き込み
   指定した .feature ファイルの構造コンテンツ（Feature / Background / Scenario）の

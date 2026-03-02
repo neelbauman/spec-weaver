@@ -1,4 +1,5 @@
 # spec-weaver-fingerprint: ac749f5b22acae3a56e7afe46f7303fcc05eeb9fe7aa5007ce208559648dc4e4
+# spec-weaver-fingerprint-SPEC-015: YiLruzlF4hNk_KTHogjxeTyoVpQWzdz1kQ7b38uBVbI=
 @SPEC-015
 Feature: scaffold コマンド
   .feature ファイルから behave テストコードの雛形を自動生成・差分マージする。

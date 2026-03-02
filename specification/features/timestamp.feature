@@ -1,4 +1,7 @@
 # spec-weaver-fingerprint: d9ec5f68b155b88ee2491dc6b24ef7b9f724d4aa34fe4e8643280f9a6a01aef0
+# spec-weaver-fingerprint-SPEC-011: -53oR-8hWpOouK1c8heN8-xPtwspDVkwiHQR2u533IY=
+# spec-weaver-fingerprint-SPEC-012: 6AChcOXI6wWgacVmOlYuwBiMe2yVpcvc8QSWYEs91uA=
+# spec-weaver-fingerprint-SPEC-013: 3lXwk_AMvSXN8oG03slU9Cr3huiXbOVqn46-suWxa6Q=
 @SPEC-011
 Feature: タイムスタンプ管理
   アイテムの作成日・最終更新日をGit履歴から自動取得し、

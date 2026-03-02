@@ -1,5 +1,8 @@
 # [SPEC-011] タイムスタンプ・カスタム属性の定義
 
+> ⚠️ **Suspect**: 関連するアイテムやテストが変更されました。影響範囲のレビューが必要です。
+> **原因 (Unreviewed)**: `./specification/features/timestamp.feature`
+
 **実装状況**: ✅ implemented
 
 **作成日**: 2026-02-26　|　**更新日**: 2026-03-02
@@ -59,19 +62,17 @@ text: |
 - **Git 外での利用**: YAML に `created_at` / `updated_at` を手動記入することで対応可能。
 - **不変**: `created_at`（初回コミット日）は Git 履歴で自動的に不変となる。
 
-**テスト実行結果 (個別)**: ✅ 12/12 PASS
-
 ### 🧪 検証シナリオ
 
-- ✅ PASS **Git履歴から updated_at を自動取得する** — Scenario （[features/timestamp.feature:9](../features/timestamp.md)）
-- ✅ PASS **Git履歴から created_at を自動取得する** — Scenario （[features/timestamp.feature:14](../features/timestamp.md)）
-- ✅ PASS **Git情報がない場合はYAML属性にフォールバック** — Scenario （[features/timestamp.feature:19](../features/timestamp.md)）
-- ✅ PASS **Git情報もYAML属性もない場合のフォールバック** — Scenario （[features/timestamp.feature:25](../features/timestamp.md)）
-- ✅ PASS **一覧テーブルにタイムスタンプ列が表示される** — Scenario （[features/timestamp.feature:34](../features/timestamp.md)）
-- ✅ PASS **詳細ページにタイムスタンプが表示される** — Scenario （[features/timestamp.feature:42](../features/timestamp.md)）
-- ✅ PASS **Git情報がない場合の一覧テーブル表示** — Scenario （[features/timestamp.feature:49](../features/timestamp.md)）
-- ✅ PASS **stale アイテムの検出（Git履歴ベース）** — Scenario （[features/timestamp.feature:57](../features/timestamp.md)）
-- ✅ PASS **閾値内のアイテムは stale と判定されない** — Scenario （[features/timestamp.feature:65](../features/timestamp.md)）
-- ✅ PASS **Git情報もupdated_atもないアイテムは stale 判定の対象外** — Scenario （[features/timestamp.feature:71](../features/timestamp.md)）
-- ✅ PASS **deprecated アイテムは stale 判定の対象外** — Scenario （[features/timestamp.feature:77](../features/timestamp.md)）
-- ✅ PASS **--stale-days 0 で鮮度チェックを無効化** — Scenario （[features/timestamp.feature:84](../features/timestamp.md)）
+- **Git履歴から updated_at を自動取得する** — Scenario （`./specification/features/timestamp.feature:9`）
+- **Git履歴から created_at を自動取得する** — Scenario （`./specification/features/timestamp.feature:14`）
+- **Git情報がない場合はYAML属性にフォールバック** — Scenario （`./specification/features/timestamp.feature:19`）
+- **Git情報もYAML属性もない場合のフォールバック** — Scenario （`./specification/features/timestamp.feature:25`）
+- **一覧テーブルにタイムスタンプ列が表示される** — Scenario （`./specification/features/timestamp.feature:34`）
+- **詳細ページにタイムスタンプが表示される** — Scenario （`./specification/features/timestamp.feature:42`）
+- **Git情報がない場合の一覧テーブル表示** — Scenario （`./specification/features/timestamp.feature:49`）
+- **stale アイテムの検出（Git履歴ベース）** — Scenario （`./specification/features/timestamp.feature:57`）
+- **閾値内のアイテムは stale と判定されない** — Scenario （`./specification/features/timestamp.feature:65`）
+- **Git情報もupdated_atもないアイテムは stale 判定の対象外** — Scenario （`./specification/features/timestamp.feature:71`）
+- **deprecated アイテムは stale 判定の対象外** — Scenario （`./specification/features/timestamp.feature:77`）
+- **--stale-days 0 で鮮度チェックを無効化** — Scenario （`./specification/features/timestamp.feature:84`）

@@ -417,3 +417,38 @@ def test_trace_feature_file_as_origin_up(
     assert result.exit_code == 0
     assert "REQ-001" in result.stdout
     assert "SPEC-001" in result.stdout
+
+
+@patch("spec_weaver.cli.get_all_prefixes")
+@patch("spec_weaver.cli.get_tag_map")
+@patch("spec_weaver.cli.get_item_map")
+def test_trace_shows_review_status(
+    mock_get_item_map, mock_get_tag_map, mock_get_all_prefixes, tmp_path
+):
+    """トレース出力にレビューステータスが表示されることを確認する。"""
+    # mock_get_item_map で reviewed=False なアイテムを模倣
+    item_req = _make_mock_item("REQ-001", header="上位要件")
+    # Doorstopアイテムを模倣するため reviewed 属性を設定
+    item_req.reviewed = False
+    
+    mock_get_item_map.return_value = {
+        "REQ-001": item_req,
+    }
+    mock_get_tag_map.return_value = {}
+    mock_get_all_prefixes.return_value = {"REQ"}
+
+    result = runner.invoke(
+        app,
+        [
+            "trace",
+            "REQ-001",
+            "--repo-root",
+            str(tmp_path),
+        ],
+    )
+
+    assert result.exit_code == 0
+    assert "REQ-001" in result.stdout
+    # compute_review_state() は item.reviewed を見るので
+    # review_state.get_status("REQ-001") が "📋 unreviewed" を返すはず
+    assert "unreviewed" in result.stdout
