@@ -1,5 +1,5 @@
 # src/spec_weaver/review.py
-# implements: SPEC-022
+# implements: AUT-003
 
 """
 セマンティックレビュー機能。

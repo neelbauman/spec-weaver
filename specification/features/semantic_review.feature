@@ -1,6 +1,6 @@
 # spec-weaver-fingerprint: 124daaee2bb5836c4ca2efbac19f0274dec218a0971928222ffdcb6c237a458e
-# spec-weaver-fingerprint-SPEC-022: ITHr1qip7xGCJLlRj09BuXUN-KdXxrhNTgP9tqjYOHk=
-@SPEC-022
+# spec-weaver-fingerprint-AUT-003: yDu2rlGL5UZEauAw03t_ni-Gcr5kHr1I1ZJDTRClHEM=
+@AUT-003
 Feature: semantic-review コマンド — セマンティックレビュー
   仕様・Gherkin・実装コードの意味的整合性をLLMで検証し、
   実装漏れ・仕様欠落・意味的矛盾を finding として報告する。

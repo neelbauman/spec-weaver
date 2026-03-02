@@ -1,7 +1,6 @@
 # [SPEC-007] 実装ステータス管理
 
-> ⚠️ **Suspect**: 関連するアイテムやテストが変更されました。影響範囲のレビューが必要です。
-> **原因 (Unreviewed)**: `./specification/features/status.feature`
+> 🚫 **非活性 (active: false)**: このアイテムは非活性です。[VIS-003](VIS-003.md) に移行されました。
 
 **実装状況**: ✅ implemented
 
@@ -9,7 +8,7 @@
 
 **上位アイテム**: [REQ-006](REQ-006.md)
 
-**テスト対象**: Yes　**個別カバレッジ**: 🟢 1/1 (100%)
+**テスト対象**: Yes　**個別カバレッジ**: 🔴 0/1 (0%)
 
 
 ### 内容
@@ -44,8 +43,4 @@ DoorstopのYAMLファイルに `status` キーを追記することで、実装�
 
 ### 🧪 検証シナリオ
 
-- **全アイテムのステータスを一覧表示する** — Scenario （`./specification/features/status.feature:6`）
-- **status 未設定のアイテムは "-" と表示される** — Scenario （`./specification/features/status.feature:13`）
-- **--filter で特定ステータスに絞り込める** — Scenario （`./specification/features/status.feature:19`）
-- **--filter に一致するアイテムが存在しない場合に通知される** — Scenario （`./specification/features/status.feature:26`）
-- **レビューステータスと最終更新日が表示される** — Scenario （`./specification/features/status.feature:32`）
+❌ まだ Gherkin シナリオが登録されていません。

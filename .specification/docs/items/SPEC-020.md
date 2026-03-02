@@ -1,17 +1,14 @@
 # [SPEC-020] trace コマンドへの実装ファイル表示の追加
 
-> ⚠️ **Suspect**: 関連するアイテムやテストが変更されました。影響範囲のレビューが必要です。
-> **原因 (Unreviewed)**: `./specification/features/impl_link.feature`
+> 🚫 **非活性 (active: false)**: このアイテムは非活性です。[TRC-004](TRC-004.md) に移行されました。
 
 **実装状況**: ✅ implemented
 
 **作成日**: 2026-02-27　|　**更新日**: 2026-03-02
 
-**上位アイテム**: [REQ-012](REQ-012.md) / **下位アイテム**: [PLAN-001](PLAN-001.md) / **兄弟アイテム**: [SPEC-017](SPEC-017.md), [SPEC-018](SPEC-018.md), [SPEC-019](SPEC-019.md)
+**上位アイテム**: [REQ-012](REQ-012.md) / **兄弟アイテム**: [SPEC-017](SPEC-017.md), [SPEC-018](SPEC-018.md), [SPEC-019](SPEC-019.md)
 
-**テストカバレッジ**:  - （下位アイテムの集計）
-
-**テスト対象**: Yes　**個別カバレッジ**: 🟢 1/1 (100%)
+**テスト対象**: Yes　**個別カバレッジ**: 🔴 0/1 (0%)
 
 
 ### 内容
@@ -34,7 +31,7 @@ SPECノードの子要素として、実装ファイルを `📁` アイコン�
 
 ```
 REQ-012 仕様アイテムと実装ファイルのリンク管理 🚧 in-progress
-└── ★ SPEC-018 コードアノテーションスキャン 🚧 in-progress
+└── ★ TRC-003 コードアノテーションスキャン 🚧 in-progress
     ├── 🥒 impl_link.feature
     │   └── Scenario: アノテーションのスキャン
     └── 📁 src/spec_weaver/impl_scanner.py   ← impl_files フィールド由来
@@ -52,16 +49,4 @@ REQ-012 仕様アイテムと実装ファイルのリンク管理 🚧 in-progre
 
 ### 🧪 検証シナリオ
 
-- **impl_files にリスト形式でファイルパスを記述できる** — Scenario （`./specification/features/impl_link.feature:17`）
-- **impl_files が未設定の場合はリンクなしとして扱われる** — Scenario （`./specification/features/impl_link.feature:23`）
-- **アノテーションのスキャンで仕様IDとファイルの対応を抽出できる** — Scenario （`./specification/features/impl_link.feature:31`）
-- **1行に複数の仕様IDを記述できる** — Scenario （`./specification/features/impl_link.feature:37`）
-- **--extensions オプションでスキャン対象を絞れる** — Scenario （`./specification/features/impl_link.feature:44`）
-- **アノテーションがないファイルはエラーにならない** — Scenario （`./specification/features/impl_link.feature:51`）
-- **--check-impl オプションで存在しないファイルへの impl_files を検出する** — Scenario （`./specification/features/impl_link.feature:59`）
-- **impl_files にあってアノテーションがない場合は警告を報告する** — Scenario （`./specification/features/impl_link.feature:66`）
-- **アノテーションがあって impl_files がない場合は警告を報告する** — Scenario （`./specification/features/impl_link.feature:73`）
-- **--check-impl なしでは実装リンク検証は実行されない** — Scenario （`./specification/features/impl_link.feature:80`）
-- **--show-impl オプションで trace ツリーに実装ファイルを表示する** — Scenario （`./specification/features/impl_link.feature:88`）
-- **アノテーション由来のファイルも trace ツリーに表示される** — Scenario （`./specification/features/impl_link.feature:94`）
-- **--show-impl なしでは実装ファイルは表示されない** — Scenario （`./specification/features/impl_link.feature:101`）
+❌ まだ Gherkin シナリオが登録されていません。

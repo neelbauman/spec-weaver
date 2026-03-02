@@ -1,4 +1,4 @@
-active: true
+active: false
 derived: false
 gherkin_fingerprints:
 - ./specification/features/semantic_review.feature: |
@@ -14,6 +14,7 @@ impl_files:
 level: 20.2
 links:
 - REQ-013: mlYsN4aIR9VbxHA-yfOSM2Kvja2WM53jkqu9QVTeP3E=
+migrated_to: AUT-003
 normative: true
 ref: ''
 reviewed: hwM2T3NY0LFTuAQjKomOXFbrrWyGyD6YjOF330MgqVo=

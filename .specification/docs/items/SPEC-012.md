@@ -1,7 +1,6 @@
 # [SPEC-012] build コマンドにおけるタイムスタンプ表示
 
-> ⚠️ **Suspect**: 関連するアイテムやテストが変更されました。影響範囲のレビューが必要です。
-> **原因 (Unreviewed)**: `./specification/features/timestamp.feature`
+> 🚫 **非活性 (active: false)**: このアイテムは非活性です。[VIS-007](VIS-007.md) に移行されました。
 
 **実装状況**: ✅ implemented
 
@@ -9,7 +8,7 @@
 
 **上位アイテム**: [REQ-010](REQ-010.md) / **兄弟アイテム**: [SPEC-011](SPEC-011.md), [SPEC-013](SPEC-013.md)
 
-**テスト対象**: Yes　**個別カバレッジ**: 🟢 1/1 (100%)
+**テスト対象**: Yes　**個別カバレッジ**: 🔴 0/1 (0%)
 
 
 ### 内容
@@ -45,6 +44,4 @@
 
 ### 🧪 検証シナリオ
 
-- **一覧テーブルにタイムスタンプ列が表示される** — Scenario （`./specification/features/timestamp.feature:34`）
-- **詳細ページにタイムスタンプが表示される** — Scenario （`./specification/features/timestamp.feature:42`）
-- **Git情報がない場合の一覧テーブル表示** — Scenario （`./specification/features/timestamp.feature:49`）
+❌ まだ Gherkin シナリオが登録されていません。

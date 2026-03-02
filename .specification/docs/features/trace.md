@@ -1,6 +1,8 @@
 # Feature: trace コマンド — トレーサビリティ・ツリー表示
 
-**タグ**: `@SPEC-010`
+**タグ**: `@TRC-001`
+
+**関連アイテム**: [TRC-001](../items/TRC-001.md)
 
 任意のアイテム（REQ・SPEC・Gherkin）を起点として、
   関連する上位・下位アイテムを階層構造で表示する。
@@ -31,9 +33,14 @@ def given_6df87eb3(context):
 #### And 以下のREQアイテムが存在する:
 
 ```python
-@given(u'以下のREQアイテムが存在する:')
-def step_impl(context):
-    pass
+@given('以下のREQアイテムが存在する:')  # type: ignore
+def given_28140be4(context):
+    """以下のREQアイテムが存在する:
+
+    Scenarios:
+      - 
+    """
+    raise NotImplementedError('STEP: 以下のREQアイテムが存在する:')
 ```
 
 #### And 以下のSPECアイテムが存在する:
@@ -52,9 +59,14 @@ def given_14c0b615(context):
 #### And 以下のfeatureファイルが存在する:
 
 ```python
-@given(u'以下のfeatureファイルが存在する:')
-def step_impl(context):
-    pass
+@given('以下のfeatureファイルが存在する:')  # type: ignore
+def given_a838a6ff(context):
+    """以下のfeatureファイルが存在する:
+
+    Scenarios:
+      - 
+    """
+    raise NotImplementedError('STEP: 以下のfeatureファイルが存在する:')
 ```
 
 </details>
@@ -77,85 +89,110 @@ def step_impl(context):
 #### When `spec-weaver trace REQ-001 -f ./specification/features` を実行する
 
 ```python
-@when(u'`spec-weaver trace REQ-001 -f ./specification/features` を実行する')
-def step_impl(context):
-    import shlex
-    args = shlex.split('trace REQ-001 -f ./specification/features')
-    res = run_spec_weaver(args, cwd=getattr(context, 'project_root', '.'))
-    context.exit_code = getattr(res, 'returncode', 0)
-    context.output = getattr(res, 'stdout', '') + chr(10) + getattr(res, 'stderr', '')
+@when('`spec-weaver trace REQ-001 -f ./specification/features` を実行する')  # type: ignore
+def when_6629a1b8(context):
+    """`spec-weaver trace REQ-001 -f ./specification/features` を実行する
+
+    Scenarios:
+      - REQを起点としたトップダウンのツリー表示
+      - 各ノードにステータスバッジが表示される
+    """
+    raise NotImplementedError('STEP: `spec-weaver trace REQ-001 -f ./specification/features` を実行する')
 ```
 
 #### Then 終了コードが0である
 
 ```python
-@then("終了コードが{code:d}である")  # type: ignore
-def then_exit_code(context, code):
-    """終了コードが0である / 終了コードが1である
+@then('終了コードが0である')  # type: ignore
+def then_0f800e56(context):
+    """終了コードが0である
 
     Scenarios:
-      - trace, review, semantic_review 各コマンドの共通ステップ
+      - アイテムIDを指定して test_fingerprint を更新できる
+      - .feature ファイルを指定して複数アイテムの test_fingerprint を一括更新できる
+      - アイテムIDを指定して gherkin_fingerprints を更新できる
+      - .feature ファイルを指定して複数アイテムの gherkin_fingerprints を一括更新できる
     """
-    assert context.exit_code == code, (
-        f"終了コード {code} を期待しましたが {context.exit_code} でした。\n出力:\n{context.output}"
-    )
+    raise NotImplementedError('STEP: 終了コードが0である')
 ```
 
 #### And 出力にツリー構造が含まれる
 
 ```python
-@then("出力にツリー構造が含まれる")  # type: ignore
-def then_output_has_tree(context):
+@then('出力にツリー構造が含まれる')  # type: ignore
+def then_a551e8cd(context):
     """出力にツリー構造が含まれる
 
     Scenarios:
       - REQを起点としたトップダウンのツリー表示
       - SPECを起点とした双方向のツリー表示
     """
-    assert any(
-        kw in context.output
-        for kw in ["REQ-", "SPEC-", "├", "└", "│", "─"]
-    ), f"ツリー構造が出力にありません:\n{context.output}"
+    raise NotImplementedError('STEP: 出力にツリー構造が含まれる')
 ```
 
 #### And "REQ-001" がルートノードとして表示される
 
 ```python
-@then(u'"REQ-001" がルートノードとして表示される')
-def step_impl(context):
-    pass
+@then('"{param0}" がルートノードとして表示される')  # type: ignore
+def then_24c28817(context, param0):
+    """"REQ-001" がルートノードとして表示される
+
+    Scenarios:
+      - REQを起点としたトップダウンのツリー表示
+    """
+    raise NotImplementedError('STEP: "{param0}" がルートノードとして表示される')
 ```
 
 #### And "REQ-002" が "REQ-001" の子ノードとして表示される
 
 ```python
-@then(u'"REQ-002" が "REQ-001" の子ノードとして表示される')
-def step_impl(context):
-    pass
+@then('"{param0}" が "{param1}" の子ノードとして表示される')  # type: ignore
+def then_5c046e43(context, param0, param1):
+    """"REQ-002" が "REQ-001" の子ノードとして表示される
+
+    Scenarios:
+      - REQを起点としたトップダウンのツリー表示
+    """
+    raise NotImplementedError('STEP: "{param0}" が "{param1}" の子ノードとして表示される')
 ```
 
 #### And "SPEC-001" が "REQ-001" の子ノードとして表示される
 
 ```python
-@then(u'"SPEC-001" が "REQ-001" の子ノードとして表示される')
-def step_impl(context):
-    pass
+@then('"{param0}" が "{param1}" の子ノードとして表示される')  # type: ignore
+def then_5c046e43(context, param0, param1):
+    """"REQ-002" が "REQ-001" の子ノードとして表示される
+
+    Scenarios:
+      - REQを起点としたトップダウンのツリー表示
+    """
+    raise NotImplementedError('STEP: "{param0}" が "{param1}" の子ノードとして表示される')
 ```
 
 #### And "SPEC-003" が "REQ-002" の子ノードとして表示される
 
 ```python
-@then(u'"SPEC-003" が "REQ-002" の子ノードとして表示される')
-def step_impl(context):
-    pass
+@then('"{param0}" が "{param1}" の子ノードとして表示される')  # type: ignore
+def then_5c046e43(context, param0, param1):
+    """"REQ-002" が "REQ-001" の子ノードとして表示される
+
+    Scenarios:
+      - REQを起点としたトップダウンのツリー表示
+    """
+    raise NotImplementedError('STEP: "{param0}" が "{param1}" の子ノードとして表示される')
 ```
 
 #### And "audit.feature" が "SPEC-003" の子ノードとして表示される
 
 ```python
-@then(u'"audit.feature" が "SPEC-003" の子ノードとして表示される')
-def step_impl(context):
-    pass
+@then('"{param0}" が "{param1}" の子ノードとして表示される')  # type: ignore
+def then_5c046e43(context, param0, param1):
+    """"REQ-002" が "REQ-001" の子ノードとして表示される
+
+    Scenarios:
+      - REQを起点としたトップダウンのツリー表示
+    """
+    raise NotImplementedError('STEP: "{param0}" が "{param1}" の子ノードとして表示される')
 ```
 
 </details>
@@ -176,69 +213,83 @@ def step_impl(context):
 #### When `spec-weaver trace SPEC-003 -f ./specification/features` を実行する
 
 ```python
-@when(u'`spec-weaver trace SPEC-003 -f ./specification/features` を実行する')
-def step_impl(context):
-    import shlex
-    args = shlex.split('trace SPEC-003 -f ./specification/features')
-    res = run_spec_weaver(args, cwd=getattr(context, 'project_root', '.'))
-    context.exit_code = getattr(res, 'returncode', 0)
-    context.output = getattr(res, 'stdout', '') + chr(10) + getattr(res, 'stderr', '')
+@when('`spec-weaver trace SPEC-003 -f ./specification/features` を実行する')  # type: ignore
+def when_b1a2f499(context):
+    """`spec-weaver trace SPEC-003 -f ./specification/features` を実行する
+
+    Scenarios:
+      - SPECを起点とした双方向のツリー表示
+    """
+    raise NotImplementedError('STEP: `spec-weaver trace SPEC-003 -f ./specification/features` を実行する')
 ```
 
 #### Then 終了コードが0である
 
 ```python
-@then("終了コードが{code:d}である")  # type: ignore
-def then_exit_code(context, code):
-    """終了コードが0である / 終了コードが1である
+@then('終了コードが0である')  # type: ignore
+def then_0f800e56(context):
+    """終了コードが0である
 
     Scenarios:
-      - trace, review, semantic_review 各コマンドの共通ステップ
+      - アイテムIDを指定して test_fingerprint を更新できる
+      - .feature ファイルを指定して複数アイテムの test_fingerprint を一括更新できる
+      - アイテムIDを指定して gherkin_fingerprints を更新できる
+      - .feature ファイルを指定して複数アイテムの gherkin_fingerprints を一括更新できる
     """
-    assert context.exit_code == code, (
-        f"終了コード {code} を期待しましたが {context.exit_code} でした。\n出力:\n{context.output}"
-    )
+    raise NotImplementedError('STEP: 終了コードが0である')
 ```
 
 #### And 出力にツリー構造が含まれる
 
 ```python
-@then("出力にツリー構造が含まれる")  # type: ignore
-def then_output_has_tree(context):
+@then('出力にツリー構造が含まれる')  # type: ignore
+def then_a551e8cd(context):
     """出力にツリー構造が含まれる
 
     Scenarios:
       - REQを起点としたトップダウンのツリー表示
       - SPECを起点とした双方向のツリー表示
     """
-    assert any(
-        kw in context.output
-        for kw in ["REQ-", "SPEC-", "├", "└", "│", "─"]
-    ), f"ツリー構造が出力にありません:\n{context.output}"
+    raise NotImplementedError('STEP: 出力にツリー構造が含まれる')
 ```
 
 #### And 上位に "REQ-002" が表示される
 
 ```python
-@then(u'上位に "REQ-002" が表示される')
-def step_impl(context):
-    pass
+@then('上位に "{param0}" が表示される')  # type: ignore
+def then_0d60d0d2(context, param0):
+    """上位に "REQ-002" が表示される
+
+    Scenarios:
+      - SPECを起点とした双方向のツリー表示
+    """
+    raise NotImplementedError('STEP: 上位に "{param0}" が表示される')
 ```
 
 #### And 上位に "REQ-001" が表示される
 
 ```python
-@then(u'上位に "REQ-001" が表示される')
-def step_impl(context):
-    pass
+@then('上位に "{param0}" が表示される')  # type: ignore
+def then_0d60d0d2(context, param0):
+    """上位に "REQ-002" が表示される
+
+    Scenarios:
+      - SPECを起点とした双方向のツリー表示
+    """
+    raise NotImplementedError('STEP: 上位に "{param0}" が表示される')
 ```
 
 #### And 下位に "audit.feature" のシナリオが表示される
 
 ```python
-@then(u'下位に "audit.feature" のシナリオが表示される')
-def step_impl(context):
-    pass
+@then('下位に "{param0}" のシナリオが表示される')  # type: ignore
+def then_b2f19b22(context, param0):
+    """下位に "audit.feature" のシナリオが表示される
+
+    Scenarios:
+      - SPECを起点とした双方向のツリー表示
+    """
+    raise NotImplementedError('STEP: 下位に "{param0}" のシナリオが表示される')
 ```
 
 </details>
@@ -258,52 +309,75 @@ def step_impl(context):
 #### When `spec-weaver trace audit.feature -f ./specification/features` を実行する
 
 ```python
-@when(u'`spec-weaver trace audit.feature -f ./specification/features` を実行する')
-def step_impl(context):
-    import shlex
-    args = shlex.split('trace audit.feature -f ./specification/features')
-    res = run_spec_weaver(args, cwd=getattr(context, 'project_root', '.'))
-    context.exit_code = getattr(res, 'returncode', 0)
-    context.output = getattr(res, 'stdout', '') + chr(10) + getattr(res, 'stderr', '')
+@when('`spec-weaver trace audit.feature -f ./specification/features` を実行する')  # type: ignore
+def when_53222a94(context):
+    """`spec-weaver trace audit.feature -f ./specification/features` を実行する
+
+    Scenarios:
+      - Gherkin Featureファイルを起点としたボトムアップ表示
+    """
+    raise NotImplementedError('STEP: `spec-weaver trace audit.feature -f ./specification/features` を実行する')
 ```
 
 #### Then 終了コードが0である
 
 ```python
-@then("終了コードが{code:d}である")  # type: ignore
-def then_exit_code(context, code):
-    """終了コードが0である / 終了コードが1である
+@then('終了コードが0である')  # type: ignore
+def then_0f800e56(context):
+    """終了コードが0である
 
     Scenarios:
-      - trace, review, semantic_review 各コマンドの共通ステップ
+      - アイテムIDを指定して test_fingerprint を更新できる
+      - .feature ファイルを指定して複数アイテムの test_fingerprint を一括更新できる
+      - アイテムIDを指定して gherkin_fingerprints を更新できる
+      - .feature ファイルを指定して複数アイテムの gherkin_fingerprints を一括更新できる
     """
-    assert context.exit_code == code, (
-        f"終了コード {code} を期待しましたが {context.exit_code} でした。\n出力:\n{context.output}"
-    )
+    raise NotImplementedError('STEP: 終了コードが0である')
 ```
 
 #### And 出力に "SPEC-003" が表示される
 
 ```python
-@then(u'出力に "SPEC-003" が表示される')
-def step_impl(context):
-    pass
+@then('出力に "{param0}" が表示される')  # type: ignore
+def then_1b9fcb6e(context, param0):
+    """出力に "SPEC-003" が表示される
+
+    Scenarios:
+      - Gherkin Featureファイルを起点としたボトムアップ表示
+      - --direction up で上方向のみ探索
+      - --direction down で下方向のみ探索
+    """
+    raise NotImplementedError('STEP: 出力に "{param0}" が表示される')
 ```
 
 #### And 出力に "REQ-002" が表示される
 
 ```python
-@then(u'出力に "REQ-002" が表示される')
-def step_impl(context):
-    pass
+@then('出力に "{param0}" が表示される')  # type: ignore
+def then_1b9fcb6e(context, param0):
+    """出力に "SPEC-003" が表示される
+
+    Scenarios:
+      - Gherkin Featureファイルを起点としたボトムアップ表示
+      - --direction up で上方向のみ探索
+      - --direction down で下方向のみ探索
+    """
+    raise NotImplementedError('STEP: 出力に "{param0}" が表示される')
 ```
 
 #### And 出力に "REQ-001" が表示される
 
 ```python
-@then(u'出力に "REQ-001" が表示される')
-def step_impl(context):
-    pass
+@then('出力に "{param0}" が表示される')  # type: ignore
+def then_1b9fcb6e(context, param0):
+    """出力に "SPEC-003" が表示される
+
+    Scenarios:
+      - Gherkin Featureファイルを起点としたボトムアップ表示
+      - --direction up で上方向のみ探索
+      - --direction down で下方向のみ探索
+    """
+    raise NotImplementedError('STEP: 出力に "{param0}" が表示される')
 ```
 
 </details>
@@ -336,40 +410,60 @@ def when_770f884f(context):
 #### Then 終了コードが0である
 
 ```python
-@then("終了コードが{code:d}である")  # type: ignore
-def then_exit_code(context, code):
-    """終了コードが0である / 終了コードが1である
+@then('終了コードが0である')  # type: ignore
+def then_0f800e56(context):
+    """終了コードが0である
 
     Scenarios:
-      - trace, review, semantic_review 各コマンドの共通ステップ
+      - アイテムIDを指定して test_fingerprint を更新できる
+      - .feature ファイルを指定して複数アイテムの test_fingerprint を一括更新できる
+      - アイテムIDを指定して gherkin_fingerprints を更新できる
+      - .feature ファイルを指定して複数アイテムの gherkin_fingerprints を一括更新できる
     """
-    assert context.exit_code == code, (
-        f"終了コード {code} を期待しましたが {context.exit_code} でした。\n出力:\n{context.output}"
-    )
+    raise NotImplementedError('STEP: 終了コードが0である')
 ```
 
 #### And 出力に "REQ-002" が表示される
 
 ```python
-@then(u'出力に "REQ-002" が表示される')
-def step_impl(context):
-    pass
+@then('出力に "{param0}" が表示される')  # type: ignore
+def then_1b9fcb6e(context, param0):
+    """出力に "SPEC-003" が表示される
+
+    Scenarios:
+      - Gherkin Featureファイルを起点としたボトムアップ表示
+      - --direction up で上方向のみ探索
+      - --direction down で下方向のみ探索
+    """
+    raise NotImplementedError('STEP: 出力に "{param0}" が表示される')
 ```
 
 #### And 出力に "REQ-001" が表示される
 
 ```python
-@then(u'出力に "REQ-001" が表示される')
-def step_impl(context):
-    pass
+@then('出力に "{param0}" が表示される')  # type: ignore
+def then_1b9fcb6e(context, param0):
+    """出力に "SPEC-003" が表示される
+
+    Scenarios:
+      - Gherkin Featureファイルを起点としたボトムアップ表示
+      - --direction up で上方向のみ探索
+      - --direction down で下方向のみ探索
+    """
+    raise NotImplementedError('STEP: 出力に "{param0}" が表示される')
 ```
 
 #### And 出力に "audit.feature" が表示されない
 
 ```python
-@then(u'出力に "audit.feature" が表示されない')
-def step_impl(context):
-    pass
+@then('出力に "{param0}" が表示されない')  # type: ignore
+def then_1c0ce4ff(context, param0):
+    """出力に "audit.feature" が表示されない
+
+    Scenarios:
+      - --direction up で上方向のみ探索
+    """
+    raise NotImplementedError('STEP: 出力に "{param0}" が表示されない')
 ```
 
 </details>
@@ -402,40 +496,62 @@ def when_24d70f7f(context):
 #### Then 終了コードが0である
 
 ```python
-@then("終了コードが{code:d}である")  # type: ignore
-def then_exit_code(context, code):
-    """終了コードが0である / 終了コードが1である
+@then('終了コードが0である')  # type: ignore
+def then_0f800e56(context):
+    """終了コードが0である
 
     Scenarios:
-      - trace, review, semantic_review 各コマンドの共通ステップ
+      - アイテムIDを指定して test_fingerprint を更新できる
+      - .feature ファイルを指定して複数アイテムの test_fingerprint を一括更新できる
+      - アイテムIDを指定して gherkin_fingerprints を更新できる
+      - .feature ファイルを指定して複数アイテムの gherkin_fingerprints を一括更新できる
     """
-    assert context.exit_code == code, (
-        f"終了コード {code} を期待しましたが {context.exit_code} でした。\n出力:\n{context.output}"
-    )
+    raise NotImplementedError('STEP: 終了コードが0である')
 ```
 
 #### And 出力に "REQ-002" が表示される
 
 ```python
-@then(u'出力に "REQ-002" が表示される')
-def step_impl(context):
-    pass
+@then('出力に "{param0}" が表示される')  # type: ignore
+def then_1b9fcb6e(context, param0):
+    """出力に "SPEC-003" が表示される
+
+    Scenarios:
+      - Gherkin Featureファイルを起点としたボトムアップ表示
+      - --direction up で上方向のみ探索
+      - --direction down で下方向のみ探索
+    """
+    raise NotImplementedError('STEP: 出力に "{param0}" が表示される')
 ```
 
 #### And 出力に "SPEC-003" が表示される
 
 ```python
-@then(u'出力に "SPEC-003" が表示される')
-def step_impl(context):
-    pass
+@then('出力に "{param0}" が表示される')  # type: ignore
+def then_1b9fcb6e(context, param0):
+    """出力に "SPEC-003" が表示される
+
+    Scenarios:
+      - Gherkin Featureファイルを起点としたボトムアップ表示
+      - --direction up で上方向のみ探索
+      - --direction down で下方向のみ探索
+    """
+    raise NotImplementedError('STEP: 出力に "{param0}" が表示される')
 ```
 
 #### And 出力に "audit.feature" が表示される
 
 ```python
-@then(u'出力に "audit.feature" が表示される')
-def step_impl(context):
-    pass
+@then('出力に "{param0}" が表示される')  # type: ignore
+def then_1b9fcb6e(context, param0):
+    """出力に "SPEC-003" が表示される
+
+    Scenarios:
+      - Gherkin Featureファイルを起点としたボトムアップ表示
+      - --direction up で上方向のみ探索
+      - --direction down で下方向のみ探索
+    """
+    raise NotImplementedError('STEP: 出力に "{param0}" が表示される')
 ```
 
 </details>
@@ -467,32 +583,43 @@ def when_816b7b2c(context):
 #### Then 終了コードが0である
 
 ```python
-@then("終了コードが{code:d}である")  # type: ignore
-def then_exit_code(context, code):
-    """終了コードが0である / 終了コードが1である
+@then('終了コードが0である')  # type: ignore
+def then_0f800e56(context):
+    """終了コードが0である
 
     Scenarios:
-      - trace, review, semantic_review 各コマンドの共通ステップ
+      - アイテムIDを指定して test_fingerprint を更新できる
+      - .feature ファイルを指定して複数アイテムの test_fingerprint を一括更新できる
+      - アイテムIDを指定して gherkin_fingerprints を更新できる
+      - .feature ファイルを指定して複数アイテムの gherkin_fingerprints を一括更新できる
     """
-    assert context.exit_code == code, (
-        f"終了コード {code} を期待しましたが {context.exit_code} でした。\n出力:\n{context.output}"
-    )
+    raise NotImplementedError('STEP: 終了コードが0である')
 ```
 
 #### And 出力がフラットリスト形式である
 
 ```python
-@then(u'出力がフラットリスト形式である')
-def step_impl(context):
-    pass
+@then('出力がフラットリスト形式である')  # type: ignore
+def then_f50604f0(context):
+    """出力がフラットリスト形式である
+
+    Scenarios:
+      - --format flat でフラットリスト表示
+    """
+    raise NotImplementedError('STEP: 出力がフラットリスト形式である')
 ```
 
 #### And 各行に "REQ" または "SPEC" または "TEST" のラベルが含まれる
 
 ```python
-@then(u'各行に "REQ" または "SPEC" または "TEST" のラベルが含まれる')
-def step_impl(context):
-    pass
+@then('各行に "{param0}" または "{param1}" または "{param2}" のラベルが含まれる')  # type: ignore
+def then_29017220(context, param0, param1, param2):
+    """各行に "REQ" または "SPEC" または "TEST" のラベルが含まれる
+
+    Scenarios:
+      - --format flat でフラットリスト表示
+    """
+    raise NotImplementedError('STEP: 各行に "{param0}" または "{param1}" または "{param2}" のラベルが含まれる')
 ```
 
 </details>
@@ -510,36 +637,40 @@ def step_impl(context):
 #### When `spec-weaver trace NONEXIST-999 -f ./specification/features` を実行する
 
 ```python
-@when(u'`spec-weaver trace NONEXIST-999 -f ./specification/features` を実行する')
-def step_impl(context):
-    import shlex
-    args = shlex.split('trace NONEXIST-999 -f ./specification/features')
-    res = run_spec_weaver(args, cwd=getattr(context, 'project_root', '.'))
-    context.exit_code = getattr(res, 'returncode', 0)
-    context.output = getattr(res, 'stdout', '') + chr(10) + getattr(res, 'stderr', '')
+@when('`spec-weaver trace NONEXIST-999 -f ./specification/features` を実行する')  # type: ignore
+def when_44385436(context):
+    """`spec-weaver trace NONEXIST-999 -f ./specification/features` を実行する
+
+    Scenarios:
+      - 存在しないIDを指定した場合のエラー
+    """
+    raise NotImplementedError('STEP: `spec-weaver trace NONEXIST-999 -f ./specification/features` を実行する')
 ```
 
 #### Then 終了コードが1である
 
 ```python
-@then("終了コードが{code:d}である")  # type: ignore
-def then_exit_code(context, code):
-    """終了コードが0である / 終了コードが1である
+@then('終了コードが1である')  # type: ignore
+def then_9b731a71(context):
+    """終了コードが1である
 
     Scenarios:
-      - trace, review, semantic_review 各コマンドの共通ステップ
+      - 存在しないアイテムIDを指定するとエラーになる
     """
-    assert context.exit_code == code, (
-        f"終了コード {code} を期待しましたが {context.exit_code} でした。\n出力:\n{context.output}"
-    )
+    raise NotImplementedError('STEP: 終了コードが1である')
 ```
 
 #### And エラーメッセージに "not found" が含まれる
 
 ```python
-@then(u'エラーメッセージに "not found" が含まれる')
-def step_impl(context):
-    pass
+@then('エラーメッセージに "{param0}" が含まれる')  # type: ignore
+def then_9998fad9(context, param0):
+    """エラーメッセージに "not found" が含まれる
+
+    Scenarios:
+      - 存在しないIDを指定した場合のエラー
+    """
+    raise NotImplementedError('STEP: エラーメッセージに "{param0}" が含まれる')
 ```
 
 </details>
@@ -558,44 +689,57 @@ def step_impl(context):
 #### When `spec-weaver trace REQ-001 -f ./specification/features` を実行する
 
 ```python
-@when(u'`spec-weaver trace REQ-001 -f ./specification/features` を実行する')
-def step_impl(context):
-    import shlex
-    args = shlex.split('trace REQ-001 -f ./specification/features')
-    res = run_spec_weaver(args, cwd=getattr(context, 'project_root', '.'))
-    context.exit_code = getattr(res, 'returncode', 0)
-    context.output = getattr(res, 'stdout', '') + chr(10) + getattr(res, 'stderr', '')
+@when('`spec-weaver trace REQ-001 -f ./specification/features` を実行する')  # type: ignore
+def when_6629a1b8(context):
+    """`spec-weaver trace REQ-001 -f ./specification/features` を実行する
+
+    Scenarios:
+      - REQを起点としたトップダウンのツリー表示
+      - 各ノードにステータスバッジが表示される
+    """
+    raise NotImplementedError('STEP: `spec-weaver trace REQ-001 -f ./specification/features` を実行する')
 ```
 
 #### Then 終了コードが0である
 
 ```python
-@then("終了コードが{code:d}である")  # type: ignore
-def then_exit_code(context, code):
-    """終了コードが0である / 終了コードが1である
+@then('終了コードが0である')  # type: ignore
+def then_0f800e56(context):
+    """終了コードが0である
 
     Scenarios:
-      - trace, review, semantic_review 各コマンドの共通ステップ
+      - アイテムIDを指定して test_fingerprint を更新できる
+      - .feature ファイルを指定して複数アイテムの test_fingerprint を一括更新できる
+      - アイテムIDを指定して gherkin_fingerprints を更新できる
+      - .feature ファイルを指定して複数アイテムの gherkin_fingerprints を一括更新できる
     """
-    assert context.exit_code == code, (
-        f"終了コード {code} を期待しましたが {context.exit_code} でした。\n出力:\n{context.output}"
-    )
+    raise NotImplementedError('STEP: 終了コードが0である')
 ```
 
 #### And "REQ-001" のノードに "implemented" のステータスバッジが表示される
 
 ```python
-@then(u'"REQ-001" のノードに "implemented" のステータスバッジが表示される')
-def step_impl(context):
-    pass
+@then('"{param0}" のノードに "{param1}" のステータスバッジが表示される')  # type: ignore
+def then_f676df97(context, param0, param1):
+    """"REQ-001" のノードに "implemented" のステータスバッジが表示される
+
+    Scenarios:
+      - 各ノードにステータスバッジが表示される
+    """
+    raise NotImplementedError('STEP: "{param0}" のノードに "{param1}" のステータスバッジが表示される')
 ```
 
 #### And "SPEC-003" のノードに "implemented" のステータスバッジが表示される
 
 ```python
-@then(u'"SPEC-003" のノードに "implemented" のステータスバッジが表示される')
-def step_impl(context):
-    pass
+@then('"{param0}" のノードに "{param1}" のステータスバッジが表示される')  # type: ignore
+def then_f676df97(context, param0, param1):
+    """"REQ-001" のノードに "implemented" のステータスバッジが表示される
+
+    Scenarios:
+      - 各ノードにステータスバッジが表示される
+    """
+    raise NotImplementedError('STEP: "{param0}" のノードに "{param1}" のステータスバッジが表示される')
 ```
 
 </details>
@@ -607,7 +751,8 @@ def step_impl(context):
 
 ```gherkin
 # spec-weaver-fingerprint: 800e543e22e3ca019b5ccbd6efea879aa5ea3dbb2a3afafc7f4e63db24015318
-@SPEC-010
+# spec-weaver-fingerprint-TRC-001: HKeXIyGAgfYrCuLXM9S1YOKJTFIxClAO5GHOWxFVehI=
+@TRC-001
 Feature: trace コマンド — トレーサビリティ・ツリー表示
   任意のアイテム（REQ・SPEC・Gherkin）を起点として、
   関連する上位・下位アイテムを階層構造で表示する。

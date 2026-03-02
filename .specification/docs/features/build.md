@@ -1,6 +1,8 @@
 # Feature: build コマンド
 
-**タグ**: `@SPEC-004`
+**タグ**: `@VIS-001`
+
+**関連アイテム**: [QA-001](../items/QA-001.md) / [VIS-001](../items/VIS-001.md) / [VIS-005](../items/VIS-005.md) / [VIS-008](../items/VIS-008.md)
 
 Doorstopの仕様データとGherkinテストを統合した
   MkDocsドキュメントサイトを自動生成する。
@@ -18,9 +20,15 @@ Doorstopの仕様データとGherkinテストを統合した
 #### Given DoorstopプロジェクトとGherkin featureファイルが存在する
 
 ```python
-@given(u'DoorstopプロジェクトとGherkin featureファイルが存在する')
-def step_impl(context):
-    pass
+@given('DoorstopプロジェクトとGherkin featureファイルが存在する')  # type: ignore
+def given_8a7b1a87(context):
+    """DoorstopプロジェクトとGherkin featureファイルが存在する
+
+    Scenarios:
+      - MkDocs設定ファイルの生成
+      - カスタム出力ディレクトリの指定
+    """
+    raise NotImplementedError('STEP: DoorstopプロジェクトとGherkin featureファイルが存在する')
 ```
 
 #### When build コマンドを実行する
@@ -41,17 +49,27 @@ def when_40f323b6(context):
 #### Then 出力ディレクトリに mkdocs.yml が生成されること
 
 ```python
-@then(u'出力ディレクトリに mkdocs.yml が生成されること')
-def step_impl(context):
-    pass
+@then('出力ディレクトリに mkdocs.yml が生成されること')  # type: ignore
+def then_453d91c1(context):
+    """出力ディレクトリに mkdocs.yml が生成されること
+
+    Scenarios:
+      - MkDocs設定ファイルの生成
+    """
+    raise NotImplementedError('STEP: 出力ディレクトリに mkdocs.yml が生成されること')
 ```
 
 #### And Material テーマが設定されていること
 
 ```python
-@then(u'Material テーマが設定されていること')
-def step_impl(context):
-    pass
+@then('Material テーマが設定されていること')  # type: ignore
+def then_281c0fa4(context):
+    """Material テーマが設定されていること
+
+    Scenarios:
+      - MkDocs設定ファイルの生成
+    """
+    raise NotImplementedError('STEP: Material テーマが設定されていること')
 ```
 
 </details>
@@ -71,9 +89,14 @@ def step_impl(context):
 #### Given DoorstopプロジェクトにREQアイテムが存在する
 
 ```python
-@given(u'DoorstopプロジェクトにREQアイテムが存在する')
-def step_impl(context):
-    pass
+@given('DoorstopプロジェクトにREQアイテムが存在する')  # type: ignore
+def given_ce6845b7(context):
+    """DoorstopプロジェクトにREQアイテムが存在する
+
+    Scenarios:
+      - 要件一覧ページの生成
+    """
+    raise NotImplementedError('STEP: DoorstopプロジェクトにREQアイテムが存在する')
 ```
 
 #### When build コマンドを実行する
@@ -94,25 +117,40 @@ def when_40f323b6(context):
 #### Then docs/req.md が生成されること
 
 ```python
-@then(u'docs/req.md が生成されること')
-def step_impl(context):
-    pass
+@then('docs/req.md が生成されること')  # type: ignore
+def then_0130d8b7(context):
+    """docs/req.md が生成されること
+
+    Scenarios:
+      - 要件一覧ページの生成
+    """
+    raise NotImplementedError('STEP: docs/req.md が生成されること')
 ```
 
 #### And 各REQアイテムがテーブル行として含まれること
 
 ```python
-@then(u'各REQアイテムがテーブル行として含まれること')
-def step_impl(context):
-    pass
+@then('各REQアイテムがテーブル行として含まれること')  # type: ignore
+def then_2977857a(context):
+    """各REQアイテムがテーブル行として含まれること
+
+    Scenarios:
+      - 要件一覧ページの生成
+    """
+    raise NotImplementedError('STEP: 各REQアイテムがテーブル行として含まれること')
 ```
 
 #### And 関連仕様への相互リンクが含まれること
 
 ```python
-@then(u'関連仕様への相互リンクが含まれること')
-def step_impl(context):
-    pass
+@then('関連仕様への相互リンクが含まれること')  # type: ignore
+def then_ef9d25c2(context):
+    """関連仕様への相互リンクが含まれること
+
+    Scenarios:
+      - 要件一覧ページの生成
+    """
+    raise NotImplementedError('STEP: 関連仕様への相互リンクが含まれること')
 ```
 
 </details>
@@ -132,9 +170,14 @@ def step_impl(context):
 #### Given DoorstopプロジェクトにSPECアイテムが存在する
 
 ```python
-@given(u'DoorstopプロジェクトにSPECアイテムが存在する')
-def step_impl(context):
-    pass
+@given('DoorstopプロジェクトにSPECアイテムが存在する')  # type: ignore
+def given_ae2b8b7d(context):
+    """DoorstopプロジェクトにSPECアイテムが存在する
+
+    Scenarios:
+      - 仕様一覧ページの生成
+    """
+    raise NotImplementedError('STEP: DoorstopプロジェクトにSPECアイテムが存在する')
 ```
 
 #### When build コマンドを実行する
@@ -155,25 +198,40 @@ def when_40f323b6(context):
 #### Then docs/spec.md が生成されること
 
 ```python
-@then(u'docs/spec.md が生成されること')
-def step_impl(context):
-    pass
+@then('docs/spec.md が生成されること')  # type: ignore
+def then_9b5808a6(context):
+    """docs/spec.md が生成されること
+
+    Scenarios:
+      - 仕様一覧ページの生成
+    """
+    raise NotImplementedError('STEP: docs/spec.md が生成されること')
 ```
 
 #### And 各SPECアイテムがテーブル行として含まれること
 
 ```python
-@then(u'各SPECアイテムがテーブル行として含まれること')
-def step_impl(context):
-    pass
+@then('各SPECアイテムがテーブル行として含まれること')  # type: ignore
+def then_86be7f51(context):
+    """各SPECアイテムがテーブル行として含まれること
+
+    Scenarios:
+      - 仕様一覧ページの生成
+    """
+    raise NotImplementedError('STEP: 各SPECアイテムがテーブル行として含まれること')
 ```
 
 #### And 上位要件への相互リンクが含まれること
 
 ```python
-@then(u'上位要件への相互リンクが含まれること')
-def step_impl(context):
-    pass
+@then('上位要件への相互リンクが含まれること')  # type: ignore
+def then_d1af9a65(context):
+    """上位要件への相互リンクが含まれること
+
+    Scenarios:
+      - 仕様一覧ページの生成
+    """
+    raise NotImplementedError('STEP: 上位要件への相互リンクが含まれること')
 ```
 
 </details>
@@ -194,9 +252,14 @@ def step_impl(context):
 #### Given DoorstopプロジェクトにアイテムとGherkinテストが存在する
 
 ```python
-@given(u'DoorstopプロジェクトにアイテムとGherkinテストが存在する')
-def step_impl(context):
-    pass
+@given('DoorstopプロジェクトにアイテムとGherkinテストが存在する')  # type: ignore
+def given_73c18566(context):
+    """DoorstopプロジェクトにアイテムとGherkinテストが存在する
+
+    Scenarios:
+      - 個別アイテム詳細ページの生成
+    """
+    raise NotImplementedError('STEP: DoorstopプロジェクトにアイテムとGherkinテストが存在する')
 ```
 
 #### When build コマンドを実行する
@@ -217,33 +280,53 @@ def when_40f323b6(context):
 #### Then docs/items/ 配下に各アイテムのMarkdownファイルが生成されること
 
 ```python
-@then(u'docs/items/ 配下に各アイテムのMarkdownファイルが生成されること')
-def step_impl(context):
-    pass
+@then('docs/items/ 配下に各アイテムのMarkdownファイルが生成されること')  # type: ignore
+def then_77d459df(context):
+    """docs/items/ 配下に各アイテムのMarkdownファイルが生成されること
+
+    Scenarios:
+      - 個別アイテム詳細ページの生成
+    """
+    raise NotImplementedError('STEP: docs/items/ 配下に各アイテムのMarkdownファイルが生成されること')
 ```
 
 #### And アイテムの本文が含まれること
 
 ```python
-@then(u'アイテムの本文が含まれること')
-def step_impl(context):
-    pass
+@then('アイテムの本文が含まれること')  # type: ignore
+def then_650f49fb(context):
+    """アイテムの本文が含まれること
+
+    Scenarios:
+      - 個別アイテム詳細ページの生成
+    """
+    raise NotImplementedError('STEP: アイテムの本文が含まれること')
 ```
 
 #### And 上位・下位リンクが含まれること
 
 ```python
-@then(u'上位・下位リンクが含まれること')
-def step_impl(context):
-    pass
+@then('上位・下位リンクが含まれること')  # type: ignore
+def then_677a5bf3(context):
+    """上位・下位リンクが含まれること
+
+    Scenarios:
+      - 個別アイテム詳細ページの生成
+    """
+    raise NotImplementedError('STEP: 上位・下位リンクが含まれること')
 ```
 
 #### And 対応するテストシナリオのファイルパスと行番号が含まれること
 
 ```python
-@then(u'対応するテストシナリオのファイルパスと行番号が含まれること')
-def step_impl(context):
-    pass
+@then('対応するテストシナリオのファイルパスと行番号が含まれること')  # type: ignore
+def then_ae3c7159(context):
+    """対応するテストシナリオのファイルパスと行番号が含まれること
+
+    Scenarios:
+      - 個別アイテム詳細ページの生成
+    """
+    raise NotImplementedError('STEP: 対応するテストシナリオのファイルパスと行番号が含まれること')
 ```
 
 </details>
@@ -252,7 +335,7 @@ def step_impl(context):
 ---
 ## Scenario: 一覧テーブルのフィルタリング機能
 
-**タグ**: `@SPEC-009`
+**タグ**: `@VIS-005`
 
 - **Given** Doorstopプロジェクトにアイテムが存在する
 - **When** build コマンドを実行する
@@ -264,9 +347,14 @@ def step_impl(context):
 #### Given Doorstopプロジェクトにアイテムが存在する
 
 ```python
-@given(u'Doorstopプロジェクトにアイテムが存在する')
-def step_impl(context):
-    pass
+@given('Doorstopプロジェクトにアイテムが存在する')  # type: ignore
+def given_93d749da(context):
+    """Doorstopプロジェクトにアイテムが存在する
+
+    Scenarios:
+      - 一覧テーブルのフィルタリング機能
+    """
+    raise NotImplementedError('STEP: Doorstopプロジェクトにアイテムが存在する')
 ```
 
 #### When build コマンドを実行する
@@ -287,17 +375,27 @@ def when_40f323b6(context):
 #### Then 生成された一覧ページのテーブルにフィルタリング用入力欄が表示されること
 
 ```python
-@then(u'生成された一覧ページのテーブルにフィルタリング用入力欄が表示されること')
-def step_impl(context):
-    pass
+@then('生成された一覧ページのテーブルにフィルタリング用入力欄が表示されること')  # type: ignore
+def then_7bdfccf5(context):
+    """生成された一覧ページのテーブルにフィルタリング用入力欄が表示されること
+
+    Scenarios:
+      - 一覧テーブルのフィルタリング機能
+    """
+    raise NotImplementedError('STEP: 生成された一覧ページのテーブルにフィルタリング用入力欄が表示されること')
 ```
 
 #### And ID、タイトル、実装ステータス、レベル等の項目で絞り込みが可能であること
 
 ```python
-@then(u'ID、タイトル、実装ステータス、レベル等の項目で絞り込みが可能であること')
-def step_impl(context):
-    pass
+@then('ID、タイトル、実装ステータス、レベル等の項目で絞り込みが可能であること')  # type: ignore
+def then_ca03093b(context):
+    """ID、タイトル、実装ステータス、レベル等の項目で絞り込みが可能であること
+
+    Scenarios:
+      - 一覧テーブルのフィルタリング機能
+    """
+    raise NotImplementedError('STEP: ID、タイトル、実装ステータス、レベル等の項目で絞り込みが可能であること')
 ```
 
 </details>
@@ -316,19 +414,27 @@ def step_impl(context):
 #### Given プロジェクトに既存のドキュメントが存在する
 
 ```python
-@given(u'プロジェクトに既存のドキュメントが存在する')
-def step_impl(context):
-    pass
+@given('プロジェクトに既存のドキュメントが存在する')  # type: ignore
+def given_b7341593(context):
+    """プロジェクトに既存のドキュメントが存在する
+
+    Scenarios:
+      - 出力ディレクトリの独立性
+    """
+    raise NotImplementedError('STEP: プロジェクトに既存のドキュメントが存在する')
 ```
 
 #### When build コマンドをデフォルト出力先で実行する
 
 ```python
-@when(u'build コマンドをデフォルト出力先で実行する')
-def step_impl(context):
-    res = run_spec_weaver(['build'], cwd=getattr(context, 'temp_dir', '.'))
-    context.exit_code = getattr(res, 'returncode', 0)
-    context.output = getattr(res, 'stdout', '') + chr(10) + getattr(res, 'stderr', '')
+@when('build コマンドをデフォルト出力先で実行する')  # type: ignore
+def when_6f73d51e(context):
+    """build コマンドをデフォルト出力先で実行する
+
+    Scenarios:
+      - 出力ディレクトリの独立性
+    """
+    raise NotImplementedError('STEP: build コマンドをデフォルト出力先で実行する')
 ```
 
 #### Then ".specification" ディレクトリに出力されること
@@ -348,9 +454,14 @@ def then_32de837a(context, param0):
 #### And 既存のドキュメントファイルは変更されないこと
 
 ```python
-@then(u'既存のドキュメントファイルは変更されないこと')
-def step_impl(context):
-    pass
+@then('既存のドキュメントファイルは変更されないこと')  # type: ignore
+def then_56c968de(context):
+    """既存のドキュメントファイルは変更されないこと
+
+    Scenarios:
+      - 出力ディレクトリの独立性
+    """
+    raise NotImplementedError('STEP: 既存のドキュメントファイルは変更されないこと')
 ```
 
 </details>
@@ -368,9 +479,15 @@ def step_impl(context):
 #### Given DoorstopプロジェクトとGherkin featureファイルが存在する
 
 ```python
-@given(u'DoorstopプロジェクトとGherkin featureファイルが存在する')
-def step_impl(context):
-    pass
+@given('DoorstopプロジェクトとGherkin featureファイルが存在する')  # type: ignore
+def given_8a7b1a87(context):
+    """DoorstopプロジェクトとGherkin featureファイルが存在する
+
+    Scenarios:
+      - MkDocs設定ファイルの生成
+      - カスタム出力ディレクトリの指定
+    """
+    raise NotImplementedError('STEP: DoorstopプロジェクトとGherkin featureファイルが存在する')
 ```
 
 #### When build コマンドを --out-dir "./custom_docs" で実行する
@@ -406,7 +523,7 @@ def then_32de837a(context, param0):
 ---
 ## Scenario: feature MDページへのバックリンク生成
 
-**タグ**: `@SPEC-014`
+**タグ**: `@VIS-008`
 
 - **Given** "@SPEC-003" タグを持つ "audit.feature" が存在する
 - **When** build コマンドを実行する
@@ -475,20 +592,20 @@ def then_3dd5fc62(context, param0):
 ---
 ## Scenario: 複数アイテムを参照するfeatureのバックリンク
 
-**タグ**: `@SPEC-014`
+**タグ**: `@VIS-008`
 
-- **Given** "@SPEC-004" と "@SPEC-009" の両タグを持つfeatureが存在する
+- **Given** "@VIS-001" と "@VIS-005" の両タグを持つfeatureが存在する
 - **When** build コマンドを実行する
-- **Then** 生成されたfeature MDの "関連アイテム" に "SPEC-004" と "SPEC-009" の両方のリンクが含まれること
+- **Then** 生成されたfeature MDの "関連アイテム" に "VIS-001" と "VIS-005" の両方のリンクが含まれること
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
-#### Given "@SPEC-004" と "@SPEC-009" の両タグを持つfeatureが存在する
+#### Given "@VIS-001" と "@VIS-005" の両タグを持つfeatureが存在する
 
 ```python
 @given('"{param0}" と "{param1}" の両タグを持つfeatureが存在する')  # type: ignore
 def given_1d9c057d(context, param0, param1):
-    """"@SPEC-004" と "@SPEC-009" の両タグを持つfeatureが存在する
+    """"@VIS-001" と "@VIS-005" の両タグを持つfeatureが存在する
 
     Scenarios:
       - 複数アイテムを参照するfeatureのバックリンク
@@ -511,12 +628,12 @@ def when_40f323b6(context):
     pass
 ```
 
-#### Then 生成されたfeature MDの "関連アイテム" に "SPEC-004" と "SPEC-009" の両方のリンクが含まれること
+#### Then 生成されたfeature MDの "関連アイテム" に "VIS-001" と "VIS-005" の両方のリンクが含まれること
 
 ```python
 @then('生成されたfeature MDの "{param0}" に "{param1}" と "{param2}" の両方のリンクが含まれること')  # type: ignore
 def then_d670dbfb(context, param0, param1, param2):
-    """生成されたfeature MDの "関連アイテム" に "SPEC-004" と "SPEC-009" の両方のリンクが含まれること
+    """生成されたfeature MDの "関連アイテム" に "VIS-001" と "VIS-005" の両方のリンクが含まれること
 
     Scenarios:
       - 複数アイテムを参照するfeatureのバックリンク
@@ -530,7 +647,7 @@ def then_d670dbfb(context, param0, param1, param2):
 ---
 ## Scenario: タグのないfeatureにはバックリンクを表示しない
 
-**タグ**: `@SPEC-014`
+**タグ**: `@VIS-008`
 
 - **Given** どのDoorstopアイテムからも参照されていないfeatureが存在する
 - **When** build コマンドを実行する
@@ -541,9 +658,14 @@ def then_d670dbfb(context, param0, param1, param2):
 #### Given どのDoorstopアイテムからも参照されていないfeatureが存在する
 
 ```python
-@given(u'どのDoorstopアイテムからも参照されていないfeatureが存在する')
-def step_impl(context):
-    pass
+@given('どのDoorstopアイテムからも参照されていないfeatureが存在する')  # type: ignore
+def given_486efd83(context):
+    """どのDoorstopアイテムからも参照されていないfeatureが存在する
+
+    Scenarios:
+      - タグのないfeatureにはバックリンクを表示しない
+    """
+    raise NotImplementedError('STEP: どのDoorstopアイテムからも参照されていないfeatureが存在する')
 ```
 
 #### When build コマンドを実行する
@@ -580,7 +702,7 @@ def then_7458537c(context, param0):
 ---
 ## Scenario: Suspect Link 警告の一覧テーブル表示
 
-**タグ**: `@SPEC-005`
+**タグ**: `@QA-001`
 
 - **Given** アイテムの上位リンク先が変更されている（cleared=false）
 - **When** build コマンドを実行する
@@ -592,9 +714,14 @@ def then_7458537c(context, param0):
 #### Given アイテムの上位リンク先が変更されている（cleared=false）
 
 ```python
-@given(u'アイテムの上位リンク先が変更されている（cleared=false）')
-def step_impl(context):
-    pass
+@given('アイテムの上位リンク先が変更されている（cleared=false）')  # type: ignore
+def given_5951291a(context):
+    """アイテムの上位リンク先が変更されている（cleared=false）
+
+    Scenarios:
+      - Suspect Link 警告の一覧テーブル表示
+    """
+    raise NotImplementedError('STEP: アイテムの上位リンク先が変更されている（cleared=false）')
 ```
 
 #### When build コマンドを実行する
@@ -630,9 +757,14 @@ def then_011c6eae(context, param0):
 #### And 詳細ページに Suspect Link バナーが表示されること
 
 ```python
-@then(u'詳細ページに Suspect Link バナーが表示されること')
-def step_impl(context):
-    pass
+@then('詳細ページに Suspect Link バナーが表示されること')  # type: ignore
+def then_b9db4871(context):
+    """詳細ページに Suspect Link バナーが表示されること
+
+    Scenarios:
+      - Suspect Link 警告の一覧テーブル表示
+    """
+    raise NotImplementedError('STEP: 詳細ページに Suspect Link バナーが表示されること')
 ```
 
 </details>
@@ -641,7 +773,7 @@ def step_impl(context):
 ---
 ## Scenario: Unreviewed Changes 警告の一覧テーブル表示
 
-**タグ**: `@SPEC-005`
+**タグ**: `@QA-001`
 
 - **Given** アイテム自体に未レビューの変更がある（reviewed=false）
 - **When** build コマンドを実行する
@@ -653,9 +785,14 @@ def step_impl(context):
 #### Given アイテム自体に未レビューの変更がある（reviewed=false）
 
 ```python
-@given(u'アイテム自体に未レビューの変更がある（reviewed=false）')
-def step_impl(context):
-    pass
+@given('アイテム自体に未レビューの変更がある（reviewed=false）')  # type: ignore
+def given_60830b9f(context):
+    """アイテム自体に未レビューの変更がある（reviewed=false）
+
+    Scenarios:
+      - Unreviewed Changes 警告の一覧テーブル表示
+    """
+    raise NotImplementedError('STEP: アイテム自体に未レビューの変更がある（reviewed=false）')
 ```
 
 #### When build コマンドを実行する
@@ -691,9 +828,14 @@ def then_011c6eae(context, param0):
 #### And 詳細ページに Unreviewed Changes バナーが表示されること
 
 ```python
-@then(u'詳細ページに Unreviewed Changes バナーが表示されること')
-def step_impl(context):
-    pass
+@then('詳細ページに Unreviewed Changes バナーが表示されること')  # type: ignore
+def then_e1fe71d4(context):
+    """詳細ページに Unreviewed Changes バナーが表示されること
+
+    Scenarios:
+      - Unreviewed Changes 警告の一覧テーブル表示
+    """
+    raise NotImplementedError('STEP: 詳細ページに Unreviewed Changes バナーが表示されること')
 ```
 
 </details>
@@ -702,7 +844,7 @@ def step_impl(context):
 ---
 ## Scenario: 複合警告の表示
 
-**タグ**: `@SPEC-005`
+**タグ**: `@QA-001`
 
 - **Given** アイテムに Suspect Link と Unreviewed Changes の両方がある
 - **When** build コマンドを実行する
@@ -713,9 +855,14 @@ def step_impl(context):
 #### Given アイテムに Suspect Link と Unreviewed Changes の両方がある
 
 ```python
-@given(u'アイテムに Suspect Link と Unreviewed Changes の両方がある')
-def step_impl(context):
-    pass
+@given('アイテムに Suspect Link と Unreviewed Changes の両方がある')  # type: ignore
+def given_89f3d16e(context):
+    """アイテムに Suspect Link と Unreviewed Changes の両方がある
+
+    Scenarios:
+      - 複合警告の表示
+    """
+    raise NotImplementedError('STEP: アイテムに Suspect Link と Unreviewed Changes の両方がある')
 ```
 
 #### When build コマンドを実行する
@@ -756,8 +903,12 @@ def then_011c6eae(context, param0):
 <details><summary>Raw .feature source</summary>
 
 ```gherkin
-# spec-weaver-fingerprint: 4d1abc0d24ab84d4b44873ab7fcc439c3e9951bd4046244b1bef9e31f22ac785
-@SPEC-004
+# spec-weaver-fingerprint: 8bb5e928220074386409f6de0c4ba9d25712d344bfcd76bdf4f6c6d5aa205dec
+# spec-weaver-fingerprint-QA-001: IVjwbWJI8Xga_1LFrHA_SqnpsZ_-MHzjo-w7D9zwEYE=
+# spec-weaver-fingerprint-VIS-001: vS8HMajMu_ierl6Dvv5xBk1dtLB30WMIGR7OIcwtLdk=
+# spec-weaver-fingerprint-VIS-005: cnyg43CeR6DlR-nhO8_IOS6ZTbkaQoU6UoJyLvsS-JY=
+# spec-weaver-fingerprint-VIS-008: 7sf3VezCdcJHKBaReMXoTyez2UxrlkvvZ8PvQBGdcA8=
+@VIS-001
 Feature: build コマンド
   Doorstopの仕様データとGherkinテストを統合した
   MkDocsドキュメントサイトを自動生成する。
@@ -790,7 +941,7 @@ Feature: build コマンド
     And   上位・下位リンクが含まれること
     And   対応するテストシナリオのファイルパスと行番号が含まれること
 
-  @SPEC-009
+  @VIS-005
   Scenario: 一覧テーブルのフィルタリング機能
     Given Doorstopプロジェクトにアイテムが存在する
     When  build コマンドを実行する
@@ -808,40 +959,40 @@ Feature: build コマンド
     When  build コマンドを --out-dir "./custom_docs" で実行する
     Then  "./custom_docs" ディレクトリに出力されること
 
-  @SPEC-014
+  @VIS-008
   Scenario: feature MDページへのバックリンク生成
     Given "@SPEC-003" タグを持つ "audit.feature" が存在する
     When  build コマンドを実行する
     Then  "docs/features/audit.md" の冒頭に "関連アイテム" セクションが含まれること
     And   "[SPEC-003](../items/SPEC-003.md)" へのリンクが含まれること
 
-  @SPEC-014
+  @VIS-008
   Scenario: 複数アイテムを参照するfeatureのバックリンク
-    Given "@SPEC-004" と "@SPEC-009" の両タグを持つfeatureが存在する
+    Given "@VIS-001" と "@VIS-005" の両タグを持つfeatureが存在する
     When  build コマンドを実行する
-    Then  生成されたfeature MDの "関連アイテム" に "SPEC-004" と "SPEC-009" の両方のリンクが含まれること
+    Then  生成されたfeature MDの "関連アイテム" に "VIS-001" と "VIS-005" の両方のリンクが含まれること
 
-  @SPEC-014
+  @VIS-008
   Scenario: タグのないfeatureにはバックリンクを表示しない
     Given どのDoorstopアイテムからも参照されていないfeatureが存在する
     When  build コマンドを実行する
     Then  生成されたfeature MDに "関連アイテム" 行が含まれないこと
 
-  @SPEC-005
+  @QA-001
   Scenario: Suspect Link 警告の一覧テーブル表示
     Given アイテムの上位リンク先が変更されている（cleared=false）
     When  build コマンドを実行する
     Then  一覧テーブルの行に "{: .suspect-row }" が適用されていること
     And   詳細ページに Suspect Link バナーが表示されること
 
-  @SPEC-005
+  @QA-001
   Scenario: Unreviewed Changes 警告の一覧テーブル表示
     Given アイテム自体に未レビューの変更がある（reviewed=false）
     When  build コマンドを実行する
     Then  一覧テーブルの行に "{: .unreviewed-row }" が適用されていること
     And   詳細ページに Unreviewed Changes バナーが表示されること
 
-  @SPEC-005
+  @QA-001
   Scenario: 複合警告の表示
     Given アイテムに Suspect Link と Unreviewed Changes の両方がある
     When  build コマンドを実行する

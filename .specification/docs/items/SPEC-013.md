@@ -1,7 +1,6 @@
 # [SPEC-013] タイムスタンプ鮮度の監査チェック
 
-> ⚠️ **Suspect**: 関連するアイテムやテストが変更されました。影響範囲のレビューが必要です。
-> **原因 (Unreviewed)**: `./specification/features/timestamp.feature`
+> 🚫 **非活性 (active: false)**: このアイテムは非活性です。[QA-002](QA-002.md) に移行されました。
 
 **実装状況**: ✅ implemented
 
@@ -9,7 +8,7 @@
 
 **上位アイテム**: [REQ-002](REQ-002.md), [REQ-010](REQ-010.md) / **兄弟アイテム**: [SPEC-002](SPEC-002.md), [SPEC-011](SPEC-011.md), [SPEC-012](SPEC-012.md)
 
-**テスト対象**: Yes　**個別カバレッジ**: 🟢 1/1 (100%)
+**テスト対象**: Yes　**個別カバレッジ**: 🔴 0/1 (0%)
 
 
 ### 内容
@@ -51,7 +50,7 @@ stale アイテムが検出された場合、既存の監査結果テーブル�
 ┌──────────┬────────────────────────┬────────────┬──────────┐
 │ ID       │ タイトル               │ 最終更新日  │ 経過日数  │
 ├──────────┼────────────────────────┼────────────┼──────────┤
-│ SPEC-002 │ データ抽出基盤          │ 2025-11-01 │ 117日    │
+│ CORE-001 │ データ抽出基盤          │ 2025-11-01 │ 117日    │
 └──────────┴────────────────────────┴────────────┴──────────┘
 ```
 
@@ -62,8 +61,4 @@ stale アイテムが検出された場合、既存の監査結果テーブル�
 
 ### 🧪 検証シナリオ
 
-- **stale アイテムの検出（Git履歴ベース）** — Scenario （`./specification/features/timestamp.feature:57`）
-- **閾値内のアイテムは stale と判定されない** — Scenario （`./specification/features/timestamp.feature:65`）
-- **Git情報もupdated_atもないアイテムは stale 判定の対象外** — Scenario （`./specification/features/timestamp.feature:71`）
-- **deprecated アイテムは stale 判定の対象外** — Scenario （`./specification/features/timestamp.feature:77`）
-- **--stale-days 0 で鮮度チェックを無効化** — Scenario （`./specification/features/timestamp.feature:84`）
+❌ まだ Gherkin シナリオが登録されていません。

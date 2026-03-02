@@ -1,4 +1,4 @@
-active: true
+active: false
 derived: false
 gherkin_fingerprints:
 - ./specification/features/impl_link.feature: |
@@ -10,9 +10,10 @@ impl_files:
 level: 19.0
 links:
 - REQ-012: W1M-g8bMakjNSi3dVoSS2rEjVb7A3bfA2f3UYepGHok=
+migrated_to: QA-003
 normative: true
 ref: ''
-reviewed: daEi-eFXEldqkhQGp-To0yEQw8osj44tV_mnUTFgGTM=
+reviewed: PCNU2F9G4DJdceCEZhoQPXBCh5G1M0Zlbi2rwIVwohc=
 status: implemented
 test_fingerprint: |
   41dcbf4a7faa415e07ef63246c95e474b424447dfdad377e0db239885ff3b30f
@@ -53,7 +54,7 @@ text: |
      SPEC-001 → src/spec_weaver/old_file.py (not found)
 
   ⚠️  ref のみ（アノテーションなし）:
-     SPEC-002 → src/spec_weaver/cli.py
+     CORE-001 → src/spec_weaver/cli.py
 
   ⚠️  アノテーションのみ（ref なし）:
      SPEC-003 ← src/spec_weaver/gherkin.py

@@ -1,5 +1,5 @@
-# spec-weaver-fingerprint: 6f3cf5898c917b9ffe6f61820c2e1ed326b62e94db893fe34667ced069d7d12c
-# spec-weaver-fingerprint-SPEC-005: ko9DXrE8njCAf21N2IQW1wLFn08o243gRE4eVAyjr1I=
+# spec-weaver-fingerprint: 482d0d3cc0550cd81612f7b5482ced1e27599656a96356d22af44921e893edd1
+# spec-weaver-fingerprint-QA-001: IVjwbWJI8Xga_1LFrHA_SqnpsZ_-MHzjo-w7D9zwEYE=
 
 Feature: audit コマンド
   仕様とテストの乖離を静的に検知し、CI/CD品質ゲートとして機能する。
@@ -11,10 +11,10 @@ Feature: audit コマンド
     And   成功メッセージが表示されること
 
   Scenario: テスト漏れの検出
-    Given testable な仕様 "SPEC-002" に対応するGherkinテストが存在しない
+    Given testable な仕様 "CORE-001" に対応するGherkinテストが存在しない
     When  audit コマンドを実行する
     Then  終了コード 1 が返ること
-    And   テストが実装されていない仕様として "SPEC-002" が報告されること
+    And   テストが実装されていない仕様として "CORE-001" が報告されること
 
   Scenario: orphanタグの検出
     Given Gherkinに仕様書に存在しない "@SPEC-999" タグが含まれている
@@ -23,7 +23,7 @@ Feature: audit コマンド
     And   orphanタグとして "@SPEC-999" が報告されること
 
   Scenario: テスト漏れとorphanタグの同時検出
-    Given 仕様 "SPEC-002" のテストが未実装で "@SPEC-999" がorphanタグである
+    Given 仕様 "CORE-001" のテストが未実装で "@SPEC-999" がorphanタグである
     When  audit コマンドを実行する
     Then  終了コード 1 が返ること
     And   テスト漏れとorphanタグの両方が報告されること
@@ -34,23 +34,23 @@ Feature: audit コマンド
     When  audit コマンドを実行する
     Then  "SPEC-001" はテスト漏れとして報告されないこと
 
-  @SPEC-005
+  @QA-001
   Scenario: Suspect Link の検出
-    Given 仕様 "SPEC-009" の上位アイテムが変更されている（cleared=false）
+    Given 仕様 "VIS-005" の上位アイテムが変更されている（cleared=false）
     When  audit コマンドを実行する
     Then  終了コード 1 が返ること
-    And   Suspect Link テーブルに "SPEC-009" が報告されること
+    And   Suspect Link テーブルに "VIS-005" が報告されること
     And   変更された上位アイテムのIDが表示されること
 
-  @SPEC-005
+  @QA-001
   Scenario: Unreviewed Changes の検出
-    Given 仕様 "SPEC-009" 自体に未レビューの変更がある（reviewed=false）
+    Given 仕様 "VIS-005" 自体に未レビューの変更がある（reviewed=false）
     When  audit コマンドを実行する
     Then  終了コード 1 が返ること
-    And   Unreviewed Changes テーブルに "SPEC-009" が報告されること
+    And   Unreviewed Changes テーブルに "VIS-005" が報告されること
 
 
-  @SPEC-005
+  @QA-001
   Scenario: feature ファイルが Unreviewed として検出される
     Given ".feature" ファイルのフィンガープリントコメントが現在の内容と一致しない
     When  audit コマンドを実行する

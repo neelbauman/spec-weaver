@@ -1,4 +1,4 @@
-active: true
+active: false
 derived: false
 gherkin_fingerprints:
 - ./specification/features/scaffold.feature: |
@@ -8,6 +8,7 @@ header: |
 level: 3.15
 links:
 - REQ-011: L8Bl65UQLRlIMAdIbMBwE7YNvvUDNz-IySWal4X7iNI=
+migrated_to: AUT-001
 normative: true
 ref: ''
 reviewed: E0kuqT2_S5q_nY8-zFRRmaQT-d9nZjFHrROo4-N9s9o=

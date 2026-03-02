@@ -1,7 +1,7 @@
 from specification.features.steps._helpers import create_doorstop_project_api, write_feature_file, run_spec_weaver
 import os
 """behave steps for: clear コマンド — Doorstop test_fingerprint 更新"""
-# implements: SPEC-025
+# implements: QA-005
 
 from unittest.mock import patch, MagicMock
 from typer.testing import CliRunner
@@ -31,6 +31,7 @@ def given_ddd4e2bc(context, param0):
 
     Scenarios:
       - アイテムIDを指定して test_fingerprint を更新できる
+      - アイテムIDを指定して gherkin_fingerprints を更新できる
     """
     context.target_item_id = param0
 
@@ -41,16 +42,18 @@ def given_efa9578a(context, param0):
 
     Scenarios:
       - アイテムIDを指定して test_fingerprint を更新できる
+      - アイテムIDを指定して gherkin_fingerprints を更新できる
     """
     pass
 
 
 @given('"{param0}" ファイルに複数の仕様IDタグが含まれる')  # type: ignore
 def given_dfa4c4a3(context, param0):
-    """".feature" ファイルに複数の仕様IDタグが含まれる（audit.feature は SPEC-003/SPEC-005 を含むため noop）
+    """".feature" ファイルに複数の仕様IDタグが含まれる（audit.feature は SPEC-003/QA-001 を含むため noop）
 
     Scenarios:
       - .feature ファイルを指定して複数アイテムの test_fingerprint を一括更新できる
+      - .feature ファイルを指定して複数アイテムの gherkin_fingerprints を一括更新できる
     """
     pass
 
@@ -65,11 +68,35 @@ def when_81d90ca5(context):
 
     Scenarios:
       - アイテムIDを指定して test_fingerprint を更新できる
+      - アイテムIDを指定して gherkin_fingerprints を更新できる
     """
     _invoke_clear(context, [
         "clear", "SPEC-003",
         "--feature-dir", "./specification/features",
     ])
+
+
+@then('終了コードが0である')  # type: ignore
+def then_0f800e56(context):
+    """終了コードが0である
+
+    Scenarios:
+      - アイテムIDを指定して test_fingerprint を更新できる
+      - .feature ファイルを指定して複数アイテムの test_fingerprint を一括更新できる
+      - アイテムIDを指定して gherkin_fingerprints を更新できる
+      - .feature ファイルを指定して複数アイテムの gherkin_fingerprints を一括更新できる
+    """
+    raise NotImplementedError('STEP: 終了コードが0である')
+
+
+@then('"{param0}" の YAML に gherkin_fingerprints が書き込まれる')  # type: ignore
+def then_4a7cffb4(context, param0):
+    """"SPEC-003" の YAML に gherkin_fingerprints が書き込まれる
+
+    Scenarios:
+      - アイテムIDを指定して gherkin_fingerprints を更新できる
+    """
+    raise NotImplementedError('STEP: "{param0}" の YAML に gherkin_fingerprints が書き込まれる')
 
 
 @when('`spec-weaver clear specification/features/audit.feature --feature-dir ./specification/features` を実行する')  # type: ignore
@@ -78,11 +105,22 @@ def when_f5108e70(context):
 
     Scenarios:
       - .feature ファイルを指定して複数アイテムの test_fingerprint を一括更新できる
+      - .feature ファイルを指定して複数アイテムの gherkin_fingerprints を一括更新できる
     """
     _invoke_clear(context, [
         "clear", "specification/features/audit.feature",
         "--feature-dir", "./specification/features",
     ])
+
+
+@then('ファイル内の各アイテムの gherkin_fingerprints が更新される')  # type: ignore
+def then_c4c4abcc(context):
+    """ファイル内の各アイテムの gherkin_fingerprints が更新される
+
+    Scenarios:
+      - .feature ファイルを指定して複数アイテムの gherkin_fingerprints を一括更新できる
+    """
+    raise NotImplementedError('STEP: ファイル内の各アイテムの gherkin_fingerprints が更新される')
 
 
 @when('`spec-weaver clear SPEC-999 --feature-dir ./specification/features` を実行する')  # type: ignore
@@ -106,6 +144,33 @@ def when_9a4cc39b(context):
 # @then('終了コードが0である')
 # @then('終了コードが1である')
 
+@then('終了コードが1である')  # type: ignore
+def then_9b731a71(context):
+    """終了コードが1である
+
+    Scenarios:
+      - 存在しないアイテムIDを指定するとエラーになる
+    """
+    raise NotImplementedError('STEP: 終了コードが1である')
+
+
+# [Duplicate Skip] This step is already defined elsewhere
+# @then('エラーメッセージが表示される')  # type: ignore
+# def then_d53287cf(context):
+#     """エラーメッセージが表示される
+# 
+#     Scenarios:
+#       - 存在しないアイテムIDを指定するとエラーになる
+#     """
+#     raise NotImplementedError('STEP: エラーメッセージが表示される')
+@then('エラーメッセージが表示される')  # type: ignore
+def then_d53287cf(context):
+    """エラーメッセージが表示される
+
+    Scenarios:
+      - 存在しないアイテムIDを指定するとエラーになる
+    """
+    raise NotImplementedError('STEP: エラーメッセージが表示される')
 @then('"{param0}" の YAML に test_fingerprint が書き込まれる')  # type: ignore
 def then_7cec042b(context, param0):
     """"SPEC-003" の YAML に test_fingerprint が書き込まれる
@@ -136,6 +201,7 @@ def then_b31aa65d(context):
 
     Scenarios:
       - .feature ファイルを指定して複数アイテムの test_fingerprint を一括更新できる
+      - .feature ファイルを指定して複数アイテムの gherkin_fingerprints を一括更新できる
     """
     assert "合計" in context.output and "個のアイテムの test_fingerprint を更新しました" in context.output, (
         f"更新件数メッセージが出力にありません。output:\n{context.output}"

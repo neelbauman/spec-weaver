@@ -1,4 +1,4 @@
-active: true
+active: false
 derived: false
 gherkin_fingerprints:
 - ./specification/features/timestamp.feature: |
@@ -9,9 +9,10 @@ level: 10.3
 links:
 - REQ-002: AL9bDV_13Z_dFORw5rjP1YoJvrpxV9BwxqcTBuTGPsA=
 - REQ-010: ECPuWqjRylWWFNUNmco_ygq9reO2BgGgFUNtymMh_HU=
+migrated_to: QA-002
 normative: true
 ref: ''
-reviewed: Gxr7qp0_vLAjgUQuPbLWNzmmIJjAxLI5s5HXdH1tuU8=
+reviewed: uxw9ggDuz9cI8n119Fbv2b27XY4b2Bobz9kNs86Ze7E=
 status: implemented
 test_fingerprint: |
   02387c22b53dab99ee616928a478a8033921a31c6cd535262638d7e14c747d38
@@ -54,7 +55,7 @@ text: |
   ┌──────────┬────────────────────────┬────────────┬──────────┐
   │ ID       │ タイトル               │ 最終更新日  │ 経過日数  │
   ├──────────┼────────────────────────┼────────────┼──────────┤
-  │ SPEC-002 │ データ抽出基盤          │ 2025-11-01 │ 117日    │
+  │ CORE-001 │ データ抽出基盤          │ 2025-11-01 │ 117日    │
   └──────────┴────────────────────────┴────────────┴──────────┘
   ```
 

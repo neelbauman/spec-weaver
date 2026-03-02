@@ -1,17 +1,14 @@
 # [SPEC-015] scaffold コマンド —  behave テストコード自動生成
 
-> ⚠️ **Suspect**: 関連するアイテムやテストが変更されました。影響範囲のレビューが必要です。
-> **原因 (Unreviewed)**: `./specification/features/scaffold.feature`
+> 🚫 **非活性 (active: false)**: このアイテムは非活性です。[AUT-001](AUT-001.md) に移行されました。
 
 **実装状況**: ✅ implemented
 
 **作成日**: 2026-02-26　|　**更新日**: 2026-03-02
 
-**上位アイテム**: [REQ-011](REQ-011.md) / **下位アイテム**: [PLAN-002](PLAN-002.md) / **兄弟アイテム**: [SPEC-016](SPEC-016.md)
+**上位アイテム**: [REQ-011](REQ-011.md) / **兄弟アイテム**: [SPEC-016](SPEC-016.md)
 
-**テストカバレッジ**:  - （下位アイテムの集計）
-
-**テスト対象**: Yes　**個別カバレッジ**: 🟢 1/1 (100%)
+**テスト対象**: Yes　**個別カバレッジ**: 🔴 0/1 (0%)
 
 
 ### 内容
@@ -82,14 +79,4 @@ spec-weaver scaffold <feature_dir>
 
 ### 🧪 検証シナリオ
 
-- **基本的なテストコード生成** — Scenario （`./specification/features/scaffold.feature:6`）
-- **ハッシュベースの関数名生成** — Scenario （`./specification/features/scaffold.feature:12`）
-- **ステップ関数の生成と重複排除** — Scenario （`./specification/features/scaffold.feature:19`）
-- **Docstring にシナリオリストを記載** — Scenario （`./specification/features/scaffold.feature:24`）
-- **差分マージ（新規ステップ追記）** — Scenario （`./specification/features/scaffold.feature:30`）
-- **差分なし時のスキップ** — Scenario （`./specification/features/scaffold.feature:38`）
-- **既存ファイルの上書き** — Scenario （`./specification/features/scaffold.feature:44`）
-- **Git 未コミット変更の確認プロンプト** — Scenario （`./specification/features/scaffold.feature:49`）
-- **--force オプションで確認プロンプトをスキップ** — Scenario （`./specification/features/scaffold.feature:55`）
-- **差分マージ時の Duplicate スタブのコメント化** — Scenario （`./specification/features/scaffold.feature:60`）
-- **差分マージ時の他ファイルコメント行を Duplicate 判定に使用しない** — Scenario （`./specification/features/scaffold.feature:67`）
+❌ まだ Gherkin シナリオが登録されていません。

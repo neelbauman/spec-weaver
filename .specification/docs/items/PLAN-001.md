@@ -2,20 +2,20 @@
 
 **実装状況**: ✅ implemented
 
-**作成日**: 2026-02-27　|　**更新日**: 2026-03-02
+**作成日**: 2026-02-27　|　**更新日**: 2026-03-03
 
-**上位アイテム**: [SPEC-017](SPEC-017.md), [SPEC-018](SPEC-018.md), [SPEC-019](SPEC-019.md), [SPEC-020](SPEC-020.md)
+**上位アイテム**: [QA-003](QA-003.md), [TRC-002](TRC-002.md), [TRC-003](TRC-003.md), [TRC-004](TRC-004.md)
 
 
 ### 内容
 
 ## 概要
 仕様アイテムと実装ファイルのリンク管理機能を実装する計画。
-SPEC-017〜020 に対応する。
+TRC-002〜020 に対応する。
 
 ## 実装タスク（実行順）
 
-### Task 1: impl_scanner.py の新規作成（SPEC-017, SPEC-018）
+### Task 1: impl_scanner.py の新規作成（TRC-002, TRC-003）
 **ファイル**: `src/spec_weaver/impl_scanner.py`
 **内容**:
 - `get_ref_files(item) -> list[str]`:
@@ -26,13 +26,13 @@ SPEC-017〜020 に対応する。
     `.git/`, `__pycache__/`, `.venv/` 等を除外
     extensions が指定された場合はその拡張子のみ対象
 
-### Task 2: doorstop.py への ref 読み取り関数追加（SPEC-017）
+### Task 2: doorstop.py への ref 読み取り関数追加（TRC-002）
 **ファイル**: `src/spec_weaver/doorstop.py`
 **内容**:
 - impl_scanner.py に get_ref_files を集約するため doorstop.py への追加は最小限とする
 - get_item_map の import を impl_scanner から呼べるよう整理
 
-### Task 3: audit コマンドの拡張（SPEC-019）
+### Task 3: audit コマンドの拡張（QA-003）
 **ファイル**: `src/spec_weaver/cli.py`
 **追加オプション**:
 - `--check-impl` (bool, default: False): 実装ファイルリンク検証を有効化
@@ -45,7 +45,7 @@ SPEC-017〜020 に対応する。
    b. ref にあってアノテーションなし（⚠️）
    c. アノテーションあって ref なし（⚠️）
 
-### Task 4: trace コマンドの拡張（SPEC-020）
+### Task 4: trace コマンドの拡張（TRC-004）
 **ファイル**: `src/spec_weaver/cli.py`
 **追加オプション**:
 - `--show-impl` (bool, default: False): 実装ファイルをツリー表示
@@ -90,5 +90,5 @@ Task 1〜5 → Task 6（スキル更新は最後）
 ## 完了条件
 - uv run pytest tests/ -q が全て通過
 - uv run spec-weaver audit --check-impl ./specification/features が正常終了
-- uv run spec-weaver trace SPEC-018 -f ./specification/features --show-impl が正常表示
+- uv run spec-weaver trace TRC-003 -f ./specification/features --show-impl が正常表示
 - uv run spec-weaver audit ./specification/features が従来通り動作

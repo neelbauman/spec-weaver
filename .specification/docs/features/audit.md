@@ -1,6 +1,6 @@
 # Feature: audit コマンド
 
-**タグ**: `@SPEC-003`
+**関連アイテム**: [QA-001](../items/QA-001.md)
 
 仕様とテストの乖離を静的に検知し、CI/CD品質ゲートとして機能する。
 
@@ -17,19 +17,34 @@
 #### Given すべてのtestable仕様に対応するGherkinテストが存在する
 
 ```python
-@given(u'すべてのtestable仕様に対応するGherkinテストが存在する')
-def step_impl(context):
-    pass
+@given('すべてのtestable仕様に対応するGherkinテストが存在する')  # type: ignore
+def given_a7b8516a(context):
+    """すべてのtestable仕様に対応するGherkinテストが存在する
+
+    Scenarios:
+      - 完全一致で、監査が成功する
+    """
+    raise NotImplementedError('STEP: すべてのtestable仕様に対応するGherkinテストが存在する')
 ```
 
 #### When audit コマンドを実行する
 
 ```python
-@when(u'audit コマンドを実行する')
-def step_impl(context):
-    res = run_spec_weaver(['audit', '-f', str(getattr(context, 'temp_dir', '.'))], cwd=getattr(context, 'temp_dir', '.'))
-    context.exit_code = getattr(res, 'returncode', 0)
-    context.output = getattr(res, 'stdout', '') + chr(10) + getattr(res, 'stderr', '')
+@when('audit コマンドを実行する')  # type: ignore
+def when_20ad7547(context):
+    """audit コマンドを実行する
+
+    Scenarios:
+      - 完全一致で、監査が成功する
+      - テスト漏れの検出
+      - orphanタグの検出
+      - テスト漏れとorphanタグの同時検出
+      - testable: false の仕様はスキップされる
+      - Suspect Link の検出
+      - Unreviewed Changes の検出
+      - feature ファイルが Unreviewed として検出される
+    """
+    raise NotImplementedError('STEP: audit コマンドを実行する')
 ```
 
 #### Then 終了コード 0 が返ること
@@ -52,9 +67,15 @@ def then_4f25c571(context):
 #### And 成功メッセージが表示されること
 
 ```python
-@then(u'成功メッセージが表示されること')
-def step_impl(context):
-    pass
+@then('成功メッセージが表示されること')  # type: ignore
+def then_f7642361(context):
+    """成功メッセージが表示されること
+
+    Scenarios:
+      - 完全一致で、監査が成功する
+      - orphanタグの検出
+    """
+    raise NotImplementedError('STEP: 成功メッセージが表示されること')
 ```
 
 </details>
@@ -63,45 +84,71 @@ def step_impl(context):
 ---
 ## Scenario: テスト漏れの検出
 
-- **Given** testable な仕様 "SPEC-002" に対応するGherkinテストが存在しない
+- **Given** testable な仕様 "CORE-001" に対応するGherkinテストが存在しない
 - **When** audit コマンドを実行する
 - **Then** 終了コード 1 が返ること
-- **And** テストが実装されていない仕様として "SPEC-002" が報告されること
+- **And** テストが実装されていない仕様として "CORE-001" が報告されること
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
-#### Given testable な仕様 "SPEC-002" に対応するGherkinテストが存在しない
+#### Given testable な仕様 "CORE-001" に対応するGherkinテストが存在しない
 
 ```python
-@given(u'testable な仕様 "SPEC-002" に対応するGherkinテストが存在しない')
-def step_impl(context):
-    pass
+@given('testable な仕様 "{param0}" に対応するGherkinテストが存在しない')  # type: ignore
+def given_03339ad7(context, param0):
+    """testable な仕様 "CORE-001" に対応するGherkinテストが存在しない
+
+    Scenarios:
+      - テスト漏れの検出
+      - テスト漏れとorphanタグの同時検出
+    """
+    raise NotImplementedError('STEP: testable な仕様 "{param0}" に対応するGherkinテストが存在しない')
 ```
 
 #### When audit コマンドを実行する
 
 ```python
-@when(u'audit コマンドを実行する')
-def step_impl(context):
-    res = run_spec_weaver(['audit', '-f', str(getattr(context, 'temp_dir', '.'))], cwd=getattr(context, 'temp_dir', '.'))
-    context.exit_code = getattr(res, 'returncode', 0)
-    context.output = getattr(res, 'stdout', '') + chr(10) + getattr(res, 'stderr', '')
+@when('audit コマンドを実行する')  # type: ignore
+def when_20ad7547(context):
+    """audit コマンドを実行する
+
+    Scenarios:
+      - 完全一致で、監査が成功する
+      - テスト漏れの検出
+      - orphanタグの検出
+      - テスト漏れとorphanタグの同時検出
+      - testable: false の仕様はスキップされる
+      - Suspect Link の検出
+      - Unreviewed Changes の検出
+      - feature ファイルが Unreviewed として検出される
+    """
+    raise NotImplementedError('STEP: audit コマンドを実行する')
 ```
 
 #### Then 終了コード 1 が返ること
 
 ```python
-@then(u'終了コード 1 が返ること')
-def step_impl(context):
-    context.exit_code = 1 # force pass for stub
+@then('終了コード 1 が返ること')  # type: ignore
+def then_4dccc2fd(context):
+    """終了コード 1 が返ること
+
+    Scenarios:
+      - テスト漏れの検出
+      - orphanタグの検出
+      - テスト漏れとorphanタグの同時検出
+      - Suspect Link の検出
+      - Unreviewed Changes の検出
+      - feature ファイルが Unreviewed として検出される
+    """
+    raise NotImplementedError('STEP: 終了コード 1 が返ること')
 ```
 
-#### And テストが実装されていない仕様として "SPEC-002" が報告されること
+#### And テストが実装されていない仕様として "CORE-001" が報告されること
 
 ```python
 @then('テストが実装されていない仕様として "{param0}" が報告されること')  # type: ignore
 def then_6664aa42(context, param0):
-    """テストが実装されていない仕様として "SPEC-002" が報告されること
+    """テストが実装されていない仕様として "CORE-001" が報告されること
 
     Scenarios:
       - テスト漏れの検出
@@ -138,19 +185,39 @@ def given_3aa00113(context, param0):
 #### When audit コマンドを実行する
 
 ```python
-@when(u'audit コマンドを実行する')
-def step_impl(context):
-    res = run_spec_weaver(['audit', '-f', str(getattr(context, 'temp_dir', '.'))], cwd=getattr(context, 'temp_dir', '.'))
-    context.exit_code = getattr(res, 'returncode', 0)
-    context.output = getattr(res, 'stdout', '') + chr(10) + getattr(res, 'stderr', '')
+@when('audit コマンドを実行する')  # type: ignore
+def when_20ad7547(context):
+    """audit コマンドを実行する
+
+    Scenarios:
+      - 完全一致で、監査が成功する
+      - テスト漏れの検出
+      - orphanタグの検出
+      - テスト漏れとorphanタグの同時検出
+      - testable: false の仕様はスキップされる
+      - Suspect Link の検出
+      - Unreviewed Changes の検出
+      - feature ファイルが Unreviewed として検出される
+    """
+    raise NotImplementedError('STEP: audit コマンドを実行する')
 ```
 
 #### Then 終了コード 1 が返ること
 
 ```python
-@then(u'終了コード 1 が返ること')
-def step_impl(context):
-    context.exit_code = 1 # force pass for stub
+@then('終了コード 1 が返ること')  # type: ignore
+def then_4dccc2fd(context):
+    """終了コード 1 が返ること
+
+    Scenarios:
+      - テスト漏れの検出
+      - orphanタグの検出
+      - テスト漏れとorphanタグの同時検出
+      - Suspect Link の検出
+      - Unreviewed Changes の検出
+      - feature ファイルが Unreviewed として検出される
+    """
+    raise NotImplementedError('STEP: 終了コード 1 が返ること')
 ```
 
 #### And orphanタグとして "@SPEC-999" が報告されること
@@ -172,19 +239,19 @@ def then_33c30716(context, param0):
 ---
 ## Scenario: テスト漏れとorphanタグの同時検出
 
-- **Given** 仕様 "SPEC-002" のテストが未実装で "@SPEC-999" がorphanタグである
+- **Given** 仕様 "CORE-001" のテストが未実装で "@SPEC-999" がorphanタグである
 - **When** audit コマンドを実行する
 - **Then** 終了コード 1 が返ること
 - **And** テスト漏れとorphanタグの両方が報告されること
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
-#### Given 仕様 "SPEC-002" のテストが未実装で "@SPEC-999" がorphanタグである
+#### Given 仕様 "CORE-001" のテストが未実装で "@SPEC-999" がorphanタグである
 
 ```python
 @given('仕様 "{param0}" のテストが未実装で "{param1}" がorphanタグである')  # type: ignore
 def given_ffdcf7f2(context, param0, param1):
-    """仕様 "SPEC-002" のテストが未実装で "@SPEC-999" がorphanタグである
+    """仕様 "CORE-001" のテストが未実装で "@SPEC-999" がorphanタグである
 
     Scenarios:
       - テスト漏れとorphanタグの同時検出
@@ -195,27 +262,52 @@ def given_ffdcf7f2(context, param0, param1):
 #### When audit コマンドを実行する
 
 ```python
-@when(u'audit コマンドを実行する')
-def step_impl(context):
-    res = run_spec_weaver(['audit', '-f', str(getattr(context, 'temp_dir', '.'))], cwd=getattr(context, 'temp_dir', '.'))
-    context.exit_code = getattr(res, 'returncode', 0)
-    context.output = getattr(res, 'stdout', '') + chr(10) + getattr(res, 'stderr', '')
+@when('audit コマンドを実行する')  # type: ignore
+def when_20ad7547(context):
+    """audit コマンドを実行する
+
+    Scenarios:
+      - 完全一致で、監査が成功する
+      - テスト漏れの検出
+      - orphanタグの検出
+      - テスト漏れとorphanタグの同時検出
+      - testable: false の仕様はスキップされる
+      - Suspect Link の検出
+      - Unreviewed Changes の検出
+      - feature ファイルが Unreviewed として検出される
+    """
+    raise NotImplementedError('STEP: audit コマンドを実行する')
 ```
 
 #### Then 終了コード 1 が返ること
 
 ```python
-@then(u'終了コード 1 が返ること')
-def step_impl(context):
-    context.exit_code = 1 # force pass for stub
+@then('終了コード 1 が返ること')  # type: ignore
+def then_4dccc2fd(context):
+    """終了コード 1 が返ること
+
+    Scenarios:
+      - テスト漏れの検出
+      - orphanタグの検出
+      - テスト漏れとorphanタグの同時検出
+      - Suspect Link の検出
+      - Unreviewed Changes の検出
+      - feature ファイルが Unreviewed として検出される
+    """
+    raise NotImplementedError('STEP: 終了コード 1 が返ること')
 ```
 
 #### And テスト漏れとorphanタグの両方が報告されること
 
 ```python
-@then(u'テスト漏れとorphanタグの両方が報告されること')
-def step_impl(context):
-    pass
+@then('テスト漏れとorphanタグの両方が報告されること')  # type: ignore
+def then_755ec6da(context):
+    """テスト漏れとorphanタグの両方が報告されること
+
+    Scenarios:
+      - テスト漏れとorphanタグの同時検出
+    """
+    raise NotImplementedError('STEP: テスト漏れとorphanタグの両方が報告されること')
 ```
 
 </details>
@@ -260,11 +352,21 @@ def given_ea690d53(context, param0):
 #### When audit コマンドを実行する
 
 ```python
-@when(u'audit コマンドを実行する')
-def step_impl(context):
-    res = run_spec_weaver(['audit', '-f', str(getattr(context, 'temp_dir', '.'))], cwd=getattr(context, 'temp_dir', '.'))
-    context.exit_code = getattr(res, 'returncode', 0)
-    context.output = getattr(res, 'stdout', '') + chr(10) + getattr(res, 'stderr', '')
+@when('audit コマンドを実行する')  # type: ignore
+def when_20ad7547(context):
+    """audit コマンドを実行する
+
+    Scenarios:
+      - 完全一致で、監査が成功する
+      - テスト漏れの検出
+      - orphanタグの検出
+      - テスト漏れとorphanタグの同時検出
+      - testable: false の仕様はスキップされる
+      - Suspect Link の検出
+      - Unreviewed Changes の検出
+      - feature ファイルが Unreviewed として検出される
+    """
+    raise NotImplementedError('STEP: audit コマンドを実行する')
 ```
 
 #### Then "SPEC-001" はテスト漏れとして報告されないこと
@@ -286,22 +388,22 @@ def then_55c71a2c(context, param0):
 ---
 ## Scenario: Suspect Link の検出
 
-**タグ**: `@SPEC-005`
+**タグ**: `@QA-001`
 
-- **Given** 仕様 "SPEC-009" の上位アイテムが変更されている（cleared=false）
+- **Given** 仕様 "VIS-005" の上位アイテムが変更されている（cleared=false）
 - **When** audit コマンドを実行する
 - **Then** 終了コード 1 が返ること
-- **And** Suspect Link テーブルに "SPEC-009" が報告されること
+- **And** Suspect Link テーブルに "VIS-005" が報告されること
 - **And** 変更された上位アイテムのIDが表示されること
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
-#### Given 仕様 "SPEC-009" の上位アイテムが変更されている（cleared=false）
+#### Given 仕様 "VIS-005" の上位アイテムが変更されている（cleared=false）
 
 ```python
 @given('仕様 "{param0}" の上位アイテムが変更されている（cleared=false）')  # type: ignore
 def given_db49ffab(context, param0):
-    """仕様 "SPEC-009" の上位アイテムが変更されている（cleared=false）
+    """仕様 "VIS-005" の上位アイテムが変更されている（cleared=false）
 
     Scenarios:
       - Suspect Link の検出
@@ -312,27 +414,47 @@ def given_db49ffab(context, param0):
 #### When audit コマンドを実行する
 
 ```python
-@when(u'audit コマンドを実行する')
-def step_impl(context):
-    res = run_spec_weaver(['audit', '-f', str(getattr(context, 'temp_dir', '.'))], cwd=getattr(context, 'temp_dir', '.'))
-    context.exit_code = getattr(res, 'returncode', 0)
-    context.output = getattr(res, 'stdout', '') + chr(10) + getattr(res, 'stderr', '')
+@when('audit コマンドを実行する')  # type: ignore
+def when_20ad7547(context):
+    """audit コマンドを実行する
+
+    Scenarios:
+      - 完全一致で、監査が成功する
+      - テスト漏れの検出
+      - orphanタグの検出
+      - テスト漏れとorphanタグの同時検出
+      - testable: false の仕様はスキップされる
+      - Suspect Link の検出
+      - Unreviewed Changes の検出
+      - feature ファイルが Unreviewed として検出される
+    """
+    raise NotImplementedError('STEP: audit コマンドを実行する')
 ```
 
 #### Then 終了コード 1 が返ること
 
 ```python
-@then(u'終了コード 1 が返ること')
-def step_impl(context):
-    context.exit_code = 1 # force pass for stub
+@then('終了コード 1 が返ること')  # type: ignore
+def then_4dccc2fd(context):
+    """終了コード 1 が返ること
+
+    Scenarios:
+      - テスト漏れの検出
+      - orphanタグの検出
+      - テスト漏れとorphanタグの同時検出
+      - Suspect Link の検出
+      - Unreviewed Changes の検出
+      - feature ファイルが Unreviewed として検出される
+    """
+    raise NotImplementedError('STEP: 終了コード 1 が返ること')
 ```
 
-#### And Suspect Link テーブルに "SPEC-009" が報告されること
+#### And Suspect Link テーブルに "VIS-005" が報告されること
 
 ```python
 @then('Suspect Link テーブルに "{param0}" が報告されること')  # type: ignore
 def then_0149339a(context, param0):
-    """Suspect Link テーブルに "SPEC-009" が報告されること
+    """Suspect Link テーブルに "VIS-005" が報告されること
 
     Scenarios:
       - Suspect Link の検出
@@ -343,9 +465,14 @@ def then_0149339a(context, param0):
 #### And 変更された上位アイテムのIDが表示されること
 
 ```python
-@then(u'変更された上位アイテムのIDが表示されること')
-def step_impl(context):
-    pass
+@then('変更された上位アイテムのIDが表示されること')  # type: ignore
+def then_407500a2(context):
+    """変更された上位アイテムのIDが表示されること
+
+    Scenarios:
+      - Suspect Link の検出
+    """
+    raise NotImplementedError('STEP: 変更された上位アイテムのIDが表示されること')
 ```
 
 </details>
@@ -354,21 +481,21 @@ def step_impl(context):
 ---
 ## Scenario: Unreviewed Changes の検出
 
-**タグ**: `@SPEC-005`
+**タグ**: `@QA-001`
 
-- **Given** 仕様 "SPEC-009" 自体に未レビューの変更がある（reviewed=false）
+- **Given** 仕様 "VIS-005" 自体に未レビューの変更がある（reviewed=false）
 - **When** audit コマンドを実行する
 - **Then** 終了コード 1 が返ること
-- **And** Unreviewed Changes テーブルに "SPEC-009" が報告されること
+- **And** Unreviewed Changes テーブルに "VIS-005" が報告されること
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
-#### Given 仕様 "SPEC-009" 自体に未レビューの変更がある（reviewed=false）
+#### Given 仕様 "VIS-005" 自体に未レビューの変更がある（reviewed=false）
 
 ```python
 @given('仕様 "{param0}" 自体に未レビューの変更がある（reviewed=false）')  # type: ignore
 def given_8ceeca7b(context, param0):
-    """仕様 "SPEC-009" 自体に未レビューの変更がある（reviewed=false）
+    """仕様 "VIS-005" 自体に未レビューの変更がある（reviewed=false）
 
     Scenarios:
       - Unreviewed Changes の検出
@@ -379,27 +506,47 @@ def given_8ceeca7b(context, param0):
 #### When audit コマンドを実行する
 
 ```python
-@when(u'audit コマンドを実行する')
-def step_impl(context):
-    res = run_spec_weaver(['audit', '-f', str(getattr(context, 'temp_dir', '.'))], cwd=getattr(context, 'temp_dir', '.'))
-    context.exit_code = getattr(res, 'returncode', 0)
-    context.output = getattr(res, 'stdout', '') + chr(10) + getattr(res, 'stderr', '')
+@when('audit コマンドを実行する')  # type: ignore
+def when_20ad7547(context):
+    """audit コマンドを実行する
+
+    Scenarios:
+      - 完全一致で、監査が成功する
+      - テスト漏れの検出
+      - orphanタグの検出
+      - テスト漏れとorphanタグの同時検出
+      - testable: false の仕様はスキップされる
+      - Suspect Link の検出
+      - Unreviewed Changes の検出
+      - feature ファイルが Unreviewed として検出される
+    """
+    raise NotImplementedError('STEP: audit コマンドを実行する')
 ```
 
 #### Then 終了コード 1 が返ること
 
 ```python
-@then(u'終了コード 1 が返ること')
-def step_impl(context):
-    context.exit_code = 1 # force pass for stub
+@then('終了コード 1 が返ること')  # type: ignore
+def then_4dccc2fd(context):
+    """終了コード 1 が返ること
+
+    Scenarios:
+      - テスト漏れの検出
+      - orphanタグの検出
+      - テスト漏れとorphanタグの同時検出
+      - Suspect Link の検出
+      - Unreviewed Changes の検出
+      - feature ファイルが Unreviewed として検出される
+    """
+    raise NotImplementedError('STEP: 終了コード 1 が返ること')
 ```
 
-#### And Unreviewed Changes テーブルに "SPEC-009" が報告されること
+#### And Unreviewed Changes テーブルに "VIS-005" が報告されること
 
 ```python
 @then('Unreviewed Changes テーブルに "{param0}" が報告されること')  # type: ignore
 def then_56101a52(context, param0):
-    """Unreviewed Changes テーブルに "SPEC-009" が報告されること
+    """Unreviewed Changes テーブルに "VIS-005" が報告されること
 
     Scenarios:
       - Unreviewed Changes の検出
@@ -413,7 +560,7 @@ def then_56101a52(context, param0):
 ---
 ## Scenario: feature ファイルが Unreviewed として検出される
 
-**タグ**: `@SPEC-005`
+**タグ**: `@QA-001`
 
 - **Given** ".feature" ファイルのフィンガープリントコメントが現在の内容と一致しない
 - **When** audit コマンドを実行する
@@ -438,27 +585,52 @@ def given_f066bd3a(context, param0):
 #### When audit コマンドを実行する
 
 ```python
-@when(u'audit コマンドを実行する')
-def step_impl(context):
-    res = run_spec_weaver(['audit', '-f', str(getattr(context, 'temp_dir', '.'))], cwd=getattr(context, 'temp_dir', '.'))
-    context.exit_code = getattr(res, 'returncode', 0)
-    context.output = getattr(res, 'stdout', '') + chr(10) + getattr(res, 'stderr', '')
+@when('audit コマンドを実行する')  # type: ignore
+def when_20ad7547(context):
+    """audit コマンドを実行する
+
+    Scenarios:
+      - 完全一致で、監査が成功する
+      - テスト漏れの検出
+      - orphanタグの検出
+      - テスト漏れとorphanタグの同時検出
+      - testable: false の仕様はスキップされる
+      - Suspect Link の検出
+      - Unreviewed Changes の検出
+      - feature ファイルが Unreviewed として検出される
+    """
+    raise NotImplementedError('STEP: audit コマンドを実行する')
 ```
 
 #### Then 終了コード 1 が返ること
 
 ```python
-@then(u'終了コード 1 が返ること')
-def step_impl(context):
-    context.exit_code = 1 # force pass for stub
+@then('終了コード 1 が返ること')  # type: ignore
+def then_4dccc2fd(context):
+    """終了コード 1 が返ること
+
+    Scenarios:
+      - テスト漏れの検出
+      - orphanタグの検出
+      - テスト漏れとorphanタグの同時検出
+      - Suspect Link の検出
+      - Unreviewed Changes の検出
+      - feature ファイルが Unreviewed として検出される
+    """
+    raise NotImplementedError('STEP: 終了コード 1 が返ること')
 ```
 
 #### And Unreviewed テーブルに対応する feature ファイル名が表示されること
 
 ```python
-@then(u'Unreviewed テーブルに対応する feature ファイル名が表示されること')
-def step_impl(context):
-    pass
+@then('Unreviewed テーブルに対応する feature ファイル名が表示されること')  # type: ignore
+def then_c1e4063b(context):
+    """Unreviewed テーブルに対応する feature ファイル名が表示されること
+
+    Scenarios:
+      - feature ファイルが Unreviewed として検出される
+    """
+    raise NotImplementedError('STEP: Unreviewed テーブルに対応する feature ファイル名が表示されること')
 ```
 
 </details>
@@ -469,8 +641,9 @@ def step_impl(context):
 <details><summary>Raw .feature source</summary>
 
 ```gherkin
-# spec-weaver-fingerprint: 6f3cf5898c917b9ffe6f61820c2e1ed326b62e94db893fe34667ced069d7d12c
-@SPEC-003
+# spec-weaver-fingerprint: 482d0d3cc0550cd81612f7b5482ced1e27599656a96356d22af44921e893edd1
+# spec-weaver-fingerprint-QA-001: IVjwbWJI8Xga_1LFrHA_SqnpsZ_-MHzjo-w7D9zwEYE=
+
 Feature: audit コマンド
   仕様とテストの乖離を静的に検知し、CI/CD品質ゲートとして機能する。
 
@@ -481,10 +654,10 @@ Feature: audit コマンド
     And   成功メッセージが表示されること
 
   Scenario: テスト漏れの検出
-    Given testable な仕様 "SPEC-002" に対応するGherkinテストが存在しない
+    Given testable な仕様 "CORE-001" に対応するGherkinテストが存在しない
     When  audit コマンドを実行する
     Then  終了コード 1 が返ること
-    And   テストが実装されていない仕様として "SPEC-002" が報告されること
+    And   テストが実装されていない仕様として "CORE-001" が報告されること
 
   Scenario: orphanタグの検出
     Given Gherkinに仕様書に存在しない "@SPEC-999" タグが含まれている
@@ -493,7 +666,7 @@ Feature: audit コマンド
     And   orphanタグとして "@SPEC-999" が報告されること
 
   Scenario: テスト漏れとorphanタグの同時検出
-    Given 仕様 "SPEC-002" のテストが未実装で "@SPEC-999" がorphanタグである
+    Given 仕様 "CORE-001" のテストが未実装で "@SPEC-999" がorphanタグである
     When  audit コマンドを実行する
     Then  終了コード 1 が返ること
     And   テスト漏れとorphanタグの両方が報告されること
@@ -504,23 +677,23 @@ Feature: audit コマンド
     When  audit コマンドを実行する
     Then  "SPEC-001" はテスト漏れとして報告されないこと
 
-  @SPEC-005
+  @QA-001
   Scenario: Suspect Link の検出
-    Given 仕様 "SPEC-009" の上位アイテムが変更されている（cleared=false）
+    Given 仕様 "VIS-005" の上位アイテムが変更されている（cleared=false）
     When  audit コマンドを実行する
     Then  終了コード 1 が返ること
-    And   Suspect Link テーブルに "SPEC-009" が報告されること
+    And   Suspect Link テーブルに "VIS-005" が報告されること
     And   変更された上位アイテムのIDが表示されること
 
-  @SPEC-005
+  @QA-001
   Scenario: Unreviewed Changes の検出
-    Given 仕様 "SPEC-009" 自体に未レビューの変更がある（reviewed=false）
+    Given 仕様 "VIS-005" 自体に未レビューの変更がある（reviewed=false）
     When  audit コマンドを実行する
     Then  終了コード 1 が返ること
-    And   Unreviewed Changes テーブルに "SPEC-009" が報告されること
+    And   Unreviewed Changes テーブルに "VIS-005" が報告されること
 
 
-  @SPEC-005
+  @QA-001
   Scenario: feature ファイルが Unreviewed として検出される
     Given ".feature" ファイルのフィンガープリントコメントが現在の内容と一致しない
     When  audit コマンドを実行する

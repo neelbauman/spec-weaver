@@ -1,4 +1,4 @@
-active: true
+active: false
 created_at: '2026-02-26'
 derived: false
 gherkin_fingerprints:
@@ -9,6 +9,7 @@ header: |
 level: 3.14
 links:
 - REQ-003: Rb8ehO6TwgTYIqN3kXtu3nzq6LWHqvsE0-d2B9HrUWM=
+migrated_to: VIS-008
 normative: true
 ref: ''
 reviewed: Y8BNVjASsF43b1sz2z_ZZPVGYJvQS7UC0Jzg0j2H4nc=

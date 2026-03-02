@@ -1,10 +1,11 @@
-active: true
+active: false
 derived: false
 header: |
   テスト結果統合
 level: 3.1
 links:
 - REQ-005: Gg6zWXQn7051SFUpy4jSQxj7PHpCAVhcpXNoieLBql4=
+migrated_to: VIS-002
 normative: true
 ref: ''
 reviewed: -tmZmxH0myrv9z1rDd5-B1v47Qw5Xig4GMImGcf5eEw=

@@ -1,19 +1,14 @@
 # [SPEC-005] Suspect（変更波及）対応
 
-> 📋 **Unreviewed Changes**: このアイテム自体または関連するテストに未レビューの変更があります。
-
-> ⚠️ **Suspect**: 関連するアイテムやテストが変更されました。影響範囲のレビューが必要です。
-> **原因 (Unreviewed)**: `./specification/features/audit.feature`, `./specification/features/build.feature`
+> 🚫 **非活性 (active: false)**: このアイテムは非活性です。[QA-001](QA-001.md) に移行されました。
 
 **実装状況**: ✅ implemented
 
 **作成日**: 2026-02-26　|　**更新日**: 2026-03-02
 
-**上位アイテム**: [REQ-004](REQ-004.md) / **下位アイテム**: [PLAN-005](PLAN-005.md) / **兄弟アイテム**: [SPEC-024](SPEC-024.md), [SPEC-025](SPEC-025.md)
+**上位アイテム**: [REQ-004](REQ-004.md) / **兄弟アイテム**: [SPEC-024](SPEC-024.md), [SPEC-025](SPEC-025.md)
 
-**テストカバレッジ**:  - （下位アイテムの集計）
-
-**テスト対象**: Yes　**個別カバレッジ**: 🟢 1/1 (100%)
+**テスト対象**: Yes　**個別カバレッジ**: 🔴 0/1 (0%)
 
 
 ### 内容
@@ -65,9 +60,4 @@ DoorstopのSuspect機能を活用した変更波及の検知と可視化の仕�
 
 ### 🧪 検証シナリオ
 
-- **Suspect Link 警告の一覧テーブル表示** — Scenario （`./specification/features/build.feature:73`）
-- **Unreviewed Changes 警告の一覧テーブル表示** — Scenario （`./specification/features/build.feature:80`）
-- **複合警告の表示** — Scenario （`./specification/features/build.feature:87`）
-- **Suspect Link の検出** — Scenario （`./specification/features/audit.feature:37`）
-- **Unreviewed Changes の検出** — Scenario （`./specification/features/audit.feature:45`）
-- **feature ファイルが Unreviewed として検出される** — Scenario （`./specification/features/audit.feature:53`）
+❌ まだ Gherkin シナリオが登録されていません。

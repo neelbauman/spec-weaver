@@ -1,5 +1,5 @@
 # src/spec_weaver/impl_scanner.py
-# implements: SPEC-017, SPEC-018
+# implements: TRC-002, TRC-003
 
 """
 実装ファイルと仕様アイテムのリンク管理。
@@ -17,7 +17,7 @@ from typing import Any
 # アノテーション行にマッチする正規表現
 # 対応形式（コメント記号 + "implements:" + ID）:
 #   (hash) implements: SPEC-001
-#   (slash) implements: SPEC-001, SPEC-002
+#   (slash) implements: SPEC-001, CORE-001
 #   (dash) implements: SPEC-001
 _ANNOTATION_RE = re.compile(
     r"^\s*(?:#|//|--)\s*implements:\s*(.+)",
@@ -43,7 +43,7 @@ def get_ref_files(item: Any) -> list[str]:
     """Doorstopアイテムのカスタム属性 `impl_files` をファイルパスのリストとして返す。
 
     Doorstop の組み込み `ref` フィールドは文字列専用のため、
-    複数ファイルパスの管理には `impl_files` カスタム属性を使用する（SPEC-017）。
+    複数ファイルパスの管理には `impl_files` カスタム属性を使用する（TRC-002）。
 
     - リスト形式 → そのまま返す
     - 文字列形式 → 単一要素リストとして返す

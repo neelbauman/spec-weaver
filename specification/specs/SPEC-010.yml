@@ -1,4 +1,4 @@
-active: true
+active: false
 derived: false
 gherkin_fingerprints:
 - ./specification/features/trace.feature: |
@@ -8,9 +8,10 @@ header: |
 level: 10.0
 links:
 - REQ-009: pkF08weee7PhnkKk5I1Z77rBsyoSdxA8GKAILfZP8yw=
+migrated_to: TRC-001
 normative: true
 ref: ''
-reviewed: BPvIVNWYL2Kj9kbW9srXUbVKfR3ZaqPPeFSByHoZBlw=
+reviewed: J-1r_xueQ7Ie8zI0bpRjP9BON8EkqVbzPcmiRzbfLyI=
 status: implemented
 test_fingerprint: |
   b23e9a2b6fea9f30387da33160dcf6ecfc8ca8a1e67ba09e7abc812922fd01b0
@@ -71,12 +72,12 @@ text: |
   │   │       ├── Scenario: 完全一致時の監査成功
   │   │       ├── Scenario: テスト漏れの検出
   │   │       └── Scenario: 孤児タグの検出
-  │   └── SPEC-004 build コマンド仕様 ✅ implemented
+  │   └── VIS-001 build コマンド仕様 ✅ implemented
   │       └── 🥒 build.feature
   │           ├── Scenario: MkDocs設定ファイル生成
   │           └── Scenario: 要件一覧ページ生成
   ├── SPEC-001 コア・アーキテクチャ ✅ implemented
-  └── SPEC-002 データ抽出基盤 ✅ implemented
+  └── CORE-001 データ抽出基盤 ✅ implemented
       └── 🥒 data_extraction.feature
           ├── Scenario: Doorstop APIによる仕様ID集合取得
           └── Scenario: 非アクティブなアイテムの除外
@@ -89,7 +90,7 @@ text: |
   [REQ]  REQ-001 仕様と実装のトレーサビリティ保証 ✅ implemented
   [REQ]  REQ-002 監査による品質の継続的担保 ✅ implemented
   [SPEC] SPEC-003 audit コマンド仕様 ✅ implemented
-  [SPEC] SPEC-004 build コマンド仕様 ✅ implemented
+  [SPEC] VIS-001 build コマンド仕様 ✅ implemented
   [TEST] audit.feature :: 完全一致時の監査成功
   [TEST] audit.feature :: テスト漏れの検出
   ```

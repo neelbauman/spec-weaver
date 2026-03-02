@@ -1,6 +1,8 @@
 # Feature: タイムスタンプ管理
 
-**タグ**: `@SPEC-011`
+**タグ**: `@VIS-006`
+
+**関連アイテム**: [QA-002](../items/QA-002.md) / [VIS-006](../items/VIS-006.md) / [VIS-007](../items/VIS-007.md)
 
 アイテムの作成日・最終更新日をGit履歴から自動取得し、
   ドキュメント生成および監査で活用する。
@@ -17,25 +19,44 @@
 #### Given DoorstopアイテムのYAMLファイルがGitにコミットされている
 
 ```python
-@given(u'DoorstopアイテムのYAMLファイルがGitにコミットされている')
-def step_impl(context):
-    pass
+@given('DoorstopアイテムのYAMLファイルがGitにコミットされている')  # type: ignore
+def given_5c08ab27(context):
+    """DoorstopアイテムのYAMLファイルがGitにコミットされている
+
+    Scenarios:
+      - Git履歴から updated_at を自動取得する
+      - Git履歴から created_at を自動取得する
+    """
+    raise NotImplementedError('STEP: DoorstopアイテムのYAMLファイルがGitにコミットされている')
 ```
 
 #### When タイムスタンプ属性を取得する
 
 ```python
-@when(u'タイムスタンプ属性を取得する')
-def step_impl(context):
-    pass
+@when('タイムスタンプ属性を取得する')  # type: ignore
+def when_7e4b3813(context):
+    """タイムスタンプ属性を取得する
+
+    Scenarios:
+      - Git履歴から updated_at を自動取得する
+      - Git履歴から created_at を自動取得する
+      - Git情報がない場合はYAML属性にフォールバック
+      - Git情報もYAML属性もない場合のフォールバック
+    """
+    raise NotImplementedError('STEP: タイムスタンプ属性を取得する')
 ```
 
 #### Then updated_at として最終コミット日が YYYY-MM-DD 形式で返されること
 
 ```python
-@then(u'updated_at として最終コミット日が YYYY-MM-DD 形式で返されること')
-def step_impl(context):
-    pass
+@then('updated_at として最終コミット日が YYYY-MM-DD 形式で返されること')  # type: ignore
+def then_c495b67c(context):
+    """updated_at として最終コミット日が YYYY-MM-DD 形式で返されること
+
+    Scenarios:
+      - Git履歴から updated_at を自動取得する
+    """
+    raise NotImplementedError('STEP: updated_at として最終コミット日が YYYY-MM-DD 形式で返されること')
 ```
 
 </details>
@@ -53,25 +74,44 @@ def step_impl(context):
 #### Given DoorstopアイテムのYAMLファイルがGitにコミットされている
 
 ```python
-@given(u'DoorstopアイテムのYAMLファイルがGitにコミットされている')
-def step_impl(context):
-    pass
+@given('DoorstopアイテムのYAMLファイルがGitにコミットされている')  # type: ignore
+def given_5c08ab27(context):
+    """DoorstopアイテムのYAMLファイルがGitにコミットされている
+
+    Scenarios:
+      - Git履歴から updated_at を自動取得する
+      - Git履歴から created_at を自動取得する
+    """
+    raise NotImplementedError('STEP: DoorstopアイテムのYAMLファイルがGitにコミットされている')
 ```
 
 #### When タイムスタンプ属性を取得する
 
 ```python
-@when(u'タイムスタンプ属性を取得する')
-def step_impl(context):
-    pass
+@when('タイムスタンプ属性を取得する')  # type: ignore
+def when_7e4b3813(context):
+    """タイムスタンプ属性を取得する
+
+    Scenarios:
+      - Git履歴から updated_at を自動取得する
+      - Git履歴から created_at を自動取得する
+      - Git情報がない場合はYAML属性にフォールバック
+      - Git情報もYAML属性もない場合のフォールバック
+    """
+    raise NotImplementedError('STEP: タイムスタンプ属性を取得する')
 ```
 
 #### Then created_at として初回コミット日が YYYY-MM-DD 形式で返されること
 
 ```python
-@then(u'created_at として初回コミット日が YYYY-MM-DD 形式で返されること')
-def step_impl(context):
-    pass
+@then('created_at として初回コミット日が YYYY-MM-DD 形式で返されること')  # type: ignore
+def then_c016ae72(context):
+    """created_at として初回コミット日が YYYY-MM-DD 形式で返されること
+
+    Scenarios:
+      - Git履歴から created_at を自動取得する
+    """
+    raise NotImplementedError('STEP: created_at として初回コミット日が YYYY-MM-DD 形式で返されること')
 ```
 
 </details>
@@ -90,9 +130,15 @@ def step_impl(context):
 #### Given DoorstopアイテムのYAMLファイルがGit管理外である
 
 ```python
-@given(u'DoorstopアイテムのYAMLファイルがGit管理外である')
-def step_impl(context):
-    pass
+@given('DoorstopアイテムのYAMLファイルがGit管理外である')  # type: ignore
+def given_02feb7b0(context):
+    """DoorstopアイテムのYAMLファイルがGit管理外である
+
+    Scenarios:
+      - Git情報がない場合はYAML属性にフォールバック
+      - Git情報もYAML属性もない場合のフォールバック
+    """
+    raise NotImplementedError('STEP: DoorstopアイテムのYAMLファイルがGit管理外である')
 ```
 
 #### And YAMLに created_at: '2026-01-15' が設定されている
@@ -111,9 +157,17 @@ def given_78ddd292(context):
 #### When タイムスタンプ属性を取得する
 
 ```python
-@when(u'タイムスタンプ属性を取得する')
-def step_impl(context):
-    pass
+@when('タイムスタンプ属性を取得する')  # type: ignore
+def when_7e4b3813(context):
+    """タイムスタンプ属性を取得する
+
+    Scenarios:
+      - Git履歴から updated_at を自動取得する
+      - Git履歴から created_at を自動取得する
+      - Git情報がない場合はYAML属性にフォールバック
+      - Git情報もYAML属性もない場合のフォールバック
+    """
+    raise NotImplementedError('STEP: タイムスタンプ属性を取得する')
 ```
 
 #### Then created_at として "2026-01-15" が返されること
@@ -145,25 +199,44 @@ def then_afecb621(context, param0):
 #### Given DoorstopアイテムのYAMLファイルがGit管理外である
 
 ```python
-@given(u'DoorstopアイテムのYAMLファイルがGit管理外である')
-def step_impl(context):
-    pass
+@given('DoorstopアイテムのYAMLファイルがGit管理外である')  # type: ignore
+def given_02feb7b0(context):
+    """DoorstopアイテムのYAMLファイルがGit管理外である
+
+    Scenarios:
+      - Git情報がない場合はYAML属性にフォールバック
+      - Git情報もYAML属性もない場合のフォールバック
+    """
+    raise NotImplementedError('STEP: DoorstopアイテムのYAMLファイルがGit管理外である')
 ```
 
 #### And YAMLに created_at も updated_at も設定されていない
 
 ```python
-@given(u'YAMLに created_at も updated_at も設定されていない')
-def step_impl(context):
-    pass
+@given('YAMLに created_at も updated_at も設定されていない')  # type: ignore
+def given_20d06697(context):
+    """YAMLに created_at も updated_at も設定されていない
+
+    Scenarios:
+      - Git情報もYAML属性もない場合のフォールバック
+    """
+    raise NotImplementedError('STEP: YAMLに created_at も updated_at も設定されていない')
 ```
 
 #### When タイムスタンプ属性を取得する
 
 ```python
-@when(u'タイムスタンプ属性を取得する')
-def step_impl(context):
-    pass
+@when('タイムスタンプ属性を取得する')  # type: ignore
+def when_7e4b3813(context):
+    """タイムスタンプ属性を取得する
+
+    Scenarios:
+      - Git履歴から updated_at を自動取得する
+      - Git履歴から created_at を自動取得する
+      - Git情報がない場合はYAML属性にフォールバック
+      - Git情報もYAML属性もない場合のフォールバック
+    """
+    raise NotImplementedError('STEP: タイムスタンプ属性を取得する')
 ```
 
 #### Then 両方とも "-" が返されること
@@ -185,7 +258,7 @@ def then_6f3caa07(context, param0):
 ---
 ## Scenario: 一覧テーブルにタイムスタンプ列が表示される
 
-**タグ**: `@SPEC-012`
+**タグ**: `@VIS-007`
 
 - **Given** DoorstopアイテムがGitにコミットされている
 - **When** build コマンドを実行する
@@ -198,9 +271,15 @@ def then_6f3caa07(context, param0):
 #### Given DoorstopアイテムがGitにコミットされている
 
 ```python
-@given(u'DoorstopアイテムがGitにコミットされている')
-def step_impl(context):
-    pass
+@given('DoorstopアイテムがGitにコミットされている')  # type: ignore
+def given_cc8e9bef(context):
+    """DoorstopアイテムがGitにコミットされている
+
+    Scenarios:
+      - 一覧テーブルにタイムスタンプ列が表示される
+      - 詳細ページにタイムスタンプが表示される
+    """
+    raise NotImplementedError('STEP: DoorstopアイテムがGitにコミットされている')
 ```
 
 #### When build コマンドを実行する
@@ -221,25 +300,40 @@ def when_40f323b6(context):
 #### Then 一覧テーブルに「作成日」列が含まれること
 
 ```python
-@then(u'一覧テーブルに「作成日」列が含まれること')
-def step_impl(context):
-    pass
+@then('一覧テーブルに「作成日」列が含まれること')  # type: ignore
+def then_ed934883(context):
+    """一覧テーブルに「作成日」列が含まれること
+
+    Scenarios:
+      - 一覧テーブルにタイムスタンプ列が表示される
+    """
+    raise NotImplementedError('STEP: 一覧テーブルに「作成日」列が含まれること')
 ```
 
 #### And 一覧テーブルに「更新日」列が含まれること
 
 ```python
-@then(u'一覧テーブルに「更新日」列が含まれること')
-def step_impl(context):
-    pass
+@then('一覧テーブルに「更新日」列が含まれること')  # type: ignore
+def then_2ae95f61(context):
+    """一覧テーブルに「更新日」列が含まれること
+
+    Scenarios:
+      - 一覧テーブルにタイムスタンプ列が表示される
+    """
+    raise NotImplementedError('STEP: 一覧テーブルに「更新日」列が含まれること')
 ```
 
 #### And Git履歴から取得した日付が正しく表示されること
 
 ```python
-@then(u'Git履歴から取得した日付が正しく表示されること')
-def step_impl(context):
-    pass
+@then('Git履歴から取得した日付が正しく表示されること')  # type: ignore
+def then_232626f7(context):
+    """Git履歴から取得した日付が正しく表示されること
+
+    Scenarios:
+      - 一覧テーブルにタイムスタンプ列が表示される
+    """
+    raise NotImplementedError('STEP: Git履歴から取得した日付が正しく表示されること')
 ```
 
 </details>
@@ -248,7 +342,7 @@ def step_impl(context):
 ---
 ## Scenario: 詳細ページにタイムスタンプが表示される
 
-**タグ**: `@SPEC-012`
+**タグ**: `@VIS-007`
 
 - **Given** DoorstopアイテムがGitにコミットされている
 - **When** build コマンドを実行する
@@ -260,9 +354,15 @@ def step_impl(context):
 #### Given DoorstopアイテムがGitにコミットされている
 
 ```python
-@given(u'DoorstopアイテムがGitにコミットされている')
-def step_impl(context):
-    pass
+@given('DoorstopアイテムがGitにコミットされている')  # type: ignore
+def given_cc8e9bef(context):
+    """DoorstopアイテムがGitにコミットされている
+
+    Scenarios:
+      - 一覧テーブルにタイムスタンプ列が表示される
+      - 詳細ページにタイムスタンプが表示される
+    """
+    raise NotImplementedError('STEP: DoorstopアイテムがGitにコミットされている')
 ```
 
 #### When build コマンドを実行する
@@ -283,17 +383,27 @@ def when_40f323b6(context):
 #### Then 詳細ページに作成日と更新日が表示されること
 
 ```python
-@then(u'詳細ページに作成日と更新日が表示されること')
-def step_impl(context):
-    pass
+@then('詳細ページに作成日と更新日が表示されること')  # type: ignore
+def then_4954ab92(context):
+    """詳細ページに作成日と更新日が表示されること
+
+    Scenarios:
+      - 詳細ページにタイムスタンプが表示される
+    """
+    raise NotImplementedError('STEP: 詳細ページに作成日と更新日が表示されること')
 ```
 
 #### And 実装状況バッジの直後に配置されていること
 
 ```python
-@then(u'実装状況バッジの直後に配置されていること')
-def step_impl(context):
-    pass
+@then('実装状況バッジの直後に配置されていること')  # type: ignore
+def then_1a39f98b(context):
+    """実装状況バッジの直後に配置されていること
+
+    Scenarios:
+      - 詳細ページにタイムスタンプが表示される
+    """
+    raise NotImplementedError('STEP: 実装状況バッジの直後に配置されていること')
 ```
 
 </details>
@@ -302,7 +412,7 @@ def step_impl(context):
 ---
 ## Scenario: Git情報がない場合の一覧テーブル表示
 
-**タグ**: `@SPEC-012`
+**タグ**: `@VIS-007`
 
 - **Given** DoorstopアイテムがGit管理外でYAMLにもタイムスタンプがない
 - **When** build コマンドを実行する
@@ -313,9 +423,14 @@ def step_impl(context):
 #### Given DoorstopアイテムがGit管理外でYAMLにもタイムスタンプがない
 
 ```python
-@given(u'DoorstopアイテムがGit管理外でYAMLにもタイムスタンプがない')
-def step_impl(context):
-    pass
+@given('DoorstopアイテムがGit管理外でYAMLにもタイムスタンプがない')  # type: ignore
+def given_8798cdab(context):
+    """DoorstopアイテムがGit管理外でYAMLにもタイムスタンプがない
+
+    Scenarios:
+      - Git情報がない場合の一覧テーブル表示
+    """
+    raise NotImplementedError('STEP: DoorstopアイテムがGit管理外でYAMLにもタイムスタンプがない')
 ```
 
 #### When build コマンドを実行する
@@ -352,7 +467,7 @@ def then_645670cf(context, param0):
 ---
 ## Scenario: stale アイテムの検出（Git履歴ベース）
 
-**タグ**: `@SPEC-013`
+**タグ**: `@QA-002`
 
 - **Given** Doorstopアイテムの最終コミット日が 91日前である
 - **And** そのアイテムの status が "implemented" である
@@ -365,9 +480,14 @@ def then_645670cf(context, param0):
 #### Given Doorstopアイテムの最終コミット日が 91日前である
 
 ```python
-@given(u'Doorstopアイテムの最終コミット日が 91日前である')
-def step_impl(context):
-    pass
+@given('Doorstopアイテムの最終コミット日が 91日前である')  # type: ignore
+def given_6998f2b6(context):
+    """Doorstopアイテムの最終コミット日が 91日前である
+
+    Scenarios:
+      - stale アイテムの検出（Git履歴ベース）
+    """
+    raise NotImplementedError('STEP: Doorstopアイテムの最終コミット日が 91日前である')
 ```
 
 #### And そのアイテムの status が "implemented" である
@@ -386,27 +506,43 @@ def given_a61b1d71(context, param0):
 #### When audit コマンドを --stale-days 90 で実行する
 
 ```python
-@when(u'audit コマンドを --stale-days 90 で実行する')
-def step_impl(context):
-    res = run_spec_weaver(['audit', '-f', str(getattr(context, 'temp_dir', '.'))], cwd=getattr(context, 'temp_dir', '.'))
-    context.exit_code = getattr(res, 'returncode', 0)
-    context.output = getattr(res, 'stdout', '') + chr(10) + getattr(res, 'stderr', '')
+@when('audit コマンドを --stale-days 90 で実行する')  # type: ignore
+def when_81d68298(context):
+    """audit コマンドを --stale-days 90 で実行する
+
+    Scenarios:
+      - stale アイテムの検出（Git履歴ベース）
+      - 閾値内のアイテムは stale と判定されない
+      - Git情報もupdated_atもないアイテムは stale 判定の対象外
+      - deprecated アイテムは stale 判定の対象外
+    """
+    raise NotImplementedError('STEP: audit コマンドを --stale-days 90 で実行する')
 ```
 
 #### Then そのアイテムが stale として報告されること
 
 ```python
-@then(u'そのアイテムが stale として報告されること')
-def step_impl(context):
-    pass
+@then('そのアイテムが stale として報告されること')  # type: ignore
+def then_54f17b4b(context):
+    """そのアイテムが stale として報告されること
+
+    Scenarios:
+      - stale アイテムの検出（Git履歴ベース）
+    """
+    raise NotImplementedError('STEP: そのアイテムが stale として報告されること')
 ```
 
 #### And 経過日数が表示されること
 
 ```python
-@then(u'経過日数が表示されること')
-def step_impl(context):
-    pass
+@then('経過日数が表示されること')  # type: ignore
+def then_9500bbae(context):
+    """経過日数が表示されること
+
+    Scenarios:
+      - stale アイテムの検出（Git履歴ベース）
+    """
+    raise NotImplementedError('STEP: 経過日数が表示されること')
 ```
 
 </details>
@@ -415,7 +551,7 @@ def step_impl(context):
 ---
 ## Scenario: 閾値内のアイテムは stale と判定されない
 
-**タグ**: `@SPEC-013`
+**タグ**: `@QA-002`
 
 - **Given** Doorstopアイテムの最終コミット日が 30日前である
 - **When** audit コマンドを --stale-days 90 で実行する
@@ -426,27 +562,45 @@ def step_impl(context):
 #### Given Doorstopアイテムの最終コミット日が 30日前である
 
 ```python
-@given(u'Doorstopアイテムの最終コミット日が 30日前である')
-def step_impl(context):
-    pass
+@given('Doorstopアイテムの最終コミット日が 30日前である')  # type: ignore
+def given_32d4fe40(context):
+    """Doorstopアイテムの最終コミット日が 30日前である
+
+    Scenarios:
+      - 閾値内のアイテムは stale と判定されない
+    """
+    raise NotImplementedError('STEP: Doorstopアイテムの最終コミット日が 30日前である')
 ```
 
 #### When audit コマンドを --stale-days 90 で実行する
 
 ```python
-@when(u'audit コマンドを --stale-days 90 で実行する')
-def step_impl(context):
-    res = run_spec_weaver(['audit', '-f', str(getattr(context, 'temp_dir', '.'))], cwd=getattr(context, 'temp_dir', '.'))
-    context.exit_code = getattr(res, 'returncode', 0)
-    context.output = getattr(res, 'stdout', '') + chr(10) + getattr(res, 'stderr', '')
+@when('audit コマンドを --stale-days 90 で実行する')  # type: ignore
+def when_81d68298(context):
+    """audit コマンドを --stale-days 90 で実行する
+
+    Scenarios:
+      - stale アイテムの検出（Git履歴ベース）
+      - 閾値内のアイテムは stale と判定されない
+      - Git情報もupdated_atもないアイテムは stale 判定の対象外
+      - deprecated アイテムは stale 判定の対象外
+    """
+    raise NotImplementedError('STEP: audit コマンドを --stale-days 90 で実行する')
 ```
 
 #### Then そのアイテムは stale として報告されないこと
 
 ```python
-@then(u'そのアイテムは stale として報告されないこと')
-def step_impl(context):
-    pass
+@then('そのアイテムは stale として報告されないこと')  # type: ignore
+def then_e9c88743(context):
+    """そのアイテムは stale として報告されないこと
+
+    Scenarios:
+      - 閾値内のアイテムは stale と判定されない
+      - Git情報もupdated_atもないアイテムは stale 判定の対象外
+      - deprecated アイテムは stale 判定の対象外
+    """
+    raise NotImplementedError('STEP: そのアイテムは stale として報告されないこと')
 ```
 
 </details>
@@ -455,7 +609,7 @@ def step_impl(context):
 ---
 ## Scenario: Git情報もupdated_atもないアイテムは stale 判定の対象外
 
-**タグ**: `@SPEC-013`
+**タグ**: `@QA-002`
 
 - **Given** DoorstopアイテムがGit管理外でupdated_atも設定されていない
 - **When** audit コマンドを --stale-days 90 で実行する
@@ -466,27 +620,45 @@ def step_impl(context):
 #### Given DoorstopアイテムがGit管理外でupdated_atも設定されていない
 
 ```python
-@given(u'DoorstopアイテムがGit管理外でupdated_atも設定されていない')
-def step_impl(context):
-    pass
+@given('DoorstopアイテムがGit管理外でupdated_atも設定されていない')  # type: ignore
+def given_9da29b97(context):
+    """DoorstopアイテムがGit管理外でupdated_atも設定されていない
+
+    Scenarios:
+      - Git情報もupdated_atもないアイテムは stale 判定の対象外
+    """
+    raise NotImplementedError('STEP: DoorstopアイテムがGit管理外でupdated_atも設定されていない')
 ```
 
 #### When audit コマンドを --stale-days 90 で実行する
 
 ```python
-@when(u'audit コマンドを --stale-days 90 で実行する')
-def step_impl(context):
-    res = run_spec_weaver(['audit', '-f', str(getattr(context, 'temp_dir', '.'))], cwd=getattr(context, 'temp_dir', '.'))
-    context.exit_code = getattr(res, 'returncode', 0)
-    context.output = getattr(res, 'stdout', '') + chr(10) + getattr(res, 'stderr', '')
+@when('audit コマンドを --stale-days 90 で実行する')  # type: ignore
+def when_81d68298(context):
+    """audit コマンドを --stale-days 90 で実行する
+
+    Scenarios:
+      - stale アイテムの検出（Git履歴ベース）
+      - 閾値内のアイテムは stale と判定されない
+      - Git情報もupdated_atもないアイテムは stale 判定の対象外
+      - deprecated アイテムは stale 判定の対象外
+    """
+    raise NotImplementedError('STEP: audit コマンドを --stale-days 90 で実行する')
 ```
 
 #### Then そのアイテムは stale として報告されないこと
 
 ```python
-@then(u'そのアイテムは stale として報告されないこと')
-def step_impl(context):
-    pass
+@then('そのアイテムは stale として報告されないこと')  # type: ignore
+def then_e9c88743(context):
+    """そのアイテムは stale として報告されないこと
+
+    Scenarios:
+      - 閾値内のアイテムは stale と判定されない
+      - Git情報もupdated_atもないアイテムは stale 判定の対象外
+      - deprecated アイテムは stale 判定の対象外
+    """
+    raise NotImplementedError('STEP: そのアイテムは stale として報告されないこと')
 ```
 
 </details>
@@ -495,7 +667,7 @@ def step_impl(context):
 ---
 ## Scenario: deprecated アイテムは stale 判定の対象外
 
-**タグ**: `@SPEC-013`
+**タグ**: `@QA-002`
 
 - **Given** Doorstopアイテムの status が "deprecated" である
 - **And** 最終コミット日が 180日前である
@@ -520,27 +692,45 @@ def given_e5e93deb(context, param0):
 #### And 最終コミット日が 180日前である
 
 ```python
-@given(u'最終コミット日が 180日前である')
-def step_impl(context):
-    pass
+@given('最終コミット日が 180日前である')  # type: ignore
+def given_1588d2c1(context):
+    """最終コミット日が 180日前である
+
+    Scenarios:
+      - deprecated アイテムは stale 判定の対象外
+    """
+    raise NotImplementedError('STEP: 最終コミット日が 180日前である')
 ```
 
 #### When audit コマンドを --stale-days 90 で実行する
 
 ```python
-@when(u'audit コマンドを --stale-days 90 で実行する')
-def step_impl(context):
-    res = run_spec_weaver(['audit', '-f', str(getattr(context, 'temp_dir', '.'))], cwd=getattr(context, 'temp_dir', '.'))
-    context.exit_code = getattr(res, 'returncode', 0)
-    context.output = getattr(res, 'stdout', '') + chr(10) + getattr(res, 'stderr', '')
+@when('audit コマンドを --stale-days 90 で実行する')  # type: ignore
+def when_81d68298(context):
+    """audit コマンドを --stale-days 90 で実行する
+
+    Scenarios:
+      - stale アイテムの検出（Git履歴ベース）
+      - 閾値内のアイテムは stale と判定されない
+      - Git情報もupdated_atもないアイテムは stale 判定の対象外
+      - deprecated アイテムは stale 判定の対象外
+    """
+    raise NotImplementedError('STEP: audit コマンドを --stale-days 90 で実行する')
 ```
 
 #### Then そのアイテムは stale として報告されないこと
 
 ```python
-@then(u'そのアイテムは stale として報告されないこと')
-def step_impl(context):
-    pass
+@then('そのアイテムは stale として報告されないこと')  # type: ignore
+def then_e9c88743(context):
+    """そのアイテムは stale として報告されないこと
+
+    Scenarios:
+      - 閾値内のアイテムは stale と判定されない
+      - Git情報もupdated_atもないアイテムは stale 判定の対象外
+      - deprecated アイテムは stale 判定の対象外
+    """
+    raise NotImplementedError('STEP: そのアイテムは stale として報告されないこと')
 ```
 
 </details>
@@ -549,7 +739,7 @@ def step_impl(context):
 ---
 ## Scenario: --stale-days 0 で鮮度チェックを無効化
 
-**タグ**: `@SPEC-013`
+**タグ**: `@QA-002`
 
 - **Given** Doorstopアイテムの最終コミット日が 365日前である
 - **When** audit コマンドを --stale-days 0 で実行する
@@ -560,27 +750,40 @@ def step_impl(context):
 #### Given Doorstopアイテムの最終コミット日が 365日前である
 
 ```python
-@given(u'Doorstopアイテムの最終コミット日が 365日前である')
-def step_impl(context):
-    pass
+@given('Doorstopアイテムの最終コミット日が 365日前である')  # type: ignore
+def given_45c0cb00(context):
+    """Doorstopアイテムの最終コミット日が 365日前である
+
+    Scenarios:
+      - --stale-days 0 で鮮度チェックを無効化
+    """
+    raise NotImplementedError('STEP: Doorstopアイテムの最終コミット日が 365日前である')
 ```
 
 #### When audit コマンドを --stale-days 0 で実行する
 
 ```python
-@when(u'audit コマンドを --stale-days 0 で実行する')
-def step_impl(context):
-    res = run_spec_weaver(['audit', '-f', str(getattr(context, 'temp_dir', '.'))], cwd=getattr(context, 'temp_dir', '.'))
-    context.exit_code = getattr(res, 'returncode', 0)
-    context.output = getattr(res, 'stdout', '') + chr(10) + getattr(res, 'stderr', '')
+@when('audit コマンドを --stale-days 0 で実行する')  # type: ignore
+def when_5cbe8c38(context):
+    """audit コマンドを --stale-days 0 で実行する
+
+    Scenarios:
+      - --stale-days 0 で鮮度チェックを無効化
+    """
+    raise NotImplementedError('STEP: audit コマンドを --stale-days 0 で実行する')
 ```
 
 #### Then stale に関する報告は表示されないこと
 
 ```python
-@then(u'stale に関する報告は表示されないこと')
-def step_impl(context):
-    pass
+@then('stale に関する報告は表示されないこと')  # type: ignore
+def then_e6a9cec1(context):
+    """stale に関する報告は表示されないこと
+
+    Scenarios:
+      - --stale-days 0 で鮮度チェックを無効化
+    """
+    raise NotImplementedError('STEP: stale に関する報告は表示されないこと')
 ```
 
 </details>
@@ -592,12 +795,15 @@ def step_impl(context):
 
 ```gherkin
 # spec-weaver-fingerprint: d9ec5f68b155b88ee2491dc6b24ef7b9f724d4aa34fe4e8643280f9a6a01aef0
-@SPEC-011
+# spec-weaver-fingerprint-QA-002: pIUDUCm2SbEPeLzmScATm5kxQXhzHgfNLVTet64j5OY=
+# spec-weaver-fingerprint-VIS-006: X_KRBM_YhZCFigeGpRMit5ZIjnIx1JMby0egIg10egw=
+# spec-weaver-fingerprint-VIS-007: yOFv-Mqqd6cmn9y-BMHTC3-5N_plpH_vbw4UzEypfk8=
+@VIS-006
 Feature: タイムスタンプ管理
   アイテムの作成日・最終更新日をGit履歴から自動取得し、
   ドキュメント生成および監査で活用する。
 
-  # --- Git履歴からの自動取得 (SPEC-011) ---
+  # --- Git履歴からの自動取得 (VIS-006) ---
 
   Scenario: Git履歴から updated_at を自動取得する
     Given DoorstopアイテムのYAMLファイルがGitにコミットされている
@@ -621,9 +827,9 @@ Feature: タイムスタンプ管理
     When  タイムスタンプ属性を取得する
     Then  両方とも "-" が返されること
 
-  # --- build コマンドへの表示統合 (SPEC-012) ---
+  # --- build コマンドへの表示統合 (VIS-007) ---
 
-  @SPEC-012
+  @VIS-007
   Scenario: 一覧テーブルにタイムスタンプ列が表示される
     Given DoorstopアイテムがGitにコミットされている
     When  build コマンドを実行する
@@ -631,22 +837,22 @@ Feature: タイムスタンプ管理
     And   一覧テーブルに「更新日」列が含まれること
     And   Git履歴から取得した日付が正しく表示されること
 
-  @SPEC-012
+  @VIS-007
   Scenario: 詳細ページにタイムスタンプが表示される
     Given DoorstopアイテムがGitにコミットされている
     When  build コマンドを実行する
     Then  詳細ページに作成日と更新日が表示されること
     And   実装状況バッジの直後に配置されていること
 
-  @SPEC-012
+  @VIS-007
   Scenario: Git情報がない場合の一覧テーブル表示
     Given DoorstopアイテムがGit管理外でYAMLにもタイムスタンプがない
     When  build コマンドを実行する
     Then  一覧テーブルの作成日・更新日列に "-" が表示されること
 
-  # --- 鮮度の監査チェック (SPEC-013) ---
+  # --- 鮮度の監査チェック (QA-002) ---
 
-  @SPEC-013
+  @QA-002
   Scenario: stale アイテムの検出（Git履歴ベース）
     Given Doorstopアイテムの最終コミット日が 91日前である
     And   そのアイテムの status が "implemented" である
@@ -654,26 +860,26 @@ Feature: タイムスタンプ管理
     Then  そのアイテムが stale として報告されること
     And   経過日数が表示されること
 
-  @SPEC-013
+  @QA-002
   Scenario: 閾値内のアイテムは stale と判定されない
     Given Doorstopアイテムの最終コミット日が 30日前である
     When  audit コマンドを --stale-days 90 で実行する
     Then  そのアイテムは stale として報告されないこと
 
-  @SPEC-013
+  @QA-002
   Scenario: Git情報もupdated_atもないアイテムは stale 判定の対象外
     Given DoorstopアイテムがGit管理外でupdated_atも設定されていない
     When  audit コマンドを --stale-days 90 で実行する
     Then  そのアイテムは stale として報告されないこと
 
-  @SPEC-013
+  @QA-002
   Scenario: deprecated アイテムは stale 判定の対象外
     Given Doorstopアイテムの status が "deprecated" である
     And   最終コミット日が 180日前である
     When  audit コマンドを --stale-days 90 で実行する
     Then  そのアイテムは stale として報告されないこと
 
-  @SPEC-013
+  @QA-002
   Scenario: --stale-days 0 で鮮度チェックを無効化
     Given Doorstopアイテムの最終コミット日が 365日前である
     When  audit コマンドを --stale-days 0 で実行する

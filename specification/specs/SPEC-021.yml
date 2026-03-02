@@ -1,4 +1,4 @@
-active: true
+active: false
 derived: false
 gherkin_fingerprints:
 - ./specification/features/data_extraction.feature: |
@@ -10,6 +10,7 @@ impl_files:
 level: 20.1
 links:
 - REQ-001: r8HLD3Bp9ilMNgxhGINfuTj969G6-xvhIcjcnYrl-J0=
+migrated_to: CORE-002
 normative: true
 ref: ''
 reviewed: DNdd7QOwXUNGtJIcW6QRxIELp92ax-ebhh8n2B0ywZ0=

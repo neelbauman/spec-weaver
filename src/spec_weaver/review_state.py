@@ -17,7 +17,7 @@ class ReviewState:
         causes = self.suspect_causes.get(node_id, set())
         is_suspect = bool(causes)
 
-        # SPEC-005: Check if any related items are unreviewed
+        # QA-001: Check if any related items are unreviewed
         has_unreviewed_related = False
         
         # 1. Check direct parents (for Doorstop native suspect)
@@ -139,7 +139,7 @@ def compute_review_state(
                     stripped_expected_fps.append({k: v.strip() for k, v in d.items()})
                 
                 if actual_fps != stripped_expected_fps:
-                    # SPEC-005: どのファイルが変更されたかを原因として記録する
+                    # QA-001: どのファイルが変更されたかを原因として記録する
                     actual_dict = {list(d.keys())[0]: list(d.values())[0] for d in actual_fps}
                     expected_dict = {list(d.keys())[0]: list(d.values())[0] for d in stripped_expected_fps}
                     

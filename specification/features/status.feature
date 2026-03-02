@@ -1,6 +1,6 @@
 # spec-weaver-fingerprint: 747a067a366f71279c1117cac9de1de2defd17db0b57a350b3806f514bd482a0
-# spec-weaver-fingerprint-SPEC-007: T6XuJu67Dj1RDLYHNeLzVkenP67ky6zNbqcs-ubwpzY=
-@SPEC-007
+# spec-weaver-fingerprint-VIS-003: vkjlHhlge0Un5uAGQCyff68rJGP3jp7vGCvSQVAsuNM=
+@VIS-003
 Feature: status コマンド
   REQ・SPECの実装ステータスをRichテーブル形式で一覧表示する。
 

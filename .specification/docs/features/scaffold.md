@@ -1,6 +1,8 @@
 # Feature: scaffold コマンド
 
-**タグ**: `@SPEC-015`
+**タグ**: `@AUT-001`
+
+**関連アイテム**: [AUT-001](../items/AUT-001.md)
 
 .feature ファイルから behave テストコードの雛形を自動生成・差分マージする。
 
@@ -31,10 +33,17 @@ def given_488529e3(context, param0):
 #### When scaffold コマンドを実行する
 
 ```python
-@when(u'scaffold コマンドを実行する')
-def step_impl(context):
-    context.exit_code = 0
-    context.output = ''
+@when('scaffold コマンドを実行する')  # type: ignore
+def when_4cda1d3b(context):
+    """scaffold コマンドを実行する
+
+    Scenarios:
+      - 基本的なテストコード生成
+      - ハッシュベースの関数名生成
+      - ステップ関数の生成と重複排除
+      - Docstring にシナリオリストを記載
+    """
+    raise NotImplementedError('STEP: scaffold コマンドを実行する')
 ```
 
 #### Then 各 .feature に対応する "step_<stem>.py" が生成されること
@@ -80,42 +89,69 @@ def then_398bb2af(context, param0, param1, param2):
 #### Given 日本語のシナリオ名を持つ .feature ファイルがある
 
 ```python
-@given(u'日本語のシナリオ名を持つ .feature ファイルがある')
-def step_impl(context):
-    pass
+@given('日本語のシナリオ名を持つ .feature ファイルがある')  # type: ignore
+def given_a87fa38a(context):
+    """日本語のシナリオ名を持つ .feature ファイルがある
+
+    Scenarios:
+      - ハッシュベースの関数名生成
+    """
+    raise NotImplementedError('STEP: 日本語のシナリオ名を持つ .feature ファイルがある')
 ```
 
 #### When scaffold コマンドを実行する
 
 ```python
-@when(u'scaffold コマンドを実行する')
-def step_impl(context):
-    context.exit_code = 0
-    context.output = ''
+@when('scaffold コマンドを実行する')  # type: ignore
+def when_4cda1d3b(context):
+    """scaffold コマンドを実行する
+
+    Scenarios:
+      - 基本的なテストコード生成
+      - ハッシュベースの関数名生成
+      - ステップ関数の生成と重複排除
+      - Docstring にシナリオリストを記載
+    """
+    raise NotImplementedError('STEP: scaffold コマンドを実行する')
 ```
 
 #### Then 生成されたステップ関数名が ASCII 文字のみで構成されること
 
 ```python
-@then(u'生成されたステップ関数名が ASCII 文字のみで構成されること')
-def step_impl(context):
-    pass
+@then('生成されたステップ関数名が ASCII 文字のみで構成されること')  # type: ignore
+def then_75178cb9(context):
+    """生成されたステップ関数名が ASCII 文字のみで構成されること
+
+    Scenarios:
+      - ハッシュベースの関数名生成
+    """
+    raise NotImplementedError('STEP: 生成されたステップ関数名が ASCII 文字のみで構成されること')
 ```
 
 #### And 関数名にステップ文の SHA256 ハッシュ先頭8文字が使用されること
 
 ```python
-@then(u'関数名にステップ文の SHA256 ハッシュ先頭8文字が使用されること')
-def step_impl(context):
-    pass
+@then('関数名にステップ文の SHA256 ハッシュ先頭8文字が使用されること')  # type: ignore
+def then_3649a406(context):
+    """関数名にステップ文の SHA256 ハッシュ先頭8文字が使用されること
+
+    Scenarios:
+      - ハッシュベースの関数名生成
+    """
+    raise NotImplementedError('STEP: 関数名にステップ文の SHA256 ハッシュ先頭8文字が使用されること')
 ```
 
 #### And docstring にオリジナルのステップ文が記載されること
 
 ```python
-@then(u'docstring にオリジナルのステップ文が記載されること')
-def step_impl(context):
-    pass
+@then('docstring にオリジナルのステップ文が記載されること')  # type: ignore
+def then_c876ede8(context):
+    """docstring にオリジナルのステップ文が記載されること
+
+    Scenarios:
+      - ハッシュベースの関数名生成
+    """
+    raise NotImplementedError('STEP: docstring にオリジナルのステップ文が記載されること')
 ```
 
 </details>
@@ -133,26 +169,43 @@ def step_impl(context):
 #### Given 複数のシナリオで同一のステップ文が使用されている
 
 ```python
-@given(u'複数のシナリオで同一のステップ文が使用されている')
-def step_impl(context):
-    pass
+@given('複数のシナリオで同一のステップ文が使用されている')  # type: ignore
+def given_ae2a90a1(context):
+    """複数のシナリオで同一のステップ文が使用されている
+
+    Scenarios:
+      - ステップ関数の生成と重複排除
+    """
+    raise NotImplementedError('STEP: 複数のシナリオで同一のステップ文が使用されている')
 ```
 
 #### When scaffold コマンドを実行する
 
 ```python
-@when(u'scaffold コマンドを実行する')
-def step_impl(context):
-    context.exit_code = 0
-    context.output = ''
+@when('scaffold コマンドを実行する')  # type: ignore
+def when_4cda1d3b(context):
+    """scaffold コマンドを実行する
+
+    Scenarios:
+      - 基本的なテストコード生成
+      - ハッシュベースの関数名生成
+      - ステップ関数の生成と重複排除
+      - Docstring にシナリオリストを記載
+    """
+    raise NotImplementedError('STEP: scaffold コマンドを実行する')
 ```
 
 #### Then 同一ステップに対する関数は1回のみ生成されること
 
 ```python
-@then(u'同一ステップに対する関数は1回のみ生成されること')
-def step_impl(context):
-    pass
+@then('同一ステップに対する関数は1回のみ生成されること')  # type: ignore
+def then_67099eaf(context):
+    """同一ステップに対する関数は1回のみ生成されること
+
+    Scenarios:
+      - ステップ関数の生成と重複排除
+    """
+    raise NotImplementedError('STEP: 同一ステップに対する関数は1回のみ生成されること')
 ```
 
 </details>
@@ -185,10 +238,17 @@ def given_488529e3(context, param0):
 #### When scaffold コマンドを実行する
 
 ```python
-@when(u'scaffold コマンドを実行する')
-def step_impl(context):
-    context.exit_code = 0
-    context.output = ''
+@when('scaffold コマンドを実行する')  # type: ignore
+def when_4cda1d3b(context):
+    """scaffold コマンドを実行する
+
+    Scenarios:
+      - 基本的なテストコード生成
+      - ハッシュベースの関数名生成
+      - ステップ関数の生成と重複排除
+      - Docstring にシナリオリストを記載
+    """
+    raise NotImplementedError('STEP: scaffold コマンドを実行する')
 ```
 
 #### Then 各ステップ関数の Docstring に "Scenarios:" セクションが含まれること
@@ -207,9 +267,14 @@ def then_5ab7d202(context, param0):
 #### And そのステップを使用するシナリオ名が列挙されること
 
 ```python
-@then(u'そのステップを使用するシナリオ名が列挙されること')
-def step_impl(context):
-    pass
+@then('そのステップを使用するシナリオ名が列挙されること')  # type: ignore
+def then_6fd54334(context):
+    """そのステップを使用するシナリオ名が列挙されること
+
+    Scenarios:
+      - Docstring にシナリオリストを記載
+    """
+    raise NotImplementedError('STEP: そのステップを使用するシナリオ名が列挙されること')
 ```
 
 </details>
@@ -230,50 +295,85 @@ def step_impl(context):
 #### Given 出力先に既存のテストファイルが存在する
 
 ```python
-@given(u'出力先に既存のテストファイルが存在する')
-def step_impl(context):
-    pass
+@given('出力先に既存のテストファイルが存在する')  # type: ignore
+def given_f54fe40f(context):
+    """出力先に既存のテストファイルが存在する
+
+    Scenarios:
+      - 差分マージ（新規ステップ追記）
+      - 既存ファイルの上書き
+      - 差分マージ時の Duplicate スタブのコメント化
+    """
+    raise NotImplementedError('STEP: 出力先に既存のテストファイルが存在する')
 ```
 
 #### And .feature に既存ファイルにないステップが追加されている
 
 ```python
-@given(u'.feature に既存ファイルにないステップが追加されている')
-def step_impl(context):
-    pass
+@given('.feature に既存ファイルにないステップが追加されている')  # type: ignore
+def given_63fcef57(context):
+    """.feature に既存ファイルにないステップが追加されている
+
+    Scenarios:
+      - 差分マージ（新規ステップ追記）
+    """
+    raise NotImplementedError('STEP: .feature に既存ファイルにないステップが追加されている')
 ```
 
 #### When scaffold コマンドをデフォルトオプションで実行する
 
 ```python
-@when(u'scaffold コマンドをデフォルトオプションで実行する')
-def step_impl(context):
-    context.exit_code = 0
-    context.output = ''
+@when('scaffold コマンドをデフォルトオプションで実行する')  # type: ignore
+def when_7a9125c7(context):
+    """scaffold コマンドをデフォルトオプションで実行する
+
+    Scenarios:
+      - 差分マージ（新規ステップ追記）
+      - 差分なし時のスキップ
+      - Git 未コミット変更の確認プロンプト
+      - 差分マージ時の Duplicate スタブのコメント化
+      - 差分マージ時の他ファイルコメント行を Duplicate 判定に使用しない
+    """
+    raise NotImplementedError('STEP: scaffold コマンドをデフォルトオプションで実行する')
 ```
 
 #### Then 既存ファイルに新規ステップのみが追記されること
 
 ```python
-@then(u'既存ファイルに新規ステップのみが追記されること')
-def step_impl(context):
-    pass
+@then('既存ファイルに新規ステップのみが追記されること')  # type: ignore
+def then_84ae62d5(context):
+    """既存ファイルに新規ステップのみが追記されること
+
+    Scenarios:
+      - 差分マージ（新規ステップ追記）
+    """
+    raise NotImplementedError('STEP: 既存ファイルに新規ステップのみが追記されること')
 ```
 
 #### And 既存のステップ定義は保持されること
 
 ```python
-@then(u'既存のステップ定義は保持されること')
-def step_impl(context):
-    pass
+@then('既存のステップ定義は保持されること')  # type: ignore
+def then_0cdc5832(context):
+    """既存のステップ定義は保持されること
+
+    Scenarios:
+      - 差分マージ（新規ステップ追記）
+    """
+    raise NotImplementedError('STEP: 既存のステップ定義は保持されること')
 ```
 
 #### And 新規ステップは .feature の出現順で挿入されること
 
 ```python
-@then(u'新規ステップは .feature の出現順で挿入されること')
-def step_impl(context):
-    pass
+@then('新規ステップは .feature の出現順で挿入されること')  # type: ignore
+def then_5c2cc2d3(context):
+    """新規ステップは .feature の出現順で挿入されること
+
+    Scenarios:
+      - 差分マージ（新規ステップ追記）
+    """
+    raise NotImplementedError('STEP: 新規ステップは .feature の出現順で挿入されること')
 ```
 
 </details>
@@ -292,34 +392,57 @@ def step_impl(context):
 #### Given 出力先の既存テストファイルが .feature と完全に同期している
 
 ```python
-@given(u'出力先の既存テストファイルが .feature と完全に同期している')
-def step_impl(context):
-    pass
+@given('出力先の既存テストファイルが .feature と完全に同期している')  # type: ignore
+def given_fdb17660(context):
+    """出力先の既存テストファイルが .feature と完全に同期している
+
+    Scenarios:
+      - 差分なし時のスキップ
+    """
+    raise NotImplementedError('STEP: 出力先の既存テストファイルが .feature と完全に同期している')
 ```
 
 #### When scaffold コマンドをデフォルトオプションで実行する
 
 ```python
-@when(u'scaffold コマンドをデフォルトオプションで実行する')
-def step_impl(context):
-    context.exit_code = 0
-    context.output = ''
+@when('scaffold コマンドをデフォルトオプションで実行する')  # type: ignore
+def when_7a9125c7(context):
+    """scaffold コマンドをデフォルトオプションで実行する
+
+    Scenarios:
+      - 差分マージ（新規ステップ追記）
+      - 差分なし時のスキップ
+      - Git 未コミット変更の確認プロンプト
+      - 差分マージ時の Duplicate スタブのコメント化
+      - 差分マージ時の他ファイルコメント行を Duplicate 判定に使用しない
+    """
+    raise NotImplementedError('STEP: scaffold コマンドをデフォルトオプションで実行する')
 ```
 
 #### Then ファイルへの書き込みは行われないこと
 
 ```python
-@then(u'ファイルへの書き込みは行われないこと')
-def step_impl(context):
-    pass
+@then('ファイルへの書き込みは行われないこと')  # type: ignore
+def then_834cd5e1(context):
+    """ファイルへの書き込みは行われないこと
+
+    Scenarios:
+      - 差分なし時のスキップ
+    """
+    raise NotImplementedError('STEP: ファイルへの書き込みは行われないこと')
 ```
 
 #### And スキップ（差分なし）が表示されること
 
 ```python
-@then(u'スキップ（差分なし）が表示されること')
-def step_impl(context):
-    pass
+@then('スキップ（差分なし）が表示されること')  # type: ignore
+def then_f45c0000(context):
+    """スキップ（差分なし）が表示されること
+
+    Scenarios:
+      - 差分なし時のスキップ
+    """
+    raise NotImplementedError('STEP: スキップ（差分なし）が表示されること')
 ```
 
 </details>
@@ -337,9 +460,16 @@ def step_impl(context):
 #### Given 出力先に既存のテストファイルが存在する
 
 ```python
-@given(u'出力先に既存のテストファイルが存在する')
-def step_impl(context):
-    pass
+@given('出力先に既存のテストファイルが存在する')  # type: ignore
+def given_f54fe40f(context):
+    """出力先に既存のテストファイルが存在する
+
+    Scenarios:
+      - 差分マージ（新規ステップ追記）
+      - 既存ファイルの上書き
+      - 差分マージ時の Duplicate スタブのコメント化
+    """
+    raise NotImplementedError('STEP: 出力先に既存のテストファイルが存在する')
 ```
 
 #### When scaffold コマンドを "--overwrite" オプション付きで実行する
@@ -359,9 +489,14 @@ def when_b42c7e05(context, param0):
 #### Then 既存ファイルが上書きされること
 
 ```python
-@then(u'既存ファイルが上書きされること')
-def step_impl(context):
-    pass
+@then('既存ファイルが上書きされること')  # type: ignore
+def then_6f27dfe3(context):
+    """既存ファイルが上書きされること
+
+    Scenarios:
+      - 既存ファイルの上書き
+    """
+    raise NotImplementedError('STEP: 既存ファイルが上書きされること')
 ```
 
 </details>
@@ -380,34 +515,58 @@ def step_impl(context):
 #### Given 出力先のテストファイルに未コミットの変更がある
 
 ```python
-@given(u'出力先のテストファイルに未コミットの変更がある')
-def step_impl(context):
-    pass
+@given('出力先のテストファイルに未コミットの変更がある')  # type: ignore
+def given_3f60de62(context):
+    """出力先のテストファイルに未コミットの変更がある
+
+    Scenarios:
+      - Git 未コミット変更の確認プロンプト
+      - --force オプションで確認プロンプトをスキップ
+    """
+    raise NotImplementedError('STEP: 出力先のテストファイルに未コミットの変更がある')
 ```
 
 #### When scaffold コマンドをデフォルトオプションで実行する
 
 ```python
-@when(u'scaffold コマンドをデフォルトオプションで実行する')
-def step_impl(context):
-    context.exit_code = 0
-    context.output = ''
+@when('scaffold コマンドをデフォルトオプションで実行する')  # type: ignore
+def when_7a9125c7(context):
+    """scaffold コマンドをデフォルトオプションで実行する
+
+    Scenarios:
+      - 差分マージ（新規ステップ追記）
+      - 差分なし時のスキップ
+      - Git 未コミット変更の確認プロンプト
+      - 差分マージ時の Duplicate スタブのコメント化
+      - 差分マージ時の他ファイルコメント行を Duplicate 判定に使用しない
+    """
+    raise NotImplementedError('STEP: scaffold コマンドをデフォルトオプションで実行する')
 ```
 
 #### Then マージするか確認プロンプトが表示されること
 
 ```python
-@then(u'マージするか確認プロンプトが表示されること')
-def step_impl(context):
-    pass
+@then('マージするか確認プロンプトが表示されること')  # type: ignore
+def then_fe932c66(context):
+    """マージするか確認プロンプトが表示されること
+
+    Scenarios:
+      - Git 未コミット変更の確認プロンプト
+    """
+    raise NotImplementedError('STEP: マージするか確認プロンプトが表示されること')
 ```
 
 #### And キャンセルするとそのファイルはスキップされること
 
 ```python
-@then(u'キャンセルするとそのファイルはスキップされること')
-def step_impl(context):
-    pass
+@then('キャンセルするとそのファイルはスキップされること')  # type: ignore
+def then_c8096039(context):
+    """キャンセルするとそのファイルはスキップされること
+
+    Scenarios:
+      - Git 未コミット変更の確認プロンプト
+    """
+    raise NotImplementedError('STEP: キャンセルするとそのファイルはスキップされること')
 ```
 
 </details>
@@ -425,9 +584,15 @@ def step_impl(context):
 #### Given 出力先のテストファイルに未コミットの変更がある
 
 ```python
-@given(u'出力先のテストファイルに未コミットの変更がある')
-def step_impl(context):
-    pass
+@given('出力先のテストファイルに未コミットの変更がある')  # type: ignore
+def given_3f60de62(context):
+    """出力先のテストファイルに未コミットの変更がある
+
+    Scenarios:
+      - Git 未コミット変更の確認プロンプト
+      - --force オプションで確認プロンプトをスキップ
+    """
+    raise NotImplementedError('STEP: 出力先のテストファイルに未コミットの変更がある')
 ```
 
 #### When scaffold コマンドを "--force" オプション付きで実行する
@@ -447,9 +612,14 @@ def when_b42c7e05(context, param0):
 #### Then 確認プロンプトなしでマージが実行されること
 
 ```python
-@then(u'確認プロンプトなしでマージが実行されること')
-def step_impl(context):
-    pass
+@then('確認プロンプトなしでマージが実行されること')  # type: ignore
+def then_4b7c11ee(context):
+    """確認プロンプトなしでマージが実行されること
+
+    Scenarios:
+      - --force オプションで確認プロンプトをスキップ
+    """
+    raise NotImplementedError('STEP: 確認プロンプトなしでマージが実行されること')
 ```
 
 </details>
@@ -469,42 +639,72 @@ def step_impl(context):
 #### Given 出力先に既存のテストファイルが存在する
 
 ```python
-@given(u'出力先に既存のテストファイルが存在する')
-def step_impl(context):
-    pass
+@given('出力先に既存のテストファイルが存在する')  # type: ignore
+def given_f54fe40f(context):
+    """出力先に既存のテストファイルが存在する
+
+    Scenarios:
+      - 差分マージ（新規ステップ追記）
+      - 既存ファイルの上書き
+      - 差分マージ時の Duplicate スタブのコメント化
+    """
+    raise NotImplementedError('STEP: 出力先に既存のテストファイルが存在する')
 ```
 
 #### And 別のステップファイルに同一ステップの実装が追加されている
 
 ```python
-@given(u'別のステップファイルに同一ステップの実装が追加されている')
-def step_impl(context):
-    pass
+@given('別のステップファイルに同一ステップの実装が追加されている')  # type: ignore
+def given_b99b973a(context):
+    """別のステップファイルに同一ステップの実装が追加されている
+
+    Scenarios:
+      - 差分マージ時の Duplicate スタブのコメント化
+    """
+    raise NotImplementedError('STEP: 別のステップファイルに同一ステップの実装が追加されている')
 ```
 
 #### When scaffold コマンドをデフォルトオプションで実行する
 
 ```python
-@when(u'scaffold コマンドをデフォルトオプションで実行する')
-def step_impl(context):
-    context.exit_code = 0
-    context.output = ''
+@when('scaffold コマンドをデフォルトオプションで実行する')  # type: ignore
+def when_7a9125c7(context):
+    """scaffold コマンドをデフォルトオプションで実行する
+
+    Scenarios:
+      - 差分マージ（新規ステップ追記）
+      - 差分なし時のスキップ
+      - Git 未コミット変更の確認プロンプト
+      - 差分マージ時の Duplicate スタブのコメント化
+      - 差分マージ時の他ファイルコメント行を Duplicate 判定に使用しない
+    """
+    raise NotImplementedError('STEP: scaffold コマンドをデフォルトオプションで実行する')
 ```
 
 #### Then 既存ファイルのスタブが Duplicate コメントに置き換わること
 
 ```python
-@then(u'既存ファイルのスタブが Duplicate コメントに置き換わること')
-def step_impl(context):
-    pass
+@then('既存ファイルのスタブが Duplicate コメントに置き換わること')  # type: ignore
+def then_df56f0cc(context):
+    """既存ファイルのスタブが Duplicate コメントに置き換わること
+
+    Scenarios:
+      - 差分マージ時の Duplicate スタブのコメント化
+    """
+    raise NotImplementedError('STEP: 既存ファイルのスタブが Duplicate コメントに置き換わること')
 ```
 
 #### And 他のステップのスタブは保持されること
 
 ```python
-@then(u'他のステップのスタブは保持されること')
-def step_impl(context):
-    pass
+@then('他のステップのスタブは保持されること')  # type: ignore
+def then_d0e8d8d6(context):
+    """他のステップのスタブは保持されること
+
+    Scenarios:
+      - 差分マージ時の Duplicate スタブのコメント化
+    """
+    raise NotImplementedError('STEP: 他のステップのスタブは保持されること')
 ```
 
 </details>
@@ -523,34 +723,57 @@ def step_impl(context):
 #### Given 別のステップファイルに同一ステップが Duplicate コメントとして記載されている
 
 ```python
-@given(u'別のステップファイルに同一ステップが Duplicate コメントとして記載されている')
-def step_impl(context):
-    pass
+@given('別のステップファイルに同一ステップが Duplicate コメントとして記載されている')  # type: ignore
+def given_e0006816(context):
+    """別のステップファイルに同一ステップが Duplicate コメントとして記載されている
+
+    Scenarios:
+      - 差分マージ時の他ファイルコメント行を Duplicate 判定に使用しない
+    """
+    raise NotImplementedError('STEP: 別のステップファイルに同一ステップが Duplicate コメントとして記載されている')
 ```
 
 #### And その同一ステップを実際に定義しているファイルは存在しない
 
 ```python
-@given(u'その同一ステップを実際に定義しているファイルは存在しない')
-def step_impl(context):
-    pass
+@given('その同一ステップを実際に定義しているファイルは存在しない')  # type: ignore
+def given_0e535b1f(context):
+    """その同一ステップを実際に定義しているファイルは存在しない
+
+    Scenarios:
+      - 差分マージ時の他ファイルコメント行を Duplicate 判定に使用しない
+    """
+    raise NotImplementedError('STEP: その同一ステップを実際に定義しているファイルは存在しない')
 ```
 
 #### When scaffold コマンドをデフォルトオプションで実行する
 
 ```python
-@when(u'scaffold コマンドをデフォルトオプションで実行する')
-def step_impl(context):
-    context.exit_code = 0
-    context.output = ''
+@when('scaffold コマンドをデフォルトオプションで実行する')  # type: ignore
+def when_7a9125c7(context):
+    """scaffold コマンドをデフォルトオプションで実行する
+
+    Scenarios:
+      - 差分マージ（新規ステップ追記）
+      - 差分なし時のスキップ
+      - Git 未コミット変更の確認プロンプト
+      - 差分マージ時の Duplicate スタブのコメント化
+      - 差分マージ時の他ファイルコメント行を Duplicate 判定に使用しない
+    """
+    raise NotImplementedError('STEP: scaffold コマンドをデフォルトオプションで実行する')
 ```
 
 #### Then そのステップが Duplicate としてではなくスタブとして生成されること
 
 ```python
-@then(u'そのステップが Duplicate としてではなくスタブとして生成されること')
-def step_impl(context):
-    pass
+@then('そのステップが Duplicate としてではなくスタブとして生成されること')  # type: ignore
+def then_35ff3425(context):
+    """そのステップが Duplicate としてではなくスタブとして生成されること
+
+    Scenarios:
+      - 差分マージ時の他ファイルコメント行を Duplicate 判定に使用しない
+    """
+    raise NotImplementedError('STEP: そのステップが Duplicate としてではなくスタブとして生成されること')
 ```
 
 </details>
@@ -562,7 +785,8 @@ def step_impl(context):
 
 ```gherkin
 # spec-weaver-fingerprint: ac749f5b22acae3a56e7afe46f7303fcc05eeb9fe7aa5007ce208559648dc4e4
-@SPEC-015
+# spec-weaver-fingerprint-AUT-001: FnmTOZIIA7Vf35CV-yoWSn5nUOY43-qpxJP98jDBnew=
+@AUT-001
 Feature: scaffold コマンド
   .feature ファイルから behave テストコードの雛形を自動生成・差分マージする。
 

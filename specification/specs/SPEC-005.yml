@@ -1,4 +1,4 @@
-active: true
+active: false
 derived: false
 gherkin_fingerprints:
 - ./specification/features/audit.feature: |
@@ -10,6 +10,7 @@ header: |
 level: 2.1
 links:
 - REQ-004: KXm5cZc2wXUhF29d-4lpSPbclfjN4ruCBIwDvWX93tg=
+migrated_to: QA-001
 normative: true
 ref: ''
 reviewed: yxWjzdWfdpNvinFXypkHKPXq2fCdKmNAJGMmC27qmao=

@@ -24,6 +24,25 @@ description: >
 仕様の具体的な操作手順（YAML編集、`.feature` 作成、`doorstop` コマンド）は
 **doorstop-gherkin-skill に委譲**する。本スキルはそれらの操作を**いつ・どの順序で行うか**を定める。
 
+### scaffold の鉄則
+
+**`.feature` ファイルを作成・変更したら、その直後に必ず scaffold を実行**してステップファイルを更新すること。
+手書きでゼロから Step 定義を書き始めてはならない。
+
+```bash
+# .feature を変更するたびに実行（新規ステップのみ追記）
+uv run spec-weaver scaffold ./specification/features --out-dir specification/features/steps
+
+# 強制上書き（ファイル全体を再生成）
+uv run spec-weaver scaffold ./specification/features --out-dir specification/features/steps --overwrite
+```
+
+| タイミング | 操作 |
+|---|---|
+| Phase 2 で `.feature` を新規作成した | scaffold 実行 → ステップ骨格（`NotImplementedError`）を生成 |
+| Phase 4 で `.feature` を追加・変更した | scaffold 実行 → 差分ステップ骨格を取り込む |
+| Phase 5 で `.feature` を修正した（波及更新） | scaffold 実行 → ステップファイルに反映 |
+
 ---
 
 ## 拡張ドキュメント階層
@@ -115,8 +134,13 @@ spec-weaver status
 
 1. 新規/更新が必要な REQ / SPEC を doorstop-gherkin-skill の手順で作成・更新する
 2. 規模に応じて DESIGN / ADR / RESEARCH ドキュメントを作成する（後述の規模判定を参照）
-3. `.feature` ファイルの追加・更新が必要か判断する
-4. 設計方針をユーザーに提示し、承認を得る
+3. `.feature` ファイルの追加・更新が必要か判断し、Gherkin を記述する
+4. `.feature` を作成・更新したら、**その直後に scaffold を実行**してステップ骨格を生成する:
+   ```bash
+   uv run spec-weaver scaffold ./specification/features --out-dir specification/features/steps
+   ```
+   > ここで生成された骨格（`NotImplementedError`）の肉付けは Phase 4 で行う。
+5. 設計方針をユーザーに提示し、承認を得る
 
 ### 規模に応じたドキュメント作成判定
 
@@ -131,7 +155,8 @@ spec-weaver status
 
 - [ ] REQ / SPEC の新規追加・更新が完了した
 - [ ] 必要な設計ドキュメント（DESIGN / ADR / RESEARCH）を作成した
-- [ ] `.feature` ファイルの更新方針を決定した
+- [ ] `.feature` ファイルの更新方針を決定し、Gherkin を記述した
+- [ ] `.feature` を作成・更新した場合、scaffold を実行してステップ骨格を生成した
 - [ ] 設計方針についてユーザーの承認を得た
 
 ---
@@ -177,13 +202,18 @@ doorstop link PLAN-001 SPEC-001
 1. 計画に沿ってコードを変更する
 2. 仕様の更新が必要な場合は doorstop-gherkin-skill の手順に従う
 3. `.feature` ファイルを追加・更新する
-4. 関連する REQ / SPEC の `status` を `in-progress` に更新する
-5. `updated_at` を更新する
+4. `.feature` を変更したら **必ず scaffold を実行**してステップファイルを更新する:
+   ```bash
+   uv run spec-weaver scaffold ./specification/features --out-dir specification/features/steps
+   ```
+   生成されたステップ骨格（`NotImplementedError`）を仕様に従って肉付けする。
+5. 関連する REQ / SPEC の `status` を `in-progress` に更新する
+6. `updated_at` を更新する
 
 ### 実装中の仕様同期ルール
 
 - コードの変更に伴い SPEC の内容が変わる場合は、**コードと同時に SPEC も更新する**
-- 新しい振る舞いを追加した場合は、`.feature` のシナリオも追加する
+- 新しい振る舞いを追加した場合は、`.feature` のシナリオも追加し、scaffold を再実行する
 - 仕様の更新手順は doorstop-gherkin-skill に従う
 
 ### 判定基準
@@ -191,6 +221,7 @@ doorstop link PLAN-001 SPEC-001
 - [ ] 計画の全タスクが完了した
 - [ ] テストが通過する
 - [ ] 仕様（REQ / SPEC / `.feature`）がコードと同期している
+- [ ] `.feature` を変更した場合、scaffold を実行してステップファイルを更新した
 
 ---
 
@@ -323,6 +354,7 @@ flowchart TD
 | REQ / SPEC の YAML 作成・編集 | doorstop-gherkin-skill | `doorstop add` / `doorstop edit` の手順 |
 | `.feature` ファイルの作成・編集 | doorstop-gherkin-skill | Gherkin 構文、タグ付けルール |
 | Spec-Weaver コマンドの使い方 | doorstop-gherkin-skill | `audit` / `build` / `status` / `trace` |
+| scaffold 実行、ステップ定義の実装 | bdd-behave-expert-skill | `.feature` 変更後に scaffold → 肉付け |
 | 開発フェーズの進行管理 | **dev-lifecycle（本スキル）** | フェーズ判定、チェックリスト |
 | コミットメッセージの規約 | **dev-lifecycle（本スキル）** | Conventional Commits 形式 |
 | 拡張ドキュメントの管理 | **dev-lifecycle（本スキル）** | DESIGN / PLAN / ADR / RESEARCH |

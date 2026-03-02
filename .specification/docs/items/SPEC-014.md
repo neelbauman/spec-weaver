@@ -1,15 +1,14 @@
 # [SPEC-014] feature MDページのバックリンク生成
 
-> ⚠️ **Suspect**: 関連するアイテムやテストが変更されました。影響範囲のレビューが必要です。
-> **原因 (Unreviewed)**: `./specification/features/build.feature`
+> 🚫 **非活性 (active: false)**: このアイテムは非活性です。[VIS-008](VIS-008.md) に移行されました。
 
 **実装状況**: ✅ implemented
 
-**作成日**: 2026-02-26　|　**更新日**: 2026-03-01
+**作成日**: 2026-02-26　|　**更新日**: 2026-03-02
 
 **上位アイテム**: [REQ-003](REQ-003.md) / **兄弟アイテム**: [SPEC-004](SPEC-004.md)
 
-**テスト対象**: Yes　**個別カバレッジ**: 🟢 1/1 (100%)
+**テスト対象**: Yes　**個別カバレッジ**: 🔴 0/1 (0%)
 
 
 ### 内容
@@ -43,6 +42,4 @@ Gherkinのfeatureファイルにはタグ（`@SPEC-003` 等）で仕様IDが紐�
 
 ### 🧪 検証シナリオ
 
-- **feature MDページへのバックリンク生成** — Scenario （`./specification/features/build.feature:54`）
-- **複数アイテムを参照するfeatureのバックリンク** — Scenario （`./specification/features/build.feature:61`）
-- **タグのないfeatureにはバックリンクを表示しない** — Scenario （`./specification/features/build.feature:67`）
+❌ まだ Gherkin シナリオが登録されていません。

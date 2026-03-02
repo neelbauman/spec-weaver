@@ -1,5 +1,5 @@
 # src/spec_weaver/codegen.py
-# implements: SPEC-015
+# implements: AUT-001
 
 """
 Gherkin .feature ファイルから behave テストコードの雛形を自動生成・差分マージする。

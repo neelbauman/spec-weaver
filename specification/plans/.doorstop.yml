@@ -1,6 +1,6 @@
 settings:
   digits: 3
   itemformat: yaml
-  parent: SPEC
+  parent: REQ
   prefix: PLAN
   sep: '-'

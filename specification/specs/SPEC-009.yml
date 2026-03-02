@@ -1,4 +1,4 @@
-active: true
+active: false
 derived: false
 gherkin_fingerprints:
 - ./specification/features/build.feature: |
@@ -8,6 +8,7 @@ header: |
 level: 9.0
 links:
 - REQ-008: O9VIOrrKyJ85dw8M2ZmFhANwo2DOlpuX0mijvY509xA=
+migrated_to: VIS-005
 normative: true
 ref: ''
 reviewed: XGwmm3OUhexv7Ihj6ioUjHsbiIdKMkFgk3-FC4YY6_Q=

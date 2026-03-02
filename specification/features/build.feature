@@ -1,9 +1,9 @@
-# spec-weaver-fingerprint: 4d1abc0d24ab84d4b44873ab7fcc439c3e9951bd4046244b1bef9e31f22ac785
-# spec-weaver-fingerprint-SPEC-004: 7U9xqeigRlGvB6tAUHnX6B87VymQZBElCddcDDoHKno=
-# spec-weaver-fingerprint-SPEC-005: ko9DXrE8njCAf21N2IQW1wLFn08o243gRE4eVAyjr1I=
-# spec-weaver-fingerprint-SPEC-009: KYgAAoNS9HaRaWh-1RokApiYtsiviZjsBtDjVjMZdc0=
-# spec-weaver-fingerprint-SPEC-014: 2NaavnhCDILEa_GR51DcPxcGgajBiAhsND2Dn0OA4Xo=
-@SPEC-004
+# spec-weaver-fingerprint: 8bb5e928220074386409f6de0c4ba9d25712d344bfcd76bdf4f6c6d5aa205dec
+# spec-weaver-fingerprint-QA-001: IVjwbWJI8Xga_1LFrHA_SqnpsZ_-MHzjo-w7D9zwEYE=
+# spec-weaver-fingerprint-VIS-001: vS8HMajMu_ierl6Dvv5xBk1dtLB30WMIGR7OIcwtLdk=
+# spec-weaver-fingerprint-VIS-005: cnyg43CeR6DlR-nhO8_IOS6ZTbkaQoU6UoJyLvsS-JY=
+# spec-weaver-fingerprint-VIS-008: 7sf3VezCdcJHKBaReMXoTyez2UxrlkvvZ8PvQBGdcA8=
+@VIS-001
 Feature: build コマンド
   Doorstopの仕様データとGherkinテストを統合した
   MkDocsドキュメントサイトを自動生成する。
@@ -36,7 +36,7 @@ Feature: build コマンド
     And   上位・下位リンクが含まれること
     And   対応するテストシナリオのファイルパスと行番号が含まれること
 
-  @SPEC-009
+  @VIS-005
   Scenario: 一覧テーブルのフィルタリング機能
     Given Doorstopプロジェクトにアイテムが存在する
     When  build コマンドを実行する
@@ -54,40 +54,40 @@ Feature: build コマンド
     When  build コマンドを --out-dir "./custom_docs" で実行する
     Then  "./custom_docs" ディレクトリに出力されること
 
-  @SPEC-014
+  @VIS-008
   Scenario: feature MDページへのバックリンク生成
     Given "@SPEC-003" タグを持つ "audit.feature" が存在する
     When  build コマンドを実行する
     Then  "docs/features/audit.md" の冒頭に "関連アイテム" セクションが含まれること
     And   "[SPEC-003](../items/SPEC-003.md)" へのリンクが含まれること
 
-  @SPEC-014
+  @VIS-008
   Scenario: 複数アイテムを参照するfeatureのバックリンク
-    Given "@SPEC-004" と "@SPEC-009" の両タグを持つfeatureが存在する
+    Given "@VIS-001" と "@VIS-005" の両タグを持つfeatureが存在する
     When  build コマンドを実行する
-    Then  生成されたfeature MDの "関連アイテム" に "SPEC-004" と "SPEC-009" の両方のリンクが含まれること
+    Then  生成されたfeature MDの "関連アイテム" に "VIS-001" と "VIS-005" の両方のリンクが含まれること
 
-  @SPEC-014
+  @VIS-008
   Scenario: タグのないfeatureにはバックリンクを表示しない
     Given どのDoorstopアイテムからも参照されていないfeatureが存在する
     When  build コマンドを実行する
     Then  生成されたfeature MDに "関連アイテム" 行が含まれないこと
 
-  @SPEC-005
+  @QA-001
   Scenario: Suspect Link 警告の一覧テーブル表示
     Given アイテムの上位リンク先が変更されている（cleared=false）
     When  build コマンドを実行する
     Then  一覧テーブルの行に "{: .suspect-row }" が適用されていること
     And   詳細ページに Suspect Link バナーが表示されること
 
-  @SPEC-005
+  @QA-001
   Scenario: Unreviewed Changes 警告の一覧テーブル表示
     Given アイテム自体に未レビューの変更がある（reviewed=false）
     When  build コマンドを実行する
     Then  一覧テーブルの行に "{: .unreviewed-row }" が適用されていること
     And   詳細ページに Unreviewed Changes バナーが表示されること
 
-  @SPEC-005
+  @QA-001
   Scenario: 複合警告の表示
     Given アイテムに Suspect Link と Unreviewed Changes の両方がある
     When  build コマンドを実行する

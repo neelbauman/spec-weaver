@@ -1,4 +1,4 @@
-active: true
+active: false
 derived: false
 gherkin_fingerprints:
 - ./specification/features/impl_link.feature: |
@@ -10,9 +10,10 @@ impl_files:
 level: 20.0
 links:
 - REQ-012: W1M-g8bMakjNSi3dVoSS2rEjVb7A3bfA2f3UYepGHok=
+migrated_to: TRC-004
 normative: true
 ref: ''
-reviewed: iyVziwF_MnLGJbh8CBmuskS2h11yCsc9Z-QgqBBDNr0=
+reviewed: kecUFEKox_diTIZTNEWyMcNDSog_nqO08j4-sXhMnUM=
 status: implemented
 test_fingerprint: |
   41dcbf4a7faa415e07ef63246c95e474b424447dfdad377e0db239885ff3b30f
@@ -36,7 +37,7 @@ text: |
 
   ```
   REQ-012 仕様アイテムと実装ファイルのリンク管理 🚧 in-progress
-  └── ★ SPEC-018 コードアノテーションスキャン 🚧 in-progress
+  └── ★ TRC-003 コードアノテーションスキャン 🚧 in-progress
       ├── 🥒 impl_link.feature
       │   └── Scenario: アノテーションのスキャン
       └── 📁 src/spec_weaver/impl_scanner.py   ← impl_files フィールド由来

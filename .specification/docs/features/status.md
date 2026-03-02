@@ -1,6 +1,8 @@
 # Feature: status コマンド
 
-**タグ**: `@SPEC-007`
+**タグ**: `@VIS-003`
+
+**関連アイテム**: [VIS-003](../items/VIS-003.md)
 
 REQ・SPECの実装ステータスをRichテーブル形式で一覧表示する。
 
@@ -18,19 +20,29 @@ REQ・SPECの実装ステータスをRichテーブル形式で一覧表示する
 #### Given REQ-001 が status: draft、SPEC-001 が status: implemented に設定されている
 
 ```python
-@given(u'REQ-001 が status: draft、SPEC-001 が status: implemented に設定されている')
-def step_impl(context):
-    pass
+@given('REQ-001 が status: draft、SPEC-001 が status: implemented に設定されている')  # type: ignore
+def given_ef098fcf(context):
+    """REQ-001 が status: draft、SPEC-001 が status: implemented に設定されている
+
+    Scenarios:
+      - 全アイテムのステータスを一覧表示する
+    """
+    raise NotImplementedError('STEP: REQ-001 が status: draft、SPEC-001 が status: implemented に設定されている')
 ```
 
 #### When status コマンドを実行する
 
 ```python
-@when(u'status コマンドを実行する')
-def step_impl(context):
-    res = run_spec_weaver(['status'], cwd=getattr(context, 'temp_dir', '.'))
-    context.exit_code = getattr(res, 'returncode', 0)
-    context.output = getattr(res, 'stdout', '') + chr(10) + getattr(res, 'stderr', '')
+@when('status コマンドを実行する')  # type: ignore
+def when_d68a8d9a(context):
+    """status コマンドを実行する
+
+    Scenarios:
+      - 全アイテムのステータスを一覧表示する
+      - status 未設定のアイテムは "-" と表示される
+      - レビューステータスと最終更新日が表示される
+    """
+    raise NotImplementedError('STEP: status コマンドを実行する')
 ```
 
 #### Then 終了コード 0 が返ること
@@ -92,19 +104,29 @@ def then_9f0d7f01(context, param0):
 #### Given SPEC-001 に status フィールドが設定されていない
 
 ```python
-@given(u'SPEC-001 に status フィールドが設定されていない')
-def step_impl(context):
-    pass
+@given('SPEC-001 に status フィールドが設定されていない')  # type: ignore
+def given_0d995d24(context):
+    """SPEC-001 に status フィールドが設定されていない
+
+    Scenarios:
+      - status 未設定のアイテムは "-" と表示される
+    """
+    raise NotImplementedError('STEP: SPEC-001 に status フィールドが設定されていない')
 ```
 
 #### When status コマンドを実行する
 
 ```python
-@when(u'status コマンドを実行する')
-def step_impl(context):
-    res = run_spec_weaver(['status'], cwd=getattr(context, 'temp_dir', '.'))
-    context.exit_code = getattr(res, 'returncode', 0)
-    context.output = getattr(res, 'stdout', '') + chr(10) + getattr(res, 'stderr', '')
+@when('status コマンドを実行する')  # type: ignore
+def when_d68a8d9a(context):
+    """status コマンドを実行する
+
+    Scenarios:
+      - 全アイテムのステータスを一覧表示する
+      - status 未設定のアイテムは "-" と表示される
+      - レビューステータスと最終更新日が表示される
+    """
+    raise NotImplementedError('STEP: status コマンドを実行する')
 ```
 
 #### Then 終了コード 0 が返ること
@@ -154,9 +176,14 @@ def then_5818121f(context, param0):
 #### Given REQ-001 が status: implemented、REQ-002 が status: draft に設定されている
 
 ```python
-@given(u'REQ-001 が status: implemented、REQ-002 が status: draft に設定されている')
-def step_impl(context):
-    pass
+@given('REQ-001 が status: implemented、REQ-002 が status: draft に設定されている')  # type: ignore
+def given_58beb4fc(context):
+    """REQ-001 が status: implemented、REQ-002 が status: draft に設定されている
+
+    Scenarios:
+      - --filter で特定ステータスに絞り込める
+    """
+    raise NotImplementedError('STEP: REQ-001 が status: implemented、REQ-002 が status: draft に設定されている')
 ```
 
 #### When status コマンドを "--filter implemented" オプション付きで実行する
@@ -196,17 +223,27 @@ def then_4f25c571(context):
 #### And REQ-001 が表示されること
 
 ```python
-@then(u'REQ-001 が表示されること')
-def step_impl(context):
-    pass
+@then('REQ-001 が表示されること')  # type: ignore
+def then_2847178d(context):
+    """REQ-001 が表示されること
+
+    Scenarios:
+      - --filter で特定ステータスに絞り込める
+    """
+    raise NotImplementedError('STEP: REQ-001 が表示されること')
 ```
 
 #### And REQ-002 は表示されないこと
 
 ```python
-@then(u'REQ-002 は表示されないこと')
-def step_impl(context):
-    pass
+@then('REQ-002 は表示されないこと')  # type: ignore
+def then_9fc4e668(context):
+    """REQ-002 は表示されないこと
+
+    Scenarios:
+      - --filter で特定ステータスに絞り込める
+    """
+    raise NotImplementedError('STEP: REQ-002 は表示されないこと')
 ```
 
 </details>
@@ -272,9 +309,14 @@ def then_4f25c571(context):
 #### And 一致するアイテムが見つからなかった旨が表示されること
 
 ```python
-@then(u'一致するアイテムが見つからなかった旨が表示されること')
-def step_impl(context):
-    pass
+@then('一致するアイテムが見つからなかった旨が表示されること')  # type: ignore
+def then_897c0cfb(context):
+    """一致するアイテムが見つからなかった旨が表示されること
+
+    Scenarios:
+      - --filter に一致するアイテムが存在しない場合に通知される
+    """
+    raise NotImplementedError('STEP: 一致するアイテムが見つからなかった旨が表示されること')
 ```
 
 </details>
@@ -294,19 +336,29 @@ def step_impl(context):
 #### Given Doorstopのアイテムが存在する
 
 ```python
-@given(u'Doorstopのアイテムが存在する')
-def step_impl(context):
-    pass
+@given('Doorstopのアイテムが存在する')  # type: ignore
+def given_0da078b7(context):
+    """Doorstopのアイテムが存在する
+
+    Scenarios:
+      - レビューステータスと最終更新日が表示される
+    """
+    raise NotImplementedError('STEP: Doorstopのアイテムが存在する')
 ```
 
 #### When status コマンドを実行する
 
 ```python
-@when(u'status コマンドを実行する')
-def step_impl(context):
-    res = run_spec_weaver(['status'], cwd=getattr(context, 'temp_dir', '.'))
-    context.exit_code = getattr(res, 'returncode', 0)
-    context.output = getattr(res, 'stdout', '') + chr(10) + getattr(res, 'stderr', '')
+@when('status コマンドを実行する')  # type: ignore
+def when_d68a8d9a(context):
+    """status コマンドを実行する
+
+    Scenarios:
+      - 全アイテムのステータスを一覧表示する
+      - status 未設定のアイテムは "-" と表示される
+      - レビューステータスと最終更新日が表示される
+    """
+    raise NotImplementedError('STEP: status コマンドを実行する')
 ```
 
 #### Then 終了コード 0 が返ること
@@ -329,17 +381,27 @@ def then_4f25c571(context):
 #### And レビューステータス列が表示されること
 
 ```python
-@then(u'レビューステータス列が表示されること')
-def step_impl(context):
-    pass
+@then('レビューステータス列が表示されること')  # type: ignore
+def then_33e7dc19(context):
+    """レビューステータス列が表示されること
+
+    Scenarios:
+      - レビューステータスと最終更新日が表示される
+    """
+    raise NotImplementedError('STEP: レビューステータス列が表示されること')
 ```
 
 #### And 最終更新日列が表示されること
 
 ```python
-@then(u'最終更新日列が表示されること')
-def step_impl(context):
-    pass
+@then('最終更新日列が表示されること')  # type: ignore
+def then_49bd7463(context):
+    """最終更新日列が表示されること
+
+    Scenarios:
+      - レビューステータスと最終更新日が表示される
+    """
+    raise NotImplementedError('STEP: 最終更新日列が表示されること')
 ```
 
 </details>
@@ -351,7 +413,8 @@ def step_impl(context):
 
 ```gherkin
 # spec-weaver-fingerprint: 747a067a366f71279c1117cac9de1de2defd17db0b57a350b3806f514bd482a0
-@SPEC-007
+# spec-weaver-fingerprint-VIS-003: vkjlHhlge0Un5uAGQCyff68rJGP3jp7vGCvSQVAsuNM=
+@VIS-003
 Feature: status コマンド
   REQ・SPECの実装ステータスをRichテーブル形式で一覧表示する。
 

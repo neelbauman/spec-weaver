@@ -1,8 +1,8 @@
-active: true
+active: false
 derived: false
 gherkin_fingerprints:
 - ./specification/features/clear.feature: |
-    dcb4876da876208a14c7521cb84eea0f54f9cb8c41962501df2bc9d8827d8b43
+    1e72b35df72dd2bd1ece9a3271893d1ad53d1a097f4ffb5df816d589104e085e
 header: |
   clear コマンド — Doorstop gherkin_fingerprints 更新
 impl_files:
@@ -10,6 +10,7 @@ impl_files:
 level: 20.5
 links:
 - REQ-004: KXm5cZc2wXUhF29d-4lpSPbclfjN4ruCBIwDvWX93tg=
+migrated_to: QA-005
 normative: true
 ref: ''
 reviewed: kFpUXikpmvsWjUZezz9cYJesvTTg2P0yNCwKSskfGYQ=

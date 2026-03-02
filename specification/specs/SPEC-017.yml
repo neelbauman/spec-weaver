@@ -1,4 +1,4 @@
-active: true
+active: false
 derived: false
 gherkin_fingerprints:
 - ./specification/features/impl_link.feature: |
@@ -11,6 +11,7 @@ impl_files:
 level: 17.0
 links:
 - REQ-012: W1M-g8bMakjNSi3dVoSS2rEjVb7A3bfA2f3UYepGHok=
+migrated_to: TRC-002
 normative: true
 ref: ''
 reviewed: Rr6fkJVvV3hw9XNSMzoSUQCgohFmARadEcqcDp7cm0Q=

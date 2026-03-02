@@ -1,4 +1,4 @@
-active: true
+active: false
 derived: false
 gherkin_fingerprints:
 - ./specification/features/impl_link.feature: |
@@ -10,9 +10,10 @@ impl_files:
 level: 18.0
 links:
 - REQ-012: W1M-g8bMakjNSi3dVoSS2rEjVb7A3bfA2f3UYepGHok=
+migrated_to: TRC-003
 normative: true
 ref: ''
-reviewed: IEDfYR9Ce9sTaNWfNob1qIfM31YLn8AR3pvQu6xXj_4=
+reviewed: _HZQWhkE8ZwOHiP_aBrMJWzbxkyEjpENfip56pEPCWU=
 status: implemented
 test_fingerprint: |
   41dcbf4a7faa415e07ef63246c95e474b424447dfdad377e0db239885ff3b30f
@@ -29,7 +30,7 @@ text: |
 
   ```python
   # implements: SPEC-001
-  # implements: SPEC-001, SPEC-002
+  # implements: SPEC-001, CORE-001
   # implements: SPEC-001, REQ-012
   ```
 
@@ -50,7 +51,7 @@ text: |
   # 例
   {
       "SPEC-001": {"src/spec_weaver/cli.py", "src/spec_weaver/doorstop.py"},
-      "SPEC-018": {"src/spec_weaver/impl_scanner.py"},
+      "TRC-003": {"src/spec_weaver/impl_scanner.py"},
   }
   ```
 

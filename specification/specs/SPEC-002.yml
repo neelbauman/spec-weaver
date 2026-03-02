@@ -1,4 +1,4 @@
-active: true
+active: false
 derived: false
 gherkin_fingerprints:
 - ./specification/features/data_extraction.feature: |
@@ -9,9 +9,10 @@ level: 1.1
 links:
 - REQ-001: r8HLD3Bp9ilMNgxhGINfuTj969G6-xvhIcjcnYrl-J0=
 - REQ-002: AL9bDV_13Z_dFORw5rjP1YoJvrpxV9BwxqcTBuTGPsA=
+migrated_to: CORE-001
 normative: true
 ref: ''
-reviewed: D4KjmcrpAg3v3-QAXCdB7bTOowaShXstZqoS8dZBTuI=
+reviewed: MuONq9kEF0UMInLdJkl5b_DRkIsNkY_U9_hX7hCNRBA=
 status: implemented
 test_fingerprint: |
   bfb97c507a8e3e23e58c4c6e0bc437d7d98c1d27c8c9accfcc20affd9fe0aa20
@@ -49,7 +50,7 @@ text: |
   - `gherkin-official` パーサーを用いて抽象構文木（AST）を構築すること
   - タグの文字列だけでなく、そのタグが属する「シナリオ名」「ファイル相対パス」「行番号」の
     メタデータを正確に抽出すること
-  - Gherkin のタグ継承（Effective Tags）に関する詳細仕様は **SPEC-021** を参照すること
+  - Gherkin のタグ継承（Effective Tags）に関する詳細仕様は **CORE-002** を参照すること
 
   ### カスタム属性の評価
   - Doorstopの `testable: false` 属性を評価すること

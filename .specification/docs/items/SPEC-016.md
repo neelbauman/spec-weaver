@@ -1,15 +1,14 @@
 # [SPEC-016] CI/CD パイプライン統合 — テスト実行・結果反映の自動化
 
-> ⚠️ **Suspect**: 関連するアイテムやテストが変更されました。影響範囲のレビューが必要です。
-> **原因 (Unreviewed)**: `./specification/features/ci.feature`
+> 🚫 **非活性 (active: false)**: このアイテムは非活性です。[AUT-002](AUT-002.md) に移行されました。
 
 **実装状況**: ✅ implemented
 
-**作成日**: 2026-02-26　|　**更新日**: 2026-03-01
+**作成日**: 2026-02-26　|　**更新日**: 2026-03-02
 
 **上位アイテム**: [REQ-011](REQ-011.md) / **兄弟アイテム**: [SPEC-015](SPEC-015.md)
 
-**テスト対象**: Yes　**個別カバレッジ**: 🟢 1/1 (100%)
+**テスト対象**: Yes　**個別カバレッジ**: 🔴 0/1 (0%)
 
 
 ### 内容
@@ -49,6 +48,4 @@ spec-weaver ci <feature_dir>
 
 ### 🧪 検証シナリオ
 
-- **テスト実行とドキュメント生成の一貫実行** — Scenario （`./specification/features/ci.feature:6`）
-- **テスト失敗時のドキュメント生成継続** — Scenario （`./specification/features/ci.feature:14`）
-- **scaffold 付き ci 実行** — Scenario （`./specification/features/ci.feature:20`）
+❌ まだ Gherkin シナリオが登録されていません。

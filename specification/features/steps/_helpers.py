@@ -208,7 +208,7 @@ def create_doorstop_project_api(
 ) -> None:
     """
     Doorstop Python API でプロジェクトを作成し review/clear まで行う。
-    UID は順番に自動割り当て: REQ-001, REQ-002, ... / SPEC-001, SPEC-002, ...
+    UID は順番に自動割り当て: REQ-001, REQ-002, ... / SPEC-001, CORE-001, ...
     """
     import doorstop
 

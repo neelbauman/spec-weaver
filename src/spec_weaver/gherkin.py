@@ -1,7 +1,7 @@
 # src/spec_weaver/gherkin.py
-# implements: SPEC-021
-# implements: SPEC-002
-# implements: SPEC-024
+# implements: CORE-002
+# implements: CORE-001
+# implements: QA-004
 
 from collections import defaultdict
 from pathlib import Path
@@ -53,7 +53,7 @@ def get_tag_map(
     指定ディレクトリ以下の .feature ファイルを解析し、
     仕様ID（タグ）と、それに紐づくシナリオ（テスト）情報のマッピングを取得します。
 
-    Gherkin のタグ継承ルール（SPEC-021）に従い、Feature / Rule レベルのタグは
+    Gherkin のタグ継承ルール（CORE-002）に従い、Feature / Rule レベルのタグは
     配下のすべての Scenario / Scenario Outline に継承されます。
     tag_map の各エントリは必ず Scenario 系のキーワードを持つ ScenarioInfo になります。
 
@@ -98,7 +98,7 @@ def get_tag_map(
                 rel_path = str(feature_file)
 
             # コアジェネレータで (effective_tag_set, scenario_info) を取得し、
-            # プレフィックスフィルタを適用してから tag_map に登録する（SPEC-021）
+            # プレフィックスフィルタを適用してから tag_map に登録する（CORE-002）
             for effective_tags, scenario_info in _extract_scenarios_with_inherited_tags(
                 ast, rel_path
             ):
@@ -126,7 +126,7 @@ def _extract_scenarios_with_inherited_tags(
     GherkinのASTをトップダウンで再帰的に探索し、各シナリオの
     「Effective Tags（有効タグ）」と ScenarioInfo のタプルを生成するコアジェネレータ。
 
-    タグ継承ルール（SPEC-021）:
+    タグ継承ルール（CORE-002）:
     - Feature のタグはすべての直下 Scenario および Rule 配下の Scenario に継承される
     - Rule のタグは Feature タグと合わせて配下のすべての Scenario に継承される
     - Scenario Outline の場合、全 Examples テーブルのタグの和集合を effective_tags に加算
@@ -182,7 +182,7 @@ def _process_scenario_node(
     (effective_tag_set, ScenarioInfo) を yield する。
 
     Scenario Outline の場合、全 Examples テーブルのタグを effective_tags に集約し、
-    1エントリとして扱う（SPEC-021: ScenarioOutline は1エントリ）。
+    1エントリとして扱う（CORE-002: ScenarioOutline は1エントリ）。
     """
     scenario = child.get("scenario")
     if not scenario:
@@ -237,7 +237,7 @@ def _get_node_hash_content(node: Any) -> str:
 
 
 # ---------------------------------------------------------------------------
-# .feature ファイル単位フィンガープリント（SPEC-024）
+# .feature ファイル単位フィンガープリント（QA-004）
 # ---------------------------------------------------------------------------
 
 _FINGERPRINT_PREFIX = "# spec-weaver-fingerprint: "

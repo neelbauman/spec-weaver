@@ -1,4 +1,4 @@
-active: true
+active: false
 derived: false
 header: |
   semantic-review-skill — Claude Code セマンティックレビュースキル
@@ -7,6 +7,7 @@ impl_files:
 level: 20.3
 links:
 - REQ-013: mlYsN4aIR9VbxHA-yfOSM2Kvja2WM53jkqu9QVTeP3E=
+migrated_to: AUT-004
 normative: true
 ref: ''
 reviewed: sWmlXE2wp2ZyujLxdBNjXzAh-5EqmNnJLFr1viuBTTI=

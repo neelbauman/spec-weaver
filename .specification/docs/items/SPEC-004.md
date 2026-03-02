@@ -1,15 +1,14 @@
 # [SPEC-004] build コマンド仕様
 
-> ⚠️ **Suspect**: 関連するアイテムやテストが変更されました。影響範囲のレビューが必要です。
-> **原因 (Unreviewed)**: `./specification/features/build.feature`
+> 🚫 **非活性 (active: false)**: このアイテムは非活性です。[VIS-001](VIS-001.md) に移行されました。
 
 **実装状況**: ✅ implemented
 
-**作成日**: 2026-02-26　|　**更新日**: 2026-03-01
+**作成日**: 2026-02-26　|　**更新日**: 2026-03-02
 
 **上位アイテム**: [REQ-003](REQ-003.md) / **兄弟アイテム**: [SPEC-014](SPEC-014.md)
 
-**テスト対象**: Yes　**個別カバレッジ**: 🟢 1/1 (100%)
+**テスト対象**: Yes　**個別カバレッジ**: 🔴 0/1 (0%)
 
 
 ### 内容
@@ -37,16 +36,4 @@
 
 ### 🧪 検証シナリオ
 
-- **MkDocs設定ファイルの生成** — Scenario （`./specification/features/build.feature:7`）
-- **要件一覧ページの生成** — Scenario （`./specification/features/build.feature:13`）
-- **仕様一覧ページの生成** — Scenario （`./specification/features/build.feature:20`）
-- **個別アイテム詳細ページの生成** — Scenario （`./specification/features/build.feature:27`）
-- **一覧テーブルのフィルタリング機能** — Scenario （`./specification/features/build.feature:36`）
-- **出力ディレクトリの独立性** — Scenario （`./specification/features/build.feature:42`）
-- **カスタム出力ディレクトリの指定** — Scenario （`./specification/features/build.feature:48`）
-- **feature MDページへのバックリンク生成** — Scenario （`./specification/features/build.feature:54`）
-- **複数アイテムを参照するfeatureのバックリンク** — Scenario （`./specification/features/build.feature:61`）
-- **タグのないfeatureにはバックリンクを表示しない** — Scenario （`./specification/features/build.feature:67`）
-- **Suspect Link 警告の一覧テーブル表示** — Scenario （`./specification/features/build.feature:73`）
-- **Unreviewed Changes 警告の一覧テーブル表示** — Scenario （`./specification/features/build.feature:80`）
-- **複合警告の表示** — Scenario （`./specification/features/build.feature:87`）
+❌ まだ Gherkin シナリオが登録されていません。

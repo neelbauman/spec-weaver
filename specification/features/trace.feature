@@ -1,6 +1,6 @@
 # spec-weaver-fingerprint: 800e543e22e3ca019b5ccbd6efea879aa5ea3dbb2a3afafc7f4e63db24015318
-# spec-weaver-fingerprint-SPEC-010: hBJQt8GgHtcO_w_LWvgQDsEVyjFEMZMMJxYhZBKwhPY=
-@SPEC-010
+# spec-weaver-fingerprint-TRC-001: HKeXIyGAgfYrCuLXM9S1YOKJTFIxClAO5GHOWxFVehI=
+@TRC-001
 Feature: trace コマンド — トレーサビリティ・ツリー表示
   任意のアイテム（REQ・SPEC・Gherkin）を起点として、
   関連する上位・下位アイテムを階層構造で表示する。

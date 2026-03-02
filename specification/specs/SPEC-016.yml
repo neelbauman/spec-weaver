@@ -1,4 +1,4 @@
-active: true
+active: false
 derived: false
 gherkin_fingerprints:
 - ./specification/features/ci.feature: |
@@ -8,6 +8,7 @@ header: |
 level: 3.16
 links:
 - REQ-011: L8Bl65UQLRlIMAdIbMBwE7YNvvUDNz-IySWal4X7iNI=
+migrated_to: AUT-002
 normative: true
 ref: ''
 reviewed: OqdFH6AQlo2h3QVLbYrLbkHrDjMJ3QsSLZB4lVvmy40=

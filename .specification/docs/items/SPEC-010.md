@@ -1,7 +1,6 @@
 # [SPEC-010] trace コマンド — トレーサビリティ・ツリー表示
 
-> ⚠️ **Suspect**: 関連するアイテムやテストが変更されました。影響範囲のレビューが必要です。
-> **原因 (Unreviewed)**: `./specification/features/trace.feature`
+> 🚫 **非活性 (active: false)**: このアイテムは非活性です。[TRC-001](TRC-001.md) に移行されました。
 
 **実装状況**: ✅ implemented
 
@@ -9,7 +8,7 @@
 
 **上位アイテム**: [REQ-009](REQ-009.md)
 
-**テスト対象**: Yes　**個別カバレッジ**: 🟢 1/1 (100%)
+**テスト対象**: Yes　**個別カバレッジ**: 🔴 0/1 (0%)
 
 
 ### 内容
@@ -69,12 +68,12 @@ REQ-001 仕様と実装のトレーサビリティ保証 ✅ implemented
 │   │       ├── Scenario: 完全一致時の監査成功
 │   │       ├── Scenario: テスト漏れの検出
 │   │       └── Scenario: 孤児タグの検出
-│   └── SPEC-004 build コマンド仕様 ✅ implemented
+│   └── VIS-001 build コマンド仕様 ✅ implemented
 │       └── 🥒 build.feature
 │           ├── Scenario: MkDocs設定ファイル生成
 │           └── Scenario: 要件一覧ページ生成
 ├── SPEC-001 コア・アーキテクチャ ✅ implemented
-└── SPEC-002 データ抽出基盤 ✅ implemented
+└── CORE-001 データ抽出基盤 ✅ implemented
     └── 🥒 data_extraction.feature
         ├── Scenario: Doorstop APIによる仕様ID集合取得
         └── Scenario: 非アクティブなアイテムの除外
@@ -87,7 +86,7 @@ REQ-001 仕様と実装のトレーサビリティ保証 ✅ implemented
 [REQ]  REQ-001 仕様と実装のトレーサビリティ保証 ✅ implemented
 [REQ]  REQ-002 監査による品質の継続的担保 ✅ implemented
 [SPEC] SPEC-003 audit コマンド仕様 ✅ implemented
-[SPEC] SPEC-004 build コマンド仕様 ✅ implemented
+[SPEC] VIS-001 build コマンド仕様 ✅ implemented
 [TEST] audit.feature :: 完全一致時の監査成功
 [TEST] audit.feature :: テスト漏れの検出
 ```
@@ -104,11 +103,4 @@ REQ-001 仕様と実装のトレーサビリティ保証 ✅ implemented
 
 ### 🧪 検証シナリオ
 
-- **REQを起点としたトップダウンのツリー表示** — Scenario （`./specification/features/trace.feature:21`）
-- **SPECを起点とした双方向のツリー表示** — Scenario （`./specification/features/trace.feature:31`）
-- **Gherkin Featureファイルを起点としたボトムアップ表示** — Scenario （`./specification/features/trace.feature:39`）
-- **--direction up で上方向のみ探索** — Scenario （`./specification/features/trace.feature:46`）
-- **--direction down で下方向のみ探索** — Scenario （`./specification/features/trace.feature:53`）
-- **--format flat でフラットリスト表示** — Scenario （`./specification/features/trace.feature:60`）
-- **存在しないIDを指定した場合のエラー** — Scenario （`./specification/features/trace.feature:66`）
-- **各ノードにステータスバッジが表示される** — Scenario （`./specification/features/trace.feature:71`）
+❌ まだ Gherkin シナリオが登録されていません。

@@ -1,4 +1,4 @@
-active: true
+active: false
 derived: false
 gherkin_fingerprints:
 - ./specification/features/timestamp.feature: |
@@ -8,6 +8,7 @@ header: |
 level: 10.1
 links:
 - REQ-010: ECPuWqjRylWWFNUNmco_ygq9reO2BgGgFUNtymMh_HU=
+migrated_to: VIS-006
 normative: true
 ref: ''
 reviewed: jwwZiIldu80K5LmvzeU34GlnKrg4R2q1xF8nFe59BqU=

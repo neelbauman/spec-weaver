@@ -1,6 +1,8 @@
 # Feature: 仕様アイテムと実装ファイルのリンク管理
 
-**タグ**: `@SPEC-017` `@SPEC-018` `@SPEC-019` `@SPEC-020`
+**タグ**: `@TRC-002` `@TRC-003` `@QA-003` `@TRC-004`
+
+**関連アイテム**: [QA-003](../items/QA-003.md) / [TRC-002](../items/TRC-002.md) / [TRC-003](../items/TRC-003.md) / [TRC-004](../items/TRC-004.md)
 
 DoorstopのYAML impl_files カスタム属性とコードアノテーションを組み合わせて、
   仕様と実装ファイルの双方向トレーサビリティを実現する。
@@ -45,36 +47,52 @@ def given_14c0b615(context):
 ---
 ## Scenario: impl_files にリスト形式でファイルパスを記述できる
 
-**タグ**: `@SPEC-017`
+**タグ**: `@TRC-002`
 
-- **Given** SPEC-018 の impl_files に ["src/spec_weaver/impl_scanner.py"] が設定されている
+- **Given** TRC-003 の impl_files に ["src/spec_weaver/impl_scanner.py"] が設定されている
 - **When** impl_files を読み取る
 - **Then** ファイルパスのリスト ["src/spec_weaver/impl_scanner.py"] が得られること
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
-#### Given SPEC-018 の impl_files に ["src/spec_weaver/impl_scanner.py"] が設定されている
+#### Given TRC-003 の impl_files に ["src/spec_weaver/impl_scanner.py"] が設定されている
 
 ```python
-@given(u'SPEC-018 の impl_files に ["src/spec_weaver/impl_scanner.py"] が設定されている')
-def step_impl(context):
-    pass
+@given('TRC-003 の impl_files に ["{param0}"] が設定されている')  # type: ignore
+def given_5b35c4dd(context, param0):
+    """TRC-003 の impl_files に ["src/spec_weaver/impl_scanner.py"] が設定されている
+
+    Scenarios:
+      - impl_files にリスト形式でファイルパスを記述できる
+    """
+    raise NotImplementedError('STEP: TRC-003 の impl_files に ["{param0}"] が設定されている')
 ```
 
 #### When impl_files を読み取る
 
 ```python
-@when(u'impl_files を読み取る')
-def step_impl(context):
-    pass
+@when('impl_files を読み取る')  # type: ignore
+def when_1e9b41a9(context):
+    """impl_files を読み取る
+
+    Scenarios:
+      - impl_files にリスト形式でファイルパスを記述できる
+      - impl_files が未設定の場合はリンクなしとして扱われる
+    """
+    raise NotImplementedError('STEP: impl_files を読み取る')
 ```
 
 #### Then ファイルパスのリスト ["src/spec_weaver/impl_scanner.py"] が得られること
 
 ```python
-@then(u'ファイルパスのリスト ["src/spec_weaver/impl_scanner.py"] が得られること')
-def step_impl(context):
-    pass
+@then('ファイルパスのリスト ["{param0}"] が得られること')  # type: ignore
+def then_4c08825b(context, param0):
+    """ファイルパスのリスト ["src/spec_weaver/impl_scanner.py"] が得られること
+
+    Scenarios:
+      - impl_files にリスト形式でファイルパスを記述できる
+    """
+    raise NotImplementedError('STEP: ファイルパスのリスト ["{param0}"] が得られること')
 ```
 
 </details>
@@ -83,36 +101,53 @@ def step_impl(context):
 ---
 ## Scenario: impl_files が未設定の場合はリンクなしとして扱われる
 
-**タグ**: `@SPEC-017`
+**タグ**: `@TRC-002`
 
-- **Given** SPEC-019 の impl_files が未設定である
+- **Given** QA-003 の impl_files が未設定である
 - **When** impl_files を読み取る
 - **Then** 空のリストが返ること
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
-#### Given SPEC-019 の impl_files が未設定である
+#### Given QA-003 の impl_files が未設定である
 
 ```python
-@given(u'SPEC-019 の impl_files が未設定である')
-def step_impl(context):
-    pass
+@given('QA-003 の impl_files が未設定である')  # type: ignore
+def given_60f3699e(context):
+    """QA-003 の impl_files が未設定である
+
+    Scenarios:
+      - impl_files が未設定の場合はリンクなしとして扱われる
+      - アノテーションがあって impl_files がない場合は警告を報告する
+    """
+    raise NotImplementedError('STEP: QA-003 の impl_files が未設定である')
 ```
 
 #### When impl_files を読み取る
 
 ```python
-@when(u'impl_files を読み取る')
-def step_impl(context):
-    pass
+@when('impl_files を読み取る')  # type: ignore
+def when_1e9b41a9(context):
+    """impl_files を読み取る
+
+    Scenarios:
+      - impl_files にリスト形式でファイルパスを記述できる
+      - impl_files が未設定の場合はリンクなしとして扱われる
+    """
+    raise NotImplementedError('STEP: impl_files を読み取る')
 ```
 
 #### Then 空のリストが返ること
 
 ```python
-@then(u'空のリストが返ること')
-def step_impl(context):
-    pass
+@then('空のリストが返ること')  # type: ignore
+def then_3cd52b0f(context):
+    """空のリストが返ること
+
+    Scenarios:
+      - impl_files が未設定の場合はリンクなしとして扱われる
+    """
+    raise NotImplementedError('STEP: 空のリストが返ること')
 ```
 
 </details>
@@ -121,36 +156,57 @@ def step_impl(context):
 ---
 ## Scenario: アノテーションのスキャンで仕様IDとファイルの対応を抽出できる
 
-**タグ**: `@SPEC-018`
+**タグ**: `@TRC-003`
 
-- **Given** "src/spec_weaver/impl_scanner.py" の行頭に "# implements: SPEC-018" が記述されている
+- **Given** "src/spec_weaver/impl_scanner.py" の行頭に "# implements: TRC-003" が記述されている
 - **When** impl-scanner でリポジトリをスキャンする
-- **Then** "SPEC-018" に対して "src/spec_weaver/impl_scanner.py" が紐づくこと
+- **Then** "TRC-003" に対して "src/spec_weaver/impl_scanner.py" が紐づくこと
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
-#### Given "src/spec_weaver/impl_scanner.py" の行頭に "# implements: SPEC-018" が記述されている
+#### Given "src/spec_weaver/impl_scanner.py" の行頭に "# implements: TRC-003" が記述されている
 
 ```python
-@given(u'"src/spec_weaver/impl_scanner.py" の行頭に "# implements: SPEC-018" が記述されている')
-def step_impl(context):
-    pass
+@given('"{param0}" の行頭に "{param1}" が記述されている')  # type: ignore
+def given_1a5b95f0(context, param0, param1):
+    """"src/spec_weaver/impl_scanner.py" の行頭に "# implements: TRC-003" が記述されている
+
+    Scenarios:
+      - アノテーションのスキャンで仕様IDとファイルの対応を抽出できる
+      - 1行に複数の仕様IDを記述できる
+      - アノテーションがあって impl_files がない場合は警告を報告する
+      - アノテーション由来のファイルも trace ツリーに表示される
+    """
+    raise NotImplementedError('STEP: "{param0}" の行頭に "{param1}" が記述されている')
 ```
 
 #### When impl-scanner でリポジトリをスキャンする
 
 ```python
-@when(u'impl-scanner でリポジトリをスキャンする')
-def step_impl(context):
-    pass
+@when('impl-scanner でリポジトリをスキャンする')  # type: ignore
+def when_59b7b6ae(context):
+    """impl-scanner でリポジトリをスキャンする
+
+    Scenarios:
+      - アノテーションのスキャンで仕様IDとファイルの対応を抽出できる
+      - 1行に複数の仕様IDを記述できる
+      - アノテーションがないファイルはエラーにならない
+    """
+    raise NotImplementedError('STEP: impl-scanner でリポジトリをスキャンする')
 ```
 
-#### Then "SPEC-018" に対して "src/spec_weaver/impl_scanner.py" が紐づくこと
+#### Then "TRC-003" に対して "src/spec_weaver/impl_scanner.py" が紐づくこと
 
 ```python
-@then(u'"SPEC-018" に対して "src/spec_weaver/impl_scanner.py" が紐づくこと')
-def step_impl(context):
-    pass
+@then('"{param0}" に対して "{param1}" が紐づくこと')  # type: ignore
+def then_6cd9ae6b(context, param0, param1):
+    """"TRC-003" に対して "src/spec_weaver/impl_scanner.py" が紐づくこと
+
+    Scenarios:
+      - アノテーションのスキャンで仕様IDとファイルの対応を抽出できる
+      - 1行に複数の仕様IDを記述できる
+    """
+    raise NotImplementedError('STEP: "{param0}" に対して "{param1}" が紐づくこと')
 ```
 
 </details>
@@ -159,45 +215,72 @@ def step_impl(context):
 ---
 ## Scenario: 1行に複数の仕様IDを記述できる
 
-**タグ**: `@SPEC-018`
+**タグ**: `@TRC-003`
 
-- **Given** "src/spec_weaver/cli.py" の行頭に "# implements: SPEC-019, SPEC-020" が記述されている
+- **Given** "src/spec_weaver/cli.py" の行頭に "# implements: QA-003, TRC-004" が記述されている
 - **When** impl-scanner でリポジトリをスキャンする
-- **Then** "SPEC-019" に対して "src/spec_weaver/cli.py" が紐づくこと
-- **And** "SPEC-020" に対して "src/spec_weaver/cli.py" が紐づくこと
+- **Then** "QA-003" に対して "src/spec_weaver/cli.py" が紐づくこと
+- **And** "TRC-004" に対して "src/spec_weaver/cli.py" が紐づくこと
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
-#### Given "src/spec_weaver/cli.py" の行頭に "# implements: SPEC-019, SPEC-020" が記述されている
+#### Given "src/spec_weaver/cli.py" の行頭に "# implements: QA-003, TRC-004" が記述されている
 
 ```python
-@given(u'"src/spec_weaver/cli.py" の行頭に "# implements: SPEC-019, SPEC-020" が記述されている')
-def step_impl(context):
-    pass
+@given('"{param0}" の行頭に "{param1}" が記述されている')  # type: ignore
+def given_1a5b95f0(context, param0, param1):
+    """"src/spec_weaver/impl_scanner.py" の行頭に "# implements: TRC-003" が記述されている
+
+    Scenarios:
+      - アノテーションのスキャンで仕様IDとファイルの対応を抽出できる
+      - 1行に複数の仕様IDを記述できる
+      - アノテーションがあって impl_files がない場合は警告を報告する
+      - アノテーション由来のファイルも trace ツリーに表示される
+    """
+    raise NotImplementedError('STEP: "{param0}" の行頭に "{param1}" が記述されている')
 ```
 
 #### When impl-scanner でリポジトリをスキャンする
 
 ```python
-@when(u'impl-scanner でリポジトリをスキャンする')
-def step_impl(context):
-    pass
+@when('impl-scanner でリポジトリをスキャンする')  # type: ignore
+def when_59b7b6ae(context):
+    """impl-scanner でリポジトリをスキャンする
+
+    Scenarios:
+      - アノテーションのスキャンで仕様IDとファイルの対応を抽出できる
+      - 1行に複数の仕様IDを記述できる
+      - アノテーションがないファイルはエラーにならない
+    """
+    raise NotImplementedError('STEP: impl-scanner でリポジトリをスキャンする')
 ```
 
-#### Then "SPEC-019" に対して "src/spec_weaver/cli.py" が紐づくこと
+#### Then "QA-003" に対して "src/spec_weaver/cli.py" が紐づくこと
 
 ```python
-@then(u'"SPEC-019" に対して "src/spec_weaver/cli.py" が紐づくこと')
-def step_impl(context):
-    pass
+@then('"{param0}" に対して "{param1}" が紐づくこと')  # type: ignore
+def then_6cd9ae6b(context, param0, param1):
+    """"TRC-003" に対して "src/spec_weaver/impl_scanner.py" が紐づくこと
+
+    Scenarios:
+      - アノテーションのスキャンで仕様IDとファイルの対応を抽出できる
+      - 1行に複数の仕様IDを記述できる
+    """
+    raise NotImplementedError('STEP: "{param0}" に対して "{param1}" が紐づくこと')
 ```
 
-#### And "SPEC-020" に対して "src/spec_weaver/cli.py" が紐づくこと
+#### And "TRC-004" に対して "src/spec_weaver/cli.py" が紐づくこと
 
 ```python
-@then(u'"SPEC-020" に対して "src/spec_weaver/cli.py" が紐づくこと')
-def step_impl(context):
-    pass
+@then('"{param0}" に対して "{param1}" が紐づくこと')  # type: ignore
+def then_6cd9ae6b(context, param0, param1):
+    """"TRC-003" に対して "src/spec_weaver/impl_scanner.py" が紐づくこと
+
+    Scenarios:
+      - アノテーションのスキャンで仕様IDとファイルの対応を抽出できる
+      - 1行に複数の仕様IDを記述できる
+    """
+    raise NotImplementedError('STEP: "{param0}" に対して "{param1}" が紐づくこと')
 ```
 
 </details>
@@ -206,10 +289,10 @@ def step_impl(context):
 ---
 ## Scenario: --extensions オプションでスキャン対象を絞れる
 
-**タグ**: `@SPEC-018`
+**タグ**: `@TRC-003`
 
 - **Given** リポジトリに .py ファイルと .md ファイルが存在する
-- **And** .md ファイルの行頭に "# implements: SPEC-018" が記述されている
+- **And** .md ファイルの行頭に "# implements: TRC-003" が記述されている
 - **When** --extensions py を指定して impl-scanner でスキャンする
 - **Then** .md ファイルは結果に含まれないこと
 
@@ -218,33 +301,53 @@ def step_impl(context):
 #### Given リポジトリに .py ファイルと .md ファイルが存在する
 
 ```python
-@given(u'リポジトリに .py ファイルと .md ファイルが存在する')
-def step_impl(context):
-    pass
+@given('リポジトリに .py ファイルと .md ファイルが存在する')  # type: ignore
+def given_6f18a295(context):
+    """リポジトリに .py ファイルと .md ファイルが存在する
+
+    Scenarios:
+      - --extensions オプションでスキャン対象を絞れる
+    """
+    raise NotImplementedError('STEP: リポジトリに .py ファイルと .md ファイルが存在する')
 ```
 
-#### And .md ファイルの行頭に "# implements: SPEC-018" が記述されている
+#### And .md ファイルの行頭に "# implements: TRC-003" が記述されている
 
 ```python
-@given(u'.md ファイルの行頭に "# implements: SPEC-018" が記述されている')
-def step_impl(context):
-    pass
+@given('.md ファイルの行頭に "{param0}" が記述されている')  # type: ignore
+def given_d9c1b21a(context, param0):
+    """.md ファイルの行頭に "# implements: TRC-003" が記述されている
+
+    Scenarios:
+      - --extensions オプションでスキャン対象を絞れる
+    """
+    raise NotImplementedError('STEP: .md ファイルの行頭に "{param0}" が記述されている')
 ```
 
 #### When --extensions py を指定して impl-scanner でスキャンする
 
 ```python
-@when(u'--extensions py を指定して impl-scanner でスキャンする')
-def step_impl(context):
-    pass
+@when('--extensions py を指定して impl-scanner でスキャンする')  # type: ignore
+def when_d61ff5a2(context):
+    """--extensions py を指定して impl-scanner でスキャンする
+
+    Scenarios:
+      - --extensions オプションでスキャン対象を絞れる
+    """
+    raise NotImplementedError('STEP: --extensions py を指定して impl-scanner でスキャンする')
 ```
 
 #### Then .md ファイルは結果に含まれないこと
 
 ```python
-@then(u'.md ファイルは結果に含まれないこと')
-def step_impl(context):
-    pass
+@then('.md ファイルは結果に含まれないこと')  # type: ignore
+def then_1e4aee33(context):
+    """.md ファイルは結果に含まれないこと
+
+    Scenarios:
+      - --extensions オプションでスキャン対象を絞れる
+    """
+    raise NotImplementedError('STEP: .md ファイルは結果に含まれないこと')
 ```
 
 </details>
@@ -253,7 +356,7 @@ def step_impl(context):
 ---
 ## Scenario: アノテーションがないファイルはエラーにならない
 
-**タグ**: `@SPEC-018`
+**タグ**: `@TRC-003`
 
 - **Given** "src/spec_weaver/gherkin.py" にアノテーションが存在しない
 - **When** impl-scanner でリポジトリをスキャンする
@@ -264,25 +367,42 @@ def step_impl(context):
 #### Given "src/spec_weaver/gherkin.py" にアノテーションが存在しない
 
 ```python
-@given(u'"src/spec_weaver/gherkin.py" にアノテーションが存在しない')
-def step_impl(context):
-    pass
+@given('"{param0}" にアノテーションが存在しない')  # type: ignore
+def given_8d04b283(context, param0):
+    """"src/spec_weaver/gherkin.py" にアノテーションが存在しない
+
+    Scenarios:
+      - アノテーションがないファイルはエラーにならない
+    """
+    raise NotImplementedError('STEP: "{param0}" にアノテーションが存在しない')
 ```
 
 #### When impl-scanner でリポジトリをスキャンする
 
 ```python
-@when(u'impl-scanner でリポジトリをスキャンする')
-def step_impl(context):
-    pass
+@when('impl-scanner でリポジトリをスキャンする')  # type: ignore
+def when_59b7b6ae(context):
+    """impl-scanner でリポジトリをスキャンする
+
+    Scenarios:
+      - アノテーションのスキャンで仕様IDとファイルの対応を抽出できる
+      - 1行に複数の仕様IDを記述できる
+      - アノテーションがないファイルはエラーにならない
+    """
+    raise NotImplementedError('STEP: impl-scanner でリポジトリをスキャンする')
 ```
 
 #### Then エラーが発生しないこと
 
 ```python
-@then(u'エラーが発生しないこと')
-def step_impl(context):
-    pass
+@then('エラーが発生しないこと')  # type: ignore
+def then_b705ab9f(context):
+    """エラーが発生しないこと
+
+    Scenarios:
+      - アノテーションがないファイルはエラーにならない
+    """
+    raise NotImplementedError('STEP: エラーが発生しないこと')
 ```
 
 </details>
@@ -291,49 +411,70 @@ def step_impl(context):
 ---
 ## Scenario: --check-impl オプションで存在しないファイルへの impl_files を検出する
 
-**タグ**: `@SPEC-019`
+**タグ**: `@QA-003`
 
-- **Given** SPEC-019 の impl_files に "src/spec_weaver/nonexistent.py" が設定されている
+- **Given** QA-003 の impl_files に "src/spec_weaver/nonexistent.py" が設定されている
 - **When** "spec-weaver audit --check-impl" を実行する
 - **Then** 終了コードが 1 であること
 - **And** "nonexistent.py" が存在しないファイルとして報告されること
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
-#### Given SPEC-019 の impl_files に "src/spec_weaver/nonexistent.py" が設定されている
+#### Given QA-003 の impl_files に "src/spec_weaver/nonexistent.py" が設定されている
 
 ```python
-@given(u'SPEC-019 の impl_files に "src/spec_weaver/nonexistent.py" が設定されている')
-def step_impl(context):
-    pass
+@given('QA-003 の impl_files に "{param0}" が設定されている')  # type: ignore
+def given_4cea3b9d(context, param0):
+    """QA-003 の impl_files に "src/spec_weaver/nonexistent.py" が設定されている
+
+    Scenarios:
+      - --check-impl オプションで存在しないファイルへの impl_files を検出する
+      - --check-impl なしでは実装リンク検証は実行されない
+    """
+    raise NotImplementedError('STEP: QA-003 の impl_files に "{param0}" が設定されている')
 ```
 
 #### When "spec-weaver audit --check-impl" を実行する
 
 ```python
-@when(u'"spec-weaver audit --check-impl" を実行する')
-def step_impl(context):
-    import shlex
-    args = shlex.split('audit --check-impl')
-    res = run_spec_weaver(args, cwd=getattr(context, 'temp_dir', '.'))
-    context.exit_code = getattr(res, 'returncode', 0)
-    context.output = getattr(res, 'stdout', '') + chr(10) + getattr(res, 'stderr', '')
+@when('"{param0}" を実行する')  # type: ignore
+def when_68ff7f63(context, param0):
+    """"spec-weaver audit --check-impl" を実行する
+
+    Scenarios:
+      - --check-impl オプションで存在しないファイルへの impl_files を検出する
+      - impl_files にあってアノテーションがない場合は警告を報告する
+      - アノテーションがあって impl_files がない場合は警告を報告する
+      - --show-impl オプションで trace ツリーに実装ファイルを表示する
+      - アノテーション由来のファイルも trace ツリーに表示される
+    """
+    raise NotImplementedError('STEP: "{param0}" を実行する')
 ```
 
 #### Then 終了コードが 1 であること
 
 ```python
-@then(u'終了コードが 1 であること')
-def step_impl(context):
-    pass
+@then('終了コードが 1 であること')  # type: ignore
+def then_3783b41c(context):
+    """終了コードが 1 であること
+
+    Scenarios:
+      - --check-impl オプションで存在しないファイルへの impl_files を検出する
+    """
+    raise NotImplementedError('STEP: 終了コードが 1 であること')
 ```
 
 #### And "nonexistent.py" が存在しないファイルとして報告されること
 
 ```python
-@then(u'"nonexistent.py" が存在しないファイルとして報告されること')
-def step_impl(context):
-    pass
+@then('"{param0}" が存在しないファイルとして報告されること')  # type: ignore
+def then_7ef614ad(context, param0):
+    """"nonexistent.py" が存在しないファイルとして報告されること
+
+    Scenarios:
+      - --check-impl オプションで存在しないファイルへの impl_files を検出する
+    """
+    raise NotImplementedError('STEP: "{param0}" が存在しないファイルとして報告されること')
 ```
 
 </details>
@@ -342,49 +483,71 @@ def step_impl(context):
 ---
 ## Scenario: impl_files にあってアノテーションがない場合は警告を報告する
 
-**タグ**: `@SPEC-019`
+**タグ**: `@QA-003`
 
-- **Given** SPEC-018 の impl_files に "src/spec_weaver/cli.py" が設定されている
-- **And** "src/spec_weaver/cli.py" に SPEC-018 のアノテーションが存在しない
+- **Given** TRC-003 の impl_files に "src/spec_weaver/cli.py" が設定されている
+- **And** "src/spec_weaver/cli.py" に TRC-003 のアノテーションが存在しない
 - **When** "spec-weaver audit --check-impl" を実行する
-- **Then** "SPEC-018 → src/spec_weaver/cli.py" が impl_files のみ（アノテーションなし）として報告されること
+- **Then** "TRC-003 → src/spec_weaver/cli.py" が impl_files のみ（アノテーションなし）として報告されること
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
-#### Given SPEC-018 の impl_files に "src/spec_weaver/cli.py" が設定されている
+#### Given TRC-003 の impl_files に "src/spec_weaver/cli.py" が設定されている
 
 ```python
-@given(u'SPEC-018 の impl_files に "src/spec_weaver/cli.py" が設定されている')
-def step_impl(context):
-    pass
+@given('TRC-003 の impl_files に "{param0}" が設定されている')  # type: ignore
+def given_e64bd8f6(context, param0):
+    """TRC-003 の impl_files に "src/spec_weaver/cli.py" が設定されている
+
+    Scenarios:
+      - impl_files にあってアノテーションがない場合は警告を報告する
+      - --show-impl オプションで trace ツリーに実装ファイルを表示する
+      - --show-impl なしでは実装ファイルは表示されない
+    """
+    raise NotImplementedError('STEP: TRC-003 の impl_files に "{param0}" が設定されている')
 ```
 
-#### And "src/spec_weaver/cli.py" に SPEC-018 のアノテーションが存在しない
+#### And "src/spec_weaver/cli.py" に TRC-003 のアノテーションが存在しない
 
 ```python
-@given(u'"src/spec_weaver/cli.py" に SPEC-018 のアノテーションが存在しない')
-def step_impl(context):
-    pass
+@given('"{param0}" に TRC-003 のアノテーションが存在しない')  # type: ignore
+def given_d0ba98a0(context, param0):
+    """"src/spec_weaver/cli.py" に TRC-003 のアノテーションが存在しない
+
+    Scenarios:
+      - impl_files にあってアノテーションがない場合は警告を報告する
+    """
+    raise NotImplementedError('STEP: "{param0}" に TRC-003 のアノテーションが存在しない')
 ```
 
 #### When "spec-weaver audit --check-impl" を実行する
 
 ```python
-@when(u'"spec-weaver audit --check-impl" を実行する')
-def step_impl(context):
-    import shlex
-    args = shlex.split('audit --check-impl')
-    res = run_spec_weaver(args, cwd=getattr(context, 'temp_dir', '.'))
-    context.exit_code = getattr(res, 'returncode', 0)
-    context.output = getattr(res, 'stdout', '') + chr(10) + getattr(res, 'stderr', '')
+@when('"{param0}" を実行する')  # type: ignore
+def when_68ff7f63(context, param0):
+    """"spec-weaver audit --check-impl" を実行する
+
+    Scenarios:
+      - --check-impl オプションで存在しないファイルへの impl_files を検出する
+      - impl_files にあってアノテーションがない場合は警告を報告する
+      - アノテーションがあって impl_files がない場合は警告を報告する
+      - --show-impl オプションで trace ツリーに実装ファイルを表示する
+      - アノテーション由来のファイルも trace ツリーに表示される
+    """
+    raise NotImplementedError('STEP: "{param0}" を実行する')
 ```
 
-#### Then "SPEC-018 → src/spec_weaver/cli.py" が impl_files のみ（アノテーションなし）として報告されること
+#### Then "TRC-003 → src/spec_weaver/cli.py" が impl_files のみ（アノテーションなし）として報告されること
 
 ```python
-@then(u'"SPEC-018 → src/spec_weaver/cli.py" が impl_files のみ（アノテーションなし）として報告されること')
-def step_impl(context):
-    pass
+@then('"{param0}" が impl_files のみ（アノテーションなし）として報告されること')  # type: ignore
+def then_f76e2a8d(context, param0):
+    """"TRC-003 → src/spec_weaver/cli.py" が impl_files のみ（アノテーションなし）として報告されること
+
+    Scenarios:
+      - impl_files にあってアノテーションがない場合は警告を報告する
+    """
+    raise NotImplementedError('STEP: "{param0}" が impl_files のみ（アノテーションなし）として報告されること')
 ```
 
 </details>
@@ -393,49 +556,73 @@ def step_impl(context):
 ---
 ## Scenario: アノテーションがあって impl_files がない場合は警告を報告する
 
-**タグ**: `@SPEC-019`
+**タグ**: `@QA-003`
 
-- **Given** "src/spec_weaver/gherkin.py" の行頭に "# implements: SPEC-019" が記述されている
-- **And** SPEC-019 の impl_files が未設定である
+- **Given** "src/spec_weaver/gherkin.py" の行頭に "# implements: QA-003" が記述されている
+- **And** QA-003 の impl_files が未設定である
 - **When** "spec-weaver audit --check-impl" を実行する
-- **Then** "SPEC-019 ← src/spec_weaver/gherkin.py" がアノテーションのみ（impl_files なし）として報告されること
+- **Then** "QA-003 ← src/spec_weaver/gherkin.py" がアノテーションのみ（impl_files なし）として報告されること
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
-#### Given "src/spec_weaver/gherkin.py" の行頭に "# implements: SPEC-019" が記述されている
+#### Given "src/spec_weaver/gherkin.py" の行頭に "# implements: QA-003" が記述されている
 
 ```python
-@given(u'"src/spec_weaver/gherkin.py" の行頭に "# implements: SPEC-019" が記述されている')
-def step_impl(context):
-    pass
+@given('"{param0}" の行頭に "{param1}" が記述されている')  # type: ignore
+def given_1a5b95f0(context, param0, param1):
+    """"src/spec_weaver/impl_scanner.py" の行頭に "# implements: TRC-003" が記述されている
+
+    Scenarios:
+      - アノテーションのスキャンで仕様IDとファイルの対応を抽出できる
+      - 1行に複数の仕様IDを記述できる
+      - アノテーションがあって impl_files がない場合は警告を報告する
+      - アノテーション由来のファイルも trace ツリーに表示される
+    """
+    raise NotImplementedError('STEP: "{param0}" の行頭に "{param1}" が記述されている')
 ```
 
-#### And SPEC-019 の impl_files が未設定である
+#### And QA-003 の impl_files が未設定である
 
 ```python
-@given(u'SPEC-019 の impl_files が未設定である')
-def step_impl(context):
-    pass
+@given('QA-003 の impl_files が未設定である')  # type: ignore
+def given_60f3699e(context):
+    """QA-003 の impl_files が未設定である
+
+    Scenarios:
+      - impl_files が未設定の場合はリンクなしとして扱われる
+      - アノテーションがあって impl_files がない場合は警告を報告する
+    """
+    raise NotImplementedError('STEP: QA-003 の impl_files が未設定である')
 ```
 
 #### When "spec-weaver audit --check-impl" を実行する
 
 ```python
-@when(u'"spec-weaver audit --check-impl" を実行する')
-def step_impl(context):
-    import shlex
-    args = shlex.split('audit --check-impl')
-    res = run_spec_weaver(args, cwd=getattr(context, 'temp_dir', '.'))
-    context.exit_code = getattr(res, 'returncode', 0)
-    context.output = getattr(res, 'stdout', '') + chr(10) + getattr(res, 'stderr', '')
+@when('"{param0}" を実行する')  # type: ignore
+def when_68ff7f63(context, param0):
+    """"spec-weaver audit --check-impl" を実行する
+
+    Scenarios:
+      - --check-impl オプションで存在しないファイルへの impl_files を検出する
+      - impl_files にあってアノテーションがない場合は警告を報告する
+      - アノテーションがあって impl_files がない場合は警告を報告する
+      - --show-impl オプションで trace ツリーに実装ファイルを表示する
+      - アノテーション由来のファイルも trace ツリーに表示される
+    """
+    raise NotImplementedError('STEP: "{param0}" を実行する')
 ```
 
-#### Then "SPEC-019 ← src/spec_weaver/gherkin.py" がアノテーションのみ（impl_files なし）として報告されること
+#### Then "QA-003 ← src/spec_weaver/gherkin.py" がアノテーションのみ（impl_files なし）として報告されること
 
 ```python
-@then(u'"SPEC-019 ← src/spec_weaver/gherkin.py" がアノテーションのみ（impl_files なし）として報告されること')
-def step_impl(context):
-    pass
+@then('"{param0}" がアノテーションのみ（impl_files なし）として報告されること')  # type: ignore
+def then_7fa51a4f(context, param0):
+    """"QA-003 ← src/spec_weaver/gherkin.py" がアノテーションのみ（impl_files なし）として報告されること
+
+    Scenarios:
+      - アノテーションがあって impl_files がない場合は警告を報告する
+    """
+    raise NotImplementedError('STEP: "{param0}" がアノテーションのみ（impl_files なし）として報告されること')
 ```
 
 </details>
@@ -444,40 +631,52 @@ def step_impl(context):
 ---
 ## Scenario: --check-impl なしでは実装リンク検証は実行されない
 
-**タグ**: `@SPEC-019`
+**タグ**: `@QA-003`
 
-- **Given** SPEC-019 の impl_files に "src/spec_weaver/nonexistent.py" が設定されている
+- **Given** QA-003 の impl_files に "src/spec_weaver/nonexistent.py" が設定されている
 - **When** 通常の "spec-weaver audit" を実行する（--check-impl なし）
 - **Then** 実装ファイルリンクのセクションが出力されないこと
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
-#### Given SPEC-019 の impl_files に "src/spec_weaver/nonexistent.py" が設定されている
+#### Given QA-003 の impl_files に "src/spec_weaver/nonexistent.py" が設定されている
 
 ```python
-@given(u'SPEC-019 の impl_files に "src/spec_weaver/nonexistent.py" が設定されている')
-def step_impl(context):
-    pass
+@given('QA-003 の impl_files に "{param0}" が設定されている')  # type: ignore
+def given_4cea3b9d(context, param0):
+    """QA-003 の impl_files に "src/spec_weaver/nonexistent.py" が設定されている
+
+    Scenarios:
+      - --check-impl オプションで存在しないファイルへの impl_files を検出する
+      - --check-impl なしでは実装リンク検証は実行されない
+    """
+    raise NotImplementedError('STEP: QA-003 の impl_files に "{param0}" が設定されている')
 ```
 
 #### When 通常の "spec-weaver audit" を実行する（--check-impl なし）
 
 ```python
-@when(u'通常の "spec-weaver audit" を実行する（--check-impl なし）')
-def step_impl(context):
-    import shlex
-    args = shlex.split('audit')
-    res = run_spec_weaver(args, cwd=getattr(context, 'temp_dir', '.'))
-    context.exit_code = getattr(res, 'returncode', 0)
-    context.output = getattr(res, 'stdout', '') + chr(10) + getattr(res, 'stderr', '')
+@when('通常の "{param0}" を実行する（--check-impl なし）')  # type: ignore
+def when_6a6c02d8(context, param0):
+    """通常の "spec-weaver audit" を実行する（--check-impl なし）
+
+    Scenarios:
+      - --check-impl なしでは実装リンク検証は実行されない
+    """
+    raise NotImplementedError('STEP: 通常の "{param0}" を実行する（--check-impl なし）')
 ```
 
 #### Then 実装ファイルリンクのセクションが出力されないこと
 
 ```python
-@then(u'実装ファイルリンクのセクションが出力されないこと')
-def step_impl(context):
-    pass
+@then('実装ファイルリンクのセクションが出力されないこと')  # type: ignore
+def then_70e4e0dc(context):
+    """実装ファイルリンクのセクションが出力されないこと
+
+    Scenarios:
+      - --check-impl なしでは実装リンク検証は実行されない
+    """
+    raise NotImplementedError('STEP: 実装ファイルリンクのセクションが出力されないこと')
 ```
 
 </details>
@@ -486,40 +685,58 @@ def step_impl(context):
 ---
 ## Scenario: --show-impl オプションで trace ツリーに実装ファイルを表示する
 
-**タグ**: `@SPEC-020`
+**タグ**: `@TRC-004`
 
-- **Given** SPEC-018 の impl_files に "src/spec_weaver/impl_scanner.py" が設定されている
-- **When** "spec-weaver trace SPEC-018 -f ./specification/features --show-impl" を実行する
+- **Given** TRC-003 の impl_files に "src/spec_weaver/impl_scanner.py" が設定されている
+- **When** "spec-weaver trace TRC-003 -f ./specification/features --show-impl" を実行する
 - **Then** 出力ツリーに "src/spec_weaver/impl_scanner.py" が含まれること
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
-#### Given SPEC-018 の impl_files に "src/spec_weaver/impl_scanner.py" が設定されている
+#### Given TRC-003 の impl_files に "src/spec_weaver/impl_scanner.py" が設定されている
 
 ```python
-@given(u'SPEC-018 の impl_files に "src/spec_weaver/impl_scanner.py" が設定されている')
-def step_impl(context):
-    pass
+@given('TRC-003 の impl_files に "{param0}" が設定されている')  # type: ignore
+def given_e64bd8f6(context, param0):
+    """TRC-003 の impl_files に "src/spec_weaver/cli.py" が設定されている
+
+    Scenarios:
+      - impl_files にあってアノテーションがない場合は警告を報告する
+      - --show-impl オプションで trace ツリーに実装ファイルを表示する
+      - --show-impl なしでは実装ファイルは表示されない
+    """
+    raise NotImplementedError('STEP: TRC-003 の impl_files に "{param0}" が設定されている')
 ```
 
-#### When "spec-weaver trace SPEC-018 -f ./specification/features --show-impl" を実行する
+#### When "spec-weaver trace TRC-003 -f ./specification/features --show-impl" を実行する
 
 ```python
-@when(u'"spec-weaver trace SPEC-018 -f ./specification/features --show-impl" を実行する')
-def step_impl(context):
-    import shlex
-    args = shlex.split('trace SPEC-018 -f ./specification/features --show-impl')
-    res = run_spec_weaver(args, cwd=getattr(context, 'project_root', '.'))
-    context.exit_code = getattr(res, 'returncode', 0)
-    context.output = getattr(res, 'stdout', '') + chr(10) + getattr(res, 'stderr', '')
+@when('"{param0}" を実行する')  # type: ignore
+def when_68ff7f63(context, param0):
+    """"spec-weaver audit --check-impl" を実行する
+
+    Scenarios:
+      - --check-impl オプションで存在しないファイルへの impl_files を検出する
+      - impl_files にあってアノテーションがない場合は警告を報告する
+      - アノテーションがあって impl_files がない場合は警告を報告する
+      - --show-impl オプションで trace ツリーに実装ファイルを表示する
+      - アノテーション由来のファイルも trace ツリーに表示される
+    """
+    raise NotImplementedError('STEP: "{param0}" を実行する')
 ```
 
 #### Then 出力ツリーに "src/spec_weaver/impl_scanner.py" が含まれること
 
 ```python
-@then(u'出力ツリーに "src/spec_weaver/impl_scanner.py" が含まれること')
-def step_impl(context):
-    pass
+@then('出力ツリーに "{param0}" が含まれること')  # type: ignore
+def then_2c56e82a(context, param0):
+    """出力ツリーに "src/spec_weaver/impl_scanner.py" が含まれること
+
+    Scenarios:
+      - --show-impl オプションで trace ツリーに実装ファイルを表示する
+      - アノテーション由来のファイルも trace ツリーに表示される
+    """
+    raise NotImplementedError('STEP: 出力ツリーに "{param0}" が含まれること')
 ```
 
 </details>
@@ -528,49 +745,73 @@ def step_impl(context):
 ---
 ## Scenario: アノテーション由来のファイルも trace ツリーに表示される
 
-**タグ**: `@SPEC-020`
+**タグ**: `@TRC-004`
 
-- **Given** "src/spec_weaver/cli.py" の行頭に "# implements: SPEC-018" が記述されている
-- **And** SPEC-018 の impl_files が未設定である
-- **When** "spec-weaver trace SPEC-018 -f ./specification/features --show-impl" を実行する
+- **Given** "src/spec_weaver/cli.py" の行頭に "# implements: TRC-003" が記述されている
+- **And** TRC-003 の impl_files が未設定である
+- **When** "spec-weaver trace TRC-003 -f ./specification/features --show-impl" を実行する
 - **Then** 出力ツリーに "src/spec_weaver/cli.py" が含まれること
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
-#### Given "src/spec_weaver/cli.py" の行頭に "# implements: SPEC-018" が記述されている
+#### Given "src/spec_weaver/cli.py" の行頭に "# implements: TRC-003" が記述されている
 
 ```python
-@given(u'"src/spec_weaver/cli.py" の行頭に "# implements: SPEC-018" が記述されている')
-def step_impl(context):
-    pass
+@given('"{param0}" の行頭に "{param1}" が記述されている')  # type: ignore
+def given_1a5b95f0(context, param0, param1):
+    """"src/spec_weaver/impl_scanner.py" の行頭に "# implements: TRC-003" が記述されている
+
+    Scenarios:
+      - アノテーションのスキャンで仕様IDとファイルの対応を抽出できる
+      - 1行に複数の仕様IDを記述できる
+      - アノテーションがあって impl_files がない場合は警告を報告する
+      - アノテーション由来のファイルも trace ツリーに表示される
+    """
+    raise NotImplementedError('STEP: "{param0}" の行頭に "{param1}" が記述されている')
 ```
 
-#### And SPEC-018 の impl_files が未設定である
+#### And TRC-003 の impl_files が未設定である
 
 ```python
-@given(u'SPEC-018 の impl_files が未設定である')
-def step_impl(context):
-    pass
+@given('TRC-003 の impl_files が未設定である')  # type: ignore
+def given_c11ed496(context):
+    """TRC-003 の impl_files が未設定である
+
+    Scenarios:
+      - アノテーション由来のファイルも trace ツリーに表示される
+    """
+    raise NotImplementedError('STEP: TRC-003 の impl_files が未設定である')
 ```
 
-#### When "spec-weaver trace SPEC-018 -f ./specification/features --show-impl" を実行する
+#### When "spec-weaver trace TRC-003 -f ./specification/features --show-impl" を実行する
 
 ```python
-@when(u'"spec-weaver trace SPEC-018 -f ./specification/features --show-impl" を実行する')
-def step_impl(context):
-    import shlex
-    args = shlex.split('trace SPEC-018 -f ./specification/features --show-impl')
-    res = run_spec_weaver(args, cwd=getattr(context, 'project_root', '.'))
-    context.exit_code = getattr(res, 'returncode', 0)
-    context.output = getattr(res, 'stdout', '') + chr(10) + getattr(res, 'stderr', '')
+@when('"{param0}" を実行する')  # type: ignore
+def when_68ff7f63(context, param0):
+    """"spec-weaver audit --check-impl" を実行する
+
+    Scenarios:
+      - --check-impl オプションで存在しないファイルへの impl_files を検出する
+      - impl_files にあってアノテーションがない場合は警告を報告する
+      - アノテーションがあって impl_files がない場合は警告を報告する
+      - --show-impl オプションで trace ツリーに実装ファイルを表示する
+      - アノテーション由来のファイルも trace ツリーに表示される
+    """
+    raise NotImplementedError('STEP: "{param0}" を実行する')
 ```
 
 #### Then 出力ツリーに "src/spec_weaver/cli.py" が含まれること
 
 ```python
-@then(u'出力ツリーに "src/spec_weaver/cli.py" が含まれること')
-def step_impl(context):
-    pass
+@then('出力ツリーに "{param0}" が含まれること')  # type: ignore
+def then_2c56e82a(context, param0):
+    """出力ツリーに "src/spec_weaver/impl_scanner.py" が含まれること
+
+    Scenarios:
+      - --show-impl オプションで trace ツリーに実装ファイルを表示する
+      - アノテーション由来のファイルも trace ツリーに表示される
+    """
+    raise NotImplementedError('STEP: 出力ツリーに "{param0}" が含まれること')
 ```
 
 </details>
@@ -579,40 +820,53 @@ def step_impl(context):
 ---
 ## Scenario: --show-impl なしでは実装ファイルは表示されない
 
-**タグ**: `@SPEC-020`
+**タグ**: `@TRC-004`
 
-- **Given** SPEC-018 の impl_files に "src/spec_weaver/impl_scanner.py" が設定されている
-- **When** "spec-weaver trace SPEC-018 -f ./specification/features" を実行する（--show-impl なし）
+- **Given** TRC-003 の impl_files に "src/spec_weaver/impl_scanner.py" が設定されている
+- **When** "spec-weaver trace TRC-003 -f ./specification/features" を実行する（--show-impl なし）
 - **Then** 出力ツリーに "impl_scanner.py" が含まれないこと
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
-#### Given SPEC-018 の impl_files に "src/spec_weaver/impl_scanner.py" が設定されている
+#### Given TRC-003 の impl_files に "src/spec_weaver/impl_scanner.py" が設定されている
 
 ```python
-@given(u'SPEC-018 の impl_files に "src/spec_weaver/impl_scanner.py" が設定されている')
-def step_impl(context):
-    pass
+@given('TRC-003 の impl_files に "{param0}" が設定されている')  # type: ignore
+def given_e64bd8f6(context, param0):
+    """TRC-003 の impl_files に "src/spec_weaver/cli.py" が設定されている
+
+    Scenarios:
+      - impl_files にあってアノテーションがない場合は警告を報告する
+      - --show-impl オプションで trace ツリーに実装ファイルを表示する
+      - --show-impl なしでは実装ファイルは表示されない
+    """
+    raise NotImplementedError('STEP: TRC-003 の impl_files に "{param0}" が設定されている')
 ```
 
-#### When "spec-weaver trace SPEC-018 -f ./specification/features" を実行する（--show-impl なし）
+#### When "spec-weaver trace TRC-003 -f ./specification/features" を実行する（--show-impl なし）
 
 ```python
-@when(u'"spec-weaver trace SPEC-018 -f ./specification/features" を実行する（--show-impl なし）')
-def step_impl(context):
-    import shlex
-    args = shlex.split('trace SPEC-018 -f ./specification/features')
-    res = run_spec_weaver(args, cwd=getattr(context, 'project_root', '.'))
-    context.exit_code = getattr(res, 'returncode', 0)
-    context.output = getattr(res, 'stdout', '') + chr(10) + getattr(res, 'stderr', '')
+@when('"{param0}" を実行する（--show-impl なし）')  # type: ignore
+def when_dfb07a47(context, param0):
+    """"spec-weaver trace TRC-003 -f ./specification/features" を実行する（--show-impl なし）
+
+    Scenarios:
+      - --show-impl なしでは実装ファイルは表示されない
+    """
+    raise NotImplementedError('STEP: "{param0}" を実行する（--show-impl なし）')
 ```
 
 #### Then 出力ツリーに "impl_scanner.py" が含まれないこと
 
 ```python
-@then(u'出力ツリーに "impl_scanner.py" が含まれないこと')
-def step_impl(context):
-    pass
+@then('出力ツリーに "{param0}" が含まれないこと')  # type: ignore
+def then_35df9926(context, param0):
+    """出力ツリーに "impl_scanner.py" が含まれないこと
+
+    Scenarios:
+      - --show-impl なしでは実装ファイルは表示されない
+    """
+    raise NotImplementedError('STEP: 出力ツリーに "{param0}" が含まれないこと')
 ```
 
 </details>
@@ -623,8 +877,12 @@ def step_impl(context):
 <details><summary>Raw .feature source</summary>
 
 ```gherkin
-# spec-weaver-fingerprint: cf89b3e4e58d61268dc81d76d9f7769fc56d5d3ed31d5221ccd2cfe07947fdb3
-@SPEC-017 @SPEC-018 @SPEC-019 @SPEC-020
+# spec-weaver-fingerprint: b811f33b65429d4bb62aa6ed1e234420882eb37e2a3270541e5030282efd3be7
+# spec-weaver-fingerprint-QA-003: R7lU5c_GYfAMywWH7ga7C5bNWLi0BcEk_ct5FCCzLOg=
+# spec-weaver-fingerprint-TRC-002: CsNYG2kwoAL2aGQ4OMJZPbq_BdQL1XO9mD52BES64WU=
+# spec-weaver-fingerprint-TRC-003: HejBnkVVAXr50mezShqlLJuFqDQgnm2Ll2xq1IrX7wY=
+# spec-weaver-fingerprint-TRC-004: taSaPJAOYmNABY3Fq9QzpfuL400jN9dj2MpQSufRkT8=
+@TRC-002 @TRC-003 @QA-003 @TRC-004
 Feature: 仕様アイテムと実装ファイルのリンク管理
   DoorstopのYAML impl_files カスタム属性とコードアノテーションを組み合わせて、
   仕様と実装ファイルの双方向トレーサビリティを実現する。
@@ -633,99 +891,99 @@ Feature: 仕様アイテムと実装ファイルのリンク管理
     Given Doorstopツリーが初期化されている
     And 以下のSPECアイテムが存在する:
       | ID       | Header             | impl_files                       |
-      | SPEC-018 | アノテーションスキャン | src/spec_weaver/impl_scanner.py |
-      | SPEC-019 | audit拡張          |                                  |
+      | TRC-003 | アノテーションスキャン | src/spec_weaver/impl_scanner.py |
+      | QA-003 | audit拡張          |                                  |
 
-  # ---- SPEC-017: impl_files カスタム属性 ----
+  # ---- TRC-002: impl_files カスタム属性 ----
 
-  @SPEC-017
+  @TRC-002
   Scenario: impl_files にリスト形式でファイルパスを記述できる
-    Given SPEC-018 の impl_files に ["src/spec_weaver/impl_scanner.py"] が設定されている
+    Given TRC-003 の impl_files に ["src/spec_weaver/impl_scanner.py"] が設定されている
     When impl_files を読み取る
     Then ファイルパスのリスト ["src/spec_weaver/impl_scanner.py"] が得られること
 
-  @SPEC-017
+  @TRC-002
   Scenario: impl_files が未設定の場合はリンクなしとして扱われる
-    Given SPEC-019 の impl_files が未設定である
+    Given QA-003 の impl_files が未設定である
     When impl_files を読み取る
     Then 空のリストが返ること
 
-  # ---- SPEC-018: アノテーションスキャン ----
+  # ---- TRC-003: アノテーションスキャン ----
 
-  @SPEC-018
+  @TRC-003
   Scenario: アノテーションのスキャンで仕様IDとファイルの対応を抽出できる
-    Given "src/spec_weaver/impl_scanner.py" の行頭に "# implements: SPEC-018" が記述されている
+    Given "src/spec_weaver/impl_scanner.py" の行頭に "# implements: TRC-003" が記述されている
     When impl-scanner でリポジトリをスキャンする
-    Then "SPEC-018" に対して "src/spec_weaver/impl_scanner.py" が紐づくこと
+    Then "TRC-003" に対して "src/spec_weaver/impl_scanner.py" が紐づくこと
 
-  @SPEC-018
+  @TRC-003
   Scenario: 1行に複数の仕様IDを記述できる
-    Given "src/spec_weaver/cli.py" の行頭に "# implements: SPEC-019, SPEC-020" が記述されている
+    Given "src/spec_weaver/cli.py" の行頭に "# implements: QA-003, TRC-004" が記述されている
     When impl-scanner でリポジトリをスキャンする
-    Then "SPEC-019" に対して "src/spec_weaver/cli.py" が紐づくこと
-    And  "SPEC-020" に対して "src/spec_weaver/cli.py" が紐づくこと
+    Then "QA-003" に対して "src/spec_weaver/cli.py" が紐づくこと
+    And  "TRC-004" に対して "src/spec_weaver/cli.py" が紐づくこと
 
-  @SPEC-018
+  @TRC-003
   Scenario: --extensions オプションでスキャン対象を絞れる
     Given リポジトリに .py ファイルと .md ファイルが存在する
-    And .md ファイルの行頭に "# implements: SPEC-018" が記述されている
+    And .md ファイルの行頭に "# implements: TRC-003" が記述されている
     When --extensions py を指定して impl-scanner でスキャンする
     Then .md ファイルは結果に含まれないこと
 
-  @SPEC-018
+  @TRC-003
   Scenario: アノテーションがないファイルはエラーにならない
     Given "src/spec_weaver/gherkin.py" にアノテーションが存在しない
     When impl-scanner でリポジトリをスキャンする
     Then エラーが発生しないこと
 
-  # ---- SPEC-019: audit 拡張 ----
+  # ---- QA-003: audit 拡張 ----
 
-  @SPEC-019
+  @QA-003
   Scenario: --check-impl オプションで存在しないファイルへの impl_files を検出する
-    Given SPEC-019 の impl_files に "src/spec_weaver/nonexistent.py" が設定されている
+    Given QA-003 の impl_files に "src/spec_weaver/nonexistent.py" が設定されている
     When "spec-weaver audit --check-impl" を実行する
     Then 終了コードが 1 であること
     And  "nonexistent.py" が存在しないファイルとして報告されること
 
-  @SPEC-019
+  @QA-003
   Scenario: impl_files にあってアノテーションがない場合は警告を報告する
-    Given SPEC-018 の impl_files に "src/spec_weaver/cli.py" が設定されている
-    And "src/spec_weaver/cli.py" に SPEC-018 のアノテーションが存在しない
+    Given TRC-003 の impl_files に "src/spec_weaver/cli.py" が設定されている
+    And "src/spec_weaver/cli.py" に TRC-003 のアノテーションが存在しない
     When "spec-weaver audit --check-impl" を実行する
-    Then "SPEC-018 → src/spec_weaver/cli.py" が impl_files のみ（アノテーションなし）として報告されること
+    Then "TRC-003 → src/spec_weaver/cli.py" が impl_files のみ（アノテーションなし）として報告されること
 
-  @SPEC-019
+  @QA-003
   Scenario: アノテーションがあって impl_files がない場合は警告を報告する
-    Given "src/spec_weaver/gherkin.py" の行頭に "# implements: SPEC-019" が記述されている
-    And SPEC-019 の impl_files が未設定である
+    Given "src/spec_weaver/gherkin.py" の行頭に "# implements: QA-003" が記述されている
+    And QA-003 の impl_files が未設定である
     When "spec-weaver audit --check-impl" を実行する
-    Then "SPEC-019 ← src/spec_weaver/gherkin.py" がアノテーションのみ（impl_files なし）として報告されること
+    Then "QA-003 ← src/spec_weaver/gherkin.py" がアノテーションのみ（impl_files なし）として報告されること
 
-  @SPEC-019
+  @QA-003
   Scenario: --check-impl なしでは実装リンク検証は実行されない
-    Given SPEC-019 の impl_files に "src/spec_weaver/nonexistent.py" が設定されている
+    Given QA-003 の impl_files に "src/spec_weaver/nonexistent.py" が設定されている
     When 通常の "spec-weaver audit" を実行する（--check-impl なし）
     Then 実装ファイルリンクのセクションが出力されないこと
 
-  # ---- SPEC-020: trace 拡張 ----
+  # ---- TRC-004: trace 拡張 ----
 
-  @SPEC-020
+  @TRC-004
   Scenario: --show-impl オプションで trace ツリーに実装ファイルを表示する
-    Given SPEC-018 の impl_files に "src/spec_weaver/impl_scanner.py" が設定されている
-    When "spec-weaver trace SPEC-018 -f ./specification/features --show-impl" を実行する
+    Given TRC-003 の impl_files に "src/spec_weaver/impl_scanner.py" が設定されている
+    When "spec-weaver trace TRC-003 -f ./specification/features --show-impl" を実行する
     Then 出力ツリーに "src/spec_weaver/impl_scanner.py" が含まれること
 
-  @SPEC-020
+  @TRC-004
   Scenario: アノテーション由来のファイルも trace ツリーに表示される
-    Given "src/spec_weaver/cli.py" の行頭に "# implements: SPEC-018" が記述されている
-    And SPEC-018 の impl_files が未設定である
-    When "spec-weaver trace SPEC-018 -f ./specification/features --show-impl" を実行する
+    Given "src/spec_weaver/cli.py" の行頭に "# implements: TRC-003" が記述されている
+    And TRC-003 の impl_files が未設定である
+    When "spec-weaver trace TRC-003 -f ./specification/features --show-impl" を実行する
     Then 出力ツリーに "src/spec_weaver/cli.py" が含まれること
 
-  @SPEC-020
+  @TRC-004
   Scenario: --show-impl なしでは実装ファイルは表示されない
-    Given SPEC-018 の impl_files に "src/spec_weaver/impl_scanner.py" が設定されている
-    When "spec-weaver trace SPEC-018 -f ./specification/features" を実行する（--show-impl なし）
+    Given TRC-003 の impl_files に "src/spec_weaver/impl_scanner.py" が設定されている
+    When "spec-weaver trace TRC-003 -f ./specification/features" を実行する（--show-impl なし）
     Then 出力ツリーに "impl_scanner.py" が含まれないこと
 
 ```

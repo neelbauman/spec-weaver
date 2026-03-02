@@ -1,7 +1,6 @@
 # [SPEC-002] データ抽出基盤
 
-> ⚠️ **Suspect**: 関連するアイテムやテストが変更されました。影響範囲のレビューが必要です。
-> **原因 (Unreviewed)**: `./specification/features/data_extraction.feature`
+> 🚫 **非活性 (active: false)**: このアイテムは非活性です。[CORE-001](CORE-001.md) に移行されました。
 
 **実装状況**: ✅ implemented
 
@@ -9,7 +8,7 @@
 
 **上位アイテム**: [REQ-001](REQ-001.md), [REQ-002](REQ-002.md) / **兄弟アイテム**: [SPEC-001](SPEC-001.md), [SPEC-013](SPEC-013.md), [SPEC-021](SPEC-021.md)
 
-**テスト対象**: Yes　**個別カバレッジ**: 🟢 1/1 (100%)
+**テスト対象**: Yes　**個別カバレッジ**: 🔴 0/1 (0%)
 
 
 ### 内容
@@ -46,7 +45,7 @@ sequenceDiagram
 - `gherkin-official` パーサーを用いて抽象構文木（AST）を構築すること
 - タグの文字列だけでなく、そのタグが属する「シナリオ名」「ファイル相対パス」「行番号」の
   メタデータを正確に抽出すること
-- Gherkin のタグ継承（Effective Tags）に関する詳細仕様は **SPEC-021** を参照すること
+- Gherkin のタグ継承（Effective Tags）に関する詳細仕様は **CORE-002** を参照すること
 
 ### カスタム属性の評価
 - Doorstopの `testable: false` 属性を評価すること
@@ -55,17 +54,4 @@ sequenceDiagram
 
 ### 🧪 検証シナリオ
 
-- **Doorstop APIによる仕様ID集合の取得** — Scenario （`./specification/features/data_extraction.feature:8`）
-- **非アクティブなアイテムの除外** — Scenario （`./specification/features/data_extraction.feature:13`）
-- **テスト不可能な仕様の除外** — Scenario （`./specification/features/data_extraction.feature:18`）
-- **プレフィックスによるフィルタリング** — Scenario （`./specification/features/data_extraction.feature:23`）
-- **Gherkin ASTからのタグ抽出** — Scenario （`./specification/features/data_extraction.feature:30`）
-- **Feature・Scenario両レベルのタグ抽出** — Scenario （`./specification/features/data_extraction.feature:35`）
-- **サブディレクトリ内のfeatureファイルの再帰探索** — Scenario （`./specification/features/data_extraction.feature:40`）
-- **Gherkin構文エラーの検出** — Scenario （`./specification/features/data_extraction.feature:45`）
-- **Featureタグのみが付与されたfeatureファイルでScenarioがタグマップに登録される** — Scenario （`./specification/features/data_extraction.feature:55`）
-- **Featureタグを継承したエントリのkeywordはScenarioになる** — Scenario （`./specification/features/data_extraction.feature:61`）
-- **Feature→Rule→Scenarioの多段継承でEffective Tagsが正しく算出される** — Scenario （`./specification/features/data_extraction.feature:67`）
-- **シナリオ自身のタグと継承タグが共存してEffective Tagsを形成する** — Scenario （`./specification/features/data_extraction.feature:74`）
-- **Scenario Outlineの全ExamplesタグがEffective Tagsに集約される** — Scenario （`./specification/features/data_extraction.feature:81`）
-- **プレフィックスフィルタはEffective Tags算出後に適用される** — Scenario （`./specification/features/data_extraction.feature:88`）
+❌ まだ Gherkin シナリオが登録されていません。

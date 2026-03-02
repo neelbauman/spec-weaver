@@ -2,9 +2,9 @@
 
 **実装状況**: ✅ implemented
 
-**作成日**: 2026-02-27　|　**更新日**: 2026-03-02
+**作成日**: 2026-02-27　|　**更新日**: 2026-03-03
 
-**上位アイテム**: [SPEC-015](SPEC-015.md)
+**上位アイテム**: [AUT-001](AUT-001.md)
 
 
 ### 内容
@@ -16,10 +16,10 @@ scaffold コマンドに差分マージ機能・インメモリ差分表示・Gi
 
 ## タスク一覧
 
-### T1: SPEC-015.yml 更新
+### T1: AUT-001.yml 更新
 - 依存: なし
 - 完了条件: コマンドIF（--repo-root, --force）、マージ動作、Docstring 仕様が記述されている
-- 対象: `specification/specs/SPEC-015.yml`
+- 対象: `specification/specs/AUT-001.yml`
 
 ### T2: scaffold.feature 更新
 - 依存: T1

@@ -1,4 +1,4 @@
-active: true
+active: false
 derived: false
 gherkin_fingerprints:
 - ./specification/features/review.feature: |
@@ -11,9 +11,10 @@ impl_files:
 level: 20.4
 links:
 - REQ-004: KXm5cZc2wXUhF29d-4lpSPbclfjN4ruCBIwDvWX93tg=
+migrated_to: QA-004
 normative: true
 ref: ''
-reviewed: ISgYOQhZE9VjVtN1ewapLL9jhC3dlc--Cjk-Q9UVtzs=
+reviewed: 7uCi84hBB5A5kSrEBTiGvpVaTgJvFuM536LcEtEkhb8=
 status: implemented
 testable: true
 text: |
@@ -47,7 +48,7 @@ text: |
 
   ```gherkin
   # spec-weaver-fingerprint: abc123def456...
-  @SPEC-024
+  @QA-004
   Feature: ...
   ```
 
@@ -58,4 +59,4 @@ text: |
 
   ## 関連コマンドとの役割分担
   - `spec-weaver review <feature_file>`: `.feature` ファイル自身のレビュー状態を記録する（本仕様）
-  - `spec-weaver clear <SPEC_ID>`: Doorstop アイテムが現在の Gherkin 内容を把握済みであることを記録する（SPEC-025）
+  - `spec-weaver clear <SPEC_ID>`: Doorstop アイテムが現在の Gherkin 内容を把握済みであることを記録する（QA-005）
