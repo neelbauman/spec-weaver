@@ -255,6 +255,11 @@ def test_result_badge_all_passed():
     assert result_badge(3, 0, 3) == "✅ 3/3 PASS"
 
 
+def test_result_badge_partial_pass_no_fail():
+    """パスはあるが未実行あり（failedなし）。"""
+    assert result_badge(2, 0, 3) == "🟡 2/3 PASS"
+
+
 def test_result_badge_all_failed():
     assert result_badge(0, 3, 3) == "✘ 3/3 FAIL"
 

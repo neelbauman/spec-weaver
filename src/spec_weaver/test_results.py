@@ -111,7 +111,9 @@ def result_badge(passed: int, failed: int, total: int) -> str:
     if total == 0 or (passed + failed == 0):
         return "-"
     if failed == 0:
-        return f"✅ {passed}/{total} PASS"
+        if passed == total:
+            return f"✅ {passed}/{total} PASS"
+        return f"🟡 {passed}/{total} PASS"
     if passed == 0:
         return f"✘ {failed}/{total} FAIL"
     return f"🟡 {passed}✅ {failed}✘ /{total}"
