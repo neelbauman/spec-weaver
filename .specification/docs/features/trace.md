@@ -211,12 +211,36 @@ def when_6629a1b8(context):
     _run_trace(context, "REQ-001")
 ```
 
+#### Then 終了コードが0である
+
+```python
+@then("終了コードが{code:d}である")  # type: ignore
+def then_exit_code(context, code):
+    """終了コードが0である / 終了コードが1である
+
+    Scenarios:
+      - trace, review, semantic_review 各コマンドの共通ステップ
+    """
+    assert context.exit_code == code, (
+        f"終了コード {code} を期待しましたが {context.exit_code} でした。\n出力:\n{context.output}"
+    )
+```
+
 #### And 出力にツリー構造が含まれる
 
 ```python
-@then('出力にツリー構造が含まれる')
-def step_impl_8(context):
-    assert "REQ-" in context.stdout or "SPEC-" in context.stdout
+@then("出力にツリー構造が含まれる")  # type: ignore
+def then_output_has_tree(context):
+    """出力にツリー構造が含まれる
+
+    Scenarios:
+      - REQを起点としたトップダウンのツリー表示
+      - SPECを起点とした双方向のツリー表示
+    """
+    assert any(
+        kw in context.output
+        for kw in ["REQ-", "SPEC-", "├", "└", "│", "─"]
+    ), f"ツリー構造が出力にありません:\n{context.output}"
 ```
 
 #### And "REQ-001" がルートノードとして表示される
@@ -338,12 +362,36 @@ def when_b1a2f499(context):
     _run_trace(context, "SPEC-003")
 ```
 
+#### Then 終了コードが0である
+
+```python
+@then("終了コードが{code:d}である")  # type: ignore
+def then_exit_code(context, code):
+    """終了コードが0である / 終了コードが1である
+
+    Scenarios:
+      - trace, review, semantic_review 各コマンドの共通ステップ
+    """
+    assert context.exit_code == code, (
+        f"終了コード {code} を期待しましたが {context.exit_code} でした。\n出力:\n{context.output}"
+    )
+```
+
 #### And 出力にツリー構造が含まれる
 
 ```python
-@then('出力にツリー構造が含まれる')
-def step_impl_8(context):
-    assert "REQ-" in context.stdout or "SPEC-" in context.stdout
+@then("出力にツリー構造が含まれる")  # type: ignore
+def then_output_has_tree(context):
+    """出力にツリー構造が含まれる
+
+    Scenarios:
+      - REQを起点としたトップダウンのツリー表示
+      - SPECを起点とした双方向のツリー表示
+    """
+    assert any(
+        kw in context.output
+        for kw in ["REQ-", "SPEC-", "├", "└", "│", "─"]
+    ), f"ツリー構造が出力にありません:\n{context.output}"
 ```
 
 #### And 上位に "REQ-002" が表示される
@@ -416,6 +464,21 @@ def when_53222a94(context):
       - Gherkin Featureファイルを起点としたボトムアップ表示
     """
     _run_trace(context, "audit.feature")
+```
+
+#### Then 終了コードが0である
+
+```python
+@then("終了コードが{code:d}である")  # type: ignore
+def then_exit_code(context, code):
+    """終了コードが0である / 終了コードが1である
+
+    Scenarios:
+      - trace, review, semantic_review 各コマンドの共通ステップ
+    """
+    assert context.exit_code == code, (
+        f"終了コード {code} を期待しましたが {context.exit_code} でした。\n出力:\n{context.output}"
+    )
 ```
 
 #### And 出力に "SPEC-003" が表示される
@@ -492,6 +555,21 @@ def when_770f884f(context):
     _run_trace(context, "SPEC-003", extra_args=["--direction", "up"])
 ```
 
+#### Then 終了コードが0である
+
+```python
+@then("終了コードが{code:d}である")  # type: ignore
+def then_exit_code(context, code):
+    """終了コードが0である / 終了コードが1である
+
+    Scenarios:
+      - trace, review, semantic_review 各コマンドの共通ステップ
+    """
+    assert context.exit_code == code, (
+        f"終了コード {code} を期待しましたが {context.exit_code} でした。\n出力:\n{context.output}"
+    )
+```
+
 #### And 出力に "REQ-002" が表示される
 
 ```python
@@ -564,6 +642,21 @@ def when_24d70f7f(context):
       - --direction down で下方向のみ探索
     """
     _run_trace(context, "REQ-001", extra_args=["--direction", "down"])
+```
+
+#### Then 終了コードが0である
+
+```python
+@then("終了コードが{code:d}である")  # type: ignore
+def then_exit_code(context, code):
+    """終了コードが0である / 終了コードが1である
+
+    Scenarios:
+      - trace, review, semantic_review 各コマンドの共通ステップ
+    """
+    assert context.exit_code == code, (
+        f"終了コード {code} を期待しましたが {context.exit_code} でした。\n出力:\n{context.output}"
+    )
 ```
 
 #### And 出力に "REQ-002" が表示される
@@ -639,6 +732,21 @@ def when_816b7b2c(context):
     _run_trace(context, "REQ-001", extra_args=["--format", "flat"])
 ```
 
+#### Then 終了コードが0である
+
+```python
+@then("終了コードが{code:d}である")  # type: ignore
+def then_exit_code(context, code):
+    """終了コードが0である / 終了コードが1である
+
+    Scenarios:
+      - trace, review, semantic_review 各コマンドの共通ステップ
+    """
+    assert context.exit_code == code, (
+        f"終了コード {code} を期待しましたが {context.exit_code} でした。\n出力:\n{context.output}"
+    )
+```
+
 #### And 出力がフラットリスト形式である
 
 ```python
@@ -696,6 +804,21 @@ def when_44385436(context):
     _run_trace(context, "NONEXIST-999")
 ```
 
+#### Then 終了コードが1である
+
+```python
+@then("終了コードが{code:d}である")  # type: ignore
+def then_exit_code(context, code):
+    """終了コードが0である / 終了コードが1である
+
+    Scenarios:
+      - trace, review, semantic_review 各コマンドの共通ステップ
+    """
+    assert context.exit_code == code, (
+        f"終了コード {code} を期待しましたが {context.exit_code} でした。\n出力:\n{context.output}"
+    )
+```
+
 #### And エラーメッセージに "not found" が含まれる
 
 ```python
@@ -736,6 +859,21 @@ def when_6629a1b8(context):
       - 各ノードにステータスバッジが表示される
     """
     _run_trace(context, "REQ-001")
+```
+
+#### Then 終了コードが0である
+
+```python
+@then("終了コードが{code:d}である")  # type: ignore
+def then_exit_code(context, code):
+    """終了コードが0である / 終了コードが1である
+
+    Scenarios:
+      - trace, review, semantic_review 各コマンドの共通ステップ
+    """
+    assert context.exit_code == code, (
+        f"終了コード {code} を期待しましたが {context.exit_code} でした。\n出力:\n{context.output}"
+    )
 ```
 
 #### And "REQ-001" のノードに "implemented" のステータスバッジが表示される

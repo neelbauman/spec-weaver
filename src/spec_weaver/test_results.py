@@ -57,8 +57,9 @@ def load_test_results(results_file: Path) -> TestResultMap:
 
         # 【重要】Feature全体のステータスも辞書に登録する
         # （タグがFeature自体に付与されていた場合のマッピング用）
-        if feat_stem and feature_name:
-            feat_status = feature.get("status", "undefined")
+        # 明示的な status フィールドがある場合のみ登録する（デフォルト undefined は無視）
+        feat_status = feature.get("status")
+        if feat_stem and feature_name and feat_status is not None:
             if feat_status == "error":
                 feat_status = "failed"
             result_map[(feat_stem, feature_name)] = feat_status

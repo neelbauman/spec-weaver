@@ -3,7 +3,7 @@
 > 📋 **Unreviewed Changes**: このフィーチャーファイル自体に未レビューの変更があります。レビュー後に `review` コマンドで更新してください。
 
 > ⚠️ **Suspect**: 関連する仕様や他のテストが変更されました。影響範囲のレビューが必要です。
-> **原因 (Unreviewed)**: [SPEC-020](../items/SPEC-020.md)
+> **原因 (Unreviewed)**: [SPEC-017](../items/SPEC-017.md)
 
 **タグ**: `@SPEC-017` `@SPEC-018` `@SPEC-019` `@SPEC-020`
 

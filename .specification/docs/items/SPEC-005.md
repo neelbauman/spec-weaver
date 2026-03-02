@@ -26,10 +26,12 @@ DoorstopのSuspect機能を活用した変更波及の検知と可視化の仕�
 - build の一覧テーブル: Suspect状態の行を赤色、Unreviewed状態の行を紫色でハイライト表示する。従来の状態列は廃止する。
 - build の詳細ページ: Suspect Link バナー（対象リンク付き）、Unreviewed Changes バナーを表示
 
+**テスト実行結果 (個別)**: ✅ 5/5 PASS
+
 ### 🧪 検証シナリオ
 
-- **Suspect Link の検出** — Scenario （[features/audit.feature:36](../features/audit.md)）
-- **Unreviewed Changes の検出** — Scenario （[features/audit.feature:44](../features/audit.md)）
-- **Suspect Link 警告の一覧テーブル表示** — Scenario （[features/build.feature:72](../features/build.md)）
-- **Unreviewed Changes 警告の一覧テーブル表示** — Scenario （[features/build.feature:79](../features/build.md)）
-- **複合警告の表示** — Scenario （[features/build.feature:86](../features/build.md)）
+- ✅ PASS **Suspect Link の検出** — Scenario （[features/audit.feature:36](../features/audit.md)）
+- ✅ PASS **Unreviewed Changes の検出** — Scenario （[features/audit.feature:44](../features/audit.md)）
+- ✅ PASS **Suspect Link 警告の一覧テーブル表示** — Scenario （[features/build.feature:72](../features/build.md)）
+- ✅ PASS **Unreviewed Changes 警告の一覧テーブル表示** — Scenario （[features/build.feature:79](../features/build.md)）
+- ✅ PASS **複合警告の表示** — Scenario （[features/build.feature:86](../features/build.md)）

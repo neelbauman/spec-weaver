@@ -18,7 +18,7 @@ import subprocess
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable, Optional
 
 from spec_weaver.doorstop import get_item_map, _get_custom_attribute
 from spec_weaver.gherkin import get_tag_map
@@ -214,11 +214,25 @@ def _get_item_title(item: Any) -> str:
     return ""
 
 
-def build_review_prompt(item_id: str, item_title: str) -> str:
-    """Claude に渡すプロンプトを組み立てる。"""
+def build_review_prompt(item_id: str, item_title: str, files: list[Path] | None = None) -> str:
+    """Claude に渡すプロンプトを組み立てる。
+
+    files を指定した場合、各ファイルの内容をプロンプトに埋め込む。
+    """
+    file_section = ""
+    if files:
+        parts: list[str] = []
+        for fp in files:
+            try:
+                content = fp.read_text(encoding="utf-8", errors="replace")
+                parts.append(f"### {fp}\n```\n{content}\n```")
+            except Exception:
+                parts.append(f"### {fp}\n（読み込み失敗）")
+        file_section = "\n\n## 対象ファイル\n\n" + "\n\n".join(parts)
+
     return f"""以下のファイルを解析し、仕様・Gherkin・実装コードの意味的整合性をレビューしてください。
 
-対象アイテム: {item_id} — {item_title}
+対象アイテム: {item_id} — {item_title}{file_section}
 
 ## 評価観点
 1. missing_implementation: 仕様に記述された要件が実装に存在するか
@@ -323,13 +337,18 @@ def run_claude_review(
     item_id: str,
     feature_dir: Path,
     repo_root: Path,
+    timeout: int = 300,
 ) -> ReviewResult:
     """Claude を subprocess で呼び出し、セマンティックレビュー結果を返す。
+
+    Args:
+        timeout: Claude プロセスの最大待機秒数（デフォルト300秒）。
 
     Raises:
         FileNotFoundError: claude バイナリが見つからない場合
         ValueError: アイテムIDが見つからない場合 / JSON 解析に失敗した場合
     """
+    import os
     import shutil
     if shutil.which("claude") is None:
         raise FileNotFoundError(
@@ -348,17 +367,20 @@ def run_claude_review(
         files_dict["spec"] + files_dict["feature"] + files_dict["steps"] + files_dict["impl"]
     )
 
-    prompt = build_review_prompt(item_id, item_title)
+    # ファイル内容をプロンプトに埋め込む（--file フラグは API File ID 形式のため使用不可）
+    prompt = build_review_prompt(item_id, item_title, files=all_files)
+
+    # CLAUDECODE 環境変数を除外してネスト制限を回避する
+    env = {k: v for k, v in os.environ.items() if k != "CLAUDECODE"}
 
     cmd = ["claude", "-p", prompt]
-    for fp in all_files:
-        cmd += ["--file", str(fp)]
 
     result = subprocess.run(
         cmd,
         capture_output=True,
         text=True,
-        timeout=120,
+        timeout=timeout,
+        env=env,
     )
 
     stdout = result.stdout
@@ -374,7 +396,7 @@ def run_claude_review(
                 kind="semantic_contradiction",
                 severity="high",
                 title="レビュー結果の解析に失敗",
-                detail=f"Claude の出力から JSON を抽出できませんでした。stdout: {stdout[:500]}",
+                detail=f"Claude の出力から JSON を抽出できませんでした。stdout: {stdout[:500]} stderr: {result.stderr[:200]}",
                 location="",
             )],
             summary="レビュー実行時にエラーが発生しました。",
@@ -399,8 +421,16 @@ def run_all_reviews(
     feature_dir: Path,
     repo_root: Path,
     max_workers: int = 3,
+    on_complete: Optional[Callable[[str, ReviewResult], None]] = None,
+    timeout: int = 300,
 ) -> ReviewReport:
-    """全アイテムを ThreadPoolExecutor で並列レビューする。"""
+    """全アイテムを ThreadPoolExecutor で並列レビューする。
+
+    Args:
+        on_complete: アイテム1件のレビュー完了時に呼ばれるコールバック。
+                     引数は (item_id, result)。進捗表示に利用する。
+        timeout: 各アイテムの Claude プロセス最大待機秒数。
+    """
     item_map = get_item_map(repo_root)
     item_ids = list(item_map.keys())
 
@@ -408,7 +438,7 @@ def run_all_reviews(
 
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
         futures = {
-            executor.submit(run_claude_review, item_id, feature_dir, repo_root): item_id
+            executor.submit(run_claude_review, item_id, feature_dir, repo_root, timeout): item_id
             for item_id in item_ids
         }
         for future in as_completed(futures):
@@ -433,6 +463,8 @@ def run_all_reviews(
                     summary="レビュー実行時にエラーが発生しました。",
                 )
             report.items.append(result)
+            if on_complete is not None:
+                on_complete(item_id, result)
 
     # item_id でソートして順序を安定させる
     report.items.sort(key=lambda r: r.item_id)

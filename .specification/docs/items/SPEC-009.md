@@ -27,6 +27,8 @@
 - 親、子、兄弟、状態、作成日については、ドロップダウンなどによる選択形式のフィルタとする。
 - 実装に使用するJavaScriptおよびCSSは、独立したソースファイルとして管理し、ビルド時に配布ディレクトリへ自動配置する。
 
+**テスト実行結果 (個別)**: ✅ 1/1 PASS
+
 ### 🧪 検証シナリオ
 
-- **一覧テーブルのフィルタリング機能** — Scenario （[features/build.feature:35](../features/build.md)）
+- ✅ PASS **一覧テーブルのフィルタリング機能** — Scenario （[features/build.feature:35](../features/build.md)）

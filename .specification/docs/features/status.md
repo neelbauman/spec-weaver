@@ -52,6 +52,21 @@ def when_d68a8d9a(context):
     _run_status(context)
 ```
 
+#### Then 終了コード 0 が返ること
+
+```python
+@then('終了コード 0 が返ること')  # type: ignore
+def then_4f25c571(context):
+    """終了コード 0 が返ること
+
+    Scenarios:
+      - 完全一致時の監査成功
+    """
+    assert context.exit_code == 0, (
+        f"終了コード {context.exit_code} (期待: 0)\n{context.output}"
+    )
+```
+
 #### And REQ-001 が "draft" バッジとともに表示されること
 
 ```python
@@ -132,6 +147,21 @@ def when_d68a8d9a(context):
     _run_status(context)
 ```
 
+#### Then 終了コード 0 が返ること
+
+```python
+@then('終了コード 0 が返ること')  # type: ignore
+def then_4f25c571(context):
+    """終了コード 0 が返ること
+
+    Scenarios:
+      - 完全一致時の監査成功
+    """
+    assert context.exit_code == 0, (
+        f"終了コード {context.exit_code} (期待: 0)\n{context.output}"
+    )
+```
+
 #### And SPEC-001 の実装状況が "-" と表示されること
 
 ```python
@@ -197,6 +227,21 @@ def when_d36ae1bf(context, option):
     _run_status(context, extra_args=parts)
 ```
 
+#### Then 終了コード 0 が返ること
+
+```python
+@then('終了コード 0 が返ること')  # type: ignore
+def then_4f25c571(context):
+    """終了コード 0 が返ること
+
+    Scenarios:
+      - 完全一致時の監査成功
+    """
+    assert context.exit_code == 0, (
+        f"終了コード {context.exit_code} (期待: 0)\n{context.output}"
+    )
+```
+
 #### And REQ-001 が表示されること
 
 ```python
@@ -248,7 +293,11 @@ def given_f93df893(context, status):
     Scenarios:
       - --filter に一致するアイテムが存在しない場合に通知される
     """
-    raise NotImplementedError('STEP: すべてのアイテムの status が "{param0}" に設定されている')
+    context.repo_root = context.temp_dir / "repo"
+    create_doorstop_project_api(
+        context.repo_root,
+        spec_items=[{"header": "仕様A", "testable": True, "status": status}],
+    )
 ```
 
 #### When status コマンドを "--filter implemented" オプション付きで実行する
@@ -267,12 +316,35 @@ def when_d36ae1bf(context, option):
     _run_status(context, extra_args=parts)
 ```
 
+#### Then 終了コード 0 が返ること
+
+```python
+@then('終了コード 0 が返ること')  # type: ignore
+def then_4f25c571(context):
+    """終了コード 0 が返ること
+
+    Scenarios:
+      - 完全一致時の監査成功
+    """
+    assert context.exit_code == 0, (
+        f"終了コード {context.exit_code} (期待: 0)\n{context.output}"
+    )
+```
+
 #### And 一致するアイテムが見つからなかった旨が表示されること
 
 ```python
-@then('一致するアイテムが見つからなかった旨が表示されること')
-def step_impl_13(context):
-    assert "見つかりませんでした" in context.stdout or "一致するアイテムが存在しません" in context.stdout
+@then("一致するアイテムが見つからなかった旨が表示されること")  # type: ignore
+def then_b2e9a1c0(context):
+    """一致するアイテムが見つからなかった旨が表示されること
+
+    Scenarios:
+      - --filter に一致するアイテムが存在しない場合に通知される
+    """
+    assert any(
+        kw in context.output
+        for kw in ["見つかりませんでした", "一致するアイテムが存在しません", "No items", "not found"]
+    ), f"未発見メッセージが出力にありません:\n{context.output}"
 ```
 
 </details>
@@ -289,6 +361,24 @@ def step_impl_13(context):
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
+#### Given Doorstopのアイテムが存在する
+
+```python
+@given("Doorstopのアイテムが存在する")  # type: ignore
+def given_7c3d8e9f(context):
+    """Doorstopのアイテムが存在する
+
+    Scenarios:
+      - レビューステータスと最終更新日が表示される
+    """
+    context.repo_root = context.temp_dir / "repo"
+    create_doorstop_project_api(
+        context.repo_root,
+        req_items=[{"header": "要件A", "testable": False}],
+        spec_items=[{"header": "仕様A", "testable": True}],
+    )
+```
+
 #### When status コマンドを実行する
 
 ```python
@@ -302,6 +392,53 @@ def when_d68a8d9a(context):
       - レビューステータスと最終更新日が表示される
     """
     _run_status(context)
+```
+
+#### Then 終了コード 0 が返ること
+
+```python
+@then('終了コード 0 が返ること')  # type: ignore
+def then_4f25c571(context):
+    """終了コード 0 が返ること
+
+    Scenarios:
+      - 完全一致時の監査成功
+    """
+    assert context.exit_code == 0, (
+        f"終了コード {context.exit_code} (期待: 0)\n{context.output}"
+    )
+```
+
+#### And レビューステータス列が表示されること
+
+```python
+@then("レビューステータス列が表示されること")  # type: ignore
+def then_4a2b3c1d(context):
+    """レビューステータス列が表示されること
+
+    Scenarios:
+      - レビューステータスと最終更新日が表示される
+    """
+    assert any(
+        kw in context.output
+        for kw in ["reviewed", "レビュー", "Reviewed"]
+    ), f"レビューステータス列が出力にありません:\n{context.output}"
+```
+
+#### And 最終更新日列が表示されること
+
+```python
+@then("最終更新日列が表示されること")  # type: ignore
+def then_9e7f6a5b(context):
+    """最終更新日列が表示されること
+
+    Scenarios:
+      - レビューステータスと最終更新日が表示される
+    """
+    assert any(
+        kw in context.output
+        for kw in ["updated", "更新", "Updated", "-"]
+    ), f"最終更新日列が出力にありません:\n{context.output}"
 ```
 
 </details>

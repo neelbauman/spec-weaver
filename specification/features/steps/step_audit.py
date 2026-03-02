@@ -80,19 +80,50 @@ def when_20ad7547(context):
     _run_audit(context)
 
 
-    # SPEC-001 (testable=False), SPEC-002 (testable=True, 未カバー)
+@then('終了コード 0 が返ること')  # type: ignore
+def then_4f25c571(context):
+    """終了コード 0 が返ること
+
+    Scenarios:
+      - 完全一致時の監査成功
+    """
+    assert context.exit_code == 0, (
+        f"終了コード {context.exit_code} (期待: 0)\n{context.output}"
+    )
+
+
+@then('成功メッセージが表示されること')  # type: ignore
+def then_f7642361(context):
+    """成功メッセージが表示されること
+
+    Scenarios:
+      - 完全一致時の監査成功
+    """
+    assert any(
+        kw in context.output
+        for kw in ["OK", "ok", "成功", "passed", "✓", "✅", "問題なし", "All"]
+    ), f"成功メッセージが出力にありません:\n{context.output}"
+
+
+@given('testable な仕様 "{param0}" に対応するGherkinテストが存在しない')  # type: ignore
+def given_03339ad7(context, param0):
+    """testable な仕様 "SPEC-002" に対応するGherkinテストが存在しない
+
+    Scenarios:
+      - テスト漏れの検出
+    """
+    # SPEC-001 (testable=False) は audit でスキップされ、
+    # SPEC-002 (testable=True) だけが未カバーとして報告される
     context.repo_root = context.temp_dir / "repo"
     create_doorstop_project_api(
         context.repo_root,
         spec_items=[
-            {"header": "カバー外仕様1", "testable": False},
+            {"header": "テスト不可仕様", "testable": False},
             {"header": "未カバー仕様", "testable": True},
         ],
     )
     context.feature_dir = context.temp_dir / "features"
-    # feature ファイルは作らない (SPEC-002 が未カバー)
     context.feature_dir.mkdir(parents=True, exist_ok=True)
-    context.expected_spec_id = spec_id  # "SPEC-002"
 
 
 @then("終了コード 1 が返ること")  # type: ignore

@@ -1,7 +1,7 @@
 # [PLAN-001] 実装ファイルリンク管理機能の実装計画
 
 > ⚠️ **Suspect**: 関連するアイテムやテストが変更されました。影響範囲のレビューが必要です。
-> **原因 (Unreviewed)**: [SPEC-020](SPEC-020.md), `Doorstop native suspect link`
+> **原因 (Unreviewed)**: [SPEC-017](SPEC-017.md), `Doorstop native suspect link`
 
 **実装状況**: ✅ implemented
 

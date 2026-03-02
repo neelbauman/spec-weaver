@@ -2342,6 +2342,11 @@ def semantic_review_cmd(
         "--max-workers",
         help="--all 時の並列 Claude プロセス数",
     ),
+    timeout: int = typer.Option(
+        300,
+        "--timeout",
+        help="Claude プロセスの最大待機秒数（デフォルト: 300秒）",
+    ),
 ) -> None:
     """
     仕様・Gherkin・実装コードの意味的整合性を Claude でレビューします。
@@ -2372,7 +2377,11 @@ def semantic_review_cmd(
     # --------------- 単一アイテム ---------------
     if item:
         try:
-            result = run_claude_review(item, feature_dir, repo_root)
+            if output != "json":
+                with console.status(f"[bold cyan]🔍 {item} をレビュー中...[/bold cyan]"):
+                    result = run_claude_review(item, feature_dir, repo_root, timeout=timeout)
+            else:
+                result = run_claude_review(item, feature_dir, repo_root, timeout=timeout)
         except FileNotFoundError as e:
             console.print(f"[bold red]❌ {e}[/bold red]")
             raise typer.Exit(code=1)
@@ -2394,7 +2403,34 @@ def semantic_review_cmd(
 
     # --------------- 全アイテム並列 ---------------
     try:
-        report = run_all_reviews(feature_dir, repo_root, max_workers=max_workers)
+        if output != "json":
+            from rich.progress import BarColumn, MofNCompleteColumn, Progress, SpinnerColumn, TextColumn, TimeElapsedColumn
+
+            from spec_weaver.doorstop import get_item_map as _get_item_map
+            total = len(_get_item_map(repo_root))
+
+            with Progress(
+                SpinnerColumn(),
+                TextColumn("[progress.description]{task.description}"),
+                BarColumn(),
+                MofNCompleteColumn(),
+                TimeElapsedColumn(),
+                console=console,
+            ) as progress:
+                task_id = progress.add_task("[cyan]セマンティックレビュー実行中...[/cyan]", total=total)
+
+                def _on_complete(iid: str, _result: "ReviewResult") -> None:
+                    progress.advance(task_id)
+                    progress.update(task_id, description=f"[cyan]完了: {iid}[/cyan]")
+
+                report = run_all_reviews(
+                    feature_dir, repo_root, max_workers=max_workers,
+                    on_complete=_on_complete, timeout=timeout,
+                )
+        else:
+            report = run_all_reviews(
+                feature_dir, repo_root, max_workers=max_workers, timeout=timeout,
+            )
     except FileNotFoundError as e:
         console.print(f"[bold red]❌ {e}[/bold red]")
         raise typer.Exit(code=1)
