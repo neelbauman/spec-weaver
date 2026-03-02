@@ -1487,6 +1487,17 @@ def _coverage_badge(covered: int, total: int) -> str:
     return f"{icon} {covered}/{total} ({pct}%)"
 
 
+def _scenario_count_badge(uid: str, tag_map: dict, item) -> str:
+    """SPEC単体のシナリオ数を直接表示するバッジ。testable=falseなら '-'、0なら🔴、それ以上は🟢。"""
+    testable = _get_custom_attribute(item, "testable", True)
+    if not testable:
+        return "-"
+    count = len(tag_map.get(uid, []))
+    if count == 0:
+        return "🔴 0"
+    return f"🟢 {count}"
+
+
 # ---------------------------------------------------------------------------
 # ヘルパー: Gherkin → Markdown 変換
 # ---------------------------------------------------------------------------
@@ -1681,10 +1692,9 @@ def _generate_index_table(
     result_col_header = " | テスト結果" if has_results else ""
     result_col_sep = " | :--- " if has_results else ""
 
-    # QA-001: 「レビューステータス」列を廃止。ハイライトで表現する。
-    # ID | タイトル | 活性 | 親 | 子 | 兄弟 | Gherkinカバレッジ | 実装状況 | 作成日 | 更新日
-    header = f"| ID | タイトル | 活性 | 親 | 子 | 兄弟 | Gherkinカバレッジ | 実装状況 | 作成日 | 更新日{result_col_header} |"
-    sep = f"| :--- | :--- | :---: | :--- | :--- | :--- | :--- | :--- | :--- | :---{result_col_sep}|"
+    # ID | タイトル | 活性 | 親 | 子 | 兄弟 | Gherkinカバレッジ | レビュー | 実装状況 | 作成日 | 更新日
+    header = f"| ID | タイトル | 活性 | 親 | 子 | 兄弟 | Gherkinカバレッジ | レビュー | 実装状況 | 作成日 | 更新日{result_col_header} |"
+    sep = f"| :--- | :--- | :---: | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :---{result_col_sep}|"
 
     lines = [f"# {title}\n", header, sep]
 
@@ -1703,13 +1713,12 @@ def _generate_index_table(
         siblings_col = "<br>".join(f"[{s}](items/{s}.md)" for s in siblings) or "-"
 
         # カバレッジ計算
-        # 子がいる場合は集約カバレッジ、いない場合は自身のカバレッジを表示
+        # 子がいる場合は集約カバレッジ（割合%）、いない場合はシナリオ数を直接表示
         if children:
             covered, total = _req_coverage(uid, child_map, all_items_str, tag_map)
-            coverage_col = _coverage_badge(covered, total) + " [agg]"
-        else:
-            covered, total = _spec_coverage(uid, tag_map, item, all_items_str)
             coverage_col = _coverage_badge(covered, total)
+        else:
+            coverage_col = _scenario_count_badge(uid, tag_map, item)
 
         review_status = _review_status_badge(uid, review_state=review_state)
         impl_col = _impl_status_badge(item)
@@ -1718,7 +1727,7 @@ def _generate_index_table(
         active_col = "✅" if item.active else "⛔"
 
         # 行の組み立て
-        row = f"| [{uid}](items/{uid}.md) | {item.header} | {active_col} | {parents_col} | {children_col} | {siblings_col} | {coverage_col} | {impl_col} | {created_col} | {updated_col}"
+        row = f"| [{uid}](items/{uid}.md) | {item.header} | {active_col} | {parents_col} | {children_col} | {siblings_col} | {coverage_col} | {review_status} | {impl_col} | {created_col} | {updated_col}"
 
         # 状態に応じた行ハイライト (attr_list 拡張用)
         # QA-001: Unreviewedは赤 (.unreviewed-row), Suspectは紫 (.suspect-row)
@@ -1865,8 +1874,7 @@ def _generate_item_markdown(
 
     # 自身がテスト対象、またはシナリオがある場合
     if testable or scenarios:
-        covered, total = _spec_coverage(uid, tag_map, item, all_items_str)
-        coverage_str = _coverage_badge(covered, total)
+        coverage_str = _scenario_count_badge(uid, tag_map, item)
         content.append(
             f"**テスト対象**: {'Yes' if testable else 'No'}　**個別カバレッジ**: {coverage_str}\n"
         )

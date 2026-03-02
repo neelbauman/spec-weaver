@@ -1,4 +1,4 @@
-# spec-weaver-fingerprint: 8bb5e928220074386409f6de0c4ba9d25712d344bfcd76bdf4f6c6d5aa205dec
+# spec-weaver-fingerprint: 9a459b73e608b26276d27ad6be826dfdafb28b176f6b7c528b2240a313da2bac
 # spec-weaver-fingerprint-QA-001: IVjwbWJI8Xga_1LFrHA_SqnpsZ_-MHzjo-w7D9zwEYE=
 # spec-weaver-fingerprint-VIS-001: vS8HMajMu_ierl6Dvv5xBk1dtLB30WMIGR7OIcwtLdk=
 # spec-weaver-fingerprint-VIS-005: cnyg43CeR6DlR-nhO8_IOS6ZTbkaQoU6UoJyLvsS-JY=
@@ -92,3 +92,14 @@ Feature: build コマンド
     Given アイテムに Suspect Link と Unreviewed Changes の両方がある
     When  build コマンドを実行する
     Then  一覧テーブルの行に "{: .suspect-row }" が適用されていること
+
+  Scenario: 一覧テーブルのGherkinカバレッジ列はシナリオ数を表示すること
+    Given 2つのシナリオを持つfeatureファイルにタグで紐づいたSPECアイテムが存在する
+    When  build コマンドを実行する
+    Then  一覧テーブルの Gherkinカバレッジ列に "🟢 2" が含まれること
+
+  Scenario: 一覧テーブルにレビューステータス列が表示されること
+    Given DoorstopプロジェクトにSPECアイテムが存在する
+    When  build コマンドを実行する
+    Then  一覧テーブルのヘッダーに "レビュー" 列が含まれること
+    And   各行にレビューステータスが表示されること

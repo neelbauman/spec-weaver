@@ -176,8 +176,45 @@ def given_ae2b8b7d(context):
 
     Scenarios:
       - 仕様一覧ページの生成
+      - 一覧テーブルにレビューステータス列が表示されること
     """
-    raise NotImplementedError('STEP: DoorstopプロジェクトにSPECアイテムが存在する')
+    import tempfile
+    from pathlib import Path
+
+    tmp_dir = Path(tempfile.mkdtemp())
+    context.tmp_dir = tmp_dir
+
+    from specification.features.steps._helpers import create_doorstop_project_yaml, write_feature_file
+    create_doorstop_project_yaml(tmp_dir, [
+        {
+            "dir": "reqs",
+            "prefix": "REQ",
+            "parent": None,
+            "items": [{"uid": "REQ-001", "header": "要件1", "testable": False}],
+        },
+        {
+            "dir": "specs",
+            "prefix": "SPEC",
+            "parent": "REQ",
+            "items": [{"uid": "SPEC-001", "header": "仕様1", "links": ["REQ-001"]}],
+        },
+    ])
+
+    features_dir = tmp_dir / "features"
+    features_dir.mkdir()
+    write_feature_file(
+        features_dir / "test.feature",
+        "@SPEC-001\nFeature: テスト\n\n  Scenario: S1\n    Given 前提\n    When 操作\n    Then 確認\n",
+    )
+
+    out_dir = tmp_dir / "out"
+    result = run_spec_weaver(
+        ["build", str(features_dir), "--out-dir", str(out_dir)],
+        cwd=tmp_dir,
+    )
+    spec_md = out_dir / "docs" / "spec.md"
+    context.spec_md_content = spec_md.read_text(encoding="utf-8") if spec_md.exists() else ""
+    context.build_result = result
 ```
 
 #### When build コマンドを実行する
@@ -898,12 +935,234 @@ def then_011c6eae(context, param0):
 </details>
 
 
+---
+## Scenario: 一覧テーブルのGherkinカバレッジ列はシナリオ数を表示すること
+
+- **Given** 2つのシナリオを持つfeatureファイルにタグで紐づいたSPECアイテムが存在する
+- **When** build コマンドを実行する
+- **Then** 一覧テーブルの Gherkinカバレッジ列に "🟢 2" が含まれること
+
+<details><summary><b>Step Definitions (Source Code)</b></summary>
+
+#### Given 2つのシナリオを持つfeatureファイルにタグで紐づいたSPECアイテムが存在する
+
+```python
+@given('2つのシナリオを持つfeatureファイルにタグで紐づいたSPECアイテムが存在する')  # type: ignore
+def given_a5569e86(context):
+    """2つのシナリオを持つfeatureファイルにタグで紐づいたSPECアイテムが存在する
+
+    Scenarios:
+      - 一覧テーブルのGherkinカバレッジ列はシナリオ数を表示すること
+    """
+    import tempfile
+    from pathlib import Path
+
+    tmp_dir = Path(tempfile.mkdtemp())
+    context.tmp_dir = tmp_dir
+
+    from specification.features.steps._helpers import create_doorstop_project_yaml, write_feature_file
+    create_doorstop_project_yaml(tmp_dir, [
+        {
+            "dir": "reqs",
+            "prefix": "REQ",
+            "parent": None,
+            "items": [{"uid": "REQ-001", "header": "要件1", "testable": False}],
+        },
+        {
+            "dir": "specs",
+            "prefix": "SPEC",
+            "parent": "REQ",
+            "items": [{"uid": "SPEC-001", "header": "仕様1", "links": ["REQ-001"]}],
+        },
+    ])
+
+    features_dir = tmp_dir / "features"
+    features_dir.mkdir()
+    feature_content = (
+        "@SPEC-001\n"
+        "Feature: テスト用フィーチャー\n\n"
+        "  Scenario: シナリオその1\n"
+        "    Given 前提\n"
+        "    When  操作\n"
+        "    Then  確認\n\n"
+        "  Scenario: シナリオその2\n"
+        "    Given 前提2\n"
+        "    When  操作2\n"
+        "    Then  確認2\n"
+    )
+    write_feature_file(features_dir / "test.feature", feature_content)
+
+    out_dir = tmp_dir / "out"
+    result = run_spec_weaver(
+        ["build", str(features_dir), "--out-dir", str(out_dir)],
+        cwd=tmp_dir,
+    )
+    spec_md = out_dir / "docs" / "spec.md"
+    context.spec_md_content = spec_md.read_text(encoding="utf-8") if spec_md.exists() else ""
+    context.build_result = result
+```
+
+#### When build コマンドを実行する
+
+```python
+@when('build コマンドを実行する')  # type: ignore
+def when_40f323b6(context):
+    """build コマンドを実行する
+
+    Scenarios:
+      - 一覧テーブルにタイムスタンプ列が表示される
+      - 詳細ページにタイムスタンプが表示される
+      - Git情報がない場合の一覧テーブル表示
+    """
+    pass
+```
+
+#### Then 一覧テーブルの Gherkinカバレッジ列に "🟢 2" が含まれること
+
+```python
+@then('一覧テーブルの Gherkinカバレッジ列に "{param0}" が含まれること')  # type: ignore
+def then_5b76eb00(context, param0):
+    """一覧テーブルの Gherkinカバレッジ列に "🟢 2" が含まれること
+
+    Scenarios:
+      - 一覧テーブルのGherkinカバレッジ列はシナリオ数を表示すること
+    """
+    content = getattr(context, "spec_md_content", "")
+    assert param0 in content, (
+        f"期待文字列 {param0!r} が spec.md に見つかりません。\n"
+        f"spec.md:\n{content[:2000]}"
+    )
+```
+
+</details>
+
+
+---
+## Scenario: 一覧テーブルにレビューステータス列が表示されること
+
+- **Given** DoorstopプロジェクトにSPECアイテムが存在する
+- **When** build コマンドを実行する
+- **Then** 一覧テーブルのヘッダーに "レビュー" 列が含まれること
+- **And** 各行にレビューステータスが表示されること
+
+<details><summary><b>Step Definitions (Source Code)</b></summary>
+
+#### Given DoorstopプロジェクトにSPECアイテムが存在する
+
+```python
+@given('DoorstopプロジェクトにSPECアイテムが存在する')  # type: ignore
+def given_ae2b8b7d(context):
+    """DoorstopプロジェクトにSPECアイテムが存在する
+
+    Scenarios:
+      - 仕様一覧ページの生成
+      - 一覧テーブルにレビューステータス列が表示されること
+    """
+    import tempfile
+    from pathlib import Path
+
+    tmp_dir = Path(tempfile.mkdtemp())
+    context.tmp_dir = tmp_dir
+
+    from specification.features.steps._helpers import create_doorstop_project_yaml, write_feature_file
+    create_doorstop_project_yaml(tmp_dir, [
+        {
+            "dir": "reqs",
+            "prefix": "REQ",
+            "parent": None,
+            "items": [{"uid": "REQ-001", "header": "要件1", "testable": False}],
+        },
+        {
+            "dir": "specs",
+            "prefix": "SPEC",
+            "parent": "REQ",
+            "items": [{"uid": "SPEC-001", "header": "仕様1", "links": ["REQ-001"]}],
+        },
+    ])
+
+    features_dir = tmp_dir / "features"
+    features_dir.mkdir()
+    write_feature_file(
+        features_dir / "test.feature",
+        "@SPEC-001\nFeature: テスト\n\n  Scenario: S1\n    Given 前提\n    When 操作\n    Then 確認\n",
+    )
+
+    out_dir = tmp_dir / "out"
+    result = run_spec_weaver(
+        ["build", str(features_dir), "--out-dir", str(out_dir)],
+        cwd=tmp_dir,
+    )
+    spec_md = out_dir / "docs" / "spec.md"
+    context.spec_md_content = spec_md.read_text(encoding="utf-8") if spec_md.exists() else ""
+    context.build_result = result
+```
+
+#### When build コマンドを実行する
+
+```python
+@when('build コマンドを実行する')  # type: ignore
+def when_40f323b6(context):
+    """build コマンドを実行する
+
+    Scenarios:
+      - 一覧テーブルにタイムスタンプ列が表示される
+      - 詳細ページにタイムスタンプが表示される
+      - Git情報がない場合の一覧テーブル表示
+    """
+    pass
+```
+
+#### Then 一覧テーブルのヘッダーに "レビュー" 列が含まれること
+
+```python
+@then('一覧テーブルのヘッダーに "{param0}" 列が含まれること')  # type: ignore
+def then_eccd5afe(context, param0):
+    """一覧テーブルのヘッダーに "レビュー" 列が含まれること
+
+    Scenarios:
+      - 一覧テーブルにレビューステータス列が表示されること
+    """
+    content = getattr(context, "spec_md_content", "")
+    # ヘッダー行（| ID | タイトル | ... | レビュー | ... |）を確認
+    header_line = next(
+        (line for line in content.splitlines() if line.startswith("| ID ")), ""
+    )
+    assert param0 in header_line, (
+        f"ヘッダー行に {param0!r} が見つかりません。\nヘッダー行: {header_line!r}"
+    )
+```
+
+#### And 各行にレビューステータスが表示されること
+
+```python
+@then('各行にレビューステータスが表示されること')  # type: ignore
+def then_8b62591d(context):
+    """各行にレビューステータスが表示されること
+
+    Scenarios:
+      - 一覧テーブルにレビューステータス列が表示されること
+    """
+    content = getattr(context, "spec_md_content", "")
+    # データ行（| SPEC-... | で始まる行）にレビューステータス文字列が含まれることを確認
+    data_lines = [
+        line for line in content.splitlines()
+        if line.startswith("| [SPEC-") or line.startswith("| [REQ-")
+    ]
+    assert data_lines, "spec.md にデータ行が見つかりません。"
+    for line in data_lines:
+        has_review = any(marker in line for marker in ["reviewed", "suspect", "unreviewed"])
+        assert has_review, f"データ行にレビューステータスが含まれません: {line!r}"
+```
+
+</details>
+
+
 
 ---
 <details><summary>Raw .feature source</summary>
 
 ```gherkin
-# spec-weaver-fingerprint: 8bb5e928220074386409f6de0c4ba9d25712d344bfcd76bdf4f6c6d5aa205dec
+# spec-weaver-fingerprint: 9a459b73e608b26276d27ad6be826dfdafb28b176f6b7c528b2240a313da2bac
 # spec-weaver-fingerprint-QA-001: IVjwbWJI8Xga_1LFrHA_SqnpsZ_-MHzjo-w7D9zwEYE=
 # spec-weaver-fingerprint-VIS-001: vS8HMajMu_ierl6Dvv5xBk1dtLB30WMIGR7OIcwtLdk=
 # spec-weaver-fingerprint-VIS-005: cnyg43CeR6DlR-nhO8_IOS6ZTbkaQoU6UoJyLvsS-JY=
@@ -997,6 +1256,17 @@ Feature: build コマンド
     Given アイテムに Suspect Link と Unreviewed Changes の両方がある
     When  build コマンドを実行する
     Then  一覧テーブルの行に "{: .suspect-row }" が適用されていること
+
+  Scenario: 一覧テーブルのGherkinカバレッジ列はシナリオ数を表示すること
+    Given 2つのシナリオを持つfeatureファイルにタグで紐づいたSPECアイテムが存在する
+    When  build コマンドを実行する
+    Then  一覧テーブルの Gherkinカバレッジ列に "🟢 2" が含まれること
+
+  Scenario: 一覧テーブルにレビューステータス列が表示されること
+    Given DoorstopプロジェクトにSPECアイテムが存在する
+    When  build コマンドを実行する
+    Then  一覧テーブルのヘッダーに "レビュー" 列が含まれること
+    And   各行にレビューステータスが表示されること
 
 ```
 </details>

@@ -692,7 +692,6 @@ Feature: audit コマンド
     Then  終了コード 1 が返ること
     And   Unreviewed Changes テーブルに "VIS-005" が報告されること
 
-
   @QA-001
   Scenario: feature ファイルが Unreviewed として検出される
     Given ".feature" ファイルのフィンガープリントコメントが現在の内容と一致しない
