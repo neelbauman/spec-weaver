@@ -3,7 +3,8 @@ derived: false
 header: |
   仕様と実装のセマンティックレビュー機能
 level: 12.1
-links: []
+links:
+- REQ-001: sQI3PDVLr4t_7FzvaBW2KfO6i0kUFnK0vEnVRhJAA4M=
 normative: true
 ref: ''
 reviewed: mlYsN4aIR9VbxHA-yfOSM2Kvja2WM53jkqu9QVTeP3E=
