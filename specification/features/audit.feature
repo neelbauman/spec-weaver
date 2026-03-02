@@ -1,6 +1,6 @@
 # spec-weaver-fingerprint: 6f3cf5898c917b9ffe6f61820c2e1ed326b62e94db893fe34667ced069d7d12c
 # spec-weaver-fingerprint-SPEC-005: ko9DXrE8njCAf21N2IQW1wLFn08o243gRE4eVAyjr1I=
-@SPEC-003
+
 Feature: audit コマンド
   仕様とテストの乖離を静的に検知し、CI/CD品質ゲートとして機能する。
 
