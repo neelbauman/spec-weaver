@@ -1,6 +1,6 @@
 from typing import Any, Optional
-from spec_weaver.doorstop import _get_custom_attribute, _get_git_file_date
-from spec_weaver.review_state import ReviewState
+from spec_weaver.adopters.doorstop import _get_custom_attribute, _get_git_file_date
+from spec_weaver.core.review_state import ReviewState
 
 IMPL_STATUS_BADGE: dict[str, str] = {
     "draft": "📝 draft",

@@ -3,7 +3,7 @@ from pathlib import Path
 from rich.console import Console
 
 from spec_weaver.services.review_service import ReviewService
-from spec_weaver.commands.audit_cmd import _audit_cmd # 完了後に呼び出すため
+from spec_weaver.cli.commands.audit_cmd import _audit_cmd # 完了後に呼び出すため
 
 console = Console()
 

@@ -9,16 +9,15 @@ try:
 except ImportError:
     import importlib_resources as resources  # type: ignore
 
-from spec_weaver.doorstop import get_item_map, get_doorstop_tree, _get_custom_attribute
-from spec_weaver.gherkin import get_tag_map, get_spec_fingerprints
-from spec_weaver.review_state import compute_review_state, ReviewState
-from spec_weaver.test_results import (
+from spec_weaver.core.review_state import compute_review_state, ReviewState
+from spec_weaver.core.step_resolver import StepResolver
+from spec_weaver.adopters.doorstop import get_item_map, get_doorstop_tree, _get_custom_attribute
+from spec_weaver.adopters.gherkin import get_tag_map, get_spec_fingerprints
+from spec_weaver.adopters.test_results import (
     TestResultMap, load_test_results, spec_result_summary, 
     result_badge, format_status_badge
 )
-from spec_weaver.codegen import _step_keyword_to_prefix
-from spec_weaver.step_resolver import StepResolver
-
+from spec_weaver.adopters.codegen import _step_keyword_to_prefix
 from spec_weaver.services.audit_service import AuditService
 from spec_weaver.utils.formatters import (
     get_uid_prefix, get_impl_status_badge, 

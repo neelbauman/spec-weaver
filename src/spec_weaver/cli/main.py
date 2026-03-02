@@ -3,14 +3,14 @@ import typer
 from rich.console import Console
 
 # 各コマンドモジュールからのインポート
-from spec_weaver.commands.audit_cmd import _audit_cmd
-from spec_weaver.commands.scaffold_cmd import _scaffold_cmd
-from spec_weaver.commands.review_cmd import _review_cmd
-from spec_weaver.commands.clear_cmd import _clear_cmd
-from spec_weaver.commands.status_cmd import _status_cmd
-from spec_weaver.commands.build_cmd import _build_cmd
-from spec_weaver.commands.trace_cmd import _trace_cmd
-from spec_weaver.commands.semantic_review_cmd import _semantic_review_cmd
+from spec_weaver.cli.commands.audit_cmd import _audit_cmd
+from spec_weaver.cli.commands.scaffold_cmd import _scaffold_cmd
+from spec_weaver.cli.commands.review_cmd import _review_cmd
+from spec_weaver.cli.commands.clear_cmd import _clear_cmd
+from spec_weaver.cli.commands.status_cmd import _status_cmd
+from spec_weaver.cli.commands.build_cmd import _build_cmd
+from spec_weaver.cli.commands.trace_cmd import _trace_cmd
+from spec_weaver.cli.commands.semantic_review_cmd import _semantic_review_cmd
 
 # Typerアプリケーションの初期化
 app = typer.Typer(

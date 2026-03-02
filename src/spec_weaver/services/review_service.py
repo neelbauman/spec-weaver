@@ -3,15 +3,15 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional, Dict
 
-from spec_weaver.doorstop import get_item_map, get_all_prefixes
-from spec_weaver.gherkin import get_tag_map, compute_feature_file_hash, write_feature_fingerprints
+from spec_weaver.adopters.doorstop import get_item_map, get_all_prefixes
+from spec_weaver.adopters.gherkin import get_tag_map, compute_feature_file_hash, write_feature_fingerprints
 
 @dataclass
 class ReviewResult:
     is_success: bool
     target_type: str  # "feature" | "doorstop"
     fingerprint: Optional[str] = None
-    linked_items: Dict[str, str] = None
+    linked_items: Dict[str, str] | None = None
     item_id: Optional[str] = None
     error_message: Optional[str] = None
 

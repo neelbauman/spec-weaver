@@ -33,7 +33,7 @@ dependencies = [
 
 # ターミナルから `spec-weaver` コマンドとして呼び出すためのエントリーポイント設定
 [project.scripts]
-spec-weaver = "spec_weaver.cli:app"
+spec-weaver = "spec_weaver.cli.main:app"
 
 # 開発時のみ必要なツール群（Linter, Formatter, Test）
 [project.optional-dependencies]

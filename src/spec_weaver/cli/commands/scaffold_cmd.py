@@ -4,7 +4,7 @@ from rich.console import Console
 from rich.prompt import Confirm
 from rich.syntax import Syntax
 
-from spec_weaver.codegen import generate_test_file, generate_environment_file
+from spec_weaver.adopters.codegen import generate_test_file, generate_environment_file
 from spec_weaver.utils.git_utils import is_file_dirty
 
 console = Console()

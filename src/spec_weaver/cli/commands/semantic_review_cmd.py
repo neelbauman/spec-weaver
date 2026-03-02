@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Optional
 from rich.console import Console
 
-from spec_weaver.review import (
+from spec_weaver.core.review import (
     ReviewResult, filter_findings, run_all_reviews, run_claude_review, severity_gte
 )
 
@@ -55,7 +55,7 @@ def _semantic_review_cmd(
     try:
         if output != "json":
             from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn, MofNCompleteColumn, TimeElapsedColumn
-            from spec_weaver.doorstop import get_item_map
+            from spec_weaver.adopters.doorstop import get_item_map
             
             total = len(get_item_map(repo_root))
             with Progress(SpinnerColumn(), TextColumn("[progress.description]{task.description}"), BarColumn(), MofNCompleteColumn(), TimeElapsedColumn(), console=console) as progress:
