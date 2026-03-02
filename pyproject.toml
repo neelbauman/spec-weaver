@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "spec-weaver"
-version = "0.76.3"
+version = "0.76.17"
 description = "A CLI tool to weave Doorstop requirements and Gherkin feature files."
 readme = "README.md"
 requires-python = ">=3.14"

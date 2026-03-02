@@ -64,14 +64,17 @@ if (typeof document$ !== "undefined") {
 
       // 列ごとの「最小幅」を個別に指定して、内容が潰れないようにする
       const minColWidths = {
-        'ID': '100px',
-        'タイトル': '350px',
+        'ID': '80px',
+        'タイトル': '300px',
+        '活性': '20px',
         '親': '120px',
-        '子': '180px',
+        '子': '120px',
         '兄弟': '120px',
-        'カバレッジ': '140px',
-        '実装状況': '140px',
-        '状態': '100px'
+        'レビューステータス': '120px',
+        'Gherkinカバレッジ': '140px',
+        '実装状況': '120px',
+        '作成日': '120px',
+        '更新日': '120px'
       };
 
       const headers = table.querySelectorAll('th');
@@ -92,7 +95,7 @@ if (typeof document$ !== "undefined") {
       const rows = Array.prototype.slice.call(tbody.querySelectorAll('tr'));
       const filters = { text: "", dropdowns: {} };
       const multiValueCols = ['親', 'Parent', '子', 'Child', '兄弟', 'Sibling'];
-      const targetCols = multiValueCols.concat(['ステータス', 'Status', 'レベル', 'Level', '状態', '実装状況', 'カバレッジ']);
+      const targetCols = multiValueCols.concat(['活性', 'Active', 'レビューステータス', '実装状況', '作成日', '更新日']);
 
       const searchInput = document.createElement('input');
       searchInput.className = 'table-search-input';
