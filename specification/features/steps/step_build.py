@@ -1,5 +1,4 @@
 from specification.features.steps._helpers import create_doorstop_project_api, write_feature_file, run_spec_weaver
-import os
 """behave steps for: build コマンド"""
 
 from behave import given, when, then, step
@@ -7,259 +6,6 @@ from behave import given, when, then, step
 # ======================================================================
 # Steps
 # ======================================================================
-
-# [Duplicate Skip] This step is already defined elsewhere
-# @given('DoorstopプロジェクトとGherkin featureファイルが存在する')  # type: ignore
-# def given_8a7b1a87(context):
-#     """DoorstopプロジェクトとGherkin featureファイルが存在する
-# 
-#     Scenarios:
-#       - MkDocs設定ファイルの生成
-#       - カスタム出力ディレクトリの指定
-#     """
-#     raise NotImplementedError('STEP: DoorstopプロジェクトとGherkin featureファイルが存在する')
-
-
-# [Duplicate Skip] This step is already defined elsewhere
-# @when('build コマンドを実行する')  # type: ignore
-# def when_40f323b6(context):
-#     """build コマンドを実行する
-# 
-#     Scenarios:
-#       - MkDocs設定ファイルの生成
-#       - 要件一覧ページの生成
-#       - 仕様一覧ページの生成
-#       - 個別アイテム詳細ページの生成
-#       - 一覧テーブルのフィルタリング機能
-#       - feature MDページへのバックリンク生成
-#       - 複数アイテムを参照するfeatureのバックリンク
-#       - タグのないfeatureにはバックリンクを表示しない
-#       - Suspect Link 警告の一覧テーブル表示
-#       - Unreviewed Changes 警告の一覧テーブル表示
-#       - 複合警告の表示
-#     """
-#     raise NotImplementedError('STEP: build コマンドを実行する')
-
-
-# [Duplicate Skip] This step is already defined elsewhere
-# @then('出力ディレクトリに mkdocs.yml が生成されること')  # type: ignore
-# def then_453d91c1(context):
-#     """出力ディレクトリに mkdocs.yml が生成されること
-# 
-#     Scenarios:
-#       - MkDocs設定ファイルの生成
-#     """
-#     raise NotImplementedError('STEP: 出力ディレクトリに mkdocs.yml が生成されること')
-
-
-# [Duplicate Skip] This step is already defined elsewhere
-# @then('Material テーマが設定されていること')  # type: ignore
-# def then_281c0fa4(context):
-#     """Material テーマが設定されていること
-# 
-#     Scenarios:
-#       - MkDocs設定ファイルの生成
-#     """
-#     raise NotImplementedError('STEP: Material テーマが設定されていること')
-
-
-# [Duplicate Skip] This step is already defined elsewhere
-# @given('DoorstopプロジェクトにREQアイテムが存在する')  # type: ignore
-# def given_ce6845b7(context):
-#     """DoorstopプロジェクトにREQアイテムが存在する
-# 
-#     Scenarios:
-#       - 要件一覧ページの生成
-#     """
-#     raise NotImplementedError('STEP: DoorstopプロジェクトにREQアイテムが存在する')
-
-
-# [Duplicate Skip] This step is already defined elsewhere
-# @then('docs/req.md が生成されること')  # type: ignore
-# def then_0130d8b7(context):
-#     """docs/req.md が生成されること
-# 
-#     Scenarios:
-#       - 要件一覧ページの生成
-#     """
-#     raise NotImplementedError('STEP: docs/req.md が生成されること')
-
-
-# [Duplicate Skip] This step is already defined elsewhere
-# @then('各REQアイテムがテーブル行として含まれること')  # type: ignore
-# def then_2977857a(context):
-#     """各REQアイテムがテーブル行として含まれること
-# 
-#     Scenarios:
-#       - 要件一覧ページの生成
-#     """
-#     raise NotImplementedError('STEP: 各REQアイテムがテーブル行として含まれること')
-
-
-# [Duplicate Skip] This step is already defined elsewhere
-# @then('関連仕様への相互リンクが含まれること')  # type: ignore
-# def then_ef9d25c2(context):
-#     """関連仕様への相互リンクが含まれること
-# 
-#     Scenarios:
-#       - 要件一覧ページの生成
-#     """
-#     raise NotImplementedError('STEP: 関連仕様への相互リンクが含まれること')
-
-
-# [Duplicate Skip] This step is already defined elsewhere
-# @given('DoorstopプロジェクトにSPECアイテムが存在する')  # type: ignore
-# def given_ae2b8b7d(context):
-#     """DoorstopプロジェクトにSPECアイテムが存在する
-# 
-#     Scenarios:
-#       - 仕様一覧ページの生成
-#     """
-#     raise NotImplementedError('STEP: DoorstopプロジェクトにSPECアイテムが存在する')
-
-
-# [Duplicate Skip] This step is already defined elsewhere
-# @then('docs/spec.md が生成されること')  # type: ignore
-# def then_9b5808a6(context):
-#     """docs/spec.md が生成されること
-# 
-#     Scenarios:
-#       - 仕様一覧ページの生成
-#     """
-#     raise NotImplementedError('STEP: docs/spec.md が生成されること')
-
-
-# [Duplicate Skip] This step is already defined elsewhere
-# @then('各SPECアイテムがテーブル行として含まれること')  # type: ignore
-# def then_86be7f51(context):
-#     """各SPECアイテムがテーブル行として含まれること
-# 
-#     Scenarios:
-#       - 仕様一覧ページの生成
-#     """
-#     raise NotImplementedError('STEP: 各SPECアイテムがテーブル行として含まれること')
-
-
-# [Duplicate Skip] This step is already defined elsewhere
-# @then('上位要件への相互リンクが含まれること')  # type: ignore
-# def then_d1af9a65(context):
-#     """上位要件への相互リンクが含まれること
-# 
-#     Scenarios:
-#       - 仕様一覧ページの生成
-#     """
-#     raise NotImplementedError('STEP: 上位要件への相互リンクが含まれること')
-
-
-# [Duplicate Skip] This step is already defined elsewhere
-# @given('DoorstopプロジェクトにアイテムとGherkinテストが存在する')  # type: ignore
-# def given_73c18566(context):
-#     """DoorstopプロジェクトにアイテムとGherkinテストが存在する
-# 
-#     Scenarios:
-#       - 個別アイテム詳細ページの生成
-#     """
-#     raise NotImplementedError('STEP: DoorstopプロジェクトにアイテムとGherkinテストが存在する')
-
-
-# [Duplicate Skip] This step is already defined elsewhere
-# @then('docs/items/ 配下に各アイテムのMarkdownファイルが生成されること')  # type: ignore
-# def then_77d459df(context):
-#     """docs/items/ 配下に各アイテムのMarkdownファイルが生成されること
-# 
-#     Scenarios:
-#       - 個別アイテム詳細ページの生成
-#     """
-#     raise NotImplementedError('STEP: docs/items/ 配下に各アイテムのMarkdownファイルが生成されること')
-
-
-# [Duplicate Skip] This step is already defined elsewhere
-# @then('アイテムの本文が含まれること')  # type: ignore
-# def then_650f49fb(context):
-#     """アイテムの本文が含まれること
-# 
-#     Scenarios:
-#       - 個別アイテム詳細ページの生成
-#     """
-#     raise NotImplementedError('STEP: アイテムの本文が含まれること')
-
-
-# [Duplicate Skip] This step is already defined elsewhere
-# @then('上位・下位リンクが含まれること')  # type: ignore
-# def then_677a5bf3(context):
-#     """上位・下位リンクが含まれること
-# 
-#     Scenarios:
-#       - 個別アイテム詳細ページの生成
-#     """
-#     raise NotImplementedError('STEP: 上位・下位リンクが含まれること')
-
-
-# [Duplicate Skip] This step is already defined elsewhere
-# @then('対応するテストシナリオのファイルパスと行番号が含まれること')  # type: ignore
-# def then_ae3c7159(context):
-#     """対応するテストシナリオのファイルパスと行番号が含まれること
-# 
-#     Scenarios:
-#       - 個別アイテム詳細ページの生成
-#     """
-#     raise NotImplementedError('STEP: 対応するテストシナリオのファイルパスと行番号が含まれること')
-
-
-# [Duplicate Skip] This step is already defined elsewhere
-# @given('Doorstopプロジェクトにアイテムが存在する')  # type: ignore
-# def given_93d749da(context):
-#     """Doorstopプロジェクトにアイテムが存在する
-# 
-#     Scenarios:
-#       - 一覧テーブルのフィルタリング機能
-#     """
-#     raise NotImplementedError('STEP: Doorstopプロジェクトにアイテムが存在する')
-
-
-# [Duplicate Skip] This step is already defined elsewhere
-# @then('生成された一覧ページのテーブルにフィルタリング用入力欄が表示されること')  # type: ignore
-# def then_7bdfccf5(context):
-#     """生成された一覧ページのテーブルにフィルタリング用入力欄が表示されること
-# 
-#     Scenarios:
-#       - 一覧テーブルのフィルタリング機能
-#     """
-#     raise NotImplementedError('STEP: 生成された一覧ページのテーブルにフィルタリング用入力欄が表示されること')
-
-
-# [Duplicate Skip] This step is already defined elsewhere
-# @then('ID、タイトル、実装ステータス、レベル等の項目で絞り込みが可能であること')  # type: ignore
-# def then_ca03093b(context):
-#     """ID、タイトル、実装ステータス、レベル等の項目で絞り込みが可能であること
-# 
-#     Scenarios:
-#       - 一覧テーブルのフィルタリング機能
-#     """
-#     raise NotImplementedError('STEP: ID、タイトル、実装ステータス、レベル等の項目で絞り込みが可能であること')
-
-
-# [Duplicate Skip] This step is already defined elsewhere
-# @given('プロジェクトに既存のドキュメントが存在する')  # type: ignore
-# def given_b7341593(context):
-#     """プロジェクトに既存のドキュメントが存在する
-# 
-#     Scenarios:
-#       - 出力ディレクトリの独立性
-#     """
-#     raise NotImplementedError('STEP: プロジェクトに既存のドキュメントが存在する')
-
-
-# [Duplicate Skip] This step is already defined elsewhere
-# @when('build コマンドをデフォルト出力先で実行する')  # type: ignore
-# def when_6f73d51e(context):
-#     """build コマンドをデフォルト出力先で実行する
-# 
-#     Scenarios:
-#       - 出力ディレクトリの独立性
-#     """
-#     raise NotImplementedError('STEP: build コマンドをデフォルト出力先で実行する')
-
 
 @given('DoorstopプロジェクトとGherkin featureファイルが存在する')  # type: ignore
 def given_8a7b1a87(context):
@@ -270,27 +16,6 @@ def given_8a7b1a87(context):
       - カスタム出力ディレクトリの指定
     """
     raise NotImplementedError('STEP: DoorstopプロジェクトとGherkin featureファイルが存在する')
-
-
-# [Duplicate Skip] This step is already defined elsewhere
-# @when('build コマンドを実行する')  # type: ignore
-# def when_40f323b6(context):
-#     """build コマンドを実行する
-# 
-#     Scenarios:
-#       - MkDocs設定ファイルの生成
-#       - 要件一覧ページの生成
-#       - 仕様一覧ページの生成
-#       - 個別アイテム詳細ページの生成
-#       - 一覧テーブルのフィルタリング機能
-#       - feature MDページへのバックリンク生成
-#       - 複数アイテムを参照するfeatureのバックリンク
-#       - タグのないfeatureにはバックリンクを表示しない
-#       - Suspect Link 警告の一覧テーブル表示
-#       - Unreviewed Changes 警告の一覧テーブル表示
-#       - 複合警告の表示
-#     """
-#     raise NotImplementedError('STEP: build コマンドを実行する')
 
 
 @then('出力ディレクトリに mkdocs.yml が生成されること')  # type: ignore
@@ -541,17 +266,6 @@ def then_32de837a(context, param0):
     pass
 
 
-# [Duplicate Skip] This step is already defined elsewhere
-# @then('既存のドキュメントファイルは変更されないこと')  # type: ignore
-# def then_56c968de(context):
-#     """既存のドキュメントファイルは変更されないこと
-# 
-#     Scenarios:
-#       - 出力ディレクトリの独立性
-#     """
-#     raise NotImplementedError('STEP: 既存のドキュメントファイルは変更されないこと')
-
-
 @then('既存のドキュメントファイルは変更されないこと')  # type: ignore
 def then_56c968de(context):
     """既存のドキュメントファイルは変更されないこと
@@ -622,17 +336,6 @@ def then_d670dbfb(context, param0, param1, param2):
     pass
 
 
-# [Duplicate Skip] This step is already defined elsewhere
-# @given('どのDoorstopアイテムからも参照されていないfeatureが存在する')  # type: ignore
-# def given_486efd83(context):
-#     """どのDoorstopアイテムからも参照されていないfeatureが存在する
-# 
-#     Scenarios:
-#       - タグのないfeatureにはバックリンクを表示しない
-#     """
-#     raise NotImplementedError('STEP: どのDoorstopアイテムからも参照されていないfeatureが存在する')
-
-
 @given('どのDoorstopアイテムからも参照されていないfeatureが存在する')  # type: ignore
 def given_486efd83(context):
     """どのDoorstopアイテムからも参照されていないfeatureが存在する
@@ -651,17 +354,6 @@ def then_7458537c(context, param0):
       - タグのないfeatureにはバックリンクを表示しない
     """
     pass
-
-
-# [Duplicate Skip] This step is already defined elsewhere
-# @given('アイテムの上位リンク先が変更されている（cleared=false）')  # type: ignore
-# def given_5951291a(context):
-#     """アイテムの上位リンク先が変更されている（cleared=false）
-# 
-#     Scenarios:
-#       - Suspect Link 警告の一覧テーブル表示
-#     """
-#     raise NotImplementedError('STEP: アイテムの上位リンク先が変更されている（cleared=false）')
 
 
 @given('アイテムの上位リンク先が変更されている（cleared=false）')  # type: ignore
@@ -684,57 +376,6 @@ def then_011c6eae(context, param0):
       - 複合警告の表示
     """
     pass
-
-
-# [Duplicate Skip] This step is already defined elsewhere
-# @then('詳細ページに Suspect Link バナーが表示されること')  # type: ignore
-# def then_b9db4871(context):
-#     """詳細ページに Suspect Link バナーが表示されること
-# 
-#     Scenarios:
-#       - Suspect Link 警告の一覧テーブル表示
-#     """
-#     raise NotImplementedError('STEP: 詳細ページに Suspect Link バナーが表示されること')
-
-
-# [Duplicate Skip] This step is already defined elsewhere
-# @given('アイテム自体に未レビューの変更がある（reviewed=false）')  # type: ignore
-# def given_60830b9f(context):
-#     """アイテム自体に未レビューの変更がある（reviewed=false）
-# 
-#     Scenarios:
-#       - Unreviewed Changes 警告の一覧テーブル表示
-#     """
-#     raise NotImplementedError('STEP: アイテム自体に未レビューの変更がある（reviewed=false）')
-
-
-# [Duplicate Skip] This step is already defined elsewhere
-# @then('詳細ページに Unreviewed Changes バナーが表示されること')  # type: ignore
-# def then_e1fe71d4(context):
-#     """詳細ページに Unreviewed Changes バナーが表示されること
-# 
-#     Scenarios:
-#       - Unreviewed Changes 警告の一覧テーブル表示
-#     """
-#     raise NotImplementedError('STEP: 詳細ページに Unreviewed Changes バナーが表示されること')
-
-
-# [Duplicate Skip] This step is already defined elsewhere
-# @given('アイテムに Suspect Link と Unreviewed Changes の両方がある')  # type: ignore
-# def given_89f3d16e(context):
-#     """アイテムに Suspect Link と Unreviewed Changes の両方がある
-# 
-#     Scenarios:
-#       - 複合警告の表示
-#     """
-#     raise NotImplementedError('STEP: アイテムに Suspect Link と Unreviewed Changes の両方がある')@then('詳細ページに Suspect Link バナーが表示されること')  # type: ignore
-def then_b9db4871(context):
-    """詳細ページに Suspect Link バナーが表示されること
-
-    Scenarios:
-      - Suspect Link 警告の一覧テーブル表示
-    """
-    raise NotImplementedError('STEP: 詳細ページに Suspect Link バナーが表示されること')
 
 
 @then('詳細ページに Suspect Link バナーが表示されること')  # type: ignore

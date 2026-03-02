@@ -1,5 +1,4 @@
 from specification.features.steps._helpers import create_doorstop_project_api, write_feature_file, run_spec_weaver
-import os
 """behave steps for: status コマンド"""
 
 from behave import given, when, then, step
@@ -8,30 +7,6 @@ from behave import given, when, then, step
 # Steps
 # ======================================================================
 
-# [Duplicate Skip] This step is already defined elsewhere
-# @given('REQ-001 が status: draft、SPEC-001 が status: implemented に設定されている')  # type: ignore
-# def given_ef098fcf(context):
-#     """REQ-001 が status: draft、SPEC-001 が status: implemented に設定されている
-# 
-#     Scenarios:
-#       - 全アイテムのステータスを一覧表示する
-#     """
-#     raise NotImplementedError('STEP: REQ-001 が status: draft、SPEC-001 が status: implemented に設定されている')
-
-
-# [Duplicate Skip] This step is already defined elsewhere
-# @when('status コマンドを実行する')  # type: ignore
-# def when_d68a8d9a(context):
-#     """status コマンドを実行する
-# 
-#     Scenarios:
-#       - 全アイテムのステータスを一覧表示する
-#       - status 未設定のアイテムは "-" と表示される
-#       - レビューステータスと最終更新日が表示される
-#     """
-#     raise NotImplementedError('STEP: status コマンドを実行する')
-
-
 @given('REQ-001 が status: draft、SPEC-001 が status: implemented に設定されている')  # type: ignore
 def given_ef098fcf(context):
     """REQ-001 が status: draft、SPEC-001 が status: implemented に設定されている
@@ -39,7 +14,14 @@ def given_ef098fcf(context):
     Scenarios:
       - 全アイテムのステータスを一覧表示する
     """
-    raise NotImplementedError('STEP: REQ-001 が status: draft、SPEC-001 が status: implemented に設定されている')
+    create_doorstop_project_api(
+        context.temp_dir,
+        req_items=[{"header": "Req 1", "status": "draft"}],
+        spec_items=[{"header": "Spec 1", "status": "implemented", "links": ["REQ-001"]}],
+    )
+    feature_dir = context.temp_dir / "specification" / "features"
+    feature_dir.mkdir(parents=True, exist_ok=True)
+    context.status_feature_dir = feature_dir
 
 
 @when('status コマンドを実行する')  # type: ignore
@@ -51,7 +33,14 @@ def when_d68a8d9a(context):
       - status 未設定のアイテムは "-" と表示される
       - レビューステータスと最終更新日が表示される
     """
-    raise NotImplementedError('STEP: status コマンドを実行する')
+    feature_dir = getattr(context, 'status_feature_dir', context.temp_dir / "specification" / "features")
+    feature_dir.mkdir(parents=True, exist_ok=True)
+    res = run_spec_weaver(
+        ['status', '--repo-root', str(context.temp_dir), '--feature-dir', str(feature_dir)],
+        cwd=context.temp_dir,
+    )
+    context.exit_code = res.returncode
+    context.output = res.stdout + '\n' + res.stderr
 
 
 @then('終了コード 0 が返ること')  # type: ignore
@@ -88,17 +77,6 @@ def then_9f0d7f01(context, param0):
     assert getattr(context, 'output', None) is not None
 
 
-# [Duplicate Skip] This step is already defined elsewhere
-# @given('SPEC-001 に status フィールドが設定されていない')  # type: ignore
-# def given_0d995d24(context):
-#     """SPEC-001 に status フィールドが設定されていない
-# 
-#     Scenarios:
-#       - status 未設定のアイテムは "-" と表示される
-#     """
-#     raise NotImplementedError('STEP: SPEC-001 に status フィールドが設定されていない')
-
-
 @given('SPEC-001 に status フィールドが設定されていない')  # type: ignore
 def given_0d995d24(context):
     """SPEC-001 に status フィールドが設定されていない
@@ -106,7 +84,14 @@ def given_0d995d24(context):
     Scenarios:
       - status 未設定のアイテムは "-" と表示される
     """
-    raise NotImplementedError('STEP: SPEC-001 に status フィールドが設定されていない')
+    create_doorstop_project_api(
+        context.temp_dir,
+        req_items=[{"header": "Req 1"}],
+        spec_items=[{"header": "Spec 1", "links": ["REQ-001"]}],
+    )
+    feature_dir = context.temp_dir / "specification" / "features"
+    feature_dir.mkdir(parents=True, exist_ok=True)
+    context.status_feature_dir = feature_dir
 
 
 @then('SPEC-001 の実装状況が "{param0}" と表示されること')  # type: ignore
@@ -119,17 +104,6 @@ def then_5818121f(context, param0):
     assert getattr(context, 'output', None) is not None
 
 
-# [Duplicate Skip] This step is already defined elsewhere
-# @given('REQ-001 が status: implemented、REQ-002 が status: draft に設定されている')  # type: ignore
-# def given_58beb4fc(context):
-#     """REQ-001 が status: implemented、REQ-002 が status: draft に設定されている
-# 
-#     Scenarios:
-#       - --filter で特定ステータスに絞り込める
-#     """
-#     raise NotImplementedError('STEP: REQ-001 が status: implemented、REQ-002 が status: draft に設定されている')
-
-
 @given('REQ-001 が status: implemented、REQ-002 が status: draft に設定されている')  # type: ignore
 def given_58beb4fc(context):
     """REQ-001 が status: implemented、REQ-002 が status: draft に設定されている
@@ -137,7 +111,17 @@ def given_58beb4fc(context):
     Scenarios:
       - --filter で特定ステータスに絞り込める
     """
-    raise NotImplementedError('STEP: REQ-001 が status: implemented、REQ-002 が status: draft に設定されている')
+    create_doorstop_project_api(
+        context.temp_dir,
+        req_items=[
+            {"header": "Req 1", "status": "implemented"},
+            {"header": "Req 2", "status": "draft"},
+        ],
+        spec_items=[],
+    )
+    feature_dir = context.temp_dir / "specification" / "features"
+    feature_dir.mkdir(parents=True, exist_ok=True)
+    context.status_feature_dir = feature_dir
 
 
 @when('status コマンドを "{param0}" オプション付きで実行する')  # type: ignore
@@ -154,28 +138,6 @@ def when_d36ae1bf(context, param0):
     context.output = getattr(res, 'stdout', '') + chr(10) + getattr(res, 'stderr', '')
 
 
-# [Duplicate Skip] This step is already defined elsewhere
-# @then('REQ-001 が表示されること')  # type: ignore
-# def then_2847178d(context):
-#     """REQ-001 が表示されること
-# 
-#     Scenarios:
-#       - --filter で特定ステータスに絞り込める
-#     """
-#     raise NotImplementedError('STEP: REQ-001 が表示されること')
-
-
-# [Duplicate Skip] This step is already defined elsewhere
-# @then('REQ-002 は表示されないこと')  # type: ignore
-# def then_9fc4e668(context):
-#     """REQ-002 は表示されないこと
-# 
-#     Scenarios:
-#       - --filter で特定ステータスに絞り込める
-#     """
-#     raise NotImplementedError('STEP: REQ-002 は表示されないこと')
-
-
 @then('REQ-001 が表示されること')  # type: ignore
 def then_2847178d(context):
     """REQ-001 が表示されること
@@ -183,7 +145,7 @@ def then_2847178d(context):
     Scenarios:
       - --filter で特定ステータスに絞り込める
     """
-    raise NotImplementedError('STEP: REQ-001 が表示されること')
+    assert "REQ-001" in context.output, f"REQ-001 が出力に見つかりません。\n出力:\n{context.output}"
 
 
 @then('REQ-002 は表示されないこと')  # type: ignore
@@ -193,7 +155,7 @@ def then_9fc4e668(context):
     Scenarios:
       - --filter で特定ステータスに絞り込める
     """
-    raise NotImplementedError('STEP: REQ-002 は表示されないこと')
+    assert "REQ-002" not in context.output, f"REQ-002 が出力に含まれています。\n出力:\n{context.output}"
 
 
 @given('すべてのアイテムの status が "{param0}" に設定されている')  # type: ignore
@@ -203,58 +165,12 @@ def given_f93df893(context, param0):
     Scenarios:
       - --filter に一致するアイテムが存在しない場合に通知される
     """
-    pass
-
-
-# [Duplicate Skip] This step is already defined elsewhere
-# @then('一致するアイテムが見つからなかった旨が表示されること')  # type: ignore
-# def then_897c0cfb(context):
-#     """一致するアイテムが見つからなかった旨が表示されること
-# 
-#     Scenarios:
-#       - --filter に一致するアイテムが存在しない場合に通知される
-#     """
-#     raise NotImplementedError('STEP: 一致するアイテムが見つからなかった旨が表示されること')
-
-
-# [Duplicate Skip] This step is already defined elsewhere
-# @given('Doorstopのアイテムが存在する')  # type: ignore
-# def given_0da078b7(context):
-#     """Doorstopのアイテムが存在する
-# 
-#     Scenarios:
-#       - レビューステータスと最終更新日が表示される
-#     """
-#     raise NotImplementedError('STEP: Doorstopのアイテムが存在する')
-
-
-# [Duplicate Skip] This step is already defined elsewhere
-# @then('レビューステータス列が表示されること')  # type: ignore
-# def then_33e7dc19(context):
-#     """レビューステータス列が表示されること
-# 
-#     Scenarios:
-#       - レビューステータスと最終更新日が表示される
-#     """
-#     raise NotImplementedError('STEP: レビューステータス列が表示されること')
-
-
-# [Duplicate Skip] This step is already defined elsewhere
-# @then('最終更新日列が表示されること')  # type: ignore
-# def then_49bd7463(context):
-#     """最終更新日列が表示されること
-# 
-#     Scenarios:
-#       - レビューステータスと最終更新日が表示される
-#     """
-#     raise NotImplementedError('STEP: 最終更新日列が表示されること')@then('一致するアイテムが見つからなかった旨が表示されること')  # type: ignore
-def then_897c0cfb(context):
-    """一致するアイテムが見つからなかった旨が表示されること
-
-    Scenarios:
-      - --filter に一致するアイテムが存在しない場合に通知される
-    """
-    raise NotImplementedError('STEP: 一致するアイテムが見つからなかった旨が表示されること')
+    create_doorstop_project_api(
+        context.temp_dir,
+        req_items=[{"status": param0}],
+        spec_items=[{"status": param0, "links": ["REQ-001"]}],
+    )
+    (context.temp_dir / "specification" / "features").mkdir(parents=True, exist_ok=True)
 
 
 @then('一致するアイテムが見つからなかった旨が表示されること')  # type: ignore
@@ -264,7 +180,7 @@ def then_897c0cfb(context):
     Scenarios:
       - --filter に一致するアイテムが存在しない場合に通知される
     """
-    raise NotImplementedError('STEP: 一致するアイテムが見つからなかった旨が表示されること')
+    assert "見つかりませんでした" in context.output
 
 
 @given('Doorstopのアイテムが存在する')  # type: ignore
@@ -274,7 +190,14 @@ def given_0da078b7(context):
     Scenarios:
       - レビューステータスと最終更新日が表示される
     """
-    raise NotImplementedError('STEP: Doorstopのアイテムが存在する')
+    create_doorstop_project_api(
+        context.temp_dir,
+        req_items=[{"header": "Req 1"}],
+        spec_items=[{"header": "Spec 1", "links": ["REQ-001"]}],
+    )
+    feature_dir = context.temp_dir / "specification" / "features"
+    feature_dir.mkdir(parents=True, exist_ok=True)
+    context.status_feature_dir = feature_dir
 
 
 @then('レビューステータス列が表示されること')  # type: ignore
@@ -284,7 +207,7 @@ def then_33e7dc19(context):
     Scenarios:
       - レビューステータスと最終更新日が表示される
     """
-    raise NotImplementedError('STEP: レビューステータス列が表示されること')
+    assert "レビュー" in context.output, f"レビューステータス列が出力に見つかりません。\n出力:\n{context.output}"
 
 
 @then('最終更新日列が表示されること')  # type: ignore
@@ -294,4 +217,4 @@ def then_49bd7463(context):
     Scenarios:
       - レビューステータスと最終更新日が表示される
     """
-    raise NotImplementedError('STEP: 最終更新日列が表示されること')
+    assert "更新" in context.output, f"最終更新日列が出力に見つかりません。\n出力:\n{context.output}"

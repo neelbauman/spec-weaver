@@ -1,5 +1,4 @@
 from specification.features.steps._helpers import create_doorstop_project_api, write_feature_file, run_spec_weaver
-import os
 """behave steps for: semantic-review コマンド — セマンティックレビュー"""
 
 from behave import given, when, then, step
@@ -22,34 +21,6 @@ def given_2b87969c(context):
     pass
 
 
-# [Duplicate Skip] step_clear.py の @given('仕様アイテム "{param0}" が存在する') で処理される
-
-
-# [Duplicate Skip] This step is already defined elsewhere
-# @when('`spec-weaver semantic-review --item SPEC-003 --feature-dir ./specification/features` を実行する')  # type: ignore
-# def when_84125f26(context):
-#     """`spec-weaver semantic-review --item SPEC-003 --feature-dir ./specification/features` を実行する
-# 
-#     Scenarios:
-#       - 単一アイテムのレビューが実行できる
-#     """
-#     raise NotImplementedError('STEP: `spec-weaver semantic-review --item SPEC-003 --feature-dir ./specification/features` を実行する')
-
-
-# [Duplicate Skip] This step is already defined elsewhere
-# @then('終了コードが0である')  # type: ignore
-# def then_0f800e56(context):
-#     """終了コードが0である
-# 
-#     Scenarios:
-#       - 単一アイテムのレビューが実行できる
-#       - 単一アイテムをJSON形式で出力できる
-#       - --fail-on high でhigh findingがない場合に終了コード0を返す
-#       - --min-severity medium で low の finding が非表示になる
-#     """
-#     raise NotImplementedError('STEP: 終了コードが0である')
-
-
 @when('`spec-weaver semantic-review --item SPEC-003 --feature-dir ./specification/features` を実行する')  # type: ignore
 def when_84125f26(context):
     """`spec-weaver semantic-review --item SPEC-003 --feature-dir ./specification/features` を実行する
@@ -60,20 +31,6 @@ def when_84125f26(context):
     raise NotImplementedError('STEP: `spec-weaver semantic-review --item SPEC-003 --feature-dir ./specification/features` を実行する')
 
 
-# [Duplicate Skip] This step is already defined elsewhere
-# @then('終了コードが0である')  # type: ignore
-# def then_0f800e56(context):
-#     """終了コードが0である
-# 
-#     Scenarios:
-#       - 単一アイテムのレビューが実行できる
-#       - 単一アイテムをJSON形式で出力できる
-#       - --fail-on high でhigh findingがない場合に終了コード0を返す
-#       - --min-severity medium で low の finding が非表示になる
-#     """
-#     raise NotImplementedError('STEP: 終了コードが0である')
-
-
 @then('出力にレビュー結果が含まれる')  # type: ignore
 def then_6d399f8f(context):
     """出力にレビュー結果が含まれる
@@ -82,17 +39,6 @@ def then_6d399f8f(context):
       - 単一アイテムのレビューが実行できる
     """
     pass
-
-
-# [Duplicate Skip] This step is already defined elsewhere
-# @when('`spec-weaver semantic-review --item SPEC-003 --output json` を実行する')  # type: ignore
-# def when_48c7474c(context):
-#     """`spec-weaver semantic-review --item SPEC-003 --output json` を実行する
-# 
-#     Scenarios:
-#       - 単一アイテムをJSON形式で出力できる
-#     """
-#     raise NotImplementedError('STEP: `spec-weaver semantic-review --item SPEC-003 --output json` を実行する')
 
 
 @when('`spec-weaver semantic-review --item SPEC-003 --output json` を実行する')  # type: ignore
@@ -125,48 +71,6 @@ def then_d68a96bd(context, param0):
     pass
 
 
-# [Duplicate Skip] This step is already defined elsewhere
-# @when('`spec-weaver semantic-review --item NOTEXIST-999` を実行する')  # type: ignore
-# def when_d00f5929(context):
-#     """`spec-weaver semantic-review --item NOTEXIST-999` を実行する
-# 
-#     Scenarios:
-#       - 存在しないアイテムIDを指定するとエラーになる
-#     """
-#     raise NotImplementedError('STEP: `spec-weaver semantic-review --item NOTEXIST-999` を実行する')
-
-
-# [Duplicate Skip] This step is already defined elsewhere
-# @then('終了コードが1である')  # type: ignore
-# def then_9b731a71(context):
-#     """終了コードが1である
-# 
-#     Scenarios:
-#       - 存在しないアイテムIDを指定するとエラーになる
-#       - --fail-on high でhigh findingがある場合に終了コード1を返す
-#       - claudeコマンドが見つからない場合にエラーになる
-#     """
-#     raise NotImplementedError('STEP: 終了コードが1である')
-
-
-# [Duplicate Skip] common_steps.py の @then('エラーメッセージが表示される') で処理される
-
-
-# [Duplicate Skip] This step is already defined elsewhere
-# @when('`spec-weaver semantic-review --item SPEC-003 --all` を実行する')  # type: ignore
-# def when_c4549933(context):
-#     """`spec-weaver semantic-review --item SPEC-003 --all` を実行する
-# 
-#     Scenarios:
-#       - --item と --all は同時に指定できない
-#     """
-#     raise NotImplementedError('STEP: `spec-weaver semantic-review --item SPEC-003 --all` を実行する')
-
-
-# [Duplicate Skip] common_steps.py の @then('終了コードが{code:d}である') で処理される
-# @then('終了コードが2である')
-
-
 @when('`spec-weaver semantic-review --item NOTEXIST-999` を実行する')  # type: ignore
 def when_d00f5929(context):
     """`spec-weaver semantic-review --item NOTEXIST-999` を実行する
@@ -175,30 +79,6 @@ def when_d00f5929(context):
       - 存在しないアイテムIDを指定するとエラーになる
     """
     raise NotImplementedError('STEP: `spec-weaver semantic-review --item NOTEXIST-999` を実行する')
-
-
-# [Duplicate Skip] This step is already defined elsewhere
-# @then('終了コードが1である')  # type: ignore
-# def then_9b731a71(context):
-#     """終了コードが1である
-# 
-#     Scenarios:
-#       - 存在しないアイテムIDを指定するとエラーになる
-#       - --fail-on high でhigh findingがある場合に終了コード1を返す
-#       - claudeコマンドが見つからない場合にエラーになる
-#     """
-#     raise NotImplementedError('STEP: 終了コードが1である')
-
-
-# [Duplicate Skip] This step is already defined elsewhere
-# @then('エラーメッセージが表示される')  # type: ignore
-# def then_d53287cf(context):
-#     """エラーメッセージが表示される
-# 
-#     Scenarios:
-#       - 存在しないアイテムIDを指定するとエラーになる
-#     """
-#     raise NotImplementedError('STEP: エラーメッセージが表示される')
 
 
 @when('`spec-weaver semantic-review --item SPEC-003 --all` を実行する')  # type: ignore
@@ -231,18 +111,6 @@ def given_7d56eddc(context, param0):
     pass
 
 
-# [Duplicate Skip] This step is already defined elsewhere
-# @when('`spec-weaver semantic-review --item SPEC-003 --fail-on high` を実行する')  # type: ignore
-# def when_1d26b5da(context):
-#     """`spec-weaver semantic-review --item SPEC-003 --fail-on high` を実行する
-# 
-#     Scenarios:
-#       - --fail-on high でhigh findingがある場合に終了コード1を返す
-#       - --fail-on high でhigh findingがない場合に終了コード0を返す
-#     """
-#     raise NotImplementedError('STEP: `spec-weaver semantic-review --item SPEC-003 --fail-on high` を実行する')
-
-
 @when('`spec-weaver semantic-review --item SPEC-003 --fail-on high` を実行する')  # type: ignore
 def when_1d26b5da(context):
     """`spec-weaver semantic-review --item SPEC-003 --fail-on high` を実行する
@@ -262,17 +130,6 @@ def given_1689dd54(context, param0):
       - --fail-on high でhigh findingがない場合に終了コード0を返す
     """
     pass
-
-
-# [Duplicate Skip] This step is already defined elsewhere
-# @when('`spec-weaver semantic-review --item SPEC-003 --min-severity medium` を実行する')  # type: ignore
-# def when_17c9fae3(context):
-#     """`spec-weaver semantic-review --item SPEC-003 --min-severity medium` を実行する
-# 
-#     Scenarios:
-#       - --min-severity medium で low の finding が非表示になる
-#     """
-#     raise NotImplementedError('STEP: `spec-weaver semantic-review --item SPEC-003 --min-severity medium` を実行する')
 
 
 @when('`spec-weaver semantic-review --item SPEC-003 --min-severity medium` を実行する')  # type: ignore
@@ -303,17 +160,6 @@ def given_8b793538(context):
       - claudeコマンドが見つからない場合にエラーになる
     """
     pass
-
-
-# [Duplicate Skip] This step is already defined elsewhere
-# @when('`spec-weaver semantic-review --item SPEC-003` を実行する')  # type: ignore
-# def when_6f8a42ad(context):
-#     """`spec-weaver semantic-review --item SPEC-003` を実行する
-# 
-#     Scenarios:
-#       - claudeコマンドが見つからない場合にエラーになる
-#     """
-#     raise NotImplementedError('STEP: `spec-weaver semantic-review --item SPEC-003` を実行する')
 
 
 @when('`spec-weaver semantic-review --item SPEC-003` を実行する')  # type: ignore

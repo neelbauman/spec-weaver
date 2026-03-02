@@ -1,5 +1,4 @@
 from specification.features.steps._helpers import create_doorstop_project_api, write_feature_file, run_spec_weaver
-import os
 """behave steps for: clear コマンド — Doorstop test_fingerprint 更新"""
 # implements: QA-005
 
@@ -140,10 +139,6 @@ def when_9a4cc39b(context):
 # Then — 検証
 # ======================================================================
 
-# [Duplicate Skip] common_steps.py の @then('終了コードが{code:d}である') で処理される
-# @then('終了コードが0である')
-# @then('終了コードが1である')
-
 @then('終了コードが1である')  # type: ignore
 def then_9b731a71(context):
     """終了コードが1である
@@ -154,15 +149,6 @@ def then_9b731a71(context):
     raise NotImplementedError('STEP: 終了コードが1である')
 
 
-# [Duplicate Skip] This step is already defined elsewhere
-# @then('エラーメッセージが表示される')  # type: ignore
-# def then_d53287cf(context):
-#     """エラーメッセージが表示される
-# 
-#     Scenarios:
-#       - 存在しないアイテムIDを指定するとエラーになる
-#     """
-#     raise NotImplementedError('STEP: エラーメッセージが表示される')
 @then('エラーメッセージが表示される')  # type: ignore
 def then_d53287cf(context):
     """エラーメッセージが表示される
@@ -206,6 +192,3 @@ def then_b31aa65d(context):
     assert "合計" in context.output and "個のアイテムの test_fingerprint を更新しました" in context.output, (
         f"更新件数メッセージが出力にありません。output:\n{context.output}"
     )
-
-
-# [Duplicate Skip] common_steps.py の @then('エラーメッセージが表示される') で処理される

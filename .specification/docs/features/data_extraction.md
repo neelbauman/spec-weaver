@@ -25,7 +25,19 @@ def given_a04781e9(context):
     Scenarios:
       - Doorstop APIによる仕様ID集合の取得
     """
-    raise NotImplementedError('STEP: Doorstopプロジェクトにアクティブな仕様アイテムが存在する')
+    create_doorstop_project_yaml(
+        context.temp_dir,
+        [
+            {
+                "dir": "specs",
+                "prefix": "SPEC",
+                "items": [
+                    {"uid": "SPEC-001", "testable": True, "active": True},
+                    {"uid": "SPEC-002", "testable": True, "active": True},
+                ],
+            }
+        ],
+    )
 ```
 
 #### When 仕様ID集合を取得する
@@ -40,7 +52,8 @@ def when_e56707cb(context):
       - 非アクティブなアイテムの除外
       - テスト不可能な仕様の除外
     """
-    raise NotImplementedError('STEP: 仕様ID集合を取得する')
+    from spec_weaver.doorstop import get_specs
+    context.spec_ids = get_specs(context.temp_dir, prefix=None)
 ```
 
 #### Then アクティブかつtestableな仕様IDのみが返されること
@@ -53,7 +66,8 @@ def then_6823b180(context):
     Scenarios:
       - Doorstop APIによる仕様ID集合の取得
     """
-    raise NotImplementedError('STEP: アクティブかつtestableな仕様IDのみが返されること')
+    assert "SPEC-001" in context.spec_ids
+    assert "SPEC-002" in context.spec_ids
 ```
 
 </details>
@@ -78,7 +92,19 @@ def given_dccca3dc(context):
     Scenarios:
       - 非アクティブなアイテムの除外
     """
-    raise NotImplementedError('STEP: Doorstopプロジェクトに active: false のアイテムが存在する')
+    create_doorstop_project_yaml(
+        context.temp_dir,
+        [
+            {
+                "dir": "specs",
+                "prefix": "SPEC",
+                "items": [
+                    {"uid": "SPEC-001", "testable": True, "active": True},
+                    {"uid": "SPEC-002", "testable": True, "active": False},
+                ],
+            }
+        ],
+    )
 ```
 
 #### When 仕様ID集合を取得する
@@ -93,7 +119,8 @@ def when_e56707cb(context):
       - 非アクティブなアイテムの除外
       - テスト不可能な仕様の除外
     """
-    raise NotImplementedError('STEP: 仕様ID集合を取得する')
+    from spec_weaver.doorstop import get_specs
+    context.spec_ids = get_specs(context.temp_dir, prefix=None)
 ```
 
 #### Then 非アクティブなアイテムは結果に含まれないこと
@@ -106,7 +133,8 @@ def then_99bfaa46(context):
     Scenarios:
       - 非アクティブなアイテムの除外
     """
-    raise NotImplementedError('STEP: 非アクティブなアイテムは結果に含まれないこと')
+    assert "SPEC-001" in context.spec_ids
+    assert "SPEC-002" not in context.spec_ids
 ```
 
 </details>
@@ -131,7 +159,19 @@ def given_d534a041(context):
     Scenarios:
       - テスト不可能な仕様の除外
     """
-    raise NotImplementedError('STEP: Doorstopプロジェクトに testable: false のアイテムが存在する')
+    create_doorstop_project_yaml(
+        context.temp_dir,
+        [
+            {
+                "dir": "specs",
+                "prefix": "SPEC",
+                "items": [
+                    {"uid": "SPEC-001", "testable": True, "active": True},
+                    {"uid": "SPEC-002", "testable": False, "active": True},
+                ],
+            }
+        ],
+    )
 ```
 
 #### When 仕様ID集合を取得する
@@ -146,7 +186,8 @@ def when_e56707cb(context):
       - 非アクティブなアイテムの除外
       - テスト不可能な仕様の除外
     """
-    raise NotImplementedError('STEP: 仕様ID集合を取得する')
+    from spec_weaver.doorstop import get_specs
+    context.spec_ids = get_specs(context.temp_dir, prefix=None)
 ```
 
 #### Then testable: false のアイテムは結果に含まれないこと
@@ -159,7 +200,8 @@ def then_f3fad2a6(context):
     Scenarios:
       - テスト不可能な仕様の除外
     """
-    raise NotImplementedError('STEP: testable: false のアイテムは結果に含まれないこと')
+    assert "SPEC-001" in context.spec_ids
+    assert "SPEC-002" not in context.spec_ids
 ```
 
 </details>
@@ -184,7 +226,22 @@ def given_7f8e9c65(context):
     Scenarios:
       - プレフィックスによるフィルタリング
     """
-    raise NotImplementedError('STEP: DoorstopプロジェクトにREQアイテムとSPECアイテムが混在する')
+    create_doorstop_project_yaml(
+        context.temp_dir,
+        [
+            {
+                "dir": "reqs",
+                "prefix": "REQ",
+                "items": [{"uid": "REQ-001", "testable": False}],
+            },
+            {
+                "dir": "specs",
+                "prefix": "SPEC",
+                "parent": "REQ",
+                "items": [{"uid": "SPEC-001", "testable": True, "links": ["REQ-001"]}],
+            },
+        ],
+    )
 ```
 
 #### When プレフィックス "SPEC" で仕様ID集合を取得する
@@ -197,7 +254,8 @@ def when_1d11bcd6(context, param0):
     Scenarios:
       - プレフィックスによるフィルタリング
     """
-    pass
+    from spec_weaver.doorstop import get_specs
+    context.spec_ids = get_specs(context.temp_dir, prefix=param0)
 ```
 
 #### Then SPECプレフィックスのアイテムのみが返されること
@@ -210,7 +268,10 @@ def then_b5f39418(context):
     Scenarios:
       - プレフィックスによるフィルタリング
     """
-    raise NotImplementedError('STEP: SPECプレフィックスのアイテムのみが返されること')
+    assert all(uid.startswith("SPEC") for uid in context.spec_ids), (
+        f"SPEC以外のIDが含まれています: {context.spec_ids}"
+    )
+    assert "SPEC-001" in context.spec_ids
 ```
 
 </details>
@@ -235,7 +296,13 @@ def given_b830a393(context):
     Scenarios:
       - Gherkin ASTからのタグ抽出
     """
-    raise NotImplementedError('STEP: Gherkin .feature ファイルに @SPEC-001 タグが付与されている')
+    feature_dir = context.temp_dir / "features"
+    feature_dir.mkdir(parents=True, exist_ok=True)
+    write_feature_file(
+        feature_dir / "test.feature",
+        "@SPEC-001\nFeature: Test\n  Scenario: S1\n    Given test\n",
+    )
+    context.feature_dir = feature_dir
 ```
 
 #### When タグ集合を取得する
@@ -251,7 +318,14 @@ def when_a12b8a55(context):
       - サブディレクトリ内のfeatureファイルの再帰探索
       - Gherkin構文エラーの検出
     """
-    raise NotImplementedError('STEP: タグ集合を取得する')
+    from spec_weaver.gherkin import get_tag_map
+    try:
+        tag_map = get_tag_map(context.feature_dir, context.temp_dir, {"SPEC", "REQ", "CORE"})
+        context.tag_ids = set(tag_map.keys())
+        context.tag_error = None
+    except ValueError as e:
+        context.tag_ids = set()
+        context.tag_error = e
 ```
 
 #### Then "SPEC-001" がタグ集合に含まれること
@@ -264,7 +338,7 @@ def then_e8d01468(context, param0):
     Scenarios:
       - Gherkin ASTからのタグ抽出
     """
-    pass
+    assert param0 in context.tag_ids, f"{param0} がタグ集合に含まれていません。タグ: {context.tag_ids}"
 ```
 
 </details>
@@ -289,7 +363,13 @@ def given_07def24f(context):
     Scenarios:
       - Feature・Scenario両レベルのタグ抽出
     """
-    raise NotImplementedError('STEP: Feature レベルと Scenario レベルに異なるSPECタグが付与されている')
+    feature_dir = context.temp_dir / "features"
+    feature_dir.mkdir(parents=True, exist_ok=True)
+    write_feature_file(
+        feature_dir / "test.feature",
+        "@SPEC-001\nFeature: Test\n\n  @SPEC-002\n  Scenario: S1\n    Given test\n",
+    )
+    context.feature_dir = feature_dir
 ```
 
 #### When タグ集合を取得する
@@ -305,7 +385,14 @@ def when_a12b8a55(context):
       - サブディレクトリ内のfeatureファイルの再帰探索
       - Gherkin構文エラーの検出
     """
-    raise NotImplementedError('STEP: タグ集合を取得する')
+    from spec_weaver.gherkin import get_tag_map
+    try:
+        tag_map = get_tag_map(context.feature_dir, context.temp_dir, {"SPEC", "REQ", "CORE"})
+        context.tag_ids = set(tag_map.keys())
+        context.tag_error = None
+    except ValueError as e:
+        context.tag_ids = set()
+        context.tag_error = e
 ```
 
 #### Then 両方のレベルのタグがすべて抽出されること
@@ -318,7 +405,8 @@ def then_d712dc38(context):
     Scenarios:
       - Feature・Scenario両レベルのタグ抽出
     """
-    raise NotImplementedError('STEP: 両方のレベルのタグがすべて抽出されること')
+    assert "SPEC-001" in context.tag_ids, f"SPEC-001 がタグ集合に含まれていません: {context.tag_ids}"
+    assert "SPEC-002" in context.tag_ids, f"SPEC-002 がタグ集合に含まれていません: {context.tag_ids}"
 ```
 
 </details>
@@ -343,7 +431,14 @@ def given_1427ca58(context):
     Scenarios:
       - サブディレクトリ内のfeatureファイルの再帰探索
     """
-    raise NotImplementedError('STEP: サブディレクトリに .feature ファイルが存在する')
+    feature_dir = context.temp_dir / "features"
+    subdir = feature_dir / "sub"
+    subdir.mkdir(parents=True, exist_ok=True)
+    write_feature_file(
+        subdir / "sub.feature",
+        "@SPEC-010\nFeature: SubTest\n  Scenario: S1\n    Given test\n",
+    )
+    context.feature_dir = feature_dir
 ```
 
 #### When タグ集合を取得する
@@ -359,7 +454,14 @@ def when_a12b8a55(context):
       - サブディレクトリ内のfeatureファイルの再帰探索
       - Gherkin構文エラーの検出
     """
-    raise NotImplementedError('STEP: タグ集合を取得する')
+    from spec_weaver.gherkin import get_tag_map
+    try:
+        tag_map = get_tag_map(context.feature_dir, context.temp_dir, {"SPEC", "REQ", "CORE"})
+        context.tag_ids = set(tag_map.keys())
+        context.tag_error = None
+    except ValueError as e:
+        context.tag_ids = set()
+        context.tag_error = e
 ```
 
 #### Then サブディレクトリ内のタグも含めて抽出されること
@@ -372,7 +474,7 @@ def then_1c0ec472(context):
     Scenarios:
       - サブディレクトリ内のfeatureファイルの再帰探索
     """
-    raise NotImplementedError('STEP: サブディレクトリ内のタグも含めて抽出されること')
+    assert "SPEC-010" in context.tag_ids, f"SPEC-010 がタグ集合に含まれていません: {context.tag_ids}"
 ```
 
 </details>
@@ -397,7 +499,14 @@ def given_540458bc(context):
     Scenarios:
       - Gherkin構文エラーの検出
     """
-    raise NotImplementedError('STEP: 構文的に不正な .feature ファイルが存在する')
+    feature_dir = context.temp_dir / "features"
+    feature_dir.mkdir(parents=True, exist_ok=True)
+    # 不正なGherkin構文（Feature キーワードなし、インデント誤り等）
+    (feature_dir / "broken.feature").write_text(
+        "This is not valid gherkin\n  And there is no feature keyword\n    Invalid stuff\n",
+        encoding="utf-8",
+    )
+    context.feature_dir = feature_dir
 ```
 
 #### When タグ集合を取得する
@@ -413,7 +522,14 @@ def when_a12b8a55(context):
       - サブディレクトリ内のfeatureファイルの再帰探索
       - Gherkin構文エラーの検出
     """
-    raise NotImplementedError('STEP: タグ集合を取得する')
+    from spec_weaver.gherkin import get_tag_map
+    try:
+        tag_map = get_tag_map(context.feature_dir, context.temp_dir, {"SPEC", "REQ", "CORE"})
+        context.tag_ids = set(tag_map.keys())
+        context.tag_error = None
+    except ValueError as e:
+        context.tag_ids = set()
+        context.tag_error = e
 ```
 
 #### Then ValueError が発生しGherkin構文エラーが報告されること
@@ -426,7 +542,8 @@ def then_c5d0b4fe(context):
     Scenarios:
       - Gherkin構文エラーの検出
     """
-    raise NotImplementedError('STEP: ValueError が発生しGherkin構文エラーが報告されること')
+    assert context.tag_error is not None, "ValueError が発生しませんでした"
+    assert isinstance(context.tag_error, ValueError), f"ValueError ではなく {type(context.tag_error)} が発生しました"
 ```
 
 </details>

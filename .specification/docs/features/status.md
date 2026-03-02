@@ -27,7 +27,14 @@ def given_ef098fcf(context):
     Scenarios:
       - 全アイテムのステータスを一覧表示する
     """
-    raise NotImplementedError('STEP: REQ-001 が status: draft、SPEC-001 が status: implemented に設定されている')
+    create_doorstop_project_api(
+        context.temp_dir,
+        req_items=[{"header": "Req 1", "status": "draft"}],
+        spec_items=[{"header": "Spec 1", "status": "implemented", "links": ["REQ-001"]}],
+    )
+    feature_dir = context.temp_dir / "specification" / "features"
+    feature_dir.mkdir(parents=True, exist_ok=True)
+    context.status_feature_dir = feature_dir
 ```
 
 #### When status コマンドを実行する
@@ -42,7 +49,14 @@ def when_d68a8d9a(context):
       - status 未設定のアイテムは "-" と表示される
       - レビューステータスと最終更新日が表示される
     """
-    raise NotImplementedError('STEP: status コマンドを実行する')
+    feature_dir = getattr(context, 'status_feature_dir', context.temp_dir / "specification" / "features")
+    feature_dir.mkdir(parents=True, exist_ok=True)
+    res = run_spec_weaver(
+        ['status', '--repo-root', str(context.temp_dir), '--feature-dir', str(feature_dir)],
+        cwd=context.temp_dir,
+    )
+    context.exit_code = res.returncode
+    context.output = res.stdout + '\n' + res.stderr
 ```
 
 #### Then 終了コード 0 が返ること
@@ -111,7 +125,14 @@ def given_0d995d24(context):
     Scenarios:
       - status 未設定のアイテムは "-" と表示される
     """
-    raise NotImplementedError('STEP: SPEC-001 に status フィールドが設定されていない')
+    create_doorstop_project_api(
+        context.temp_dir,
+        req_items=[{"header": "Req 1"}],
+        spec_items=[{"header": "Spec 1", "links": ["REQ-001"]}],
+    )
+    feature_dir = context.temp_dir / "specification" / "features"
+    feature_dir.mkdir(parents=True, exist_ok=True)
+    context.status_feature_dir = feature_dir
 ```
 
 #### When status コマンドを実行する
@@ -126,7 +147,14 @@ def when_d68a8d9a(context):
       - status 未設定のアイテムは "-" と表示される
       - レビューステータスと最終更新日が表示される
     """
-    raise NotImplementedError('STEP: status コマンドを実行する')
+    feature_dir = getattr(context, 'status_feature_dir', context.temp_dir / "specification" / "features")
+    feature_dir.mkdir(parents=True, exist_ok=True)
+    res = run_spec_weaver(
+        ['status', '--repo-root', str(context.temp_dir), '--feature-dir', str(feature_dir)],
+        cwd=context.temp_dir,
+    )
+    context.exit_code = res.returncode
+    context.output = res.stdout + '\n' + res.stderr
 ```
 
 #### Then 終了コード 0 が返ること
@@ -183,7 +211,17 @@ def given_58beb4fc(context):
     Scenarios:
       - --filter で特定ステータスに絞り込める
     """
-    raise NotImplementedError('STEP: REQ-001 が status: implemented、REQ-002 が status: draft に設定されている')
+    create_doorstop_project_api(
+        context.temp_dir,
+        req_items=[
+            {"header": "Req 1", "status": "implemented"},
+            {"header": "Req 2", "status": "draft"},
+        ],
+        spec_items=[],
+    )
+    feature_dir = context.temp_dir / "specification" / "features"
+    feature_dir.mkdir(parents=True, exist_ok=True)
+    context.status_feature_dir = feature_dir
 ```
 
 #### When status コマンドを "--filter implemented" オプション付きで実行する
@@ -230,7 +268,7 @@ def then_2847178d(context):
     Scenarios:
       - --filter で特定ステータスに絞り込める
     """
-    raise NotImplementedError('STEP: REQ-001 が表示されること')
+    assert "REQ-001" in context.output, f"REQ-001 が出力に見つかりません。\n出力:\n{context.output}"
 ```
 
 #### And REQ-002 は表示されないこと
@@ -243,7 +281,7 @@ def then_9fc4e668(context):
     Scenarios:
       - --filter で特定ステータスに絞り込める
     """
-    raise NotImplementedError('STEP: REQ-002 は表示されないこと')
+    assert "REQ-002" not in context.output, f"REQ-002 が出力に含まれています。\n出力:\n{context.output}"
 ```
 
 </details>
@@ -269,7 +307,12 @@ def given_f93df893(context, param0):
     Scenarios:
       - --filter に一致するアイテムが存在しない場合に通知される
     """
-    pass
+    create_doorstop_project_api(
+        context.temp_dir,
+        req_items=[{"status": param0}],
+        spec_items=[{"status": param0, "links": ["REQ-001"]}],
+    )
+    (context.temp_dir / "specification" / "features").mkdir(parents=True, exist_ok=True)
 ```
 
 #### When status コマンドを "--filter implemented" オプション付きで実行する
@@ -316,7 +359,7 @@ def then_897c0cfb(context):
     Scenarios:
       - --filter に一致するアイテムが存在しない場合に通知される
     """
-    raise NotImplementedError('STEP: 一致するアイテムが見つからなかった旨が表示されること')
+    assert "見つかりませんでした" in context.output
 ```
 
 </details>
@@ -343,7 +386,14 @@ def given_0da078b7(context):
     Scenarios:
       - レビューステータスと最終更新日が表示される
     """
-    raise NotImplementedError('STEP: Doorstopのアイテムが存在する')
+    create_doorstop_project_api(
+        context.temp_dir,
+        req_items=[{"header": "Req 1"}],
+        spec_items=[{"header": "Spec 1", "links": ["REQ-001"]}],
+    )
+    feature_dir = context.temp_dir / "specification" / "features"
+    feature_dir.mkdir(parents=True, exist_ok=True)
+    context.status_feature_dir = feature_dir
 ```
 
 #### When status コマンドを実行する
@@ -358,7 +408,14 @@ def when_d68a8d9a(context):
       - status 未設定のアイテムは "-" と表示される
       - レビューステータスと最終更新日が表示される
     """
-    raise NotImplementedError('STEP: status コマンドを実行する')
+    feature_dir = getattr(context, 'status_feature_dir', context.temp_dir / "specification" / "features")
+    feature_dir.mkdir(parents=True, exist_ok=True)
+    res = run_spec_weaver(
+        ['status', '--repo-root', str(context.temp_dir), '--feature-dir', str(feature_dir)],
+        cwd=context.temp_dir,
+    )
+    context.exit_code = res.returncode
+    context.output = res.stdout + '\n' + res.stderr
 ```
 
 #### Then 終了コード 0 が返ること
@@ -388,7 +445,7 @@ def then_33e7dc19(context):
     Scenarios:
       - レビューステータスと最終更新日が表示される
     """
-    raise NotImplementedError('STEP: レビューステータス列が表示されること')
+    assert "レビュー" in context.output, f"レビューステータス列が出力に見つかりません。\n出力:\n{context.output}"
 ```
 
 #### And 最終更新日列が表示されること
@@ -401,7 +458,7 @@ def then_49bd7463(context):
     Scenarios:
       - レビューステータスと最終更新日が表示される
     """
-    raise NotImplementedError('STEP: 最終更新日列が表示されること')
+    assert "更新" in context.output, f"最終更新日列が出力に見つかりません。\n出力:\n{context.output}"
 ```
 
 </details>

@@ -663,20 +663,6 @@ def scaffold_cmd(
             try:
                 out_file = out_dir / f"step_{fpath.stem}.py"
 
-                # Git dirty チェック: 既存ファイルに未コミット変更があれば確認
-                if out_file.exists() and not force and not overwrite:
-                    if _is_file_dirty(out_file, repo_root):
-                        console.print(
-                            f"\n[bold yellow]⚠️  {_display_path(out_file)} "
-                            f"に未コミットの変更があります。[/bold yellow]"
-                        )
-                        if not Confirm.ask("差分マージを続行しますか？"):
-                            console.print(
-                                f"  [dim]⏭️ スキップ[/dim]: {_display_path(out_file)} (キャンセル)"
-                            )
-                            skipped += 1
-                            continue
-
                 result = generate_test_file(
                     fpath, out_dir, feature_dir, overwrite=overwrite
                 )
@@ -701,6 +687,20 @@ def scaffold_cmd(
                         )
                         console.print()
                     generated += 1
+
+                    # Git dirty チェック: 既存ファイルに未コミット変更があれば確認
+                    if out_file.exists() and not force and not overwrite:
+                        if _is_file_dirty(out_file, repo_root):
+                            console.print(
+                                f"\n[bold yellow]⚠️  {_display_path(out_file)} "
+                                f"に未コミットの変更があります。[/bold yellow]"
+                            )
+                            if not Confirm.ask("差分マージを続行しますか？"):
+                                console.print(
+                                    f"  [dim]⏭️ スキップ[/dim]: {_display_path(out_file)} (キャンセル)"
+                                )
+                                skipped += 1
+                                continue
 
             except Exception as e:
                 console.print(f"  [red]❌ エラー[/red]: {fpath.name}: {e}")
