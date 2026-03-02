@@ -101,7 +101,6 @@ nav:
       - build.md: features/build.md
       - clear.md: features/clear.md
       - data_extraction.md: features/data_extraction.md
-      - dummy_fail.md: features/dummy_fail.md
       - impl_link.md: features/impl_link.md
       - review.md: features/review.md
       - scaffold.md: features/scaffold.md
