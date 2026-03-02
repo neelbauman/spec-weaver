@@ -1,0 +1,56 @@
+active: true
+derived: false
+header: |
+  review コマンド — Gherkin フィンガープリント更新
+impl_files:
+- src/spec_weaver/cli.py
+level: 20.4
+links:
+- REQ-004: KXm5cZc2wXUhF29d-4lpSPbclfjN4ruCBIwDvWX93tg=
+normative: true
+ref: ''
+reviewed: VyOihnalOVkdAbxnRZV2ve5DLJIcnBBPz9qnJYMemW4=
+status: implemented
+test_fingerprint: |
+  661464f647d572401c8a0cb0d08555a59bde317481aa6b584b0aec50e6e63f54
+testable: true
+text: |
+  ## 概要
+  指定した仕様アイテム（または `.feature` ファイル）の Gherkin フィンガープリントを
+  最新の状態に更新し、Gherkin 側の「レビュー済み」状態を記録する `review` コマンドの仕様。
+
+  ## コマンド形式
+
+  ```
+  spec-weaver review <ITEM_ID_OR_FEATURE_PATH> [OPTIONS]
+  ```
+
+  ### 引数
+  - `<ITEM_ID_OR_FEATURE_PATH>` (必須): レビュー対象。以下のいずれか:
+    - 仕様アイテムID（例: `SPEC-003`）
+    - `.feature` ファイルのパス（例: `specification/features/audit.feature`）
+
+  ### オプション
+  - `--feature-dir <path>` (オプション): `.feature` ファイル検索ディレクトリ（デフォルト: `specification/features`）
+  - `--repo-root <path>` (オプション): Doorstop プロジェクトルート（デフォルト: カレントディレクトリ）
+
+  ## 処理
+
+  ### アイテムID が指定された場合
+  1. 対象アイテムに紐づく Gherkin シナリオのフィンガープリント（SHA-256）を計算する。
+  2. 該当する Doorstop YAML の `test_fingerprint` フィールドを新しいハッシュ値で上書きする。
+  3. 次に実行すべき `doorstop review <ITEM_ID>` コマンドをガイダンス表示する。
+
+  ### `.feature` ファイルが指定された場合
+  1. ファイル内の全仕様ID タグを収集する（`get_tags` 利用）。
+  2. 各アイテムについて上記と同じフィンガープリント更新を実行する。
+  3. 更新件数と `doorstop review <ID1> <ID2> ...` のガイダンスを表示する。
+
+  ## 出力
+  - 成功時: 更新されたアイテムIDとフィンガープリントのサマリーを表示する
+  - 対象なし: 警告メッセージを表示し終了コード 1 を返す
+  - 例外: エラーメッセージを表示し終了コード 1 を返す
+
+  ## 注意事項
+  - この操作により YAML が書き換えられるため、Doorstop 本体の `reviewed` 状態がリセットされる場合がある。
+  - フィンガープリント更新後は必ず `doorstop review <ITEM_ID>` を実行して Doorstop 側もレビュー済みにすること。

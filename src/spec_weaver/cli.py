@@ -1,5 +1,5 @@
 # src/spec_weaver/cli.py
-# implements: SPEC-019, SPEC-020, SPEC-022
+# implements: SPEC-019, SPEC-020, SPEC-022, SPEC-024
 
 import typer
 import shutil
@@ -2286,11 +2286,11 @@ markdown_extensions:
 
 
 # ---------------------------------------------------------------------------
-# review コマンド (SPEC-022)
+# semantic-review コマンド (SPEC-022)
 # ---------------------------------------------------------------------------
 
-@app.command("review")
-def review_cmd(
+@app.command("semantic-review")
+def semantic_review_cmd(
     item: Optional[str] = typer.Option(
         None,
         "--item",

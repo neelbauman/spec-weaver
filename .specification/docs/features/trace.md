@@ -211,42 +211,12 @@ def when_6629a1b8(context):
     _run_trace(context, "REQ-001")
 ```
 
-#### Then 終了コードが0である
-
-```python
-@then("終了コードが0である")  # type: ignore
-def then_0f800e56(context):
-    """終了コードが0である
-
-    Scenarios:
-      - REQを起点としたトップダウンのツリー表示
-      - SPECを起点とした双方向のツリー表示
-      - Gherkin Featureファイルを起点としたボトムアップ表示
-      - --direction up で上方向のみ探索
-      - --direction down で下方向のみ探索
-      - --format flat でフラットリスト表示
-      - 各ノードにステータスバッジが表示される
-    """
-    assert context.exit_code == 0, (
-        f"終了コード {context.exit_code} (期待: 0)\n{context.output}"
-    )
-```
-
 #### And 出力にツリー構造が含まれる
 
 ```python
-@then("出力にツリー構造が含まれる")  # type: ignore
-def then_a551e8cd(context):
-    """出力にツリー構造が含まれる
-
-    Scenarios:
-      - REQを起点としたトップダウンのツリー表示
-      - SPECを起点とした双方向のツリー表示
-    """
-    # Rich ツリーは "│", "├", "└" などのボックス描画文字か、ID を含む
-    assert any(ch in context.output for ch in ["│", "├", "└", "┌", "─"]) or any(
-        uid in context.output for uid in ["REQ-", "SPEC-"]
-    ), f"ツリー構造が見つかりません:\n{context.output}"
+@then('出力にツリー構造が含まれる')
+def step_impl_8(context):
+    assert "REQ-" in context.stdout or "SPEC-" in context.stdout
 ```
 
 #### And "REQ-001" がルートノードとして表示される
@@ -368,42 +338,12 @@ def when_b1a2f499(context):
     _run_trace(context, "SPEC-003")
 ```
 
-#### Then 終了コードが0である
-
-```python
-@then("終了コードが0である")  # type: ignore
-def then_0f800e56(context):
-    """終了コードが0である
-
-    Scenarios:
-      - REQを起点としたトップダウンのツリー表示
-      - SPECを起点とした双方向のツリー表示
-      - Gherkin Featureファイルを起点としたボトムアップ表示
-      - --direction up で上方向のみ探索
-      - --direction down で下方向のみ探索
-      - --format flat でフラットリスト表示
-      - 各ノードにステータスバッジが表示される
-    """
-    assert context.exit_code == 0, (
-        f"終了コード {context.exit_code} (期待: 0)\n{context.output}"
-    )
-```
-
 #### And 出力にツリー構造が含まれる
 
 ```python
-@then("出力にツリー構造が含まれる")  # type: ignore
-def then_a551e8cd(context):
-    """出力にツリー構造が含まれる
-
-    Scenarios:
-      - REQを起点としたトップダウンのツリー表示
-      - SPECを起点とした双方向のツリー表示
-    """
-    # Rich ツリーは "│", "├", "└" などのボックス描画文字か、ID を含む
-    assert any(ch in context.output for ch in ["│", "├", "└", "┌", "─"]) or any(
-        uid in context.output for uid in ["REQ-", "SPEC-"]
-    ), f"ツリー構造が見つかりません:\n{context.output}"
+@then('出力にツリー構造が含まれる')
+def step_impl_8(context):
+    assert "REQ-" in context.stdout or "SPEC-" in context.stdout
 ```
 
 #### And 上位に "REQ-002" が表示される
@@ -476,27 +416,6 @@ def when_53222a94(context):
       - Gherkin Featureファイルを起点としたボトムアップ表示
     """
     _run_trace(context, "audit.feature")
-```
-
-#### Then 終了コードが0である
-
-```python
-@then("終了コードが0である")  # type: ignore
-def then_0f800e56(context):
-    """終了コードが0である
-
-    Scenarios:
-      - REQを起点としたトップダウンのツリー表示
-      - SPECを起点とした双方向のツリー表示
-      - Gherkin Featureファイルを起点としたボトムアップ表示
-      - --direction up で上方向のみ探索
-      - --direction down で下方向のみ探索
-      - --format flat でフラットリスト表示
-      - 各ノードにステータスバッジが表示される
-    """
-    assert context.exit_code == 0, (
-        f"終了コード {context.exit_code} (期待: 0)\n{context.output}"
-    )
 ```
 
 #### And 出力に "SPEC-003" が表示される
@@ -573,27 +492,6 @@ def when_770f884f(context):
     _run_trace(context, "SPEC-003", extra_args=["--direction", "up"])
 ```
 
-#### Then 終了コードが0である
-
-```python
-@then("終了コードが0である")  # type: ignore
-def then_0f800e56(context):
-    """終了コードが0である
-
-    Scenarios:
-      - REQを起点としたトップダウンのツリー表示
-      - SPECを起点とした双方向のツリー表示
-      - Gherkin Featureファイルを起点としたボトムアップ表示
-      - --direction up で上方向のみ探索
-      - --direction down で下方向のみ探索
-      - --format flat でフラットリスト表示
-      - 各ノードにステータスバッジが表示される
-    """
-    assert context.exit_code == 0, (
-        f"終了コード {context.exit_code} (期待: 0)\n{context.output}"
-    )
-```
-
 #### And 出力に "REQ-002" が表示される
 
 ```python
@@ -666,27 +564,6 @@ def when_24d70f7f(context):
       - --direction down で下方向のみ探索
     """
     _run_trace(context, "REQ-001", extra_args=["--direction", "down"])
-```
-
-#### Then 終了コードが0である
-
-```python
-@then("終了コードが0である")  # type: ignore
-def then_0f800e56(context):
-    """終了コードが0である
-
-    Scenarios:
-      - REQを起点としたトップダウンのツリー表示
-      - SPECを起点とした双方向のツリー表示
-      - Gherkin Featureファイルを起点としたボトムアップ表示
-      - --direction up で上方向のみ探索
-      - --direction down で下方向のみ探索
-      - --format flat でフラットリスト表示
-      - 各ノードにステータスバッジが表示される
-    """
-    assert context.exit_code == 0, (
-        f"終了コード {context.exit_code} (期待: 0)\n{context.output}"
-    )
 ```
 
 #### And 出力に "REQ-002" が表示される
@@ -762,27 +639,6 @@ def when_816b7b2c(context):
     _run_trace(context, "REQ-001", extra_args=["--format", "flat"])
 ```
 
-#### Then 終了コードが0である
-
-```python
-@then("終了コードが0である")  # type: ignore
-def then_0f800e56(context):
-    """終了コードが0である
-
-    Scenarios:
-      - REQを起点としたトップダウンのツリー表示
-      - SPECを起点とした双方向のツリー表示
-      - Gherkin Featureファイルを起点としたボトムアップ表示
-      - --direction up で上方向のみ探索
-      - --direction down で下方向のみ探索
-      - --format flat でフラットリスト表示
-      - 各ノードにステータスバッジが表示される
-    """
-    assert context.exit_code == 0, (
-        f"終了コード {context.exit_code} (期待: 0)\n{context.output}"
-    )
-```
-
 #### And 出力がフラットリスト形式である
 
 ```python
@@ -840,21 +696,6 @@ def when_44385436(context):
     _run_trace(context, "NONEXIST-999")
 ```
 
-#### Then 終了コードが1である
-
-```python
-@then("終了コードが1である")  # type: ignore
-def then_9b731a71(context):
-    """終了コードが1である
-
-    Scenarios:
-      - 存在しないIDを指定した場合のエラー
-    """
-    assert context.exit_code == 1, (
-        f"終了コード {context.exit_code} (期待: 1)\n{context.output}"
-    )
-```
-
 #### And エラーメッセージに "not found" が含まれる
 
 ```python
@@ -897,27 +738,6 @@ def when_6629a1b8(context):
     _run_trace(context, "REQ-001")
 ```
 
-#### Then 終了コードが0である
-
-```python
-@then("終了コードが0である")  # type: ignore
-def then_0f800e56(context):
-    """終了コードが0である
-
-    Scenarios:
-      - REQを起点としたトップダウンのツリー表示
-      - SPECを起点とした双方向のツリー表示
-      - Gherkin Featureファイルを起点としたボトムアップ表示
-      - --direction up で上方向のみ探索
-      - --direction down で下方向のみ探索
-      - --format flat でフラットリスト表示
-      - 各ノードにステータスバッジが表示される
-    """
-    assert context.exit_code == 0, (
-        f"終了コード {context.exit_code} (期待: 0)\n{context.output}"
-    )
-```
-
 #### And "REQ-001" のノードに "implemented" のステータスバッジが表示される
 
 ```python
@@ -928,12 +748,7 @@ def then_f676df97(context, param0, param1):
     Scenarios:
       - 各ノードにステータスバッジが表示される
     """
-    assert param0 in context.output, (
-        f'ノード "{param0}" が出力にありません:\n{context.output}'
-    )
-    assert param1 in context.output, (
-        f'ステータスバッジ "{param1}" が出力にありません:\n{context.output}'
-    )
+    raise NotImplementedError('STEP: "{param0}" のノードに "{param1}" のステータスバッジが表示される')
 ```
 
 #### And "SPEC-003" のノードに "implemented" のステータスバッジが表示される
@@ -946,12 +761,7 @@ def then_f676df97(context, param0, param1):
     Scenarios:
       - 各ノードにステータスバッジが表示される
     """
-    assert param0 in context.output, (
-        f'ノード "{param0}" が出力にありません:\n{context.output}'
-    )
-    assert param1 in context.output, (
-        f'ステータスバッジ "{param1}" が出力にありません:\n{context.output}'
-    )
+    raise NotImplementedError('STEP: "{param0}" のノードに "{param1}" のステータスバッジが表示される')
 ```
 
 </details>

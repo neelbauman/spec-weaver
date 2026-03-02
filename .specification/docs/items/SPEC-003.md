@@ -1,8 +1,5 @@
 # [SPEC-003] audit コマンド仕様
 
-> ⚠️ **Suspect**: 関連するアイテムやテストが変更されました。影響範囲のレビューが必要です。
-> **原因 (Unreviewed)**: [audit.feature](../features/audit.md)
-
 **実装状況**: ✅ implemented
 
 **作成日**: 2026-02-26　|　**更新日**: 2026-03-01
@@ -34,14 +31,12 @@
 - 乖離がある場合: 終了コード `1`（CI失敗）を返し、テーブルで乖離内容を出力
 - 完全一致の場合: 終了コード `0`（成功）を返し、成功メッセージを出力
 
-**テスト実行結果 (個別)**: ✅ 7/7 PASS
-
 ### 🧪 検証シナリオ
 
-- ✅ PASS **完全一致時の監査成功** — Scenario （[features/audit.feature:5](../features/audit.md)）
-- ✅ PASS **テスト漏れの検出** — Scenario （[features/audit.feature:11](../features/audit.md)）
-- ✅ PASS **孤児タグの検出** — Scenario （[features/audit.feature:17](../features/audit.md)）
-- ✅ PASS **テスト漏れと孤児タグの同時検出** — Scenario （[features/audit.feature:23](../features/audit.md)）
-- ✅ PASS **testable: false の仕様はスキップされる** — Scenario （[features/audit.feature:29](../features/audit.md)）
-- ✅ PASS **Suspect Link の検出** — Scenario （[features/audit.feature:36](../features/audit.md)）
-- ✅ PASS **Unreviewed Changes の検出** — Scenario （[features/audit.feature:44](../features/audit.md)）
+- **完全一致時の監査成功** — Scenario （[features/audit.feature:5](../features/audit.md)）
+- **テスト漏れの検出** — Scenario （[features/audit.feature:11](../features/audit.md)）
+- **孤児タグの検出** — Scenario （[features/audit.feature:17](../features/audit.md)）
+- **テスト漏れと孤児タグの同時検出** — Scenario （[features/audit.feature:23](../features/audit.md)）
+- **testable: false の仕様はスキップされる** — Scenario （[features/audit.feature:29](../features/audit.md)）
+- **Suspect Link の検出** — Scenario （[features/audit.feature:36](../features/audit.md)）
+- **Unreviewed Changes の検出** — Scenario （[features/audit.feature:44](../features/audit.md)）

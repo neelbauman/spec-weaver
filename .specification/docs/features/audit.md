@@ -1,7 +1,5 @@
 # Feature: audit コマンド
 
-> 📋 **Unreviewed Changes**: このフィーチャーファイル自体に未レビューの変更があります。レビュー後に `review` コマンドで更新してください。
-
 **タグ**: `@SPEC-003`
 
 **関連アイテム**: [SPEC-003](../items/SPEC-003.md) / [SPEC-005](../items/SPEC-005.md)
@@ -76,61 +74,8 @@ def when_20ad7547(context):
       - Unreviewed Changes の検出
     """
     _run_audit(context)
-```
-
-#### Then 終了コード 0 が返ること
-
-```python
-@then("終了コード 0 が返ること")  # type: ignore
-def then_4f25c571(context):
-    """終了コード 0 が返ること
-
-    Scenarios:
-      - 完全一致時の監査成功
-    """
-    assert context.exit_code == 0, (
-        f"終了コード {context.exit_code} (期待: 0)\n{context.output}"
-    )
-```
-
-#### And 成功メッセージが表示されること
-
-```python
-@then("成功メッセージが表示されること")  # type: ignore
-def then_f7642361(context):
-    """成功メッセージが表示されること
-
-    Scenarios:
-      - 完全一致時の監査成功
-    """
-    assert any(
-        kw in context.output for kw in ["✅", "成功", "All", "Pass", "OK", "0 missing"]
-    ), f"成功メッセージが見当たりません:\n{context.output}"
-```
-
-</details>
 
 
----
-## Scenario: テスト漏れの検出
-
-- **Given** testable な仕様 "SPEC-002" に対応するGherkinテストが存在しない
-- **When** audit コマンドを実行する
-- **Then** 終了コード 1 が返ること
-- **And** テストが実装されていない仕様として "SPEC-002" が報告されること
-
-<details><summary><b>Step Definitions (Source Code)</b></summary>
-
-#### Given testable な仕様 "SPEC-002" に対応するGherkinテストが存在しない
-
-```python
-@given('testable な仕様 "{spec_id}" に対応するGherkinテストが存在しない')  # type: ignore
-def given_03339ad7(context, spec_id):
-    """testable な仕様 "SPEC-002" に対応するGherkinテストが存在しない
-
-    Scenarios:
-      - テスト漏れの検出
-    """
     # SPEC-001 (testable=False), SPEC-002 (testable=True, 未カバー)
     context.repo_root = context.temp_dir / "repo"
     create_doorstop_project_api(
@@ -145,6 +90,19 @@ def given_03339ad7(context, spec_id):
     context.feature_dir.mkdir(parents=True, exist_ok=True)
     context.expected_spec_id = spec_id  # "SPEC-002"
 ```
+
+</details>
+
+
+---
+## Scenario: テスト漏れの検出
+
+- **Given** testable な仕様 "SPEC-002" に対応するGherkinテストが存在しない
+- **When** audit コマンドを実行する
+- **Then** 終了コード 1 が返ること
+- **And** テストが実装されていない仕様として "SPEC-002" が報告されること
+
+<details><summary><b>Step Definitions (Source Code)</b></summary>
 
 #### When audit コマンドを実行する
 
@@ -163,6 +121,21 @@ def when_20ad7547(context):
       - Unreviewed Changes の検出
     """
     _run_audit(context)
+
+
+    # SPEC-001 (testable=False), SPEC-002 (testable=True, 未カバー)
+    context.repo_root = context.temp_dir / "repo"
+    create_doorstop_project_api(
+        context.repo_root,
+        spec_items=[
+            {"header": "カバー外仕様1", "testable": False},
+            {"header": "未カバー仕様", "testable": True},
+        ],
+    )
+    context.feature_dir = context.temp_dir / "features"
+    # feature ファイルは作らない (SPEC-002 が未カバー)
+    context.feature_dir.mkdir(parents=True, exist_ok=True)
+    context.expected_spec_id = spec_id  # "SPEC-002"
 ```
 
 #### Then 終了コード 1 が返ること
@@ -254,6 +227,21 @@ def when_20ad7547(context):
       - Unreviewed Changes の検出
     """
     _run_audit(context)
+
+
+    # SPEC-001 (testable=False), SPEC-002 (testable=True, 未カバー)
+    context.repo_root = context.temp_dir / "repo"
+    create_doorstop_project_api(
+        context.repo_root,
+        spec_items=[
+            {"header": "カバー外仕様1", "testable": False},
+            {"header": "未カバー仕様", "testable": True},
+        ],
+    )
+    context.feature_dir = context.temp_dir / "features"
+    # feature ファイルは作らない (SPEC-002 が未カバー)
+    context.feature_dir.mkdir(parents=True, exist_ok=True)
+    context.expected_spec_id = spec_id  # "SPEC-002"
 ```
 
 #### Then 終了コード 1 が返ること
@@ -344,6 +332,21 @@ def when_20ad7547(context):
       - Unreviewed Changes の検出
     """
     _run_audit(context)
+
+
+    # SPEC-001 (testable=False), SPEC-002 (testable=True, 未カバー)
+    context.repo_root = context.temp_dir / "repo"
+    create_doorstop_project_api(
+        context.repo_root,
+        spec_items=[
+            {"header": "カバー外仕様1", "testable": False},
+            {"header": "未カバー仕様", "testable": True},
+        ],
+    )
+    context.feature_dir = context.temp_dir / "features"
+    # feature ファイルは作らない (SPEC-002 が未カバー)
+    context.feature_dir.mkdir(parents=True, exist_ok=True)
+    context.expected_spec_id = spec_id  # "SPEC-002"
 ```
 
 #### Then 終了コード 1 が返ること
@@ -450,6 +453,21 @@ def when_20ad7547(context):
       - Unreviewed Changes の検出
     """
     _run_audit(context)
+
+
+    # SPEC-001 (testable=False), SPEC-002 (testable=True, 未カバー)
+    context.repo_root = context.temp_dir / "repo"
+    create_doorstop_project_api(
+        context.repo_root,
+        spec_items=[
+            {"header": "カバー外仕様1", "testable": False},
+            {"header": "未カバー仕様", "testable": True},
+        ],
+    )
+    context.feature_dir = context.temp_dir / "features"
+    # feature ファイルは作らない (SPEC-002 が未カバー)
+    context.feature_dir.mkdir(parents=True, exist_ok=True)
+    context.expected_spec_id = spec_id  # "SPEC-002"
 ```
 
 #### Then "SPEC-001" はテスト漏れとして報告されないこと
@@ -537,6 +555,21 @@ def when_20ad7547(context):
       - Unreviewed Changes の検出
     """
     _run_audit(context)
+
+
+    # SPEC-001 (testable=False), SPEC-002 (testable=True, 未カバー)
+    context.repo_root = context.temp_dir / "repo"
+    create_doorstop_project_api(
+        context.repo_root,
+        spec_items=[
+            {"header": "カバー外仕様1", "testable": False},
+            {"header": "未カバー仕様", "testable": True},
+        ],
+    )
+    context.feature_dir = context.temp_dir / "features"
+    # feature ファイルは作らない (SPEC-002 が未カバー)
+    context.feature_dir.mkdir(parents=True, exist_ok=True)
+    context.expected_spec_id = spec_id  # "SPEC-002"
 ```
 
 #### Then 終了コード 1 が返ること
@@ -651,6 +684,21 @@ def when_20ad7547(context):
       - Unreviewed Changes の検出
     """
     _run_audit(context)
+
+
+    # SPEC-001 (testable=False), SPEC-002 (testable=True, 未カバー)
+    context.repo_root = context.temp_dir / "repo"
+    create_doorstop_project_api(
+        context.repo_root,
+        spec_items=[
+            {"header": "カバー外仕様1", "testable": False},
+            {"header": "未カバー仕様", "testable": True},
+        ],
+    )
+    context.feature_dir = context.temp_dir / "features"
+    # feature ファイルは作らない (SPEC-002 が未カバー)
+    context.feature_dir.mkdir(parents=True, exist_ok=True)
+    context.expected_spec_id = spec_id  # "SPEC-002"
 ```
 
 #### Then 終了コード 1 が返ること

@@ -1,23 +1,26 @@
 active: true
 derived: false
 header: |
-  review コマンド — セマンティックレビュー
+  semantic-review コマンド — セマンティックレビュー
 impl_files:
 - src/spec_weaver/review.py
 - src/spec_weaver/cli.py
 - tests/test_review.py
 - specification/features/steps/step_review.py
+- specification/features/semantic_review.feature
 level: 20.2
 links:
 - REQ-013: mlYsN4aIR9VbxHA-yfOSM2Kvja2WM53jkqu9QVTeP3E=
 normative: true
 ref: ''
-reviewed: -5qvr16VpfOQrXSkZb4UB3zQkLpbRc2xhzEYXNyyeDI=
+reviewed: 3ha3FqDK9lrrjCL7M6RAgVxoBvpi_u8OmzIrAcIjcTU=
 status: implemented
+test_fingerprint: |
+  1f0d1125418eb94a5e8445595c56bd0ec5681fd03ff31964c090b3eb683b017e
 testable: true
 text: |
   ## 概要
-  仕様・Gherkin・実装コードの意味的整合性をLLMで検証する `review` コマンドの仕様。
+  仕様・Gherkin・実装コードの意味的整合性をLLMで検証する `semantic-review` コマンドの仕様。
 
   ## 入力
 

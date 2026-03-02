@@ -1,7 +1,5 @@
 # Feature: scaffold コマンド
 
-> 📋 **Unreviewed Changes**: このフィーチャーファイル自体に未レビューの変更があります。レビュー後に `review` コマンドで更新してください。
-
 **タグ**: `@SPEC-015`
 
 **関連アイテム**: [SPEC-015](../items/SPEC-015.md)
@@ -1058,12 +1056,7 @@ def then_35ff3425(context):
     Scenarios:
       - 差分マージ時の他ファイルコメント行を Duplicate 判定に使用しない
     """
-    assert context.exit_code == 0, f"scaffold 失敗:\n{context.output}"
-    # step_nodup.py にスタブが生成されていること
-    gen_files = list(context.steps_out_dir.glob("step_nodup.py"))
-    assert len(gen_files) >= 1, "step_nodup.py が生成されていません"
-    content = gen_files[0].read_text(encoding="utf-8")
-    assert "@given" in content, "スタブが生成されていません"
+    raise NotImplementedError('STEP: そのステップが Duplicate としてではなくスタブとして生成されること')
 ```
 
 </details>

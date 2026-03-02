@@ -1,7 +1,5 @@
 # Feature: データ抽出基盤
 
-> 📋 **Unreviewed Changes**: このフィーチャーファイル自体に未レビューの変更があります。レビュー後に `review` コマンドで更新してください。
-
 **タグ**: `@SPEC-002`
 
 **関連アイテム**: [SPEC-002](../items/SPEC-002.md) / [SPEC-021](../items/SPEC-021.md)
