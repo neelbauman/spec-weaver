@@ -1,10 +1,11 @@
 # src/spec_weaver/gherkin.py
 # implements: SPEC-021
 # implements: SPEC-002
+# implements: SPEC-024
 
 from collections import defaultdict
 from pathlib import Path
-from typing import Any, Dict, Generator, List, Set, Tuple
+from typing import Any, Dict, Generator, List, Optional, Set, Tuple
 
 from gherkin.parser import Parser
 from gherkin.token_scanner import TokenScanner
@@ -223,6 +224,101 @@ def _get_node_hash_content(node: Any) -> str:
     content = node.get("keyword", "") + node.get("name", "") + (node.get("description", "") or "").strip()
     for step in node.get("steps", []):
         content += step.get("keyword", "") + step.get("text", "")
+    return content
+
+
+# ---------------------------------------------------------------------------
+# .feature ファイル単位フィンガープリント（SPEC-024）
+# ---------------------------------------------------------------------------
+
+_FINGERPRINT_PREFIX = "# spec-weaver-fingerprint: "
+
+
+def compute_feature_file_hash(feature_file: Path) -> str:
+    """
+    .feature ファイル全体の構造コンテンツ（Feature / Background / Scenario）の
+    SHA-256 ハッシュを計算して返します。
+
+    Gherkin パーサーで AST を生成するため、# spec-weaver-fingerprint: コメント行は
+    自動的に除外されます（コメントは Gherkin AST に含まれません）。
+    """
+    import hashlib
+
+    with open(feature_file, "r", encoding="utf-8") as f:
+        content = f.read()
+
+    parser = Parser()
+    ast = parser.parse(TokenScanner(content))
+    feature = ast.get("feature")
+    if not feature:
+        return hashlib.sha256(b"").hexdigest()
+
+    combined = _get_node_hash_content(feature)
+
+    for child in feature.get("children", []):
+        if "background" in child:
+            combined += _get_node_hash_content(child["background"])
+        elif "rule" in child:
+            rule = child["rule"]
+            combined += _get_node_hash_content(rule)
+            for rule_child in rule.get("children", []):
+                if "background" in rule_child:
+                    combined += _get_node_hash_content(rule_child["background"])
+                elif "scenario" in rule_child:
+                    combined += _get_scenario_hash_content(rule_child["scenario"])
+        elif "scenario" in child:
+            combined += _get_scenario_hash_content(child["scenario"])
+
+    return hashlib.sha256(combined.encode("utf-8")).hexdigest()
+
+
+def read_stored_fingerprint(feature_file: Path) -> Optional[str]:
+    """
+    .feature ファイルの先頭行から spec-weaver-fingerprint コメントを読み取り、
+    ハッシュ値を返します。コメントがない場合は None を返します。
+    """
+    try:
+        with open(feature_file, "r", encoding="utf-8") as f:
+            first_line = f.readline()
+        if first_line.startswith(_FINGERPRINT_PREFIX):
+            return first_line[len(_FINGERPRINT_PREFIX):].strip()
+    except OSError:
+        pass
+    return None
+
+
+def write_feature_fingerprint(feature_file: Path, fingerprint: str) -> None:
+    """
+    .feature ファイルの先頭に spec-weaver-fingerprint コメントを書き込みます。
+    既存のコメントがある場合は上書きします。
+    """
+    with open(feature_file, "r", encoding="utf-8") as f:
+        lines = f.readlines()
+
+    comment_line = f"{_FINGERPRINT_PREFIX}{fingerprint}\n"
+
+    if lines and lines[0].startswith(_FINGERPRINT_PREFIX):
+        lines[0] = comment_line
+    else:
+        lines.insert(0, comment_line)
+
+    with open(feature_file, "w", encoding="utf-8") as f:
+        f.writelines(lines)
+
+
+def _get_scenario_hash_content(scenario: Any) -> str:
+    """シナリオノード（steps + examples 含む）のハッシュ計算用コンテンツ文字列を生成する。"""
+    keyword = scenario.get("keyword", "Scenario").strip()
+    content = scenario.get("name", "") + keyword
+    for step in scenario.get("steps", []):
+        content += step.get("keyword", "") + step.get("text", "")
+    for example in scenario.get("examples", []):
+        content += example.get("name", "")
+        header = example.get("tableHeader", {})
+        if header:
+            content += "".join(c["value"] for c in header.get("cells", []))
+        for row in example.get("tableBody", []):
+            content += "".join(c["value"] for c in row.get("cells", []))
     return content
 
 

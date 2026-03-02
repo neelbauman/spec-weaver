@@ -1,3 +1,4 @@
+# spec-weaver-fingerprint: 15d5fb6f482561665a6a41ec38e7d3dff795a95d4f7ab3c2a60a10a322b36fcb
 @SPEC-002
 Feature: データ抽出基盤
   Doorstop と Gherkin から仕様データとテストタグを正確に抽出する。

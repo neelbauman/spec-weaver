@@ -1,3 +1,4 @@
+# spec-weaver-fingerprint: 03feca4dab632e05bd3ab970a35ad511bb4b89ab75b49b6901c80febd5e09254
 @SPEC-003
 Feature: audit コマンド
   仕様とテストの乖離を静的に検知し、CI/CD品質ゲートとして機能する。
@@ -46,3 +47,17 @@ Feature: audit コマンド
     When  audit コマンドを実行する
     Then  終了コード 1 が返ること
     And   Unreviewed Changes テーブルに "SPEC-009" が報告されること
+
+  @SPEC-005
+  Scenario: feature ファイルが Suspect として検出される
+    Given 仕様 "SPEC-009" が未レビュー状態である
+    When  audit コマンドを実行する
+    Then  終了コード 1 が返ること
+    And   Suspect テーブルに対応する feature ファイル名が表示されること
+
+  @SPEC-005
+  Scenario: feature ファイルが Unreviewed として検出される
+    Given ".feature" ファイルのフィンガープリントコメントが現在の内容と一致しない
+    When  audit コマンドを実行する
+    Then  終了コード 1 が返ること
+    And   Unreviewed テーブルに対応する feature ファイル名が表示されること

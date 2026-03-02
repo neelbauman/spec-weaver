@@ -1,11 +1,11 @@
 # [SPEC-020] trace コマンドへの実装ファイル表示の追加
 
 > ⚠️ **Suspect**: 関連するアイテムやテストが変更されました。影響範囲のレビューが必要です。
-> **原因 (Unreviewed)**: [impl_link.feature](../features/impl_link.md)
+> **原因 (Unreviewed)**: [REQ-001](REQ-001.md), [REQ-012](REQ-012.md)
 
 **実装状況**: ✅ implemented
 
-**作成日**: 2026-02-27　|　**更新日**: 2026-03-01
+**作成日**: 2026-02-27　|　**更新日**: 2026-03-02
 
 **上位アイテム**: [REQ-012](REQ-012.md) / **下位アイテム**: [PLAN-001](PLAN-001.md) / **兄弟アイテム**: [SPEC-017](SPEC-017.md), [SPEC-018](SPEC-018.md), [SPEC-019](SPEC-019.md)
 
@@ -50,22 +50,18 @@ REQ-012 仕様アイテムと実装ファイルのリンク管理 🚧 in-progre
 - `impl_files` フィールドとアノテーション両方に存在するファイルは `📁` として一度だけ表示する
 - アノテーションのみのファイルは `📝` として表示する
 
-**テスト実行結果 (集計)**: -
-
-**テスト実行結果 (個別)**: ✅ 13/13 PASS
-
 ### 🧪 検証シナリオ
 
-- ✅ PASS **impl_files にリスト形式でファイルパスを記述できる** — Scenario （[features/impl_link.feature:16](../features/impl_link.md)）
-- ✅ PASS **impl_files が未設定の場合はリンクなしとして扱われる** — Scenario （[features/impl_link.feature:22](../features/impl_link.md)）
-- ✅ PASS **アノテーションのスキャンで仕様IDとファイルの対応を抽出できる** — Scenario （[features/impl_link.feature:30](../features/impl_link.md)）
-- ✅ PASS **1行に複数の仕様IDを記述できる** — Scenario （[features/impl_link.feature:36](../features/impl_link.md)）
-- ✅ PASS **--extensions オプションでスキャン対象を絞れる** — Scenario （[features/impl_link.feature:43](../features/impl_link.md)）
-- ✅ PASS **アノテーションがないファイルはエラーにならない** — Scenario （[features/impl_link.feature:50](../features/impl_link.md)）
-- ✅ PASS **--check-impl オプションで存在しないファイルへの impl_files を検出する** — Scenario （[features/impl_link.feature:58](../features/impl_link.md)）
-- ✅ PASS **impl_files にあってアノテーションがない場合は警告を報告する** — Scenario （[features/impl_link.feature:65](../features/impl_link.md)）
-- ✅ PASS **アノテーションがあって impl_files がない場合は警告を報告する** — Scenario （[features/impl_link.feature:72](../features/impl_link.md)）
-- ✅ PASS **--check-impl なしでは実装リンク検証は実行されない** — Scenario （[features/impl_link.feature:79](../features/impl_link.md)）
-- ✅ PASS **--show-impl オプションで trace ツリーに実装ファイルを表示する** — Scenario （[features/impl_link.feature:87](../features/impl_link.md)）
-- ✅ PASS **アノテーション由来のファイルも trace ツリーに表示される** — Scenario （[features/impl_link.feature:93](../features/impl_link.md)）
-- ✅ PASS **--show-impl なしでは実装ファイルは表示されない** — Scenario （[features/impl_link.feature:100](../features/impl_link.md)）
+- **impl_files にリスト形式でファイルパスを記述できる** — Scenario （[features/impl_link.feature:17](../features/impl_link.md)）
+- **impl_files が未設定の場合はリンクなしとして扱われる** — Scenario （[features/impl_link.feature:23](../features/impl_link.md)）
+- **アノテーションのスキャンで仕様IDとファイルの対応を抽出できる** — Scenario （[features/impl_link.feature:31](../features/impl_link.md)）
+- **1行に複数の仕様IDを記述できる** — Scenario （[features/impl_link.feature:37](../features/impl_link.md)）
+- **--extensions オプションでスキャン対象を絞れる** — Scenario （[features/impl_link.feature:44](../features/impl_link.md)）
+- **アノテーションがないファイルはエラーにならない** — Scenario （[features/impl_link.feature:51](../features/impl_link.md)）
+- **--check-impl オプションで存在しないファイルへの impl_files を検出する** — Scenario （[features/impl_link.feature:59](../features/impl_link.md)）
+- **impl_files にあってアノテーションがない場合は警告を報告する** — Scenario （[features/impl_link.feature:66](../features/impl_link.md)）
+- **アノテーションがあって impl_files がない場合は警告を報告する** — Scenario （[features/impl_link.feature:73](../features/impl_link.md)）
+- **--check-impl なしでは実装リンク検証は実行されない** — Scenario （[features/impl_link.feature:80](../features/impl_link.md)）
+- **--show-impl オプションで trace ツリーに実装ファイルを表示する** — Scenario （[features/impl_link.feature:88](../features/impl_link.md)）
+- **アノテーション由来のファイルも trace ツリーに表示される** — Scenario （[features/impl_link.feature:94](../features/impl_link.md)）
+- **--show-impl なしでは実装ファイルは表示されない** — Scenario （[features/impl_link.feature:101](../features/impl_link.md)）

@@ -1,0 +1,70 @@
+active: true
+derived: false
+header: |
+  review/clear コマンドの責務分離と feature ファイル自己証明フィンガープリント
+level: 1.4
+links:
+- SPEC-005: lHQCAPlJRSEvjWyCtEEjIx_Jlsx8aAzW7PLJ0L8KtB0=
+- SPEC-024: kqPRum_nwbOox7KsWYvenpLUlrlkaaZy_RrltdKqc2w=
+- SPEC-025: VpXsa6n7LO3Aa-DX1IVe1KnACioXofixqy1SW0nSRN4=
+normative: true
+ref: ''
+reviewed: kYi4X0vulNF_CKsmR9nW7x3G_eD0ef9TN7kibg4kYZ0=
+testable: false
+text: |
+  ## 目的
+  `.feature` ファイルのレビュー状態を「ファイル先頭コメント」で自己証明する仕組みに変更し、
+  Doorstop アイテムの suspect 管理を新設 `clear` コマンドに分離する。
+
+  ## タスク一覧
+
+  ### Task 1: gherkin.py — ファイル単位フィンガープリント関数の追加
+  - `compute_feature_file_hash(feature_file: Path) -> str`
+    - Gherkin パーサーで AST を取得し、Feature/Background/Scenario 構造コンテンツを連結して SHA-256 ハッシュを返す
+    - コメント行（`# spec-weaver-fingerprint:` 等）は AST に含まれないため自動除外される
+  - `read_stored_fingerprint(feature_file: Path) -> Optional[str]`
+    - ファイルの先頭行が `# spec-weaver-fingerprint: <hash>` にマッチする場合、ハッシュ値を返す
+    - マッチしない場合は None を返す
+  - `write_feature_fingerprint(feature_file: Path, fingerprint: str) -> None`
+    - ファイル先頭行が `# spec-weaver-fingerprint:` なら上書き、なければ先頭に挿入して保存
+  - 依存: なし
+
+  ### Task 2: review_state.py — feature ファイル unreviewed 判定ロジックの変更
+  - `compute_review_state()` シグネチャを変更: `feature_file_states: Dict[str, bool]` を追加
+  - 旧ロジック（YAML の test_fingerprint 比較で feature ファイルを unreviewed にする）を削除
+  - 新ロジック 1: `feature_file_states` の True エントリをそのまま `unreviewed_nodes` に追加
+  - 新ロジック 2: `gherkin_fingerprints` と YAML `test_fingerprint` の不一致 → SPEC アイテム自身を suspect_causes に追加
+  - 依存: Task 1 完了後
+
+  ### Task 3: cli.py — review コマンドの改修
+  - `review_cmd()` の処理を `.feature` ファイル専用に変更
+  - `compute_feature_file_hash()` でハッシュを計算して `write_feature_fingerprint()` で書き込む
+  - SPEC ID 指定・YAML 書き込み・`doorstop review` 呼び出しの処理を削除
+  - 依存: Task 1 完了後
+
+  ### Task 4: cli.py — clear コマンドの新設
+  - `@app.command("clear")` を追加
+  - SPEC ID 指定時: `get_spec_fingerprints()` でハッシュを計算し `update_item_attribute()` で YAML に書き込み
+  - `.feature` ファイル指定時: ファイル内の全タグに対して同様の処理を実行（旧 review コマンドの `.feature` 処理と同等）
+  - 依存: Task 2 完了後
+
+  ### Task 5: cli.py — compute_review_state() 呼び出し箇所の更新
+  - audit / status / build コマンドで `feature_file_states` を計算して渡す
+  - `feature_file_states` の計算: `feature_dir.rglob("*.feature")` で全ファイルをスキャン
+    - `{fpath: read_stored_fingerprint(f) != compute_feature_file_hash(f)}`
+  - 依存: Task 1, Task 2 完了後
+
+  ### Task 6: ステップ定義の更新
+  - `step_review.py`: 旧シナリオのステップを削除、新シナリオのステップを実装
+  - `step_clear.py`（新規）: `clear.feature` のステップ定義を実装
+  - 依存: Task 3, Task 4 完了後
+
+  ## 実行順序
+  Task 1 → Task 2 → Task 3 → Task 4 → Task 5 → Task 6
+
+  ## 完了条件
+  - `uv run pytest tests/ -q` が通過する
+  - `uv run behave` で新シナリオのステップが実行される
+  - `uv run spec-weaver review specification/features/audit.feature` でファイル先頭にコメントが書き込まれる
+  - `uv run spec-weaver clear SPEC-003 -f specification/features` で YAML が更新される
+  - `uv run spec-weaver audit ./specification/features` で unreviewed 判定がファイルコメント比較ベースになる

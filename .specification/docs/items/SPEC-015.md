@@ -1,8 +1,11 @@
 # [SPEC-015] scaffold コマンド —  behave テストコード自動生成
 
+> ⚠️ **Suspect**: 関連するアイテムやテストが変更されました。影響範囲のレビューが必要です。
+> **原因 (Unreviewed)**: [PLAN-002](PLAN-002.md), [REQ-001](REQ-001.md), [REQ-011](REQ-011.md)
+
 **実装状況**: ✅ implemented
 
-**作成日**: 2026-02-26　|　**更新日**: 2026-03-01
+**作成日**: 2026-02-26　|　**更新日**: 2026-03-02
 
 **上位アイテム**: [REQ-011](REQ-011.md) / **下位アイテム**: [PLAN-002](PLAN-002.md) / **兄弟アイテム**: [SPEC-016](SPEC-016.md)
 
@@ -37,6 +40,12 @@ spec-weaver scaffold <feature_dir>
    - docstring にオリジナルのステップ文と Scenarios セクションを記載
 4. 同一ステップ文が複数シナリオで使われる場合、関数は1回のみ生成する（重複排除）
 5. Docstring の Scenarios セクションには、そのステップを使用する全シナリオを列挙する
+6. 出力先ディレクトリの他ファイルに同一ステップが定義済みの場合（スタブを含む）、
+   そのステップは通常のスタブではなく Duplicate コメントブロックとして出力する。
+   behave はステップをグローバルに解決するため、同一パターンが複数定義されると
+   AmbiguousStep エラーになる。これを防ぐための措置。
+   - 判定対象: `@given/@when/@then/@step` デコレータが付いた有効な行のみ
+   - コメント行（`#` 始まり）内のデコレータは判定対象外とする
 
 ### 差分マージ動作（既存ファイルあり・--overwrite なし）
 1. `.feature` から「仮想新規ファイル」を生成し、理想的な関数順序を得る
@@ -46,6 +55,8 @@ spec-weaver scaffold <feature_dir>
       （直前に存在する関数の直後、アンカーがなければヘッダー直後）
 3. 変更がない場合はファイルへの書き込みを行わない（スキップ）
 4. 変更がある場合は unified diff を生成してコンソールに表示する
+5. 他ファイルに実装済みのステップ（スタブ含む）が新たに追加された場合、
+   既存ファイル内の対応スタブを Duplicate コメントブロックへ置き換える
 
 ### 戻り値（`generate_test_file` 関数）
 - `(Path, "created", "")` — 新規ファイル作成
@@ -66,21 +77,19 @@ spec-weaver scaffold <feature_dir>
 - 新規ステップが .feature の出現順で既存ファイルに挿入されること
 - Git 未コミット変更がある場合に確認プロンプトを表示すること
 - `--force` でプロンプトなしにマージが実行されること
-
-**テスト実行結果 (集計)**: -
-
-**テスト実行結果 (個別)**: ✅ 11/11 PASS
+- 他のステップファイルに定義済みのステップ（スタブ含む）は Duplicate コメントとして生成されること
+- Duplicate コメント行内のデコレータは重複判定に使用されないこと
 
 ### 🧪 検証シナリオ
 
-- ✅ PASS **基本的なテストコード生成** — Scenario （[features/scaffold.feature:5](../features/scaffold.md)）
-- ✅ PASS **ハッシュベースの関数名生成** — Scenario （[features/scaffold.feature:11](../features/scaffold.md)）
-- ✅ PASS **ステップ関数の生成と重複排除** — Scenario （[features/scaffold.feature:18](../features/scaffold.md)）
-- ✅ PASS **Docstring にシナリオリストを記載** — Scenario （[features/scaffold.feature:23](../features/scaffold.md)）
-- ✅ PASS **差分マージ（新規ステップ追記）** — Scenario （[features/scaffold.feature:29](../features/scaffold.md)）
-- ✅ PASS **差分なし時のスキップ** — Scenario （[features/scaffold.feature:37](../features/scaffold.md)）
-- ✅ PASS **既存ファイルの上書き** — Scenario （[features/scaffold.feature:43](../features/scaffold.md)）
-- ✅ PASS **Git 未コミット変更の確認プロンプト** — Scenario （[features/scaffold.feature:48](../features/scaffold.md)）
-- ✅ PASS **--force オプションで確認プロンプトをスキップ** — Scenario （[features/scaffold.feature:54](../features/scaffold.md)）
-- ✅ PASS **差分マージ時の Duplicate スタブのコメント化** — Scenario （[features/scaffold.feature:59](../features/scaffold.md)）
-- ✅ PASS **差分マージ時の他ファイルコメント行を Duplicate 判定に使用しない** — Scenario （[features/scaffold.feature:66](../features/scaffold.md)）
+- **基本的なテストコード生成** — Scenario （[features/scaffold.feature:6](../features/scaffold.md)）
+- **ハッシュベースの関数名生成** — Scenario （[features/scaffold.feature:12](../features/scaffold.md)）
+- **ステップ関数の生成と重複排除** — Scenario （[features/scaffold.feature:19](../features/scaffold.md)）
+- **Docstring にシナリオリストを記載** — Scenario （[features/scaffold.feature:24](../features/scaffold.md)）
+- **差分マージ（新規ステップ追記）** — Scenario （[features/scaffold.feature:30](../features/scaffold.md)）
+- **差分なし時のスキップ** — Scenario （[features/scaffold.feature:38](../features/scaffold.md)）
+- **既存ファイルの上書き** — Scenario （[features/scaffold.feature:44](../features/scaffold.md)）
+- **Git 未コミット変更の確認プロンプト** — Scenario （[features/scaffold.feature:49](../features/scaffold.md)）
+- **--force オプションで確認プロンプトをスキップ** — Scenario （[features/scaffold.feature:55](../features/scaffold.md)）
+- **差分マージ時の Duplicate スタブのコメント化** — Scenario （[features/scaffold.feature:60](../features/scaffold.md)）
+- **差分マージ時の他ファイルコメント行を Duplicate 判定に使用しない** — Scenario （[features/scaffold.feature:67](../features/scaffold.md)）

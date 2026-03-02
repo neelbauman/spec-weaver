@@ -17,6 +17,18 @@ def then_exit_code(context, code):
     )
 
 
+@then("エラーメッセージが表示される")  # type: ignore
+def then_error_message(context):
+    """エラーメッセージが表示される
+
+    Scenarios:
+      - 複数コマンドの共通エラー検証ステップ
+    """
+    assert len(context.output.strip()) > 0, (
+        f"エラーメッセージが出力にありません。output:\n{context.output}"
+    )
+
+
 @then("出力にツリー構造が含まれる")  # type: ignore
 def then_output_has_tree(context):
     """出力にツリー構造が含まれる

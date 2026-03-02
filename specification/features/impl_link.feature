@@ -1,3 +1,4 @@
+# spec-weaver-fingerprint: cf89b3e4e58d61268dc81d76d9f7769fc56d5d3ed31d5221ccd2cfe07947fdb3
 @SPEC-017 @SPEC-018 @SPEC-019 @SPEC-020
 Feature: 仕様アイテムと実装ファイルのリンク管理
   DoorstopのYAML impl_files カスタム属性とコードアノテーションを組み合わせて、

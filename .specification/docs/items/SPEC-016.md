@@ -1,5 +1,8 @@
 # [SPEC-016] CI/CD パイプライン統合 — テスト実行・結果反映の自動化
 
+> ⚠️ **Suspect**: 関連するアイテムやテストが変更されました。影響範囲のレビューが必要です。
+> **原因 (Unreviewed)**: [REQ-001](REQ-001.md), [REQ-011](REQ-011.md)
+
 **実装状況**: ✅ implemented
 
 **作成日**: 2026-02-26　|　**更新日**: 2026-03-01
@@ -44,10 +47,8 @@ spec-weaver ci <feature_dir>
 - テスト失敗時もドキュメント生成が行われ、FAIL 結果が反映されること
 - `--scaffold` オプションでテストコード生成も含められること
 
-**テスト実行結果 (個別)**: ✅ 3/3 PASS
-
 ### 🧪 検証シナリオ
 
-- ✅ PASS **テスト実行とドキュメント生成の一貫実行** — Scenario （[features/ci.feature:5](../features/ci.md)）
-- ✅ PASS **テスト失敗時のドキュメント生成継続** — Scenario （[features/ci.feature:13](../features/ci.md)）
-- ✅ PASS **scaffold 付き ci 実行** — Scenario （[features/ci.feature:19](../features/ci.md)）
+- **テスト実行とドキュメント生成の一貫実行** — Scenario （[features/ci.feature:6](../features/ci.md)）
+- **テスト失敗時のドキュメント生成継続** — Scenario （[features/ci.feature:14](../features/ci.md)）
+- **scaffold 付き ci 実行** — Scenario （[features/ci.feature:20](../features/ci.md)）

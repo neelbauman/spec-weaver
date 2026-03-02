@@ -1,6 +1,7 @@
 # Feature: status コマンド
 
-> 📋 **Unreviewed Changes**: このフィーチャーファイル自体に未レビューの変更があります。レビュー後に `review` コマンドで更新してください。
+> ⚠️ **Suspect**: 関連する仕様や他のテストが変更されました。影響範囲のレビューが必要です。
+> **原因 (Unreviewed)**: [REQ-001](../items/REQ-001.md), [REQ-003](../items/REQ-003.md)
 
 **タグ**: `@SPEC-007`
 
@@ -19,39 +20,6 @@ REQ・SPECの実装ステータスをRichテーブル形式で一覧表示する
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
-#### Given REQ-001 が status: draft、SPEC-001 が status: implemented に設定されている
-
-```python
-@given("REQ-001 が status: draft、SPEC-001 が status: implemented に設定されている")  # type: ignore
-def given_ef098fcf(context):
-    """REQ-001 が status: draft、SPEC-001 が status: implemented に設定されている
-
-    Scenarios:
-      - 全アイテムのステータスを一覧表示する
-    """
-    context.repo_root = context.temp_dir / "repo"
-    create_doorstop_project_api(
-        context.repo_root,
-        req_items=[{"header": "要件A", "testable": False, "status": "draft"}],
-        spec_items=[{"header": "仕様A", "testable": True, "status": "implemented"}],
-    )
-```
-
-#### When status コマンドを実行する
-
-```python
-@when("status コマンドを実行する")  # type: ignore
-def when_d68a8d9a(context):
-    """status コマンドを実行する
-
-    Scenarios:
-      - 全アイテムのステータスを一覧表示する
-      - status 未設定のアイテムは "-" と表示される
-      - レビューステータスと最終更新日が表示される
-    """
-    _run_status(context)
-```
-
 #### Then 終了コード 0 が返ること
 
 ```python
@@ -60,45 +28,39 @@ def then_4f25c571(context):
     """終了コード 0 が返ること
 
     Scenarios:
-      - 完全一致時の監査成功
+      - 全アイテムのステータスを一覧表示する
+      - status 未設定のアイテムは "-" と表示される
+      - --filter で特定ステータスに絞り込める
+      - --filter に一致するアイテムが存在しない場合に通知される
+      - レビューステータスと最終更新日が表示される
     """
-    assert context.exit_code == 0, (
-        f"終了コード {context.exit_code} (期待: 0)\n{context.output}"
-    )
+    raise NotImplementedError('STEP: 終了コード 0 が返ること')
 ```
 
 #### And REQ-001 が "draft" バッジとともに表示されること
 
 ```python
-@then('REQ-001 が "{badge}" バッジとともに表示されること')  # type: ignore
-def then_6e220346(context, badge):
+@then('REQ-001 が "{param0}" バッジとともに表示されること')  # type: ignore
+def then_6e220346(context, param0):
     """REQ-001 が "draft" バッジとともに表示されること
 
     Scenarios:
       - 全アイテムのステータスを一覧表示する
     """
-    assert "REQ-001" in context.output, f"REQ-001 が出力にありません:\n{context.output}"
-    assert badge in context.output, (
-        f"バッジ {badge!r} が出力にありません:\n{context.output}"
-    )
+    raise NotImplementedError('STEP: REQ-001 が "{param0}" バッジとともに表示されること')
 ```
 
 #### And SPEC-001 が "implemented" バッジとともに表示されること
 
 ```python
-@then('SPEC-001 が "{badge}" バッジとともに表示されること')  # type: ignore
-def then_9f0d7f01(context, badge):
+@then('SPEC-001 が "{param0}" バッジとともに表示されること')  # type: ignore
+def then_9f0d7f01(context, param0):
     """SPEC-001 が "implemented" バッジとともに表示されること
 
     Scenarios:
       - 全アイテムのステータスを一覧表示する
     """
-    assert "SPEC-001" in context.output, (
-        f"SPEC-001 が出力にありません:\n{context.output}"
-    )
-    assert badge in context.output, (
-        f"バッジ {badge!r} が出力にありません:\n{context.output}"
-    )
+    raise NotImplementedError('STEP: SPEC-001 が "{param0}" バッジとともに表示されること')
 ```
 
 </details>
@@ -114,39 +76,6 @@ def then_9f0d7f01(context, badge):
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
-#### Given SPEC-001 に status フィールドが設定されていない
-
-```python
-@given("SPEC-001 に status フィールドが設定されていない")  # type: ignore
-def given_0d995d24(context):
-    """SPEC-001 に status フィールドが設定されていない
-
-    Scenarios:
-      - status 未設定のアイテムは "-" と表示される
-    """
-    context.repo_root = context.temp_dir / "repo"
-    # status なしで作成
-    create_doorstop_project_api(
-        context.repo_root,
-        spec_items=[{"header": "仕様A", "testable": True}],
-    )
-```
-
-#### When status コマンドを実行する
-
-```python
-@when("status コマンドを実行する")  # type: ignore
-def when_d68a8d9a(context):
-    """status コマンドを実行する
-
-    Scenarios:
-      - 全アイテムのステータスを一覧表示する
-      - status 未設定のアイテムは "-" と表示される
-      - レビューステータスと最終更新日が表示される
-    """
-    _run_status(context)
-```
-
 #### Then 終了コード 0 が返ること
 
 ```python
@@ -155,26 +84,26 @@ def then_4f25c571(context):
     """終了コード 0 が返ること
 
     Scenarios:
-      - 完全一致時の監査成功
+      - 全アイテムのステータスを一覧表示する
+      - status 未設定のアイテムは "-" と表示される
+      - --filter で特定ステータスに絞り込める
+      - --filter に一致するアイテムが存在しない場合に通知される
+      - レビューステータスと最終更新日が表示される
     """
-    assert context.exit_code == 0, (
-        f"終了コード {context.exit_code} (期待: 0)\n{context.output}"
-    )
+    raise NotImplementedError('STEP: 終了コード 0 が返ること')
 ```
 
 #### And SPEC-001 の実装状況が "-" と表示されること
 
 ```python
-@then('SPEC-001 の実装状況が "{expected}" と表示されること')  # type: ignore
-def then_5818121f(context, expected):
+@then('SPEC-001 の実装状況が "{param0}" と表示されること')  # type: ignore
+def then_5818121f(context, param0):
     """SPEC-001 の実装状況が "-" と表示されること
 
     Scenarios:
       - status 未設定のアイテムは "-" と表示される
     """
-    assert expected in context.output, (
-        f"{expected!r} が出力にありません:\n{context.output}"
-    )
+    raise NotImplementedError('STEP: SPEC-001 の実装状況が "{param0}" と表示されること')
 ```
 
 </details>
@@ -191,40 +120,18 @@ def then_5818121f(context, expected):
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
-#### Given REQ-001 が status: implemented、REQ-002 が status: draft に設定されている
-
-```python
-@given("REQ-001 が status: implemented、REQ-002 が status: draft に設定されている")  # type: ignore
-def given_58beb4fc(context):
-    """REQ-001 が status: implemented、REQ-002 が status: draft に設定されている
-
-    Scenarios:
-      - --filter で特定ステータスに絞り込める
-    """
-    context.repo_root = context.temp_dir / "repo"
-    create_doorstop_project_api(
-        context.repo_root,
-        req_items=[
-            {"header": "実装済み要件", "testable": False, "status": "implemented"},
-            {"header": "ドラフト要件", "testable": False, "status": "draft"},
-        ],
-    )
-```
-
 #### When status コマンドを "--filter implemented" オプション付きで実行する
 
 ```python
-@when('status コマンドを "{option}" オプション付きで実行する')  # type: ignore
-def when_d36ae1bf(context, option):
+@when('status コマンドを "{param0}" オプション付きで実行する')  # type: ignore
+def when_d36ae1bf(context, param0):
     """status コマンドを "--filter implemented" オプション付きで実行する
 
     Scenarios:
       - --filter で特定ステータスに絞り込める
       - --filter に一致するアイテムが存在しない場合に通知される
     """
-    # option例: "--filter implemented"
-    parts = option.split()
-    _run_status(context, extra_args=parts)
+    raise NotImplementedError('STEP: status コマンドを "{param0}" オプション付きで実行する')
 ```
 
 #### Then 終了コード 0 が返ること
@@ -235,39 +142,13 @@ def then_4f25c571(context):
     """終了コード 0 が返ること
 
     Scenarios:
-      - 完全一致時の監査成功
-    """
-    assert context.exit_code == 0, (
-        f"終了コード {context.exit_code} (期待: 0)\n{context.output}"
-    )
-```
-
-#### And REQ-001 が表示されること
-
-```python
-@then("REQ-001 が表示されること")  # type: ignore
-def then_2847178d(context):
-    """REQ-001 が表示されること
-
-    Scenarios:
+      - 全アイテムのステータスを一覧表示する
+      - status 未設定のアイテムは "-" と表示される
       - --filter で特定ステータスに絞り込める
+      - --filter に一致するアイテムが存在しない場合に通知される
+      - レビューステータスと最終更新日が表示される
     """
-    assert "REQ-001" in context.output, f"REQ-001 が出力にありません:\n{context.output}"
-```
-
-#### And REQ-002 は表示されないこと
-
-```python
-@then("REQ-002 は表示されないこと")  # type: ignore
-def then_9fc4e668(context):
-    """REQ-002 は表示されないこと
-
-    Scenarios:
-      - --filter で特定ステータスに絞り込める
-    """
-    assert "REQ-002" not in context.output, (
-        f"REQ-002 が出力に含まれています:\n{context.output}"
-    )
+    raise NotImplementedError('STEP: 終了コード 0 が返ること')
 ```
 
 </details>
@@ -286,34 +167,28 @@ def then_9fc4e668(context):
 #### Given すべてのアイテムの status が "draft" に設定されている
 
 ```python
-@given('すべてのアイテムの status が "{status}" に設定されている')  # type: ignore
-def given_f93df893(context, status):
+@given('すべてのアイテムの status が "{param0}" に設定されている')  # type: ignore
+def given_f93df893(context, param0):
     """すべてのアイテムの status が "draft" に設定されている
 
     Scenarios:
       - --filter に一致するアイテムが存在しない場合に通知される
     """
-    context.repo_root = context.temp_dir / "repo"
-    create_doorstop_project_api(
-        context.repo_root,
-        spec_items=[{"header": "仕様A", "testable": True, "status": status}],
-    )
+    raise NotImplementedError('STEP: すべてのアイテムの status が "{param0}" に設定されている')
 ```
 
 #### When status コマンドを "--filter implemented" オプション付きで実行する
 
 ```python
-@when('status コマンドを "{option}" オプション付きで実行する')  # type: ignore
-def when_d36ae1bf(context, option):
+@when('status コマンドを "{param0}" オプション付きで実行する')  # type: ignore
+def when_d36ae1bf(context, param0):
     """status コマンドを "--filter implemented" オプション付きで実行する
 
     Scenarios:
       - --filter で特定ステータスに絞り込める
       - --filter に一致するアイテムが存在しない場合に通知される
     """
-    # option例: "--filter implemented"
-    parts = option.split()
-    _run_status(context, extra_args=parts)
+    raise NotImplementedError('STEP: status コマンドを "{param0}" オプション付きで実行する')
 ```
 
 #### Then 終了コード 0 が返ること
@@ -324,27 +199,13 @@ def then_4f25c571(context):
     """終了コード 0 が返ること
 
     Scenarios:
-      - 完全一致時の監査成功
-    """
-    assert context.exit_code == 0, (
-        f"終了コード {context.exit_code} (期待: 0)\n{context.output}"
-    )
-```
-
-#### And 一致するアイテムが見つからなかった旨が表示されること
-
-```python
-@then("一致するアイテムが見つからなかった旨が表示されること")  # type: ignore
-def then_b2e9a1c0(context):
-    """一致するアイテムが見つからなかった旨が表示されること
-
-    Scenarios:
+      - 全アイテムのステータスを一覧表示する
+      - status 未設定のアイテムは "-" と表示される
+      - --filter で特定ステータスに絞り込める
       - --filter に一致するアイテムが存在しない場合に通知される
+      - レビューステータスと最終更新日が表示される
     """
-    assert any(
-        kw in context.output
-        for kw in ["見つかりませんでした", "一致するアイテムが存在しません", "No items", "not found"]
-    ), f"未発見メッセージが出力にありません:\n{context.output}"
+    raise NotImplementedError('STEP: 終了コード 0 が返ること')
 ```
 
 </details>
@@ -361,39 +222,6 @@ def then_b2e9a1c0(context):
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
-#### Given Doorstopのアイテムが存在する
-
-```python
-@given("Doorstopのアイテムが存在する")  # type: ignore
-def given_7c3d8e9f(context):
-    """Doorstopのアイテムが存在する
-
-    Scenarios:
-      - レビューステータスと最終更新日が表示される
-    """
-    context.repo_root = context.temp_dir / "repo"
-    create_doorstop_project_api(
-        context.repo_root,
-        req_items=[{"header": "要件A", "testable": False}],
-        spec_items=[{"header": "仕様A", "testable": True}],
-    )
-```
-
-#### When status コマンドを実行する
-
-```python
-@when("status コマンドを実行する")  # type: ignore
-def when_d68a8d9a(context):
-    """status コマンドを実行する
-
-    Scenarios:
-      - 全アイテムのステータスを一覧表示する
-      - status 未設定のアイテムは "-" と表示される
-      - レビューステータスと最終更新日が表示される
-    """
-    _run_status(context)
-```
-
 #### Then 終了コード 0 が返ること
 
 ```python
@@ -402,43 +230,13 @@ def then_4f25c571(context):
     """終了コード 0 が返ること
 
     Scenarios:
-      - 完全一致時の監査成功
-    """
-    assert context.exit_code == 0, (
-        f"終了コード {context.exit_code} (期待: 0)\n{context.output}"
-    )
-```
-
-#### And レビューステータス列が表示されること
-
-```python
-@then("レビューステータス列が表示されること")  # type: ignore
-def then_4a2b3c1d(context):
-    """レビューステータス列が表示されること
-
-    Scenarios:
+      - 全アイテムのステータスを一覧表示する
+      - status 未設定のアイテムは "-" と表示される
+      - --filter で特定ステータスに絞り込める
+      - --filter に一致するアイテムが存在しない場合に通知される
       - レビューステータスと最終更新日が表示される
     """
-    assert any(
-        kw in context.output
-        for kw in ["reviewed", "レビュー", "Reviewed"]
-    ), f"レビューステータス列が出力にありません:\n{context.output}"
-```
-
-#### And 最終更新日列が表示されること
-
-```python
-@then("最終更新日列が表示されること")  # type: ignore
-def then_9e7f6a5b(context):
-    """最終更新日列が表示されること
-
-    Scenarios:
-      - レビューステータスと最終更新日が表示される
-    """
-    assert any(
-        kw in context.output
-        for kw in ["updated", "更新", "Updated", "-"]
-    ), f"最終更新日列が出力にありません:\n{context.output}"
+    raise NotImplementedError('STEP: 終了コード 0 が返ること')
 ```
 
 </details>
@@ -449,6 +247,7 @@ def then_9e7f6a5b(context):
 <details><summary>Raw .feature source</summary>
 
 ```gherkin
+# spec-weaver-fingerprint: 747a067a366f71279c1117cac9de1de2defd17db0b57a350b3806f514bd482a0
 @SPEC-007
 Feature: status コマンド
   REQ・SPECの実装ステータスをRichテーブル形式で一覧表示する。

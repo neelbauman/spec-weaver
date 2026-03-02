@@ -1,0 +1,54 @@
+active: true
+derived: false
+header: |
+  clear コマンド — Doorstop test_fingerprint 更新
+level: 20.5
+links:
+- REQ-004: KXm5cZc2wXUhF29d-4lpSPbclfjN4ruCBIwDvWX93tg=
+normative: true
+ref: ''
+reviewed: _QbPT_3tH6s9w-QqiKepp2rpCSZ2GwTYd41B2ct3h4Q=
+impl_files:
+- src/spec_weaver/cli.py
+status: implemented
+testable: true
+text: |
+  ## 概要
+  Doorstop アイテムの `test_fingerprint` を現在の Gherkin 内容のハッシュで更新し、
+  Suspect 状態を解除する `clear` コマンドの仕様。
+
+  ## コマンド形式
+
+  ```
+  spec-weaver clear <ITEM_ID_OR_FEATURE_PATH> [OPTIONS]
+  ```
+
+  ### 引数
+  - `<ITEM_ID_OR_FEATURE_PATH>` (必須): 対象。以下のいずれか:
+    - 仕様アイテムID（例: `SPEC-003`）
+    - `.feature` ファイルのパス（例: `specification/features/audit.feature`）
+
+  ### オプション
+  - `--feature-dir <path>` (オプション): `.feature` ファイル検索ディレクトリ（デフォルト: `specification/features`）
+  - `--repo-root <path>` (オプション): Doorstop プロジェクトルート（デフォルト: カレントディレクトリ）
+
+  ## 処理
+
+  ### アイテムID が指定された場合
+  1. 指定アイテムに紐づく Gherkin シナリオのフィンガープリント（SHA-256）を計算する。
+  2. 該当する Doorstop YAML の `test_fingerprint` フィールドを新しいハッシュ値で上書きする。
+  3. 更新したアイテム ID とハッシュ値をコンソールに表示する。
+
+  ### `.feature` ファイルが指定された場合
+  1. ファイル内の全仕様 ID タグを収集する。
+  2. 各アイテムについて上記と同じ `test_fingerprint` 更新を実行する。
+  3. 更新件数をコンソールに表示する。
+
+  ## 出力
+  - 成功時: 更新されたアイテム ID とフィンガープリントのサマリーを表示する
+  - 対象なし: 警告メッセージを表示し終了コード 1 を返す
+  - 存在しないアイテム ID: エラーメッセージを表示し終了コード 1 を返す
+
+  ## 関連コマンドとの役割分担
+  - `spec-weaver review <feature_file>`: `.feature` ファイル自身のレビュー状態を記録する（ファイルコメント）
+  - `spec-weaver clear <SPEC_ID>`: Doorstop アイテムが現在の Gherkin 内容を把握済みであることを記録する（YAML）

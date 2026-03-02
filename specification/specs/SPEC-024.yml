@@ -1,56 +1,58 @@
 active: true
 derived: false
 header: |
-  review コマンド — Gherkin フィンガープリント更新
+  review コマンド — .feature ファイルへのフィンガープリント書き込み
 impl_files:
 - src/spec_weaver/cli.py
+- src/spec_weaver/gherkin.py
 level: 20.4
 links:
 - REQ-004: KXm5cZc2wXUhF29d-4lpSPbclfjN4ruCBIwDvWX93tg=
 normative: true
 ref: ''
-reviewed: VyOihnalOVkdAbxnRZV2ve5DLJIcnBBPz9qnJYMemW4=
+reviewed: ISgYOQhZE9VjVtN1ewapLL9jhC3dlc--Cjk-Q9UVtzs=
 status: implemented
-test_fingerprint: |
-  75b3605ce0025afec93e483ea1651c1b2f8a9e2093706579bc76ce8877543eb1
 testable: true
 text: |
   ## 概要
-  指定した仕様アイテム（または `.feature` ファイル）の Gherkin フィンガープリントを
-  最新の状態に更新し、Gherkin 側の「レビュー済み」状態を記録する `review` コマンドの仕様。
+  指定した `.feature` ファイルの構造コンテンツ（Feature / Background / Scenario）の
+  SHA-256 ハッシュを計算し、ファイル先頭にコメントとして書き込む `review` コマンドの仕様。
+  これにより、ファイルが最後にレビューされた時点の状態を `.feature` ファイル自身が記録する。
 
   ## コマンド形式
 
   ```
-  spec-weaver review <ITEM_ID_OR_FEATURE_PATH> [OPTIONS]
+  spec-weaver review <FEATURE_FILE_PATH>
   ```
 
   ### 引数
-  - `<ITEM_ID_OR_FEATURE_PATH>` (必須): レビュー対象。以下のいずれか:
-    - 仕様アイテムID（例: `SPEC-003`）
-    - `.feature` ファイルのパス（例: `specification/features/audit.feature`）
-
-  ### オプション
-  - `--feature-dir <path>` (オプション): `.feature` ファイル検索ディレクトリ（デフォルト: `specification/features`）
-  - `--repo-root <path>` (オプション): Doorstop プロジェクトルート（デフォルト: カレントディレクトリ）
+  - `<FEATURE_FILE_PATH>` (必須): レビュー対象の `.feature` ファイルパス
 
   ## 処理
 
-  ### アイテムID が指定された場合
-  1. 対象アイテムに紐づく Gherkin シナリオのフィンガープリント（SHA-256）を計算する。
-  2. 該当する Doorstop YAML の `test_fingerprint` フィールドを新しいハッシュ値で上書きする。
-  3. 次に実行すべき `doorstop review <ITEM_ID>` コマンドをガイダンス表示する。
+  1. 指定された `.feature` ファイルを Gherkin パーサーで解析する。
+  2. Feature / Background / 全 Scenario の構造コンテンツ（keyword, name, steps, examples）を
+     連結して SHA-256 ハッシュを計算する。
+     - ハッシュ計算の対象: Feature の keyword・name・description、Background の steps、
+       各 Scenario の name・keyword・steps・examples テーブル
+     - ハッシュ計算の **除外対象**: ファイル先頭の `# spec-weaver-fingerprint:` コメント行
+  3. ファイルの先頭行に `# spec-weaver-fingerprint: <sha256>` の形式でコメントを書き込む。
+     - 既存のコメントがある場合は上書き更新する。
+     - コメントがない場合は先頭に挿入する。
 
-  ### `.feature` ファイルが指定された場合
-  1. ファイル内の全仕様ID タグを収集する（`get_tags` 利用）。
-  2. 各アイテムについて上記と同じフィンガープリント更新を実行する。
-  3. 更新件数と `doorstop review <ID1> <ID2> ...` のガイダンスを表示する。
+  ## コメント形式
+
+  ```gherkin
+  # spec-weaver-fingerprint: abc123def456...
+  @SPEC-024
+  Feature: ...
+  ```
 
   ## 出力
-  - 成功時: 更新されたアイテムIDとフィンガープリントのサマリーを表示する
-  - 対象なし: 警告メッセージを表示し終了コード 1 を返す
-  - 例外: エラーメッセージを表示し終了コード 1 を返す
+  - 成功時: 書き込んだファイルパスとハッシュ値を表示する
+  - 指定ファイルが存在しない: エラーメッセージを表示し終了コード 1 を返す
+  - 指定ファイルが `.feature` でない: エラーメッセージを表示し終了コード 1 を返す
 
-  ## 注意事項
-  - この操作により YAML が書き換えられるため、Doorstop 本体の `reviewed` 状態がリセットされる場合がある。
-  - フィンガープリント更新後は必ず `doorstop review <ITEM_ID>` を実行して Doorstop 側もレビュー済みにすること。
+  ## 関連コマンドとの役割分担
+  - `spec-weaver review <feature_file>`: `.feature` ファイル自身のレビュー状態を記録する（本仕様）
+  - `spec-weaver clear <SPEC_ID>`: Doorstop アイテムが現在の Gherkin 内容を把握済みであることを記録する（SPEC-025）

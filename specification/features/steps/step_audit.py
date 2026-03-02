@@ -1,366 +1,261 @@
 """behave steps for: audit コマンド"""
 
-from __future__ import annotations
-import sys
-from pathlib import Path
-from behave import given, when, then
+from behave import given, when, then, step
 
-from _helpers import (
-    PROJECT_ROOT,
-    create_doorstop_project_api,
-    create_doorstop_project_yaml,
-    minimal_feature,
-    run_spec_weaver,
-    write_feature_file,
-    assert_in_output,
-)
+# ======================================================================
+# Steps
+# ======================================================================
 
-
-# 共通: audit 実行
-def _run_audit(context, extra_args=None):
-    args = ["audit", str(context.feature_dir), "--repo-root", str(context.repo_root)]
-    if extra_args:
-        args += extra_args
-    context.result = run_spec_weaver(args)
-    context.exit_code = context.result.returncode
-    context.output = context.result.stdout + context.result.stderr
+# [Duplicate Skip] This step is already defined elsewhere
+# @given('すべてのtestable仕様に対応するGherkinテストが存在する')  # type: ignore
+# def given_a7b8516a(context):
+#     """すべてのtestable仕様に対応するGherkinテストが存在する
+# 
+#     Scenarios:
+#       - 完全一致時の監査成功
+#     """
+#     raise NotImplementedError('STEP: すべてのtestable仕様に対応するGherkinテストが存在する')
 
 
-@given("すべてのtestable仕様に対応するGherkinテストが存在する")  # type: ignore
-def given_a7b8516a(context):
-    """すべてのtestable仕様に対応するGherkinテストが存在する
-
-    Scenarios:
-      - 完全一致時の監査成功
-    """
-    # プロジェクト作成 + 全 SPEC にフィーチャーファイルを用意
-    context.repo_root = context.temp_dir / "repo"
-    create_doorstop_project_api(
-        context.repo_root, spec_items=[{"header": "仕様A", "testable": True}]
-    )
-    context.feature_dir = context.temp_dir / "features"
-    write_feature_file(
-        context.feature_dir / "spec_a.feature", minimal_feature("@SPEC-001")
-    )
-
-    # test_fingerprint の設定と Doorstop 本体のレビュー
-    run_spec_weaver(
-        [
-            "review",
-            "SPEC-001",
-            "-f",
-            str(context.feature_dir),
-            "-r",
-            str(context.repo_root),
-        ]
-    )
-    import subprocess
-
-    subprocess.run(
-        ["doorstop", "review", "SPEC-001"],
-        cwd=str(context.repo_root),
-        check=True,
-        capture_output=True,
-    )
+# [Duplicate Skip] This step is already defined elsewhere
+# @when('audit コマンドを実行する')  # type: ignore
+# def when_20ad7547(context):
+#     """audit コマンドを実行する
+# 
+#     Scenarios:
+#       - 完全一致時の監査成功
+#       - テスト漏れの検出
+#       - 孤児タグの検出
+#       - テスト漏れと孤児タグの同時検出
+#       - testable: false の仕様はスキップされる
+#       - Suspect Link の検出
+#       - Unreviewed Changes の検出
+#       - feature ファイルが Suspect として検出される
+#       - feature ファイルが Unreviewed として検出される
+#     """
+#     raise NotImplementedError('STEP: audit コマンドを実行する')
 
 
-@when("audit コマンドを実行する")  # type: ignore
-def when_20ad7547(context):
-    """audit コマンドを実行する
-
-    Scenarios:
-      - 完全一致時の監査成功
-      - テスト漏れの検出
-      - 孤児タグの検出
-      - テスト漏れと孤児タグの同時検出
-      - testable: false の仕様はスキップされる
-      - Suspect Link の検出
-      - Unreviewed Changes の検出
-    """
-    _run_audit(context)
+# [Duplicate Skip] This step is already defined elsewhere
+# @then('終了コード 0 が返ること')  # type: ignore
+# def then_4f25c571(context):
+#     """終了コード 0 が返ること
+# 
+#     Scenarios:
+#       - 完全一致時の監査成功
+#     """
+#     raise NotImplementedError('STEP: 終了コード 0 が返ること')
 
 
-@then('終了コード 0 が返ること')  # type: ignore
-def then_4f25c571(context):
-    """終了コード 0 が返ること
-
-    Scenarios:
-      - 完全一致時の監査成功
-    """
-    assert context.exit_code == 0, (
-        f"終了コード {context.exit_code} (期待: 0)\n{context.output}"
-    )
-
-
-@then('成功メッセージが表示されること')  # type: ignore
-def then_f7642361(context):
-    """成功メッセージが表示されること
-
-    Scenarios:
-      - 完全一致時の監査成功
-    """
-    assert any(
-        kw in context.output
-        for kw in ["OK", "ok", "成功", "passed", "✓", "✅", "問題なし", "All"]
-    ), f"成功メッセージが出力にありません:\n{context.output}"
+# [Duplicate Skip] This step is already defined elsewhere
+# @then('成功メッセージが表示されること')  # type: ignore
+# def then_f7642361(context):
+#     """成功メッセージが表示されること
+# 
+#     Scenarios:
+#       - 完全一致時の監査成功
+#     """
+#     raise NotImplementedError('STEP: 成功メッセージが表示されること')
 
 
-@given('testable な仕様 "{param0}" に対応するGherkinテストが存在しない')  # type: ignore
-def given_03339ad7(context, param0):
-    """testable な仕様 "SPEC-002" に対応するGherkinテストが存在しない
-
-    Scenarios:
-      - テスト漏れの検出
-    """
-    # SPEC-001 (testable=False) は audit でスキップされ、
-    # SPEC-002 (testable=True) だけが未カバーとして報告される
-    context.repo_root = context.temp_dir / "repo"
-    create_doorstop_project_api(
-        context.repo_root,
-        spec_items=[
-            {"header": "テスト不可仕様", "testable": False},
-            {"header": "未カバー仕様", "testable": True},
-        ],
-    )
-    context.feature_dir = context.temp_dir / "features"
-    context.feature_dir.mkdir(parents=True, exist_ok=True)
+# [Duplicate Skip] This step is already defined elsewhere
+# @given('testable な仕様 "{param0}" に対応するGherkinテストが存在しない')  # type: ignore
+# def given_03339ad7(context, param0):
+#     """testable な仕様 "SPEC-002" に対応するGherkinテストが存在しない
+# 
+#     Scenarios:
+#       - テスト漏れの検出
+#     """
+#     raise NotImplementedError('STEP: testable な仕様 "{param0}" に対応するGherkinテストが存在しない')
 
 
-@then("終了コード 1 が返ること")  # type: ignore
-def then_4dccc2fd(context):
-    """終了コード 1 が返ること
+# [Duplicate Skip] This step is already defined elsewhere
+# @then('終了コード 1 が返ること')  # type: ignore
+# def then_4dccc2fd(context):
+#     """終了コード 1 が返ること
+# 
+#     Scenarios:
+#       - テスト漏れの検出
+#       - 孤児タグの検出
+#       - テスト漏れと孤児タグの同時検出
+#       - Suspect Link の検出
+#       - Unreviewed Changes の検出
+#       - feature ファイルが Suspect として検出される
+#       - feature ファイルが Unreviewed として検出される
+#     """
+#     raise NotImplementedError('STEP: 終了コード 1 が返ること')
 
-    Scenarios:
-      - テスト漏れの検出
-      - 孤児タグの検出
-      - テスト漏れと孤児タグの同時検出
-      - Suspect Link の検出
-      - Unreviewed Changes の検出
-    """
-    assert context.exit_code == 1, (
-        f"終了コード {context.exit_code} (期待: 1)\n{context.output}"
-    )
 
-
-@then('テストが実装されていない仕様として "{spec_id}" が報告されること')  # type: ignore
-def then_6664aa42(context, spec_id):
+@then('テストが実装されていない仕様として "{param0}" が報告されること')  # type: ignore
+def then_6664aa42(context, param0):
     """テストが実装されていない仕様として "SPEC-002" が報告されること
 
     Scenarios:
       - テスト漏れの検出
     """
-    assert spec_id in context.output, (
-        f"{spec_id} が出力に見つかりません:\n{context.output}"
-    )
+    raise NotImplementedError('STEP: テストが実装されていない仕様として "{param0}" が報告されること')
 
 
-@given('Gherkinに仕様書に存在しない "{tag}" タグが含まれている')  # type: ignore
-def given_3aa00113(context, tag):
+@given('Gherkinに仕様書に存在しない "{param0}" タグが含まれている')  # type: ignore
+def given_3aa00113(context, param0):
     """Gherkinに仕様書に存在しない "@SPEC-999" タグが含まれている
 
     Scenarios:
       - 孤児タグの検出
     """
-    context.repo_root = context.temp_dir / "repo"
-    create_doorstop_project_api(
-        context.repo_root, spec_items=[{"header": "仕様A", "testable": True}]
-    )
-    context.feature_dir = context.temp_dir / "features"
-    # SPEC-001 はカバー、かつ存在しない SPEC-999 タグも含む
-    write_feature_file(
-        context.feature_dir / "spec_a.feature", minimal_feature("@SPEC-001")
-    )
-    # 孤児タグを持つ feature
-    orphan_tag = tag.lstrip("@")  # "@SPEC-999" -> "SPEC-999"
-    write_feature_file(context.feature_dir / "orphan.feature", minimal_feature(tag))
-    context.expected_orphan = orphan_tag
+    raise NotImplementedError('STEP: Gherkinに仕様書に存在しない "{param0}" タグが含まれている')
 
 
-@then('孤児タグとして "{tag}" が報告されること')  # type: ignore
-def then_33c30716(context, tag):
+@then('孤児タグとして "{param0}" が報告されること')  # type: ignore
+def then_33c30716(context, param0):
     """孤児タグとして "@SPEC-999" が報告されること
 
     Scenarios:
       - 孤児タグの検出
     """
-    orphan = tag.lstrip("@")
-    assert orphan in context.output, (
-        f"孤児タグ {orphan} が出力に見つかりません:\n{context.output}"
-    )
+    raise NotImplementedError('STEP: 孤児タグとして "{param0}" が報告されること')
 
 
-@given('仕様 "{spec_id}" のテストが未実装で "{tag}" が孤児タグである')  # type: ignore
-def given_ffdcf7f2(context, spec_id, tag):
+@given('仕様 "{param0}" のテストが未実装で "{param1}" が孤児タグである')  # type: ignore
+def given_ffdcf7f2(context, param0, param1):
     """仕様 "SPEC-002" のテストが未実装で "@SPEC-999" が孤児タグである
 
     Scenarios:
       - テスト漏れと孤児タグの同時検出
     """
-    context.repo_root = context.temp_dir / "repo"
-    create_doorstop_project_api(
-        context.repo_root,
-        spec_items=[
-            {"header": "カバー外", "testable": False},
-            {"header": "未カバー", "testable": True},
-        ],
-    )
-    context.feature_dir = context.temp_dir / "features"
-    orphan_tag = tag.lstrip("@")
-    write_feature_file(context.feature_dir / "orphan.feature", minimal_feature(tag))
+    raise NotImplementedError('STEP: 仕様 "{param0}" のテストが未実装で "{param1}" が孤児タグである')
 
 
-@then("テスト漏れと孤児タグの両方が報告されること")  # type: ignore
-def then_4928ac49(context):
-    """テスト漏れと孤児タグの両方が報告されること
-
-    Scenarios:
-      - テスト漏れと孤児タグの同時検出
-    """
-    # 両方の問題が出力に含まれることを確認
-    assert context.exit_code == 1
-    # SPEC-002 (未カバー) と孤児タグ (SPEC-999) が報告されていること
-    assert (
-        "SPEC-002" in context.output
-        or "missing" in context.output.lower()
-        or "漏れ" in context.output
-    )
-    assert any(kw in context.output for kw in ["SPEC-999", "orphan", "孤児"]), (
-        f"孤児タグ報告が見つかりません:\n{context.output}"
-    )
+# [Duplicate Skip] This step is already defined elsewhere
+# @then('テスト漏れと孤児タグの両方が報告されること')  # type: ignore
+# def then_4928ac49(context):
+#     """テスト漏れと孤児タグの両方が報告されること
+# 
+#     Scenarios:
+#       - テスト漏れと孤児タグの同時検出
+#     """
+#     raise NotImplementedError('STEP: テスト漏れと孤児タグの両方が報告されること')
 
 
-@given('仕様 "{spec_id}" が testable: false に設定されている')  # type: ignore
-def given_624f5f06(context, spec_id):
+@given('仕様 "{param0}" が testable: false に設定されている')  # type: ignore
+def given_624f5f06(context, param0):
     """仕様 "SPEC-001" が testable: false に設定されている
 
     Scenarios:
       - testable: false の仕様はスキップされる
     """
-    context.repo_root = context.temp_dir / "repo"
-    create_doorstop_project_api(
-        context.repo_root, spec_items=[{"header": "テスト不可仕様", "testable": False}]
-    )
-    context.feature_dir = context.temp_dir / "features"
-    context.feature_dir.mkdir(parents=True, exist_ok=True)
-    context.nontestable_id = spec_id  # "SPEC-001"
+    raise NotImplementedError('STEP: 仕様 "{param0}" が testable: false に設定されている')
 
 
-@given('"{spec_id}" に対応するGherkinテストが存在しない')  # type: ignore
-def given_ea690d53(context, spec_id):
-    """ "SPEC-001" に対応するGherkinテストが存在しない
+@given('"{param0}" に対応するGherkinテストが存在しない')  # type: ignore
+def given_ea690d53(context, param0):
+    """"SPEC-001" に対応するGherkinテストが存在しない
 
     Scenarios:
       - testable: false の仕様はスキップされる
     """
-    pass  # 上の Given でフィーチャーファイルを作っていない
+    raise NotImplementedError('STEP: "{param0}" に対応するGherkinテストが存在しない')
 
 
-@then('"{spec_id}" はテスト漏れとして報告されないこと')  # type: ignore
-def then_55c71a2c(context, spec_id):
-    """ "SPEC-001" はテスト漏れとして報告されないこと
+@then('"{param0}" はテスト漏れとして報告されないこと')  # type: ignore
+def then_55c71a2c(context, param0):
+    """"SPEC-001" はテスト漏れとして報告されないこと
 
     Scenarios:
       - testable: false の仕様はスキップされる
     """
-    # testable: false のため報告されないはず
-    # exit code 0 かつ spec_id がエラー報告に含まれないこと
-    # 出力に spec_id が含まれても "missing"/"漏れ"文脈でなければOK
-    assert context.exit_code == 0, (
-        f"終了コード {context.exit_code} (期待: 0)\n{context.output}"
-    )
+    raise NotImplementedError('STEP: "{param0}" はテスト漏れとして報告されないこと')
 
 
-@given('仕様 "{spec_id}" の上位アイテムが変更されている（cleared=false）')  # type: ignore
-def given_db49ffab(context, spec_id):
+@given('仕様 "{param0}" の上位アイテムが変更されている（cleared=false）')  # type: ignore
+def given_db49ffab(context, param0):
     """仕様 "SPEC-009" の上位アイテムが変更されている（cleared=false）
 
     Scenarios:
       - Suspect Link の検出
     """
-    import yaml, os
-
-    context.repo_root = context.temp_dir / "repo"
-    # まず通常のプロジェクトを作成
-    create_doorstop_project_api(
-        context.repo_root,
-        req_items=[{"header": "要件", "testable": False}],
-        spec_items=[{"header": "仕様", "testable": True}],
-    )
-    # SPEC-001 の link stamp を意図的に壊す (cleared=False にする)
-    specs_dir = context.repo_root / "specs"
-    spec_file = specs_dir / "SPEC-001.yml"
-    with open(spec_file, "r", encoding="utf-8") as f:
-        data = yaml.safe_load(f)
-    data["links"] = [{"REQ-001": "WRONG_STAMP_XXXX"}]
-    with open(spec_file, "w", encoding="utf-8") as f:
-        yaml.dump(data, f, allow_unicode=True)
-    context.feature_dir = context.temp_dir / "features"
-    write_feature_file(
-        context.feature_dir / "spec.feature", minimal_feature("@SPEC-001")
-    )
-    context.suspect_id = spec_id  # "SPEC-009" (featureでは SPEC-001 を使用)
+    raise NotImplementedError('STEP: 仕様 "{param0}" の上位アイテムが変更されている（cleared=false）')
 
 
-@then('Suspect Link テーブルに "{spec_id}" が報告されること')  # type: ignore
-def then_0149339a(context, spec_id):
+@then('Suspect Link テーブルに "{param0}" が報告されること')  # type: ignore
+def then_0149339a(context, param0):
     """Suspect Link テーブルに "SPEC-009" が報告されること
 
     Scenarios:
       - Suspect Link の検出
     """
-    # SPEC-001 が suspect として報告されるはず
-    assert any(
-        kw in context.output for kw in ["SPEC-001", "suspect", "Suspect", "⚠"]
-    ), f"Suspect Link 報告が見つかりません:\n{context.output}"
+    raise NotImplementedError('STEP: Suspect Link テーブルに "{param0}" が報告されること')
 
 
-@then("変更された上位アイテムのIDが表示されること")  # type: ignore
-def then_407500a2(context):
-    """変更された上位アイテムのIDが表示されること
+# [Duplicate Skip] This step is already defined elsewhere
+# @then('変更された上位アイテムのIDが表示されること')  # type: ignore
+# def then_407500a2(context):
+#     """変更された上位アイテムのIDが表示されること
+# 
+#     Scenarios:
+#       - Suspect Link の検出
+#     """
+#     raise NotImplementedError('STEP: 変更された上位アイテムのIDが表示されること')
 
-    Scenarios:
-      - Suspect Link の検出
-    """
-    assert any(kw in context.output for kw in ["REQ-001", "Suspect", "suspect", "⚠"]), (
-        f"上位アイテムIDが見つかりません:\n{context.output}"
-    )
 
-
-@given('仕様 "{spec_id}" 自体に未レビューの変更がある（reviewed=false）')  # type: ignore
-def given_8ceeca7b(context, spec_id):
+@given('仕様 "{param0}" 自体に未レビューの変更がある（reviewed=false）')  # type: ignore
+def given_8ceeca7b(context, param0):
     """仕様 "SPEC-009" 自体に未レビューの変更がある（reviewed=false）
 
     Scenarios:
       - Unreviewed Changes の検出
     """
-    import yaml
-
-    context.repo_root = context.temp_dir / "repo"
-    create_doorstop_project_api(
-        context.repo_root, spec_items=[{"header": "仕様", "testable": True}]
-    )
-    # SPEC-001 の reviewed を None に設定 (unreviewed)
-    specs_dir = context.repo_root / "specs"
-    spec_file = specs_dir / "SPEC-001.yml"
-    with open(spec_file, "r", encoding="utf-8") as f:
-        data = yaml.safe_load(f)
-    data["reviewed"] = None
-    with open(spec_file, "w", encoding="utf-8") as f:
-        yaml.dump(data, f, allow_unicode=True)
-    context.feature_dir = context.temp_dir / "features"
-    write_feature_file(
-        context.feature_dir / "spec.feature", minimal_feature("@SPEC-001")
-    )
+    raise NotImplementedError('STEP: 仕様 "{param0}" 自体に未レビューの変更がある（reviewed=false）')
 
 
-@then('Unreviewed Changes テーブルに "{spec_id}" が報告されること')  # type: ignore
-def then_56101a52(context, spec_id):
+@then('Unreviewed Changes テーブルに "{param0}" が報告されること')  # type: ignore
+def then_56101a52(context, param0):
     """Unreviewed Changes テーブルに "SPEC-009" が報告されること
 
     Scenarios:
       - Unreviewed Changes の検出
     """
-    assert any(
-        kw in context.output
-        for kw in ["SPEC-001", "unreviewed", "Unreviewed", "未レビュー", "📋"]
-    ), f"Unreviewed Changes 報告が見つかりません:\n{context.output}"
+    raise NotImplementedError('STEP: Unreviewed Changes テーブルに "{param0}" が報告されること')
+
+
+# [Duplicate Skip] This step is already defined elsewhere
+# @given('仕様 "{param0}" が未レビュー状態である')  # type: ignore
+# def given_1ef52c16(context, param0):
+#     """仕様 "SPEC-009" が未レビュー状態である
+# 
+#     Scenarios:
+#       - feature ファイルが Suspect として検出される
+#     """
+#     raise NotImplementedError('STEP: 仕様 "{param0}" が未レビュー状態である')
+
+
+# [Duplicate Skip] This step is already defined elsewhere
+# @then('Suspect テーブルに対応する feature ファイル名が表示されること')  # type: ignore
+# def then_324367b3(context):
+#     """Suspect テーブルに対応する feature ファイル名が表示されること
+# 
+#     Scenarios:
+#       - feature ファイルが Suspect として検出される
+#     """
+#     raise NotImplementedError('STEP: Suspect テーブルに対応する feature ファイル名が表示されること')
+
+
+@given('"{param0}" ファイルのフィンガープリントコメントが現在の内容と一致しない')  # type: ignore
+def given_f066bd3a(context, param0):
+    """".feature" ファイルのフィンガープリントコメントが現在の内容と一致しない
+
+    Scenarios:
+      - feature ファイルが Unreviewed として検出される
+    """
+    raise NotImplementedError('STEP: "{param0}" ファイルのフィンガープリントコメントが現在の内容と一致しない')
+
+
+# [Duplicate Skip] This step is already defined elsewhere
+# @then('Unreviewed テーブルに対応する feature ファイル名が表示されること')  # type: ignore
+# def then_c1e4063b(context):
+#     """Unreviewed テーブルに対応する feature ファイル名が表示されること
+# 
+#     Scenarios:
+#       - feature ファイルが Unreviewed として検出される
+#     """
+#     raise NotImplementedError('STEP: Unreviewed テーブルに対応する feature ファイル名が表示されること')

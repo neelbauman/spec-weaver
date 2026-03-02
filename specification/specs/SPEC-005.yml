@@ -7,10 +7,10 @@ links:
 - REQ-004: KXm5cZc2wXUhF29d-4lpSPbclfjN4ruCBIwDvWX93tg=
 normative: true
 ref: ''
-reviewed: AuOQdTuj7oo-Fu6NPe_ZQ_UFlWIqrku7fQ0tbVr2UQA=
+reviewed: xmxdF423te804bo83vrpB6-_7NF3hxmYLZ3-Bu5lwNw=
 status: implemented
 test_fingerprint: |
-  954b32b17576bc9f0427674fada75c9a9ac3e405442ec09b01a68eb9d3f0d69b
+  d3aa9a693b9f55708f771503caa670f486fdf023be2bf8f759e1151627e2a08a
 testable: true
 text: |
   ## 概要
@@ -22,8 +22,29 @@ text: |
   - Doorstop APIの `item.cleared`（suspect link 検出）および `item.reviewed`（未レビュー変更検出）属性を評価すること
   - `audit` コマンド実行時に Suspect Link / Unreviewed Changes を分離して警告出力すること
   - `build` コマンド実行時に一覧テーブルの行ハイライト（Suspectは紫、Unreviewedは赤）および詳細ページに警告バナーを動的に付与すること
+  - Doorstop アイテムに加え、`.feature` ファイルも Suspect / Unreviewed の対象とする:
+    - Suspect: 対応 SPEC が未レビュー状態になった場合、その SPEC にタグ付けされた
+      `.feature` ファイルも Suspect として audit テーブルに報告する
+    - Unreviewed: `.feature` ファイル先頭の `# spec-weaver-fingerprint:` コメントが
+      存在しない、または現在のファイル内容のハッシュと一致しない場合、
+      その `.feature` ファイルを Unreviewed として audit テーブルに報告する
+
+  ### `.feature` ファイルの Unreviewed 判定ロジック
+  1. ファイル先頭から `# spec-weaver-fingerprint: <hash>` コメントを読み取る
+  2. Feature / Background / 全 Scenario の構造コンテンツから現在のハッシュを計算する
+     （コメント行自体はハッシュ計算から除外する）
+  3. 保存されたハッシュと現在のハッシュを比較し、不一致 or コメント未存在 → Unreviewed
+
+  ### Doorstop アイテムの Suspect 判定ロジック（test_fingerprint）
+  - SPEC YAML の `test_fingerprint` と、現在の Gherkin タグ付きシナリオのハッシュを比較する
+  - 不一致の場合、その SPEC アイテムを Suspect として報告する
+  - `spec-weaver clear <SPEC_ID>` を実行することで `test_fingerprint` が更新され Suspect が解除される
 
   ### 出力・結果
   - audit の警告出力: Suspect Link テーブル（変更された上位アイテムとアクションを表示）、Unreviewed Changes テーブル（対象 ID とアクションを表示）
+    - `.feature` ファイルも同テーブルに表示する（表示名はファイル名のみ、例: `scaffold.feature`）
+    - Suspect の原因アイテムには、変更された SPEC ID を表示する
+    - Unreviewed の `.feature` のアクションには、`spec-weaver review <feature_file>` を表示する
+    - Suspect の SPEC のアクションには、`spec-weaver clear <SPEC_ID>` を表示する
   - build の一覧テーブル: Suspect状態の行を紫色、Unreviewed状態の行を赤色でハイライト表示する。従来の状態列は廃止する。
   - build の詳細ページ: Suspect Link バナー（対象リンク付き）、Unreviewed Changes バナーを表示

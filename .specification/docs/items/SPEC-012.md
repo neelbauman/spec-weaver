@@ -1,7 +1,7 @@
 # [SPEC-012] build コマンドにおけるタイムスタンプ表示
 
 > ⚠️ **Suspect**: 関連するアイテムやテストが変更されました。影響範囲のレビューが必要です。
-> **原因 (Unreviewed)**: [timestamp.feature](../features/timestamp.md)
+> **原因 (Unreviewed)**: [REQ-001](REQ-001.md), [REQ-003](REQ-003.md)
 
 **実装状況**: ✅ implemented
 
@@ -43,10 +43,8 @@
 - 日付は `YYYY-MM-DD` 形式でそのまま表示する（ロケール変換は行わない）。
 - 両方未設定の場合でも列・行は表示し、`-` で埋める。
 
-**テスト実行結果 (個別)**: ✅ 3/3 PASS
-
 ### 🧪 検証シナリオ
 
-- ✅ PASS **一覧テーブルにタイムスタンプ列が表示される** — Scenario （[features/timestamp.feature:33](../features/timestamp.md)）
-- ✅ PASS **詳細ページにタイムスタンプが表示される** — Scenario （[features/timestamp.feature:41](../features/timestamp.md)）
-- ✅ PASS **Git情報がない場合の一覧テーブル表示** — Scenario （[features/timestamp.feature:48](../features/timestamp.md)）
+- **一覧テーブルにタイムスタンプ列が表示される** — Scenario （[features/timestamp.feature:34](../features/timestamp.md)）
+- **詳細ページにタイムスタンプが表示される** — Scenario （[features/timestamp.feature:42](../features/timestamp.md)）
+- **Git情報がない場合の一覧テーブル表示** — Scenario （[features/timestamp.feature:49](../features/timestamp.md)）

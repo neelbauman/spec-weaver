@@ -1,3 +1,4 @@
+# spec-weaver-fingerprint: 4d1abc0d24ab84d4b44873ab7fcc439c3e9951bd4046244b1bef9e31f22ac785
 @SPEC-004
 Feature: build コマンド
   Doorstopの仕様データとGherkinテストを統合した

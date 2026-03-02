@@ -1,5 +1,5 @@
 # src/spec_weaver/cli.py
-# implements: SPEC-019, SPEC-020, SPEC-022, SPEC-024
+# implements: SPEC-019, SPEC-020, SPEC-022, SPEC-024, SPEC-025
 
 import typer
 import shutil
@@ -38,7 +38,14 @@ from spec_weaver.doorstop import (
     update_item_attribute,
 )
 from spec_weaver.review_state import compute_review_state, ReviewState
-from spec_weaver.gherkin import get_tag_map, get_tags, get_spec_fingerprints
+from spec_weaver.gherkin import (
+    get_tag_map,
+    get_tags,
+    get_spec_fingerprints,
+    compute_feature_file_hash,
+    read_stored_fingerprint,
+    write_feature_fingerprint,
+)
 from spec_weaver.test_results import (
     TestResultMap,
     format_status_badge,
@@ -76,6 +83,29 @@ def _review_status_badge(item_or_id: str | Any, review_state: Optional[ReviewSta
         uid = str(getattr(item_or_id, "uid", item_or_id))
         return review_state.get_status(uid)
     return "✅ reviewed"
+
+
+def _compute_feature_file_states(feature_dir: Path) -> dict[str, bool]:
+    """
+    feature_dir 以下の全 .feature ファイルについて、先頭コメントのハッシュと
+    現在のコンテンツハッシュを比較し、{相対パス: is_unreviewed} を返す。
+    相対パスは get_tag_map() と同じ基準（feature_dir.parent を起点）で生成する。
+    """
+    states: dict[str, bool] = {}
+    if not feature_dir.is_dir():
+        return states
+    for f in feature_dir.rglob("*.feature"):
+        try:
+            rel = str(f.relative_to(feature_dir.parent))
+        except ValueError:
+            rel = str(f)
+        try:
+            stored = read_stored_fingerprint(f)
+            current = compute_feature_file_hash(f)
+            states[rel] = (stored != current)
+        except Exception:
+            states[rel] = True  # 読み取り失敗は未レビュー扱い
+    return states
 
 
 def _get_timestamp(item, key: str) -> str:
@@ -220,7 +250,10 @@ def audit_cmd(
                 except Exception:
                     tag_map = {}
 
-                review_state = compute_review_state(raw_items, gherkin_fingerprints, tag_map)
+                feature_file_states = _compute_feature_file_states(feature_dir)
+                review_state = compute_review_state(
+                    raw_items, gherkin_fingerprints, tag_map, feature_file_states
+                )
 
                 suspect_specs: dict[str, set[str]] = {}
                 unreviewed_specs: set[str] = set()
@@ -235,12 +268,34 @@ def audit_cmd(
                     if "suspect" in status:
                         suspect_specs[uid] = review_state.suspect_causes.get(uid, set())
 
+                # feature ファイルの suspect/unreviewed を収集
+                feature_to_specs: dict[str, set[str]] = {}
+                for tag, scenarios in tag_map.items():
+                    if prefix and not str(tag).startswith(prefix):
+                        continue
+                    for s in scenarios:
+                        fpath = s["file"]
+                        feature_to_specs.setdefault(fpath, set()).add(str(tag))
+
+                suspect_features: dict[str, set[str]] = {}
+                unreviewed_features: set[str] = set()
+
+                for fpath in feature_to_specs:
+                    fstatus = review_state.get_status(fpath)
+                    if "unreviewed" in fstatus:
+                        unreviewed_features.add(fpath)
+                    if "suspect" in fstatus:
+                        suspect_features[fpath] = review_state.suspect_causes.get(fpath, set())
+
             except Exception as e:
                 console.print(
                     f"[bold red]❌ Suspect状態の確認に失敗しました:[/bold red] {e}"
                 )
                 suspect_specs = {}
                 unreviewed_specs = set()
+                feature_to_specs = {}
+                suspect_features = {}
+                unreviewed_features = set()
 
         untested_specs = specs_in_db - tags_in_code
         orphaned_tags = tags_in_code - specs_in_db
@@ -268,7 +323,7 @@ def audit_cmd(
                 table.add_row(f"@{tag}")
             console.print(table)
 
-        if suspect_specs:
+        if suspect_specs or suspect_features:
             has_error = True
             console.print(
                 "\n[bold yellow]⚠️ Suspect — 関連アイテムが変更されています:[/bold yellow]"
@@ -280,9 +335,13 @@ def audit_cmd(
             for spec in sorted(suspect_specs):
                 causes = ", ".join(sorted(suspect_specs[spec])) or "不明"
                 table.add_row(spec, causes, "影響範囲を確認し、必要に応じて修正")
+            for fpath in sorted(suspect_features):
+                fname = Path(fpath).name
+                causes = ", ".join(sorted(suspect_features[fpath])) or "不明"
+                table.add_row(fname, causes, "feature ファイルを確認し、必要に応じてシナリオを更新")
             console.print(table)
 
-        if unreviewed_specs:
+        if unreviewed_specs or unreviewed_features:
             has_error = True
             console.print(
                 "\n[bold yellow]📋 Unreviewed Changes — 未レビューの変更があります:[/bold yellow]"
@@ -292,6 +351,18 @@ def audit_cmd(
             table.add_column("アクション", style="dim")
             for spec in sorted(unreviewed_specs):
                 table.add_row(spec, "doorstop review / または spec-weaver review")
+            for fpath in sorted(unreviewed_features):
+                fname = Path(fpath).name
+                try:
+                    display_path = str(Path(fpath).relative_to(Path.cwd()))
+                except ValueError:
+                    display_path = fpath
+                try:
+                    display_fdir = str(feature_dir.relative_to(Path.cwd()))
+                except ValueError:
+                    display_fdir = str(feature_dir)
+                action = f"spec-weaver review {display_path} -f {display_fdir}"
+                table.add_row(fname, action)
             console.print(table)
 
         # stale チェック（終了コードには影響しない）
@@ -724,8 +795,52 @@ def ci_cmd(
 
 @app.command("review")
 def review_cmd(
+    feature_file: str = typer.Argument(
+        ..., help="フィンガープリントを書き込む .feature ファイルのパス"
+    ),
+) -> None:
+    """
+    指定した .feature ファイルの構造コンテンツ（Feature / Background / Scenario）の
+    SHA-256 ハッシュを計算し、ファイル先頭に '# spec-weaver-fingerprint: <hash>' として書き込みます。
+
+    既存のコメントがある場合は上書き更新されます。
+    ファイル自身がレビュー済み状態を自己証明する仕組みです（SPEC-024）。
+    """
+    try:
+        target = Path(feature_file)
+
+        if not target.exists():
+            console.print(f"[bold red]❌ ファイルが見つかりません: {feature_file}[/bold red]")
+            raise typer.Exit(1)
+
+        if target.suffix != ".feature":
+            console.print(f"[bold red]❌ .feature ファイルを指定してください: {feature_file}[/bold red]")
+            raise typer.Exit(1)
+
+        with console.status(f"[bold cyan]{feature_file} のハッシュを計算中...[/bold cyan]"):
+            fp = compute_feature_file_hash(target)
+
+        write_feature_fingerprint(target, fp)
+
+        console.print(f"[bold green]✅ フィンガープリントを書き込みました: {feature_file}[/bold green]")
+        console.print(f"[dim]ハッシュ: {fp}[/dim]")
+
+    except typer.Exit:
+        raise
+    except Exception as e:
+        console.print(f"[bold red]❌ review エラー: {e}[/bold red]")
+        raise typer.Exit(1)
+
+
+# ---------------------------------------------------------------------------
+# clear コマンド
+# ---------------------------------------------------------------------------
+
+
+@app.command("clear")
+def clear_cmd(
     item_id: str = typer.Argument(
-        ..., help="レビュー完了としてフィンガープリントを更新するアイテムID、または .feature ファイルパス"
+        ..., help="test_fingerprint を更新するアイテムID、または .feature ファイルパス"
     ),
     feature_dir: Path = typer.Option(
         Path("specification/features"),
@@ -749,28 +864,18 @@ def review_cmd(
     ),
 ) -> None:
     """
-    指定したアイテム（REQ/SPEC など）、または .feature ファイル内の全アイテムをレビュー済みにします。
+    指定した仕様アイテムの Doorstop YAML の test_fingerprint を現在の Gherkin ハッシュで更新し、
+    Suspect 状態を解除します（SPEC-025）。
 
-    Gherkin シナリオが紐づいている場合は test_fingerprint を更新してから doorstop review を実行します。
-    Gherkin シナリオがない場合（testable: false など）は doorstop review のみ実行します。
+    .feature ファイルが指定された場合は、ファイル内の全アイテムの test_fingerprint を一括更新します。
     """
-    def _doorstop_review(*ids: str) -> None:
-        """doorstop review を実行して Doorstop 本体のレビュー状態を更新する。"""
-        for uid in ids:
-            with console.status(f"[bold cyan]doorstop review {uid} を実行中...[/bold cyan]"):
-                result = subprocess.run(["doorstop", "review", uid], capture_output=True, text=True)
-            if result.returncode != 0:
-                raise RuntimeError(result.stderr.strip() or f"doorstop review {uid} が終了コード {result.returncode} で失敗しました")
-            console.print(f"[bold green]✅ Doorstop レビュー完了: {uid}[/bold green]")
-
     try:
         item_path = Path(item_id)
+
+        # .feature ファイルが指定された場合
         if item_path.suffix == ".feature" and item_path.exists():
-            # .feature ファイルが指定された場合
             all_prefixes = get_all_prefixes(repo_root)
-            with console.status(
-                f"[bold cyan]{item_id} に含まれる仕様IDを特定中...[/bold cyan]"
-            ):
+            with console.status(f"[bold cyan]{item_id} に含まれる仕様IDを特定中...[/bold cyan]"):
                 tags_in_file = get_tags(item_path, all_prefixes)
 
             if not tags_in_file:
@@ -779,35 +884,28 @@ def review_cmd(
                 )
                 raise typer.Exit(1)
 
-            with console.status(
-                f"[bold cyan]全フィンガープリントを計算中...[/bold cyan]"
-            ):
+            with console.status("[bold cyan]フィンガープリントを計算中...[/bold cyan]"):
                 all_fingerprints = get_spec_fingerprints(feature_dir, all_prefixes)
 
             updated_count = 0
-            sorted_tags = sorted(list(tags_in_file))
-            for tag in sorted_tags:
+            for tag in sorted(tags_in_file):
                 fp = all_fingerprints.get(tag)
                 if fp:
                     with console.status(f"[bold cyan]{tag} の YAML を更新中...[/bold cyan]"):
                         update_item_attribute(repo_root, tag, "test_fingerprint", fp)
                     console.print(
-                        f"✅ [bold]{tag}[/bold] のフィンガープリントを更新しました。 [dim]{fp}[/dim]"
+                        f"✅ [bold]{tag}[/bold] の test_fingerprint を更新しました。 [dim]{fp}[/dim]"
                     )
                     updated_count += 1
 
             if updated_count > 0:
                 console.print(
-                    f"\n[bold green]✨ 合計 {updated_count} 個のアイテムのフィンガープリントを更新しました。[/bold green]"
+                    f"\n[bold green]✨ 合計 {updated_count} 個のアイテムの test_fingerprint を更新しました。[/bold green]"
                 )
-            _doorstop_review(*sorted_tags)
             return
 
-        # ID 指定の場合: Gherkin フィンガープリントがあれば更新してから doorstop review、
-        # なければ（testable: false など）doorstop review のみ実行する
-        with console.status(
-            f"[bold cyan]{item_id} の Gherkin フィンガープリントを計算中...[/bold cyan]"
-        ):
+        # アイテムID が指定された場合
+        with console.status(f"[bold cyan]{item_id} の Gherkin フィンガープリントを計算中...[/bold cyan]"):
             all_prefixes = get_all_prefixes(repo_root)
             fingerprints = get_spec_fingerprints(feature_dir, all_prefixes)
             actual_fp = fingerprints.get(item_id)
@@ -815,19 +913,18 @@ def review_cmd(
         if actual_fp:
             with console.status(f"[bold cyan]{item_id} の YAML を更新中...[/bold cyan]"):
                 update_item_attribute(repo_root, item_id, "test_fingerprint", actual_fp)
-            console.print(
-                f"[bold green]✅ {item_id} のフィンガープリントを更新しました。[/bold green]"
-            )
+            console.print(f"[bold green]✅ {item_id} の test_fingerprint を更新しました。[/bold green]")
             console.print(f"[dim]新ハッシュ: {actual_fp}[/dim]")
         else:
             console.print(
-                f"[dim]{item_id} に紐づく Gherkin シナリオはありません。Doorstop レビューのみ実行します。[/dim]"
+                f"[bold red]❌ {item_id} に紐づく Gherkin シナリオが見つかりません。[/bold red]"
             )
+            raise typer.Exit(1)
 
-        _doorstop_review(item_id)
-
+    except typer.Exit:
+        raise
     except Exception as e:
-        console.print(f"[bold red]❌ review エラー: {e}[/bold red]")
+        console.print(f"[bold red]❌ clear エラー: {e}[/bold red]")
         raise typer.Exit(1)
 
 
@@ -887,7 +984,10 @@ def status_cmd(
         except Exception:
             tag_map = {}
 
-        review_state = compute_review_state(all_items_str, gherkin_fingerprints, tag_map)
+        feature_file_states = _compute_feature_file_states(feature_dir)
+        review_state = compute_review_state(
+            all_items_str, gherkin_fingerprints, tag_map, feature_file_states
+        )
 
         # プレフィックスごとにアイテムをグループ化
         grouped_items: dict[str, dict] = {p: {} for p in all_prefixes}
@@ -1050,7 +1150,10 @@ def _run_build(
         # 2. Gherkinタグマップ取得 (全プレフィックスを対象にする)
         tag_map = get_tag_map(feature_dir, all_prefixes)
         gherkin_fingerprints = get_spec_fingerprints(feature_dir, all_prefixes)
-        review_state = compute_review_state(all_items_str, gherkin_fingerprints, tag_map)
+        feature_file_states = _compute_feature_file_states(feature_dir)
+        review_state = compute_review_state(
+            all_items_str, gherkin_fingerprints, tag_map, feature_file_states
+        )
 
         # feature_path -> 関連アイテムUID一覧（バックリンク用）
         _backlink_sets: dict[str, set[str]] = {}

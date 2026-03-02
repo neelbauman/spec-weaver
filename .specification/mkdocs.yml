@@ -19,6 +19,7 @@ nav:
       - PLAN-002: items/PLAN-002.md
       - PLAN-003: items/PLAN-003.md
       - PLAN-004: items/PLAN-004.md
+      - PLAN-005: items/PLAN-005.md
   - REQ:
       - REQ一覧: req.md
       - REQ-001: items/REQ-001.md
@@ -60,12 +61,14 @@ nav:
       - SPEC-022: items/SPEC-022.md
       - SPEC-023: items/SPEC-023.md
       - SPEC-024: items/SPEC-024.md
+      - SPEC-025: items/SPEC-025.md
 
   - 振る舞い仕様 (Features):
       - features/index.md
       - audit.md: features/audit.md
       - build.md: features/build.md
       - ci.md: features/ci.md
+      - clear.md: features/clear.md
       - data_extraction.md: features/data_extraction.md
       - impl_link.md: features/impl_link.md
       - review.md: features/review.md
