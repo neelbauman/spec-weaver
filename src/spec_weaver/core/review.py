@@ -20,9 +20,9 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Callable, Optional
 
-from spec_weaver.adopters.doorstop import get_item_map, _get_custom_attribute
-from spec_weaver.adopters.gherkin import get_tag_map
-from spec_weaver.adopters.impl_scanner import get_ref_files, ImplScanner
+from spec_weaver.adapters.doorstop import get_item_map, _get_custom_attribute
+from spec_weaver.adapters.gherkin import get_tag_map
+from spec_weaver.adapters.impl_scanner import get_ref_files, ImplScanner
 
 # ---------------------------------------------------------------------------
 # 定数

@@ -3,9 +3,9 @@ from pathlib import Path
 from typing import Optional, Dict, List, Set
 
 from spec_weaver.core.review_state import compute_review_state, ReviewState
-from spec_weaver.adopters.doorstop import get_item_map, get_all_prefixes
-from spec_weaver.adopters.gherkin import get_tag_map, get_spec_fingerprints
-from spec_weaver.adopters.impl_scanner import ImplScanner, get_ref_files
+from spec_weaver.adapters.doorstop import get_item_map, get_all_prefixes
+from spec_weaver.adapters.gherkin import get_tag_map, get_spec_fingerprints
+from spec_weaver.adapters.impl_scanner import ImplScanner, get_ref_files
 from spec_weaver.services.audit_service import AuditService
 
 @dataclass

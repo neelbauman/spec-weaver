@@ -10,7 +10,7 @@ from typing import Any, Set, Dict, Optional
 import doorstop
 
 # get_ref_files は impl_scanner に実装し、ここから re-export する
-from spec_weaver.adopters.impl_scanner import get_ref_files as get_ref_files  # noqa: F401
+from spec_weaver.adapters.impl_scanner import get_ref_files as get_ref_files  # noqa: F401
 
 
 # ---------------------------------------------------------------------------

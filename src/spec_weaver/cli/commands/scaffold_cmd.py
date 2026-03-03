@@ -4,7 +4,7 @@ from rich.console import Console
 from rich.prompt import Confirm
 from rich.syntax import Syntax
 
-from spec_weaver.adopters.codegen import generate_test_file, generate_environment_file
+from spec_weaver.adapters.codegen import generate_test_file, generate_environment_file
 from spec_weaver.utils.git_utils import is_file_dirty
 
 console = Console()
@@ -46,6 +46,15 @@ def _scaffold_cmd(
         for fpath in feature_files:
             try:
                 out_file = out_dir / f"step_{fpath.stem}.py"
+
+                if out_file.exists() and not force and not overwrite:
+                    if is_file_dirty(out_file, repo_root):
+                        console.print(f"\n[bold yellow]⚠️  {_display_path(out_file)} に未コミットの変更があります。[/bold yellow]")
+                        if not Confirm.ask("差分マージを続行しますか？"):
+                            console.print(f"  [dim]⏭️ スキップ[/dim]: {_display_path(out_file)} (キャンセル)")
+                            skipped += 1
+                            continue
+
                 result = generate_test_file(fpath, out_dir, feature_dir, overwrite=overwrite)
 
                 if result is None:
@@ -61,14 +70,6 @@ def _scaffold_cmd(
                         console.print()
                     
                     generated += 1
-
-                    if out_file.exists() and not force and not overwrite:
-                        if is_file_dirty(out_file, repo_root):
-                            console.print(f"\n[bold yellow]⚠️  {_display_path(out_file)} に未コミットの変更があります。[/bold yellow]")
-                            if not Confirm.ask("差分マージを続行しますか？"):
-                                console.print(f"  [dim]⏭️ スキップ[/dim]: {_display_path(out_file)} (キャンセル)")
-                                skipped += 1
-                                continue
 
             except Exception as e:
                 console.print(f"  [red]❌ エラー[/red]: {fpath.name}: {e}")

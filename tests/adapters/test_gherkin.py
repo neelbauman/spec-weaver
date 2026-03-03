@@ -1,5 +1,5 @@
 import pytest
-from spec_weaver.gherkin import get_tag_map, get_tags
+from spec_weaver.adapters.gherkin import get_tag_map, get_tags
 
 
 def test_get_tags_success(tmp_path):

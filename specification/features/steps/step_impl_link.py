@@ -137,7 +137,7 @@ def then_1e4aee33(context):
 
 @given('"{param0}" にアノテーションが存在しない')  # type: ignore
 def given_8d04b283(context, param0):
-    """"src/spec_weaver/gherkin.py" にアノテーションが存在しない
+    """"src/spec_weaver.adapters.gherkin.py" にアノテーションが存在しない
 
     Scenarios:
       - アノテーションがないファイルはエラーにならない
@@ -234,7 +234,7 @@ def then_f76e2a8d(context, param0):
 
 @then('"{param0}" がアノテーションのみ（impl_files なし）として報告されること')  # type: ignore
 def then_7fa51a4f(context, param0):
-    """"QA-003 ← src/spec_weaver/gherkin.py" がアノテーションのみ（impl_files なし）として報告されること
+    """"QA-003 ← src/spec_weaver.adapters.gherkin.py" がアノテーションのみ（impl_files なし）として報告されること
 
     Scenarios:
       - アノテーションがあって impl_files がない場合は警告を報告する

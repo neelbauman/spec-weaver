@@ -1,4 +1,4 @@
-from spec_weaver.review_state import ReviewState, compute_review_state
+from spec_weaver.core.review_state import ReviewState, compute_review_state
 from pathlib import Path
 
 def test_review_state_reviewed():

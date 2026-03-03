@@ -8,8 +8,8 @@ from typer.testing import CliRunner
 
 from behave import given, when, then, step
 
-from spec_weaver.cli import app
-from spec_weaver.gherkin import read_stored_fingerprint
+from spec_weaver.cli.main import app
+from spec_weaver.adapters.gherkin import read_stored_fingerprint
 
 _runner = CliRunner()
 

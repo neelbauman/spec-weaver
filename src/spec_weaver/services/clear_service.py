@@ -2,12 +2,12 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import List, Set, Optional, Dict
 
-from spec_weaver.adopters.doorstop import (
+from spec_weaver.adapters.doorstop import (
     get_item_map, get_all_prefixes, 
     update_item_attribute, clear_doorstop_suspects, delete_item_attribute
 )
 # ※delete_item_attributeは元のcli.pyで使われていましたがimport漏れがあったためここで追加します
-from spec_weaver.adopters.gherkin import get_tags, get_spec_fingerprints, get_tag_map
+from spec_weaver.adapters.gherkin import get_tags, get_spec_fingerprints, get_tag_map
 from spec_weaver.core.review_state import compute_review_state
 from spec_weaver.services.audit_service import AuditService
 

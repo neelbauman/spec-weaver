@@ -7,7 +7,7 @@ from typer.testing import CliRunner
 
 from behave import given, when, then, step
 
-from spec_weaver.cli import app
+from spec_weaver.cli.main import app
 
 _runner = CliRunner()
 

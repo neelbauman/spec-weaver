@@ -1,0 +1,18 @@
+active: true
+derived: false
+header: ''
+level: 1.6
+links:
+- SPEC-001: jzNgmB7YWWuX_99ZL-aJle0DjDI82nSDMN__6__scIc=
+normative: true
+ref: ''
+reviewed: vtAJMsB69VglDPitXOELs9H2KW4EUCmKg-V96E-RAk4=
+status: implemented
+testable: false
+text: |
+  タイポ修正と責務移動によるモジュール構成リファクタリング
+
+  1. srcおよびtests内の `adopters` ディレクトリを `adapters` にリネーム
+  2. importパス `spec_weaver.adopters.*` を `spec_weaver.adapters.*` に一括置換
+  3. `src/spec_weaver/utils/behave.py` を `src/spec_weaver/adapters/behave.py` に移動
+  4. importパス `spec_weaver.utils.behave` を `spec_weaver.adapters.behave` に置換

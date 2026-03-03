@@ -1,5 +1,5 @@
 from unittest.mock import patch, MagicMock
-from spec_weaver.doorstop import get_specs, get_item_warnings, is_suspect, ItemWarnings
+from spec_weaver.adapters.doorstop import get_specs, get_item_warnings, is_suspect, ItemWarnings
 
 
 class MockDoorstopItem:
@@ -10,17 +10,22 @@ class MockDoorstopItem:
         self.active = active
         self.testable = testable
 
+    def get(self, key, default=None):
+        if key == "testable":
+            return self.testable
+        return getattr(self, key, default)
 
 class MockDoorstopDocument:
     def __init__(self, items):
         self.items = items
+        self.prefix = "SPEC" if items and "SPEC" in items[0].uid else "REQ"
 
     def __iter__(self):
         return iter(self.items)
 
 
-@patch("spec_weaver.doorstop.doorstop.build")
-@patch("spec_weaver.doorstop.os.chdir")  # ディレクトリ移動をモックしてテスト環境を保護
+@patch("spec_weaver.adapters.doorstop.doorstop.build")
+@patch("spec_weaver.adapters.doorstop.os.chdir")  # ディレクトリ移動をモックしてテスト環境を保護
 def test_get_specs_filtering(mock_chdir, mock_build, tmp_path):
     # Doorstopのツリーをシミュレート
     items = [

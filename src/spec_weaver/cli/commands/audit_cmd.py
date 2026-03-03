@@ -108,7 +108,48 @@ def _audit_cmd(
             table.add_row(fname, causes, "feature ファイルを確認し、必要に応じてシナリオを更新")
         console.print(table)
 
-    # ... 同様に unreviewed_specs, stale_items, broken_refs, undefined_steps の描画処理を記述 ...
+    if report.unreviewed_specs or report.unreviewed_features:
+        console.print("\n[bold yellow]📋 未レビューの変更 (Unreviewed Changes):[/bold yellow]")
+        table = Table(show_header=True, header_style="bold yellow")
+        table.add_column("UID / File", style="dim")
+        table.add_column("Type")
+        for spec in sorted(report.unreviewed_specs):
+            table.add_row(spec, "Doorstop Item")
+        for fpath in sorted(report.unreviewed_features):
+            table.add_row(Path(fpath).name, "Feature File")
+        console.print(table)
+
+    if report.broken_refs:
+        console.print("\n[bold red]❌ 実装ファイルリンク切れ (Broken Implementation Refs):[/bold red]")
+        table = Table(show_header=True, header_style="bold red")
+        table.add_column("Spec ID")
+        table.add_column("Path (not found)")
+        for uid, p in sorted(report.broken_refs):
+            table.add_row(uid, p)
+        console.print(table)
+
+    if report.stale_items:
+        console.print("\n[bold yellow]⏳ 最終更新から長期間経過しているアイテム (Stale Items):[/bold yellow]")
+        table = Table(show_header=True, header_style="bold yellow")
+        table.add_column("Spec ID")
+        table.add_column("最終更新日")
+        table.add_column("経過日数")
+        for uid, updated_at, delta in sorted(report.stale_items):
+            table.add_row(uid, updated_at, f"{delta} days")
+        console.print(table)
+
+    if report.undefined_steps:
+        console.print("\n[bold red]❌ ステップ定義が見つからないシナリオ (Undefined Steps):[/bold red]")
+        table = Table(show_header=True, header_style="bold red")
+        table.add_column("Missing Step Text")
+        for step in sorted(report.undefined_steps):
+            table.add_row(step)
+        console.print(table)
+
+    if report.unused_step_defs:
+        console.print("\n[dim]💡 未使用のステップ定義 (Unused Step Definitions):[/dim]")
+        for step in sorted(report.unused_step_defs):
+            console.print(f"  [dim]- {step}[/dim]")
 
     if report.is_success:
         console.print(f"\n[bold green]✅ 完璧です！ {report.specs_count} 件の仕様がすべてGherkinテストでカバーされています。[/bold green]")

@@ -11,7 +11,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from spec_weaver.review import (
+from spec_weaver.core.review import (
     ReviewFinding,
     ReviewResult,
     ReviewReport,
@@ -190,7 +190,7 @@ def _make_mock_item(uid: str, yaml_path: str = "/tmp/SPEC-999.yml") -> MagicMock
 
 
 def test_collect_review_files_item_not_found(tmp_path):
-    with patch("spec_weaver.review.get_item_map", return_value={}):
+    with patch("spec_weaver.core.review.get_item_map", return_value={}):
         with pytest.raises(ValueError, match="見つかりません"):
             collect_review_files("SPEC-999", tmp_path / "features", tmp_path)
 
@@ -202,10 +202,10 @@ def test_collect_review_files_returns_dict_keys(tmp_path):
     mock_item = _make_mock_item("SPEC-999", str(tmp_path / "SPEC-999.yml"))
     (tmp_path / "SPEC-999.yml").write_text("text: test")
 
-    with patch("spec_weaver.review.get_item_map", return_value={"SPEC-999": mock_item}), \
-         patch("spec_weaver.review.get_tag_map", return_value={}), \
-         patch("spec_weaver.review.get_ref_files", return_value=[]), \
-         patch("spec_weaver.review.ImplScanner") as MockScanner:
+    with patch("spec_weaver.core.review.get_item_map", return_value={"SPEC-999": mock_item}), \
+         patch("spec_weaver.core.review.get_tag_map", return_value={}), \
+         patch("spec_weaver.core.review.get_ref_files", return_value=[]), \
+         patch("spec_weaver.core.review.ImplScanner") as MockScanner:
         MockScanner.return_value.scan.return_value = {}
         files = collect_review_files("SPEC-999", feature_dir, tmp_path)
 
@@ -223,7 +223,7 @@ def test_run_claude_review_claude_not_found(tmp_path):
 
     mock_item = _make_mock_item("SPEC-999")
 
-    with patch("spec_weaver.review.get_item_map", return_value={"SPEC-999": mock_item}), \
+    with patch("spec_weaver.core.review.get_item_map", return_value={"SPEC-999": mock_item}), \
          patch("shutil.which", return_value=None):
         with pytest.raises(FileNotFoundError, match="claude"):
             run_claude_review("SPEC-999", feature_dir, tmp_path)
@@ -233,7 +233,7 @@ def test_run_claude_review_item_not_found(tmp_path):
     feature_dir = tmp_path / "features"
     feature_dir.mkdir()
 
-    with patch("spec_weaver.review.get_item_map", return_value={}), \
+    with patch("spec_weaver.core.review.get_item_map", return_value={}), \
          patch("shutil.which", return_value="/usr/bin/claude"):
         with pytest.raises(ValueError, match="見つかりません"):
             run_claude_review("SPEC-999", feature_dir, tmp_path)
@@ -246,9 +246,9 @@ def test_run_claude_review_json_parse_failure(tmp_path):
 
     mock_item = _make_mock_item("SPEC-999")
 
-    with patch("spec_weaver.review.get_item_map", return_value={"SPEC-999": mock_item}), \
+    with patch("spec_weaver.core.review.get_item_map", return_value={"SPEC-999": mock_item}), \
          patch("shutil.which", return_value="/usr/bin/claude"), \
-         patch("spec_weaver.review.collect_review_files", return_value={"spec": [], "feature": [], "steps": [], "impl": []}), \
+         patch("spec_weaver.core.review.collect_review_files", return_value={"spec": [], "feature": [], "steps": [], "impl": []}), \
          patch("subprocess.run") as mock_run:
         mock_run.return_value = MagicMock(stdout="no json output here", returncode=0)
         result = run_claude_review("SPEC-999", feature_dir, tmp_path)
@@ -274,9 +274,9 @@ def test_run_claude_review_success(tmp_path):
         "summary": "問題なし",
     }
 
-    with patch("spec_weaver.review.get_item_map", return_value={"SPEC-999": mock_item}), \
+    with patch("spec_weaver.core.review.get_item_map", return_value={"SPEC-999": mock_item}), \
          patch("shutil.which", return_value="/usr/bin/claude"), \
-         patch("spec_weaver.review.collect_review_files", return_value={"spec": [], "feature": [], "steps": [], "impl": []}), \
+         patch("spec_weaver.core.review.collect_review_files", return_value={"spec": [], "feature": [], "steps": [], "impl": []}), \
          patch("subprocess.run") as mock_run:
         mock_run.return_value = MagicMock(stdout=json.dumps(expected_json), returncode=0)
         result = run_claude_review("SPEC-999", feature_dir, tmp_path)

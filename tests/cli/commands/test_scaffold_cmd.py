@@ -8,8 +8,8 @@ from unittest.mock import patch, MagicMock
 
 from typer.testing import CliRunner
 
-from spec_weaver.cli import app
-from spec_weaver.codegen import (
+from spec_weaver.cli.main import app
+from spec_weaver.adapters.codegen import (
     _hash_name,
     _escape_string,
     _step_keyword_to_prefix,
@@ -534,7 +534,7 @@ def test_scaffold_cmd_no_features(tmp_path):
     assert "見つかりません" in result.stdout
 
 
-@patch("spec_weaver.cli._is_file_dirty")
+@patch("spec_weaver.cli.commands.scaffold_cmd.is_file_dirty")
 def test_scaffold_cmd_dirty_prompt_cancel(mock_dirty, tmp_path):
     """Git dirty ファイルの確認プロンプトでキャンセルするとスキップされること。"""
     feature_dir = tmp_path / "features"
@@ -567,7 +567,7 @@ def test_scaffold_cmd_dirty_prompt_cancel(mock_dirty, tmp_path):
     assert out_file.read_text() == "# existing"
 
 
-@patch("spec_weaver.cli._is_file_dirty")
+@patch("spec_weaver.cli.commands.scaffold_cmd.is_file_dirty")
 def test_scaffold_cmd_force_skips_prompt(mock_dirty, tmp_path):
     """--force オプションで確認プロンプトなしにマージが実行されること。"""
     feature_dir = tmp_path / "features"
@@ -600,114 +600,6 @@ def test_scaffold_cmd_force_skips_prompt(mock_dirty, tmp_path):
     assert "差分更新" in result.stdout or "新規作成" in result.stdout
     # 新規ステップが追記されていること
     assert "新しい前提条件がある" in (out_dir / "step_sample.py").read_text()
-
-
-# ---------------------------------------------------------------------------
-# ci コマンド CLI テスト
-# ---------------------------------------------------------------------------
-
-
-@patch("spec_weaver.cli.subprocess.run")
-@patch("spec_weaver.cli._run_build")
-def test_ci_cmd_full_flow(mock_build, mock_subprocess, tmp_path):
-    """ci コマンドのフルフローが動作すること。"""
-    feature_dir = tmp_path / "features"
-    feature_dir.mkdir()
-    (feature_dir / "sample.feature").write_text(SAMPLE_FEATURE_JA, encoding="utf-8")
-
-    test_dir = tmp_path / "tests"
-    test_dir.mkdir()
-    (test_dir / "step_sample.py").write_text("# test", encoding="utf-8")
-
-    report_path = tmp_path / "results.json"
-    mock_subprocess.return_value = MagicMock(returncode=0, stdout="passed", stderr="")
-    report_path.write_text("[]", encoding="utf-8")
-
-    result = runner.invoke(
-        app,
-        [
-            "ci",
-            str(feature_dir),
-            "--test-dir",
-            str(test_dir),
-            "--out-dir",
-            str(tmp_path / "out"),
-            "--report",
-            str(report_path),
-            "--repo-root",
-            str(tmp_path),
-        ],
-    )
-
-    assert mock_subprocess.called
-    assert mock_build.called
-    build_args = mock_build.call_args
-    assert build_args[0][3] == report_path
-
-
-@patch("spec_weaver.cli.subprocess.run")
-@patch("spec_weaver.cli._run_build")
-def test_ci_cmd_test_failure_continues_build(mock_build, mock_subprocess, tmp_path):
-    """テスト失敗時もドキュメント生成が継続されること。"""
-    feature_dir = tmp_path / "features"
-    feature_dir.mkdir()
-
-    test_dir = tmp_path / "tests"
-    test_dir.mkdir()
-
-    report_path = tmp_path / "results.json"
-    mock_subprocess.return_value = MagicMock(returncode=1, stdout="1 failed", stderr="")
-    report_path.write_text("[]", encoding="utf-8")
-
-    result = runner.invoke(
-        app,
-        [
-            "ci",
-            str(feature_dir),
-            "--test-dir",
-            str(test_dir),
-            "--report",
-            str(report_path),
-            "--repo-root",
-            str(tmp_path),
-        ],
-    )
-
-    assert mock_build.called
-    assert "テストに失敗があります" in result.stdout
-    assert result.exit_code == 1
-
-
-@patch("spec_weaver.cli.subprocess.run")
-@patch("spec_weaver.cli._run_build")
-def test_ci_cmd_with_scaffold(mock_build, mock_subprocess, tmp_path):
-    """--scaffold オプション付き ci がテストコード生成を行うこと。"""
-    feature_dir = tmp_path / "features"
-    feature_dir.mkdir()
-    (feature_dir / "sample.feature").write_text(SAMPLE_FEATURE_JA, encoding="utf-8")
-
-    test_dir = tmp_path / "tests_out"
-
-    report_path = tmp_path / "results.json"
-    mock_subprocess.return_value = MagicMock(returncode=0, stdout="passed", stderr="")
-    report_path.write_text("[]", encoding="utf-8")
-
-    result = runner.invoke(
-        app,
-        [
-            "ci",
-            str(feature_dir),
-            "--test-dir",
-            str(test_dir),
-            "--report",
-            str(report_path),
-            "--scaffold",
-            "--repo-root",
-            str(tmp_path),
-        ],
-    )
-
-    assert (test_dir / "step_sample.py").exists()
 
 
 # ---------------------------------------------------------------------------

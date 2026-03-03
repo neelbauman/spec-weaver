@@ -1,5 +1,5 @@
 from unittest.mock import MagicMock
-from spec_weaver.cli import _build_hierarchy_tree
+from spec_weaver.services.build_service import BuildService
 
 
 def test_build_hierarchy_tree_only_prefixes():
@@ -18,15 +18,12 @@ def test_build_hierarchy_tree_only_prefixes():
     node_req.document = doc_req
     node_req.children = [node_spec]
 
-    tree = MagicMock()
-    tree.document = doc_req  # Root
-    tree.children = [node_spec]
-
     # Actually _build_hierarchy_tree starts from doorstop_tree
     # Which seems to have a .document and .children in _build_hierarchy_tree logic
 
     prefix_to_file = {"REQ": "requirements.md", "SPEC": "specifications.md"}
-    result = _build_hierarchy_tree(node_req, prefix_to_file)
+    # BuildService()._build_hierarchy_tree を使用
+    result = BuildService()._build_hierarchy_tree(node_req, prefix_to_file)
 
     assert "- [**REQ**](requirements.md)" in result
     assert "    - [**SPEC**](specifications.md)" in result
@@ -43,7 +40,8 @@ def test_build_hierarchy_tree_unknown_prefix():
     node_xyz.document = doc_xyz
     node_xyz.children = []
 
-    result = _build_hierarchy_tree(node_xyz, {})
+    # BuildService()._build_hierarchy_tree を使用
+    result = BuildService()._build_hierarchy_tree(node_xyz, {})
 
     # Link should not be there for unknown prefix, just bold
     assert "- **XYZ**" in result

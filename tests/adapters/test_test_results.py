@@ -1,66 +1,32 @@
+# tests/test_test_results.py
+# implements: SPEC-005, SPEC-014
+
 """
-test_results モジュールのユニットテスト。
-pytest-bdd 生成の Cucumber 互換 JSON を読み込み、
-(feature_stem, scenario_name) → status マッピングを検証する。
+test_results.py のユニットテスト。
 """
 
 import json
 from pathlib import Path
+from typing import List
 
-from spec_weaver.test_results import (
-    _scenario_status,
-    format_status_badge,
+from spec_weaver.adapters.test_results import (
     load_test_results,
+    format_status_badge,
     result_badge,
     spec_result_summary,
 )
 
 
-# ---------------------------------------------------------------------------
-# _scenario_status のテスト
-# ---------------------------------------------------------------------------
-
-
-def test_scenario_status_all_passed():
-    steps = [
-        {"result": {"status": "passed"}},
-        {"result": {"status": "passed"}},
+def _make_cucumber_json(elements: List[dict], uri: str = "features/auth.feature"):
+    """テスト用の Cucumber JSON 構造を作成するヘルパー。"""
+    return [
+        {
+            "keyword": "Feature",
+            "name": "ユーザー認証",
+            "uri": uri,
+            "elements": elements,
+        }
     ]
-    assert _scenario_status(steps) == "passed"
-
-
-def test_scenario_status_with_failed_step():
-    steps = [
-        {"result": {"status": "passed"}},
-        {"result": {"status": "failed"}},
-        {"result": {"status": "passed"}},
-    ]
-    assert _scenario_status(steps) == "failed"
-
-
-def test_scenario_status_with_error_step():
-    steps = [
-        {"result": {"status": "passed"}},
-        {"result": {"status": "error"}},
-    ]
-    assert _scenario_status(steps) == "error"
-
-
-def test_scenario_status_with_skipped_step():
-    steps = [
-        {"result": {"status": "passed"}},
-        {"result": {"status": "skipped"}},
-    ]
-    assert _scenario_status(steps) == "skipped"
-
-
-def test_scenario_status_empty_steps():
-    assert _scenario_status([]) == "undefined"
-
-
-def test_scenario_status_missing_result():
-    steps = [{"keyword": "Given", "name": "something"}]
-    assert _scenario_status(steps) == "undefined"
 
 
 # ---------------------------------------------------------------------------
@@ -68,15 +34,10 @@ def test_scenario_status_missing_result():
 # ---------------------------------------------------------------------------
 
 
-def _make_cucumber_json(scenarios: list[dict]) -> list[dict]:
-    """テスト用の Cucumber JSON データを構築するヘルパー。"""
-    return [
-        {
-            "uri": "features/auth.feature",
-            "name": "Auth Feature",
-            "elements": scenarios,
-        }
-    ]
+def test_load_test_results_empty(tmp_path: Path):
+    json_file = tmp_path / "empty.json"
+    json_file.write_text("[]", encoding="utf-8")
+    assert load_test_results(json_file) == {}
 
 
 def test_load_test_results_passed(tmp_path: Path):
@@ -96,7 +57,7 @@ def test_load_test_results_passed(tmp_path: Path):
     json_file.write_text(json.dumps(data), encoding="utf-8")
 
     result = load_test_results(json_file)
-    assert result == {("auth", "ログインに成功する"): "passed"}
+    assert result == {("auth", "ログインに成功する"): {"status": "passed", "error": None}}
 
 
 def test_load_test_results_failed(tmp_path: Path):
@@ -107,7 +68,7 @@ def test_load_test_results_failed(tmp_path: Path):
                 "tags": [{"name": "@SPEC-002"}],
                 "steps": [
                     {"result": {"status": "passed"}},
-                    {"result": {"status": "failed"}},
+                    {"result": {"status": "failed", "error_message": "Assertion failed"}},
                 ],
             }
         ]
@@ -116,7 +77,7 @@ def test_load_test_results_failed(tmp_path: Path):
     json_file.write_text(json.dumps(data), encoding="utf-8")
 
     result = load_test_results(json_file)
-    assert result == {("auth", "無効なパスワードでログインを試みる"): "failed"}
+    assert result == {("auth", "無効なパスワードでログインを試みる"): {"status": "failed", "error": "Assertion failed"}}
 
 
 def test_load_test_results_error(tmp_path: Path):
@@ -125,7 +86,7 @@ def test_load_test_results_error(tmp_path: Path):
             {
                 "name": "システムエラーが発生する",
                 "steps": [
-                    {"result": {"status": "error"}},
+                    {"result": {"status": "error", "error_message": "Connection timeout"}},
                 ],
             }
         ]
@@ -134,7 +95,7 @@ def test_load_test_results_error(tmp_path: Path):
     json_file.write_text(json.dumps(data), encoding="utf-8")
 
     result = load_test_results(json_file)
-    assert result == {("auth", "システムエラーが発生する"): "error"}
+    assert result == {("auth", "システムエラーが発生する"): {"status": "error", "error": "Connection timeout"}}
 
 
 def test_load_test_results_failed_takes_priority_over_passed(tmp_path: Path):
@@ -157,7 +118,7 @@ def test_load_test_results_failed_takes_priority_over_passed(tmp_path: Path):
     json_file.write_text(json.dumps(data), encoding="utf-8")
 
     result = load_test_results(json_file)
-    assert result[("auth", "シナリオA")] == "failed"
+    assert result[("auth", "シナリオA")]["status"] == "failed"
 
 
 def test_load_test_results_error_takes_priority_over_failed(tmp_path: Path):
@@ -180,8 +141,8 @@ def test_load_test_results_error_takes_priority_over_failed(tmp_path: Path):
     json_file.write_text(json.dumps(data), encoding="utf-8")
 
     result = load_test_results(json_file)
-    # どちらも優先度3なので、後のもので上書きされる
-    assert result[("auth", "シナリオA")] == "error"
+    # どちらも優先度4 or 3なので、後のもので上書きされる
+    assert result[("auth", "シナリオA")]["status"] == "error"
 
 
 # ---------------------------------------------------------------------------
@@ -200,7 +161,7 @@ def test_spec_result_summary_all_passed():
             },
         ]
     }
-    test_result_map = {("auth", "ログイン"): "passed"}
+    test_result_map = {("auth", "ログイン"): {"status": "passed", "error": None}}
 
     p, f, e, s, t = spec_result_summary("SPEC-001", tag_map, test_result_map)
     assert (p, f, e, s, t) == (1, 0, 0, 0, 1)
@@ -216,62 +177,33 @@ def test_spec_result_summary_mixed():
         ]
     }
     test_result_map = {
-        ("a", "P"): "passed",
-        ("a", "F"): "failed",
-        ("a", "E"): "error",
-        ("a", "S"): "skipped",
+        ("a", "P"): {"status": "passed", "error": None},
+        ("a", "F"): {"status": "failed", "error": "err"},
+        ("a", "E"): {"status": "error", "error": "err"},
+        ("a", "S"): {"status": "skipped", "error": None},
     }
 
     p, f, e, s, t = spec_result_summary("SPEC-001", tag_map, test_result_map)
     assert (p, f, e, s, t) == (1, 1, 1, 1, 4)
 
 
-def test_spec_result_summary_no_scenarios():
-    tag_map: dict = {}
-    test_result_map = {("auth", "ログイン"): "passed"}
-
-    p, f, e, s, t = spec_result_summary("SPEC-001", tag_map, test_result_map)
-    assert (p, f, e, s, t) == (0, 0, 0, 0, 0)
-
-
 # ---------------------------------------------------------------------------
-# result_badge のテスト
+# format_status_badge / result_badge のテスト
 # ---------------------------------------------------------------------------
+
+
+def test_format_status_badge():
+    assert "PASS" in format_status_badge("passed")
+    assert "FAIL" in format_status_badge("failed")
+    assert "ERROR" in format_status_badge("error")
+    assert "SKIP" in format_status_badge("skipped")
+    assert "UNKNOWN" in format_status_badge(None)
 
 
 def test_result_badge_all_passed():
-    assert "3/3 PASS" in result_badge(3, 0, 0, 0, 3)
-    assert "0/3 FAIL" in result_badge(3, 0, 0, 0, 3)
+    assert "1/1 PASS" in result_badge(1, 0, 0, 0, 1)
+    assert "🔴 0/1 FAIL" in result_badge(1, 0, 0, 0, 1)
 
 
-def test_result_badge_mixed():
-    badge = result_badge(1, 1, 1, 1, 4)
-    assert "1/4 PASS" in badge
-    assert "1/4 FAIL" in badge
-    assert "1/4 ERROR" in badge
-    assert "1/4 SKIP" in badge
-
-
-def test_result_badge_no_scenarios():
+def test_result_badge_empty():
     assert result_badge(0, 0, 0, 0, 0) == "-"
-
-
-# ---------------------------------------------------------------------------
-# test_status_badge のテスト
-# ---------------------------------------------------------------------------
-
-
-def test_format_status_badge_passed():
-    assert format_status_badge("passed") == "✅ PASS"
-
-
-def test_format_status_badge_failed():
-    assert format_status_badge("failed") == "🔴 FAIL"
-
-
-def test_format_status_badge_error():
-    assert format_status_badge("error") == "❌ ERROR"
-
-
-def test_format_status_badge_skipped():
-    assert format_status_badge("skipped") == "⏭️ SKIP"

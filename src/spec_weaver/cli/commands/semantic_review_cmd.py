@@ -55,7 +55,7 @@ def _semantic_review_cmd(
     try:
         if output != "json":
             from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn, MofNCompleteColumn, TimeElapsedColumn
-            from spec_weaver.adopters.doorstop import get_item_map
+            from spec_weaver.adapters.doorstop import get_item_map
             
             total = len(get_item_map(repo_root))
             with Progress(SpinnerColumn(), TextColumn("[progress.description]{task.description}"), BarColumn(), MofNCompleteColumn(), TimeElapsedColumn(), console=console) as progress:

@@ -2,10 +2,10 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Optional, Dict, List, Set, Any
 
-from spec_weaver.adopters.doorstop import get_item_map, get_all_prefixes, _get_custom_attribute
-from spec_weaver.adopters.gherkin import get_tag_map, get_spec_fingerprints
+from spec_weaver.adapters.doorstop import get_item_map, get_all_prefixes, _get_custom_attribute
+from spec_weaver.adapters.gherkin import get_tag_map, get_spec_fingerprints
 from spec_weaver.core.review_state import compute_review_state, ReviewState
-from spec_weaver.utils.behave import check_behave_steps
+from spec_weaver.adapters.behave import check_behave_steps
 from spec_weaver.services.audit_service import AuditService  # feature_file_states取得などを再利用
 from spec_weaver.utils.formatters import get_uid_prefix
 

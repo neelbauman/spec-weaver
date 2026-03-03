@@ -4,16 +4,16 @@ from typing import Optional, Set, Dict, List, Tuple
 from datetime import date as _date
 
 from spec_weaver.core.review_state import compute_review_state, ReviewState
-from spec_weaver.utils.behave import check_behave_steps
-from spec_weaver.adopters.doorstop import (
+from spec_weaver.adapters.behave import check_behave_steps
+from spec_weaver.adapters.doorstop import (
     get_item_map, get_specs, get_all_prefixes, 
     _get_custom_attribute, _get_git_file_date
 )
-from spec_weaver.adopters.gherkin import (
+from spec_weaver.adapters.gherkin import (
     get_tag_map, get_tags, get_spec_fingerprints, 
     compute_feature_file_hash, read_stored_fingerprints
 )
-from spec_weaver.adopters.impl_scanner import ImplScanner, get_ref_files
+from spec_weaver.adapters.impl_scanner import ImplScanner, get_ref_files
 
 @dataclass
 class AuditReport:

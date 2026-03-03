@@ -1,7 +1,7 @@
 # tests/test_step_resolver.py
 
 from pathlib import Path
-from spec_weaver.step_resolver import StepResolver
+from spec_weaver.core.step_resolver import StepResolver
 
 
 def test_step_resolver_load_and_resolve(tmp_path):
