@@ -60,55 +60,6 @@ def given_a838a6ff(context):
         path = features_dir / filename
         path.write_text(f"{tags}\nFeature: Test Feature\n  Scenario: Test Scenario\n    Given test\n")
 
-
-# [Duplicate Skip] This step is already defined elsewhere
-# @then('終了コードが0である')  # type: ignore
-# def then_0f800e56(context):
-#     """終了コードが0である
-# 
-#     Scenarios:
-#       - REQを起点としたトップダウンのツリー表示
-#       - SPECを起点とした双方向のツリー表示
-#       - Gherkin Featureファイルを起点としたボトムアップ表示
-#       - --direction up で上方向のみ探索
-#       - --direction down で下方向のみ探索
-#       - --format flat でフラットリスト表示
-#       - .feature ディレクトリが存在しない場合の警告と継続
-#       - 各ノードにステータスバッジが表示される
-#     """
-#     raise NotImplementedError('STEP: 終了コードが0である')
-
-
-@when('`spec-weaver trace REQ-001 -f ./specification/features` を実行する')  # type: ignore
-def when_6629a1b8(context):
-    """`spec-weaver trace REQ-001 -f ./specification/features` を実行する
-
-    Scenarios:
-      - REQを起点としたトップダウンのツリー表示
-      - Doorstopツリーが未初期化の場合のエラー
-      - 各ノードにステータスバッジが表示される
-    """
-    raise NotImplementedError('STEP: `spec-weaver trace REQ-001 -f ./specification/features` を実行する')
-
-
-# [Duplicate Skip] This step is already defined elsewhere
-# @then('終了コードが0である')  # type: ignore
-# def then_0f800e56(context):
-#     """終了コードが0である
-# 
-#     Scenarios:
-#       - REQを起点としたトップダウンのツリー表示
-#       - SPECを起点とした双方向のツリー表示
-#       - Gherkin Featureファイルを起点としたボトムアップ表示
-#       - --direction up で上方向のみ探索
-#       - --direction down で下方向のみ探索
-#       - --format flat でフラットリスト表示
-#       - .feature ディレクトリが存在しない場合の警告と継続
-#       - 各ノードにステータスバッジが表示される
-#     """
-#     raise NotImplementedError('STEP: 終了コードが0である')
-
-
 @when('`spec-weaver trace {target}` を実行する')  # type: ignore
 @when('`spec-weaver trace {target}` を実行する（--show-impl なし）')  # type: ignore
 def when_trace_generic(context, target):
@@ -167,17 +118,6 @@ def then_5c046e43(context, param0, param1):
     assert param0 in context.result.stdout
     assert param1 in context.result.stdout
 
-
-@when('`spec-weaver trace SPEC-003 -f ./specification/features` を実行する')  # type: ignore
-def when_b1a2f499(context):
-    """`spec-weaver trace SPEC-003 -f ./specification/features` を実行する
-
-    Scenarios:
-      - SPECを起点とした双方向のツリー表示
-    """
-    raise NotImplementedError('STEP: `spec-weaver trace SPEC-003 -f ./specification/features` を実行する')
-
-
 @then('上位に "{param0}" が表示される')  # type: ignore
 def then_0d60d0d2(context, param0):
     """上位に "REQ-002" が表示される
@@ -198,16 +138,6 @@ def then_b2f19b22(context, param0):
     assert param0 in context.result.stdout
 
 
-@when('`spec-weaver trace audit.feature -f ./specification/features` を実行する')  # type: ignore
-def when_53222a94(context):
-    """`spec-weaver trace audit.feature -f ./specification/features` を実行する
-
-    Scenarios:
-      - Gherkin Featureファイルを起点としたボトムアップ表示
-    """
-    raise NotImplementedError('STEP: `spec-weaver trace audit.feature -f ./specification/features` を実行する')
-
-
 @then('出力に "{param0}" が表示される')  # type: ignore
 def then_1b9fcb6e(context, param0):
     """出力に "SPEC-003" が表示される
@@ -221,16 +151,6 @@ def then_1b9fcb6e(context, param0):
     assert param0 in context.result.stdout
 
 
-@when('`spec-weaver trace SPEC-003 -f ./specification/features --direction up` を実行する')  # type: ignore
-def when_770f884f(context):
-    """`spec-weaver trace SPEC-003 -f ./specification/features --direction up` を実行する
-
-    Scenarios:
-      - --direction up で上方向のみ探索
-    """
-    raise NotImplementedError('STEP: `spec-weaver trace SPEC-003 -f ./specification/features --direction up` を実行する')
-
-
 @then('出力に "{param0}" が表示されない')  # type: ignore
 def then_1c0ce4ff(context, param0):
     """出力に "audit.feature" が表示されない
@@ -239,26 +159,6 @@ def then_1c0ce4ff(context, param0):
       - --direction up で上方向のみ探索
     """
     assert param0 not in context.result.stdout
-
-
-@when('`spec-weaver trace REQ-001 -f ./specification/features --direction down` を実行する')  # type: ignore
-def when_24d70f7f(context):
-    """`spec-weaver trace REQ-001 -f ./specification/features --direction down` を実行する
-
-    Scenarios:
-      - --direction down で下方向のみ探索
-    """
-    raise NotImplementedError('STEP: `spec-weaver trace REQ-001 -f ./specification/features --direction down` を実行する')
-
-
-@when('`spec-weaver trace REQ-001 -f ./specification/features --format flat` を実行する')  # type: ignore
-def when_816b7b2c(context):
-    """`spec-weaver trace REQ-001 -f ./specification/features --format flat` を実行する
-
-    Scenarios:
-      - --format flat でフラットリスト表示
-    """
-    raise NotImplementedError('STEP: `spec-weaver trace REQ-001 -f ./specification/features --format flat` を実行する')
 
 
 @then('出力がフラットリスト形式である')  # type: ignore
@@ -291,28 +191,6 @@ def then_29017220(context, param0, param1, param2):
     assert found
 
 
-@when('`spec-weaver trace NONEXIST-999 -f ./specification/features` を実行する')  # type: ignore
-def when_44385436(context):
-    """`spec-weaver trace NONEXIST-999 -f ./specification/features` を実行する
-
-    Scenarios:
-      - 存在しないIDを指定した場合のエラー
-    """
-    raise NotImplementedError('STEP: `spec-weaver trace NONEXIST-999 -f ./specification/features` を実行する')
-
-
-# [Duplicate Skip] This step is already defined elsewhere
-# @then('終了コードが1である')  # type: ignore
-# def then_9b731a71(context):
-#     """終了コードが1である
-# 
-#     Scenarios:
-#       - 存在しないIDを指定した場合のエラー
-#       - Doorstopツリーが未初期化の場合のエラー
-#     """
-#     raise NotImplementedError('STEP: 終了コードが1である')
-
-
 @then('エラーメッセージに "{param0}" が含まれる')  # type: ignore
 def then_9998fad9(context, param0):
     """エラーメッセージに "not found" が含まれる
@@ -332,38 +210,6 @@ def given_1b5b3d28(context):
       - Doorstopツリーが未初期化の場合のエラー
     """
     context.repo_root = Path(tempfile.mkdtemp(prefix="sw_empty_"))
-
-
-# [Duplicate Skip] This step is already defined elsewhere
-# @then('警告メッセージが表示される')  # type: ignore
-# def then_a11d14f9(context):
-#     """警告メッセージが表示される
-# 
-#     Scenarios:
-#       - .feature ディレクトリが存在しない場合の警告と継続
-#     """
-#     raise NotImplementedError('STEP: 警告メッセージが表示される')
-
-
-@when('`spec-weaver trace REQ-001 -f ./nonexistent/features` を実行する')  # type: ignore
-def when_64ec2c6c(context):
-    """`spec-weaver trace REQ-001 -f ./nonexistent/features` を実行する
-
-    Scenarios:
-      - .feature ディレクトリが存在しない場合の警告と継続
-    """
-    raise NotImplementedError('STEP: `spec-weaver trace REQ-001 -f ./nonexistent/features` を実行する')
-
-
-# [Duplicate Skip] This step is already defined elsewhere
-# @then('警告メッセージが表示される')  # type: ignore
-# def then_a11d14f9(context):
-#     """警告メッセージが表示される
-# 
-#     Scenarios:
-#       - .feature ディレクトリが存在しない場合の警告と継続
-#     """
-#     raise NotImplementedError('STEP: 警告メッセージが表示される')
 
 
 @then('"{param0}" のノードに "{param1}" のステータスバッジが表示される')  # type: ignore

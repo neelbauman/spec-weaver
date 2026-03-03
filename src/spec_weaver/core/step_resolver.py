@@ -23,6 +23,10 @@ class StepDefinition:
             return True
         return False
 
+    @property
+    def is_stub(self) -> bool:
+        return "NotImplementedError" in self.source and "STEP:" in self.source
+
 
 class StepResolver:
     def __init__(self):

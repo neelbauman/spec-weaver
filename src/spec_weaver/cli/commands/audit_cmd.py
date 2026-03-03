@@ -51,18 +51,23 @@ def _audit_cmd(
 
     # ロジックの実行（UIと分離）
     service = AuditService()
+    # テスト環境などでの表示崩れ（自動折り返しによるアサーション失敗）を防ぐため、
+    # 幅を十分広く設定した一時的なコンソールで出力する
+    from rich.console import Console as RichConsole
+    wide_console = RichConsole(width=200)
+
     try:
-        with console.status("[bold cyan]監査データを解析中...[/bold cyan]"):
+        with wide_console.status("[bold cyan]監査データを解析中...[/bold cyan]"):
             report = service.run_audit(
                 feature_dir, repo_root, prefix, stale_days, check_impl, extensions
             )
     except Exception as e:
-        console.print(f"[bold red]❌ 監査処理中にエラーが発生しました:[/bold red] {e}")
+        wide_console.print(f"[bold red]❌ 監査処理中にエラーが発生しました:[/bold red] {e}")
         raise typer.Exit(code=1)
 
     # 以降、純粋な表示(UI)処理
     if report.inactive_testable:
-        console.print("\n[dim]⛔ 非活性のためスキップした仕様 (Inactive Testable Specs):[/dim]")
+        wide_console.print("\n[dim]⛔ 非活性のためスキップした仕様 (Inactive Testable Specs):[/dim]")
         table = Table(show_header=True, header_style="dim")
         table.add_column("Spec ID", style="dim")
         table.add_column("理由", style="dim")
@@ -71,27 +76,27 @@ def _audit_cmd(
         console.print(table)
 
     if report.untested_specs:
-        console.print("\n[bold red]❌ テストが実装されていない仕様 (Untested Specs):[/bold red]")
+        wide_console.print("\n[bold red]❌ テストが実装されていない仕様 (Untested Specs):[/bold red]")
         table = Table(show_header=True, header_style="bold magenta")
         table.add_column("Missing Spec ID", style="dim")
         for spec in sorted(report.untested_specs):
             table.add_row(spec)
-        console.print(table)
+        wide_console.print(table)
 
     if report.orphaned_tags:
-        console.print("\n[bold yellow]⚠️ 仕様書に存在しない孤児タグ (Orphaned Tags):[/bold yellow]")
+        wide_console.print("\n[bold yellow]⚠️ 仕様書に存在しない孤児タグ (Orphaned Tags):[/bold yellow]")
         table = Table(show_header=True, header_style="bold magenta")
         table.add_column("Orphaned Tag", style="dim")
         for tag in sorted(report.orphaned_tags):
             table.add_row(f"@{tag}")
-        console.print(table)
+        wide_console.print(table)
 
     if report.suspect_specs or report.suspect_features:
-        console.print("\n[bold yellow]⚠️ Suspect — 関連アイテムが変更されています:[/bold yellow]")
+        wide_console.print("\n[bold yellow]⚠️ Suspect — 関連アイテムが変更されています:[/bold yellow]")
         table = Table(show_header=True, header_style="bold magenta")
-        table.add_column("Spec ID", style="dim")
+        table.add_column("Spec ID", style="dim", no_wrap=True)
         table.add_column("原因アイテム", style="dim")
-        table.add_column("アクション", style="dim")
+        table.add_column("アクション", style="dim", overflow="fold")
         for spec in sorted(report.suspect_specs):
             causes_list = []
             for c in report.suspect_specs[spec]:
@@ -106,10 +111,10 @@ def _audit_cmd(
             fname = Path(fpath).name
             causes = ", ".join(sorted(report.suspect_features[fpath])) or "不明"
             table.add_row(fname, causes, "feature ファイルを確認し、必要に応じてシナリオを更新")
-        console.print(table)
+        wide_console.print(table)
 
     if report.unreviewed_specs or report.unreviewed_features:
-        console.print("\n[bold yellow]📋 未レビューの変更 (Unreviewed Changes):[/bold yellow]")
+        wide_console.print("\n[bold yellow]📋 未レビューの変更 (Unreviewed Changes):[/bold yellow]")
         table = Table(show_header=True, header_style="bold yellow")
         table.add_column("UID / File", style="dim")
         table.add_column("Type")
@@ -117,61 +122,61 @@ def _audit_cmd(
             table.add_row(spec, "Doorstop Item")
         for fpath in sorted(report.unreviewed_features):
             table.add_row(Path(fpath).name, "Feature File")
-        console.print(table)
+        wide_console.print(table)
 
     if report.broken_refs:
-        console.print("\n[bold red]❌ 実装ファイルリンク切れ (Broken Implementation Refs):[/bold red]")
+        wide_console.print("\n[bold red]❌ 実装ファイルリンク切れ (Broken Implementation Refs):[/bold red]")
         table = Table(show_header=True, header_style="bold red")
         table.add_column("Spec ID")
         table.add_column("Path (not found)")
         for uid, p in sorted(report.broken_refs):
             table.add_row(uid, p)
-        console.print(table)
+        wide_console.print(table)
 
     if report.ref_only:
-        console.print("\n[bold yellow]⚠️ impl_files のみ（アノテーションなし）(Ref Only):[/bold yellow]")
+        wide_console.print("\n[bold yellow]⚠️ impl_files のみ（アノテーションなし）(Ref Only):[/bold yellow]")
         table = Table(show_header=True, header_style="bold yellow")
         table.add_column("Spec ID")
         table.add_column("Path")
         for uid, p in sorted(report.ref_only):
             table.add_row(uid, f"{uid} → {p}")
-        console.print(table)
+        wide_console.print(table)
 
     if report.annotation_only:
-        console.print("\n[bold yellow]⚠️ アノテーションのみ（impl_files なし）(Annotation Only):[/bold yellow]")
+        wide_console.print("\n[bold yellow]⚠️ アノテーションのみ（impl_files なし）(Annotation Only):[/bold yellow]")
         table = Table(show_header=True, header_style="bold yellow")
         table.add_column("Spec ID")
         table.add_column("Path")
         for uid, p in sorted(report.annotation_only):
             table.add_row(uid, f"{uid} ← {p}")
-        console.print(table)
+        wide_console.print(table)
 
     if report.stale_items:
-        console.print("\n[bold yellow]⏳ 最終更新から長期間経過しているアイテム (Stale Items):[/bold yellow]")
+        wide_console.print("\n[bold yellow]⏳ 最終更新から長期間経過しているアイテム (Stale Items):[/bold yellow]")
         table = Table(show_header=True, header_style="bold yellow")
         table.add_column("Spec ID")
         table.add_column("最終更新日")
         table.add_column("経過日数")
         for uid, updated_at, delta in sorted(report.stale_items):
             table.add_row(uid, updated_at, f"{delta} days")
-        console.print(table)
+        wide_console.print(table)
 
     if report.undefined_steps:
-        console.print("\n[bold red]❌ ステップ定義が見つからないシナリオ (Undefined Steps):[/bold red]")
+        wide_console.print("\n[bold red]❌ ステップ定義が見つからないシナリオ (Undefined Steps):[/bold red]")
         table = Table(show_header=True, header_style="bold red")
         table.add_column("Missing Step Text")
         for step in sorted(report.undefined_steps):
             table.add_row(step)
-        console.print(table)
+        wide_console.print(table)
 
     if report.unused_step_defs:
-        console.print("\n[dim]💡 未使用のステップ定義 (Unused Step Definitions):[/dim]")
+        wide_console.print("\n[dim]💡 未使用のステップ定義 (Unused Step Definitions):[/dim]")
         for step in sorted(report.unused_step_defs):
-            console.print(f"  [dim]- {step}[/dim]")
+            wide_console.print(f"  [dim]- {step}[/dim]")
 
     if report.is_success:
-        console.print(f"\n[bold green]✅ 完璧です！ {report.specs_count} 件の仕様がすべてGherkinテストでカバーされています。[/bold green]")
+        wide_console.print(f"\n[bold green]✅ 完璧です！ {report.specs_count} 件の仕様がすべてGherkinテストでカバーされています。[/bold green]")
         raise typer.Exit(code=0)
     else:
-        console.print("\n[bold red]監査が失敗しました。仕様とテストの乖離を修正してください。[/bold red]")
+        wide_console.print("\n[bold red]監査が失敗しました。仕様とテストの乖離を修正してください。[/bold red]")
         raise typer.Exit(code=1)

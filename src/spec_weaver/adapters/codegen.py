@@ -1,4 +1,4 @@
-# src/spec_weaver/codegen.py
+# src/spec_weaver/adapters/codegen.py
 # implements: AUT-001
 
 """
@@ -10,6 +10,19 @@ Gherkin .feature ファイルから behave テストコードの雛形を自動�
 既存のステップファイルがある場合は、仮想新規ファイル方式により
 .feature の出現順を維持しながら未実装ステップを差分追記し、
 Docstring 内の Scenarios セクションを自動更新する。
+
+【重複判定戦略（AmbiguousStepの防止）】
+1. Prefix違いの吸収:
+   同一のステップテキストに対して "Given" や "When" などの Prefix が異なる場合、
+   behave ではグローバル空間で衝突し AmbiguousStep となる。
+   そのため、ステップレジストリのキーをプレフィックスを含まないテキスト単体とし、
+   最初に出現したPrefixで代表して関数を生成する。
+2. リネーム耐性 (StepResolverの活用):
+   開発者が可読性のために `{param0}` を `{user_name}` のように手動リネームした場合、
+   単純なテキストの完全一致では「未実装の新規ステップ」と誤認し再生成してしまう。
+   これを防ぐため、`StepResolver` (内部的に parse ライブラリを利用) を用いた
+   意味論的なマッチングを行い、既存のステップ（スタブ含む）と一致するかを
+   動的に判定して重複生成をスキップ、または Duplicate コメントとして処理する。
 """
 
 import ast as python_ast
@@ -22,6 +35,8 @@ from typing import Any
 
 from gherkin.parser import Parser
 from gherkin.token_scanner import TokenScanner
+
+from spec_weaver.core.step_resolver import StepResolver, StepDefinition
 
 # behave ステップデコレータ名
 STEP_DECORATORS = frozenset({"given", "when", "then", "step"})
@@ -69,18 +84,16 @@ def _parameterize_step(text: str) -> tuple[str, list[str]]:
 
 
 def _escape_string(text: str) -> str:
-    """
-    文字列内のバックスラッシュをエスケープし、ダブルクォーテーションを < > に置換する。
-    （テスト互換用）
-    """
-    text = text.replace("\\", "\\\\")
-    parts = text.split('"')
-    result = []
-    for i, part in enumerate(parts):
-        result.append(part)
-        if i < len(parts) - 1:
-            result.append("<" if i % 2 == 0 else ">")
-    return "".join(result)
+    """文字列内の二重引用符を不等号に、バックスラッシュをエスケープする。"""
+    res = text.replace("\\", "\\\\")
+    # 対になった二重引用符を < > に置換する簡易的な実装
+    count = 0
+    def replacer(m):
+        nonlocal count
+        res = "<" if count % 2 == 0 else ">"
+        count += 1
+        return res
+    return re.sub(r'"', replacer, res)
 
 
 def _escape_docstring(text: str) -> str:
@@ -152,7 +165,6 @@ def _parse_step_file(content: str) -> tuple[str, list[StepFunctionInfo]]:
 
     lines = content.splitlines(keepends=True)
 
-    # トップレベルのステップ関数を収集（デコレータ開始行でソート）
     step_funcs: list[tuple[python_ast.FunctionDef, list[str], int]] = []
     for node in python_ast.iter_child_nodes(tree):
         if isinstance(node, python_ast.FunctionDef):
@@ -170,16 +182,14 @@ def _parse_step_file(content: str) -> tuple[str, list[StepFunctionInfo]]:
     if not step_funcs:
         return content, []
 
-    # ヘッダー: 最初のステップ関数のデコレータ開始行より前
     header = "".join(lines[: step_funcs[0][2] - 1])
 
-    # 各ステップ関数のブロックを構築
     infos: list[StepFunctionInfo] = []
     for i, (node, params, start) in enumerate(step_funcs):
         if i + 1 < len(step_funcs):
-            end = step_funcs[i + 1][2] - 1  # 次の関数の開始行の前まで
+            end = step_funcs[i + 1][2] - 1
         else:
-            end = len(lines)  # 最後の関数はファイル末尾まで
+            end = len(lines)
         source_text = "".join(lines[start - 1 : end])
         infos.append(
             StepFunctionInfo(
@@ -199,7 +209,7 @@ def _parse_step_file(content: str) -> tuple[str, list[StepFunctionInfo]]:
 
 
 def _collect_scenarios(ast: dict) -> list[dict[str, Any]]:
-    """AST から Scenario / Background ノードを収集する。Rule ブロック内のシナリオも対象とする。"""
+    """AST から Scenario / Background ノードを収集する。"""
     feature = ast.get("feature")
     if not feature:
         return []
@@ -232,47 +242,42 @@ def _resolve_step_prefixes(steps: list[dict]) -> list[tuple[str, str]]:
     return resolved
 
 
-def _collect_existing_steps(
+def _load_existing_resolver(
     steps_dir: Path, exclude_file: Path | None = None
-) -> set[str]:
+) -> StepResolver:
     """
-    指定ディレクトリ配下の Python ファイルから定義済みの behave ステップ文を収集する。
-    AST 解析により、コメント行のデコレータは自然に無視される。
-    exclude_file を指定するとそのファイルは走査対象から除外する。
+    指定ディレクトリ配下の Python ファイルから定義済みのステップを読み込み、
+    リネーム耐性のあるマッチングを行うための StepResolver を返す。
     """
-    existing_steps: set[str] = set()
+    resolver = StepResolver()
     if not steps_dir.exists():
-        return existing_steps
+        return resolver
 
     for py_file in steps_dir.glob("*.py"):
         if exclude_file and py_file.resolve() == exclude_file.resolve():
             continue
-        try:
-            content = py_file.read_text(encoding="utf-8")
-            tree = python_ast.parse(content)
-            for node in python_ast.walk(tree):
-                if isinstance(node, python_ast.FunctionDef):
-                    for param_text in _extract_step_params(node):
-                        existing_steps.add(param_text)
-        except Exception:
-            continue
-    return existing_steps
+        # Resolverの内部関数を利用してファイルごとにパースさせる
+        resolver._parse_file(py_file)
+        
+    return resolver
 
 
 def _build_step_registry(ast: dict) -> dict[str, dict]:
     """
     AST からステップレジストリを構築する。
-    キー: "prefix:param_text"、値: ステップのメタデータ（.feature の出現順を保持）
+    キー: "param_text" (Prefix違いを吸収する)、値: ステップのメタデータ
     """
     step_registry: dict[str, dict] = {}
     for sc in _collect_scenarios(ast):
         scenario_name = sc.get("name", "Unknown Scenario")
         for prefix, raw_text in _resolve_step_prefixes(sc.get("steps", [])):
             param_text, params = _parameterize_step(raw_text)
-            step_key = f"{prefix}:{param_text}"
+            
+            # キーを param_text にし、異なるPrefixでも同じテキストなら1つにまとめる
+            step_key = param_text
             if step_key not in step_registry:
                 step_registry[step_key] = {
-                    "prefix": prefix,
+                    "prefix": prefix,  # 最初に出現したPrefixを生成時に使用
                     "param_text": param_text,
                     "raw_text": raw_text,
                     "params": params,
@@ -296,10 +301,8 @@ def _build_step_block(
     scenario_names: list[str],
     is_duplicate: bool,
 ) -> str:
-    """
-    1つのステップ関数コードブロックを文字列として生成する。
-    Docstring には Scenarios セクションを含む。
-    """
+    """1つのステップ関数コードブロックを文字列として生成する。"""
+    # 関数名ハッシュは prefix:param_text から生成し、テストとの互換性を保つ
     func_name = f"{prefix}_{_hash_name(f'{prefix}:{param_text}')}"
     args = ", ".join(["context"] + params)
     doc_text = _escape_docstring(raw_text)
@@ -324,7 +327,7 @@ def _build_step_block(
 def _generate_file_content(
     feature_name: str,
     step_registry: dict[str, dict],
-    global_existing_steps: set[str],
+    existing_resolver: StepResolver,
 ) -> str:
     """ステップレジストリからファイル全体の内容を生成する。"""
     lines: list[str] = [
@@ -339,7 +342,10 @@ def _generate_file_content(
     ]
 
     for meta in step_registry.values():
-        is_duplicate = meta["param_text"] in global_existing_steps
+        # StepResolver を用いて既存実装（リネームされたもの含む）にマッチするか判定
+        match = existing_resolver.resolve_step(meta["prefix"], meta["raw_text"])
+        is_duplicate = match is not None
+        
         block = _build_step_block(
             meta["prefix"],
             meta["param_text"],
@@ -373,11 +379,9 @@ def _add_scenarios_to_block(block: str, new_scenarios: list[str]) -> str:
 
     scenarios_match = re.search(r"(Scenarios:\s*\n)((?:\s+- .+\n)*)", block)
     if scenarios_match:
-        # 既存 Scenarios セクションの末尾に追記
         end = scenarios_match.end(2)
         return block[:end] + insert_text + block[end:]
 
-    # Scenarios セクションがない場合、Docstring の閉じ """ の直前に追加
     closing = block.rfind('"""')
     if closing == -1:
         return block
@@ -389,83 +393,101 @@ def _merge_content(
     existing_content: str,
     ideal_order: list[str],
     ideal_func_to_info: dict[str, StepFunctionInfo],
-    duplicate_func_names: set[str] | None = None,
+    step_registry: dict[str, dict],
+    existing_resolver: StepResolver,
+    out_file_path: Path,
 ) -> str:
-    """
-    仮想新規ファイルの関数順序を基に、既存ファイルへ差分マージを行う。
-
-    - 既存関数: Docstring の Scenarios セクションに不足シナリオを追記
-    - 新規関数: .feature の出現順（ideal_order）に従い適切な位置に挿入
-    - スタブ関数で他ファイルに実装済みのもの: Duplicate コメントブロックへ置き換え
-    """
+    """仮想新規ファイルの関数順序を基に、既存ファイルへ差分マージを行う。"""
     header, existing_infos = _parse_step_file(existing_content)
+    out_file_abs = out_file_path.resolve()
 
-    # 既存ブロックのメタデータを構築
     result_infos: list[StepFunctionInfo] = list(existing_infos)
-    existing_param_texts: dict[str, int] = {}
-    for i, info in enumerate(result_infos):
-        for pt in info.param_texts:
-            existing_param_texts[pt] = i
-
-    result_names = [info.name for info in result_infos]
 
     for i, func_name in enumerate(ideal_order):
+        # 挿入が発生するたび、現在の result_infos に基づいてマッピングを再構築する。
+        # これにより、挿入によるインデックスのズレを防ぐ。
+        result_names = [info.name for info in result_infos]
+        current_param_texts: dict[str, int] = {}
+        for idx, info in enumerate(result_infos):
+            for pt in info.param_texts:
+                current_param_texts[pt] = idx
+
         ideal_info = ideal_func_to_info[func_name]
         ideal_pt = ideal_info.param_texts[0] if ideal_info.param_texts else None
+        meta = step_registry.get(ideal_pt)
 
         match_idx = -1
         if func_name in result_names:
             match_idx = result_names.index(func_name)
-        elif ideal_pt and ideal_pt in existing_param_texts:
-            match_idx = existing_param_texts[ideal_pt]
+        elif ideal_pt and ideal_pt in current_param_texts:
+            match_idx = current_param_texts[ideal_pt]
+        elif meta:
+            # Semantic match check (Rename/Parameterization tolerance)
+            # 現在の result_infos を対象に、Semantic なマッチングを試みる
+            for idx, info in enumerate(result_infos):
+                matched = False
+                for pt in info.param_texts:
+                    sd = StepDefinition(meta["prefix"], pt, info.source_text, str(out_file_abs), 0)
+                    if sd.matches(meta["prefix"], meta["raw_text"]):
+                        match_idx = idx
+                        matched = True
+                        break
+                if matched:
+                    break
 
         if match_idx != -1:
-            # 既存関数: Scenarios セクションを更新
             existing_info = result_infos[match_idx]
-            ideal_scenarios = _extract_scenarios_from_block(ideal_info.source_text)
-            existing_scenarios = _extract_scenarios_from_block(
-                existing_info.source_text
-            )
-            missing = [s for s in ideal_scenarios if s not in existing_scenarios]
-            if missing:
+            # 重複判定された場合（他ファイルに実体がある）、既存がスタブならコメント化
+            is_globally_implemented = False
+            if meta:
+                # すべての登録ステップからマッチするものを探し、他ファイルに「スタブでない」実装があるか確認
+                for step_def in existing_resolver.steps:
+                    if step_def.matches(meta["prefix"], meta["raw_text"]):
+                        if (
+                            Path(step_def.file).resolve() != out_file_abs
+                            and not step_def.is_stub
+                        ):
+                            is_globally_implemented = True
+                            break
+
+            if is_globally_implemented and existing_info.is_stub:
+                commented = "\n".join(
+                    f"# {line}"
+                    for line in existing_info.source_text.rstrip("\n").split("\n")
+                )
                 result_infos[match_idx] = StepFunctionInfo(
                     name=existing_info.name,
                     param_texts=existing_info.param_texts,
-                    source_text=_add_scenarios_to_block(
-                        existing_info.source_text, missing
-                    ),
-                    is_stub=existing_info.is_stub,
-                )
-        else:
-            # 新規関数: アンカーを探して挿入位置を決定
-            # ideal_order[i] より前で result_names に存在する最後の関数 = アンカー
-            anchor_idx = -1
-            for j in range(i - 1, -1, -1):
-                if ideal_order[j] in result_names:
-                    anchor_idx = result_names.index(ideal_order[j])
-                    break
-
-            insert_pos = anchor_idx + 1  # アンカーなし(-1)のときは先頭(0)
-            result_infos.insert(insert_pos, ideal_info)
-            result_names.insert(insert_pos, func_name)
-
-    # 他ファイルに実装済みのスタブを Duplicate コメントブロックへ置き換える
-    if duplicate_func_names:
-        for i, info in enumerate(result_infos):
-            if info.name in duplicate_func_names and info.is_stub:
-                commented = "\n".join(
-                    f"# {line}"
-                    for line in info.source_text.rstrip("\n").split("\n")
-                )
-                result_infos[i] = StepFunctionInfo(
-                    name=info.name,
-                    param_texts=info.param_texts,
                     source_text=(
                         "# [Duplicate Skip] This step is already defined "
                         f"elsewhere\n{commented}\n\n"
                     ),
                     is_stub=False,
                 )
+            else:
+                ideal_scenarios = _extract_scenarios_from_block(ideal_info.source_text)
+                existing_scenarios = _extract_scenarios_from_block(
+                    existing_info.source_text
+                )
+                missing = [s for s in ideal_scenarios if s not in existing_scenarios]
+                if missing:
+                    result_infos[match_idx] = StepFunctionInfo(
+                        name=existing_info.name,
+                        param_texts=existing_info.param_texts,
+                        source_text=_add_scenarios_to_block(
+                            existing_info.source_text, missing
+                        ),
+                        is_stub=existing_info.is_stub,
+                    )
+        else:
+            anchor_idx = -1
+            for j in range(i - 1, -1, -1):
+                if ideal_order[j] in result_names:
+                    anchor_idx = result_names.index(ideal_order[j])
+                    break
+
+            insert_pos = anchor_idx + 1
+            result_infos.insert(insert_pos, ideal_info)
 
     return header + "".join(info.source_text for info in result_infos)
 
@@ -536,6 +558,23 @@ def after_step(context, step):
 """
 
 
+def _collect_existing_steps(steps_dir: Path) -> list[str]:
+    """
+    指定ディレクトリ配下の Python ファイルから定義済みのステップパターンを抽出する。
+    後方互換性とテストのために残す。
+    """
+    resolver = StepResolver()
+    resolver.load_steps(steps_dir)
+    # コメントアウトされているものを除外するために、
+    # 実際の内容を確認する（StepResolverの実装に依存するが、
+    # 簡易的に source を見て # で始まっていないか確認）
+    return [
+        s.pattern
+        for s in resolver.steps
+        if not s.source.lstrip().startswith("#")
+    ]
+
+
 def generate_environment_file(
     feature_dir: Path,
     overwrite: bool = False,
@@ -554,21 +593,13 @@ def generate_environment_file(
     env_file.write_text(ENVIRONMENT_PY_TEMPLATE, encoding="utf-8")
     return env_file, "created", ""
 
-
 def generate_test_file(
     feature_path: Path,
     out_dir: Path,
     features_base_dir: Path,
     overwrite: bool = False,
 ) -> tuple[Path, str, str] | None:
-    """
-    単一の .feature ファイルから behave ステップ定義ファイルを生成・マージする。
-
-    Returns:
-        (out_file, "created", "")        — 新規ファイルを作成した
-        (out_file, "updated", diff_text) — 既存ファイルを差分マージした
-        None                             — 変更なし（スキップ）
-    """
+    """単一の .feature ファイルから behave ステップ定義ファイルを生成・マージする。"""
     out_dir.mkdir(parents=True, exist_ok=True)
     out_file = out_dir / f"step_{feature_path.stem}.py"
 
@@ -585,38 +616,35 @@ def generate_test_file(
 
     # --- 新規作成 / 全上書き ---
     if not out_file.exists() or overwrite:
-        global_existing_steps = _collect_existing_steps(out_dir)
+        existing_resolver = _load_existing_resolver(out_dir)
         new_content = _generate_file_content(
-            feature_name, step_registry, global_existing_steps
+            feature_name, step_registry, existing_resolver
         )
         out_file.write_text(new_content, encoding="utf-8")
         return out_file, "created", ""
 
     # --- 差分マージ ---
-    # 自ファイルを除いた他のステップファイルから重複チェック用ステップを収集
-    global_existing_steps = _collect_existing_steps(out_dir, exclude_file=out_file)
+    existing_resolver = _load_existing_resolver(out_dir, exclude_file=out_file)
     ideal_content = _generate_file_content(
-        feature_name, step_registry, global_existing_steps
+        feature_name, step_registry, existing_resolver
     )
 
-    # 仮想新規ファイルから関数順序と StepFunctionInfo を取得
     _, ideal_infos = _parse_step_file(ideal_content)
     ideal_order: list[str] = [info.name for info in ideal_infos]
     ideal_func_to_info: dict[str, StepFunctionInfo] = {
         info.name: info for info in ideal_infos
     }
 
-    # 他ファイルに実装済みのステップ関数名を収集（スタブ→Duplicate コメント変換用）
-    duplicate_func_names: set[str] = set()
-    for meta in step_registry.values():
-        if meta["param_text"] in global_existing_steps:
-            fname = f"{meta['prefix']}_{_hash_name(meta['prefix'] + ':' + meta['param_text'])}"
-            duplicate_func_names.add(fname)
-
     existing_content = out_file.read_text(encoding="utf-8")
     new_content = _merge_content(
-        existing_content, ideal_order, ideal_func_to_info, duplicate_func_names
+        existing_content,
+        ideal_order,
+        ideal_func_to_info,
+        step_registry,
+        existing_resolver,
+        out_file,
     )
+
 
     if new_content == existing_content:
         return None
