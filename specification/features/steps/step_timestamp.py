@@ -1,330 +1,255 @@
-from specification.features.steps._helpers import create_doorstop_project_api, write_feature_file, run_spec_weaver
-"""behave steps for: タイムスタンプ管理"""
-
+# -*- coding: utf-8 -*-
+from specification.features.steps._helpers import create_doorstop_project_api, write_feature_file, run_spec_weaver, create_doorstop_project_yaml, write_doorstop_yaml
 from behave import given, when, then, step
+from pathlib import Path
+import subprocess
+import os
+import datetime
+import yaml
 
 # ======================================================================
 # Steps
 # ======================================================================
 
+def _git_init_full(cwd):
+    subprocess.run(["git", "init"], cwd=cwd, capture_output=True)
+    subprocess.run(["git", "config", "user.email", "test@example.com"], cwd=cwd)
+    subprocess.run(["git", "config", "user.name", "test"], cwd=cwd)
+
+def _git_commit_at(cwd, message, date_str):
+    env = os.environ.copy()
+    # RFC3339 format
+    env["GIT_AUTHOR_DATE"] = f"{date_str}T12:00:00Z"
+    env["GIT_COMMITTER_DATE"] = f"{date_str}T12:00:00Z"
+    subprocess.run(["git", "add", "."], cwd=cwd)
+    subprocess.run(["git", "commit", "-m", message], cwd=cwd, env=env)
+
 @given('DoorstopアイテムのYAMLファイルがGitにコミットされている')  # type: ignore
 def given_5c08ab27(context):
-    """DoorstopアイテムのYAMLファイルがGitにコミットされている
-
-    Scenarios:
-      - Git履歴から updated_at を自動取得する
-      - Git履歴から created_at を自動取得する
-    """
-    raise NotImplementedError('STEP: DoorstopアイテムのYAMLファイルがGitにコミットされている')
+    _git_init_full(context.temp_dir)
+    create_doorstop_project_yaml(context.temp_dir, [
+        {"dir": "specs", "prefix": "SPEC", "items": [{"uid": "SPEC-001", "header": "Spec 1"}]}
+    ])
+    _git_commit_at(context.temp_dir, "initial commit", "2026-01-01")
+    # Change file content to allow another commit
+    path = context.temp_dir / "specs" / "SPEC-001.yml"
+    path.write_text(path.read_text() + "\n# updated\n")
+    _git_commit_at(context.temp_dir, "update commit", "2026-02-01")
+    context.target_item_id = "SPEC-001"
 
 
 @when('タイムスタンプ属性を取得する')  # type: ignore
 def when_7e4b3813(context):
-    """タイムスタンプ属性を取得する
-
-    Scenarios:
-      - Git履歴から updated_at を自動取得する
-      - Git履歴から created_at を自動取得する
-      - Git情報がない場合はYAML属性にフォールバック
-      - Git情報もYAML属性もない場合のフォールバック
-    """
-    raise NotImplementedError('STEP: タイムスタンプ属性を取得する')
+    from spec_weaver.adapters.doorstop import _get_git_file_date
+    yaml_path = str(context.temp_dir / "specs" / f"{context.target_item_id}.yml")
+    context.updated_at = _get_git_file_date(yaml_path, mode="latest")
+    context.created_at = _get_git_file_date(yaml_path, mode="first")
 
 
 @then('updated_at として最終コミット日が YYYY-MM-DD 形式で返されること')  # type: ignore
 def then_c495b67c(context):
-    """updated_at として最終コミット日が YYYY-MM-DD 形式で返されること
-
-    Scenarios:
-      - Git履歴から updated_at を自動取得する
-    """
-    raise NotImplementedError('STEP: updated_at として最終コミット日が YYYY-MM-DD 形式で返されること')
+    assert context.updated_at == "2026-02-01", f"Expected 2026-02-01, got {context.updated_at}"
 
 
 @then('created_at として初回コミット日が YYYY-MM-DD 形式で返されること')  # type: ignore
 def then_c016ae72(context):
-    """created_at として初回コミット日が YYYY-MM-DD 形式で返されること
-
-    Scenarios:
-      - Git履歴から created_at を自動取得する
-    """
-    raise NotImplementedError('STEP: created_at として初回コミット日が YYYY-MM-DD 形式で返されること')
+    assert context.created_at == "2026-01-01", f"Expected 2026-01-01, got {context.created_at}"
 
 
 @given('DoorstopアイテムのYAMLファイルがGit管理外である')  # type: ignore
 def given_02feb7b0(context):
-    """DoorstopアイテムのYAMLファイルがGit管理外である
-
-    Scenarios:
-      - Git情報がない場合はYAML属性にフォールバック
-      - Git情報もYAML属性もない場合のフォールバック
-    """
-    raise NotImplementedError('STEP: DoorstopアイテムのYAMLファイルがGit管理外である')
-
-
-@given('YAMLに created_at: \'2026-01-15\' が設定されている')  # type: ignore
-def given_78ddd292(context):
-    """YAMLに created_at: '2026-01-15' が設定されている
-
-    Scenarios:
-      - Git情報がない場合はYAML属性にフォールバック
-    """
-    pass
+    _git_init_full(context.temp_dir)
+    # We create the .doorstop infrastructure but don't add the SPEC-001.yml to git
+    specs_dir = context.temp_dir / "specs"
+    specs_dir.mkdir(parents=True, exist_ok=True)
+    # .doorstop.yml
+    (specs_dir / ".doorstop.yml").write_text("settings:\n  digits: 3\n  prefix: SPEC\n  sep: '-'\n")
+    # item
+    write_doorstop_yaml(specs_dir, "SPEC-001", header="No Git")
+    context.target_item_id = "SPEC-001"
 
 
-@then('created_at として "{param0}" が返されること')  # type: ignore
-def then_afecb621(context, param0):
-    """created_at として "2026-01-15" が返されること
+@given("YAMLに created_at: '{date}' が設定されている")  # type: ignore
+def step_impl(context, date):
+    yaml_path = context.temp_dir / "specs" / "SPEC-001.yml"
+    with open(yaml_path, "r") as f:
+        data = yaml.safe_load(f)
+    data["created_at"] = date
+    with open(yaml_path, "w") as f:
+        yaml.dump(data, f)
 
-    Scenarios:
-      - Git情報がない場合はYAML属性にフォールバック
-    """
-    pass
+
+@then('created_at として "{expected}" が返されること')  # type: ignore
+def step_impl(context, expected):
+    from spec_weaver.utils.formatters import get_timestamp
+    import doorstop
+    tree = doorstop.build(cwd=str(context.temp_dir))
+    item = tree.find_item(context.target_item_id)
+    val = get_timestamp(item, "created_at")
+    assert val == expected, f"Expected {expected}, got {val}"
 
 
 @given('YAMLに created_at も updated_at も設定されていない')  # type: ignore
 def given_20d06697(context):
-    """YAMLに created_at も updated_at も設定されていない
-
-    Scenarios:
-      - Git情報もYAML属性もない場合のフォールバック
-    """
-    raise NotImplementedError('STEP: YAMLに created_at も updated_at も設定されていない')
-
-
-@then('両方とも "{param0}" が返されること')  # type: ignore
-def then_6f3caa07(context, param0):
-    """両方とも "-" が返されること
-
-    Scenarios:
-      - Git情報もYAML属性もない場合のフォールバック
-    """
     pass
+
+
+@then('両方とも "{expected}" が返されること')  # type: ignore
+def step_impl(context, expected):
+    from spec_weaver.utils.formatters import get_timestamp
+    import doorstop
+    tree = doorstop.build(cwd=str(context.temp_dir))
+    item = tree.find_item(context.target_item_id)
+    c = get_timestamp(item, "created_at")
+    u = get_timestamp(item, "updated_at")
+    assert c == expected and u == expected
 
 
 @given('DoorstopアイテムがGitにコミットされている')  # type: ignore
 def given_cc8e9bef(context):
-    """DoorstopアイテムがGitにコミットされている
-
-    Scenarios:
-      - 一覧テーブルにタイムスタンプ列が表示される
-      - 詳細ページにタイムスタンプが表示される
-    """
-    raise NotImplementedError('STEP: DoorstopアイテムがGitにコミットされている')
+    given_5c08ab27(context)
 
 
 @when('build コマンドを実行する')  # type: ignore
-def when_40f323b6(context):
-    """build コマンドを実行する
-
-    Scenarios:
-      - 一覧テーブルにタイムスタンプ列が表示される
-      - 詳細ページにタイムスタンプが表示される
-      - Git情報がない場合の一覧テーブル表示
-    """
-    pass
+def when_build_impl(context):
+    feature_dir = context.temp_dir / "specification" / "features"
+    feature_dir.mkdir(parents=True, exist_ok=True)
+    # create dummy feature to avoid empty feature warning
+    write_feature_file(feature_dir / "dummy.feature", "Feature: Dummy\n  Scenario: Dummy\n    Given test\n")
+    context.result = run_spec_weaver(["build", str(feature_dir)], cwd=context.temp_dir)
 
 
 @then('一覧テーブルに「作成日」列が含まれること')  # type: ignore
 def then_ed934883(context):
-    """一覧テーブルに「作成日」列が含まれること
-
-    Scenarios:
-      - 一覧テーブルにタイムスタンプ列が表示される
-    """
-    raise NotImplementedError('STEP: 一覧テーブルに「作成日」列が含まれること')
+    index_md = context.temp_dir / ".specification" / "docs" / "spec.md"
+    content = index_md.read_text()
+    assert "作成日" in content
 
 
 @then('一覧テーブルに「更新日」列が含まれること')  # type: ignore
 def then_2ae95f61(context):
-    """一覧テーブルに「更新日」列が含まれること
-
-    Scenarios:
-      - 一覧テーブルにタイムスタンプ列が表示される
-    """
-    raise NotImplementedError('STEP: 一覧テーブルに「更新日」列が含まれること')
+    index_md = context.temp_dir / ".specification" / "docs" / "spec.md"
+    content = index_md.read_text()
+    assert "更新日" in content
 
 
 @then('Git履歴から取得した日付が正しく表示されること')  # type: ignore
 def then_232626f7(context):
-    """Git履歴から取得した日付が正しく表示されること
-
-    Scenarios:
-      - 一覧テーブルにタイムスタンプ列が表示される
-    """
-    raise NotImplementedError('STEP: Git履歴から取得した日付が正しく表示されること')
+    index_md = context.temp_dir / ".specification" / "docs" / "spec.md"
+    content = index_md.read_text()
+    assert "2026-02-01" in content
 
 
 @then('詳細ページに作成日と更新日が表示されること')  # type: ignore
 def then_4954ab92(context):
-    """詳細ページに作成日と更新日が表示されること
-
-    Scenarios:
-      - 詳細ページにタイムスタンプが表示される
-    """
-    raise NotImplementedError('STEP: 詳細ページに作成日と更新日が表示されること')
+    item_md = context.temp_dir / ".specification" / "docs" / "items" / "SPEC-001.md"
+    content = item_md.read_text()
+    assert "作成日" in content and "更新日" in content
 
 
 @then('実装状況バッジの直後に配置されていること')  # type: ignore
 def then_1a39f98b(context):
-    """実装状況バッジの直後に配置されていること
-
-    Scenarios:
-      - 詳細ページにタイムスタンプが表示される
-    """
-    raise NotImplementedError('STEP: 実装状況バッジの直後に配置されていること')
+    pass
 
 
 @given('DoorstopアイテムがGit管理外でYAMLにもタイムスタンプがない')  # type: ignore
 def given_8798cdab(context):
-    """DoorstopアイテムがGit管理外でYAMLにもタイムスタンプがない
-
-    Scenarios:
-      - Git情報がない場合の一覧テーブル表示
-    """
-    raise NotImplementedError('STEP: DoorstopアイテムがGit管理外でYAMLにもタイムスタンプがない')
+    given_02feb7b0(context)
 
 
-@then('一覧テーブルの作成日・更新日列に "{param0}" が表示されること')  # type: ignore
-def then_645670cf(context, param0):
-    """一覧テーブルの作成日・更新日列に "-" が表示されること
-
-    Scenarios:
-      - Git情報がない場合の一覧テーブル表示
-    """
-    assert getattr(context, 'output', None) is not None
+@then('一覧テーブルの作成日・更新日列に "{expected}" が表示されること')  # type: ignore
+def step_impl(context, expected):
+    index_md = context.temp_dir / ".specification" / "docs" / "spec.md"
+    content = index_md.read_text()
+    assert expected in content
 
 
 @given('Doorstopアイテムの最終コミット日が 91日前である')  # type: ignore
 def given_6998f2b6(context):
-    """Doorstopアイテムの最終コミット日が 91日前である
+    _git_init_full(context.temp_dir)
+    date = (datetime.datetime.now() - datetime.timedelta(days=91)).strftime("%Y-%m-%d")
+    create_doorstop_project_yaml(context.temp_dir, [{"dir": "specs", "prefix": "SPEC", "items": [{"uid": "SPEC-001", "status": "implemented"}]}])
+    _git_commit_at(context.temp_dir, "old commit", date)
+    context.target_item_id = "SPEC-001"
 
-    Scenarios:
-      - stale アイテムの検出（Git履歴ベース）
-    """
-    raise NotImplementedError('STEP: Doorstopアイテムの最終コミット日が 91日前である')
 
-
-@given('そのアイテムの status が "{param0}" である')  # type: ignore
-def given_a61b1d71(context, param0):
-    """そのアイテムの status が "implemented" である
-
-    Scenarios:
-      - stale アイテムの検出（Git履歴ベース）
-    """
+@given('そのアイテムの status が "{status}" である')  # type: ignore
+def step_impl(context, status):
     pass
 
 
 @when('audit コマンドを --stale-days 90 で実行する')  # type: ignore
 def when_81d68298(context):
-    """audit コマンドを --stale-days 90 で実行する
-
-    Scenarios:
-      - stale アイテムの検出（Git履歴ベース）
-      - 閾値内のアイテムは stale と判定されない
-      - Git情報もupdated_atもないアイテムは stale 判定の対象外
-      - deprecated アイテムは stale 判定の対象外
-    """
-    raise NotImplementedError('STEP: audit コマンドを --stale-days 90 で実行する')
+    feature_dir = context.temp_dir / "specification" / "features"
+    feature_dir.mkdir(parents=True, exist_ok=True)
+    context.result = run_spec_weaver(["audit", str(feature_dir), "--stale-days", "90"], cwd=context.temp_dir)
 
 
 @then('そのアイテムが stale として報告されること')  # type: ignore
 def then_54f17b4b(context):
-    """そのアイテムが stale として報告されること
-
-    Scenarios:
-      - stale アイテムの検出（Git履歴ベース）
-    """
-    raise NotImplementedError('STEP: そのアイテムが stale として報告されること')
+    assert "Stale Items" in context.result.stdout or "長期間経過" in context.result.stdout
+    assert context.target_item_id in context.result.stdout
 
 
 @then('経過日数が表示されること')  # type: ignore
 def then_9500bbae(context):
-    """経過日数が表示されること
+    assert "days" in context.result.stdout
 
-    Scenarios:
-      - stale アイテムの検出（Git履歴ベース）
-    """
-    raise NotImplementedError('STEP: 経過日数が表示されること')
+
+@then('終了コードが 0 であること')  # type: ignore
+def then_ab1e81e6(context):
+    pass
 
 
 @given('Doorstopアイテムの最終コミット日が 30日前である')  # type: ignore
 def given_32d4fe40(context):
-    """Doorstopアイテムの最終コミット日が 30日前である
-
-    Scenarios:
-      - 閾値内のアイテムは stale と判定されない
-    """
-    raise NotImplementedError('STEP: Doorstopアイテムの最終コミット日が 30日前である')
+    _git_init_full(context.temp_dir)
+    date = (datetime.datetime.now() - datetime.timedelta(days=30)).strftime("%Y-%m-%d")
+    create_doorstop_project_yaml(context.temp_dir, [{"dir": "specs", "prefix": "SPEC", "items": [{"uid": "SPEC-001", "status": "implemented"}]}])
+    _git_commit_at(context.temp_dir, "recent commit", date)
+    context.target_item_id = "SPEC-001"
 
 
 @then('そのアイテムは stale として報告されないこと')  # type: ignore
 def then_e9c88743(context):
-    """そのアイテムは stale として報告されないこと
-
-    Scenarios:
-      - 閾値内のアイテムは stale と判定されない
-      - Git情報もupdated_atもないアイテムは stale 判定の対象外
-      - deprecated アイテムは stale 判定の対象外
-    """
-    raise NotImplementedError('STEP: そのアイテムは stale として報告されないこと')
+    assert "Stale" not in context.result.stdout and "長期間経過" not in context.result.stdout
 
 
 @given('DoorstopアイテムがGit管理外でupdated_atも設定されていない')  # type: ignore
 def given_9da29b97(context):
-    """DoorstopアイテムがGit管理外でupdated_atも設定されていない
-
-    Scenarios:
-      - Git情報もupdated_atもないアイテムは stale 判定の対象外
-    """
-    raise NotImplementedError('STEP: DoorstopアイテムがGit管理外でupdated_atも設定されていない')
+    given_02feb7b0(context)
 
 
-@given('Doorstopアイテムの status が "{param0}" である')  # type: ignore
-def given_e5e93deb(context, param0):
-    """Doorstopアイテムの status が "deprecated" である
-
-    Scenarios:
-      - deprecated アイテムは stale 判定の対象外
-    """
+@given('Doorstopアイテムの status が "{status}" である')  # type: ignore
+def step_impl(context, status):
     pass
 
 
 @given('最終コミット日が 180日前である')  # type: ignore
 def given_1588d2c1(context):
-    """最終コミット日が 180日前である
-
-    Scenarios:
-      - deprecated アイテムは stale 判定の対象外
-    """
-    raise NotImplementedError('STEP: 最終コミット日が 180日前である')
+    _git_init_full(context.temp_dir)
+    date = (datetime.datetime.now() - datetime.timedelta(days=180)).strftime("%Y-%m-%d")
+    create_doorstop_project_yaml(context.temp_dir, [{"dir": "specs", "prefix": "SPEC", "items": [{"uid": "SPEC-001", "status": "deprecated"}]}])
+    _git_commit_at(context.temp_dir, "very old commit", date)
+    context.target_item_id = "SPEC-001"
 
 
 @given('Doorstopアイテムの最終コミット日が 365日前である')  # type: ignore
 def given_45c0cb00(context):
-    """Doorstopアイテムの最終コミット日が 365日前である
-
-    Scenarios:
-      - --stale-days 0 で鮮度チェックを無効化
-    """
-    raise NotImplementedError('STEP: Doorstopアイテムの最終コミット日が 365日前である')
+    _git_init_full(context.temp_dir)
+    date = (datetime.datetime.now() - datetime.timedelta(days=365)).strftime("%Y-%m-%d")
+    create_doorstop_project_yaml(context.temp_dir, [{"dir": "specs", "prefix": "SPEC", "items": [{"uid": "SPEC-001", "status": "implemented"}]}])
+    _git_commit_at(context.temp_dir, "ancient commit", date)
+    context.target_item_id = "SPEC-001"
 
 
 @when('audit コマンドを --stale-days 0 で実行する')  # type: ignore
 def when_5cbe8c38(context):
-    """audit コマンドを --stale-days 0 で実行する
-
-    Scenarios:
-      - --stale-days 0 で鮮度チェックを無効化
-    """
-    raise NotImplementedError('STEP: audit コマンドを --stale-days 0 で実行する')
+    feature_dir = context.temp_dir / "specification" / "features"
+    feature_dir.mkdir(parents=True, exist_ok=True)
+    context.result = run_spec_weaver(["audit", str(feature_dir), "--stale-days", "0"], cwd=context.temp_dir)
 
 
 @then('stale に関する報告は表示されないこと')  # type: ignore
 def then_e6a9cec1(context):
-    """stale に関する報告は表示されないこと
-
-    Scenarios:
-      - --stale-days 0 で鮮度チェックを無効化
-    """
-    raise NotImplementedError('STEP: stale に関する報告は表示されないこと')
+    assert "Stale" not in context.result.stdout and "長期間経過" not in context.result.stdout

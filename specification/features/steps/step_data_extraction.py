@@ -38,7 +38,7 @@ def when_e56707cb(context):
       - 非アクティブなアイテムの除外
       - テスト不可能な仕様の除外
     """
-    from spec_weaver.doorstop import get_specs
+    from spec_weaver.adapters.doorstop import get_specs
     context.spec_ids = get_specs(context.temp_dir, prefix=None)
 
 
@@ -151,7 +151,7 @@ def when_1d11bcd6(context, param0):
     Scenarios:
       - プレフィックスによるフィルタリング
     """
-    from spec_weaver.doorstop import get_specs
+    from spec_weaver.adapters.doorstop import get_specs
     context.spec_ids = get_specs(context.temp_dir, prefix=param0)
 
 

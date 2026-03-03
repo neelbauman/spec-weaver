@@ -124,8 +124,11 @@ class BuildService:
                 out_path.write_text(md_content, encoding="utf-8")
                 feature_md_map[tag_rel] = f"../features/{md_rel.as_posix()}"
                 report.generated_features_count += 1
-            except Exception:
+            except Exception as e:
                 # 変換エラー時はスキップ（元実装を踏襲）
+                print(f"DEBUG: Failed to process {feature_file}: {e}")
+                import traceback
+                traceback.print_exc()
                 pass
 
         # 6. 個別アイテムページ (items/*.md)
@@ -463,12 +466,17 @@ class BuildService:
 
             row = f"| [{uid}](items/{uid}.md) | {item.header} | {active_col} | {parents_col} | {children_col} | {siblings_col} | {coverage_col} | {review_status} | {impl_col} | {created_col} | {updated_col}"
 
+            classes = []
             if not item.active:
-                row += " {: .inactive-row } |"
-            elif "unreviewed" in review_status:
-                row += " {: .unreviewed-row } |"
-            elif "suspect" in review_status:
-                row += " {: .suspect-row } |"
+                classes.append(".inactive-row")
+            else:
+                if "suspect" in review_status:
+                    classes.append(".suspect-row")
+                if "unreviewed" in review_status:
+                    classes.append(".unreviewed-row")
+
+            if classes:
+                row += " {: " + " ".join(classes) + " } |"
             else:
                 row += " |"
 

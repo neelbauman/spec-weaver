@@ -1,4 +1,4 @@
-# spec-weaver-fingerprint: 0485ebf45bbfa6feb6378a9f8817c7e3d53c0edbabe17b04d89fd7632c47e816
+# spec-weaver-fingerprint: 2e8d8c0281c99ccdbf3588ded6eb0cba0c1049b13b636b7acad9755c1f843ef3
 # spec-weaver-fingerprint-QA-005: sF4bXqVCp0C7Q2T3NpRXT26Hdj_FTb7yqGfcnXQcYkU=
 @QA-005
 Feature: clear コマンド — Doorstop gherkin_fingerprints 更新
@@ -24,3 +24,10 @@ Feature: clear コマンド — Doorstop gherkin_fingerprints 更新
     When `spec-weaver clear SPEC-999 --feature-dir ./specification/features` を実行する
     Then 終了コードが1である
     And エラーメッセージが表示される
+
+  Scenario: 紐づくGherkinシナリオが存在しないアイテムを指定するとエラーになる
+    Given 仕様アイテム "SPEC-004" が存在する
+    And "SPEC-004" に紐づく Gherkin シナリオが存在しない
+    When `spec-weaver clear SPEC-004 --feature-dir ./specification/features` を実行する
+    Then 終了コードが1である
+    And 警告メッセージが表示される

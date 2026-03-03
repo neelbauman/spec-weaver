@@ -2,7 +2,7 @@ active: true
 derived: false
 gherkin_fingerprints:
 - ./specification/features/clear.feature: |
-    1e72b35df72dd2bd1ece9a3271893d1ad53d1a097f4ffb5df816d589104e085e
+    1ee56cabd2101c8eac4919391c28082dbb8f0c6a7a7cd3ace479c75dd42375cb
 header: |
   clear コマンド — Doorstop gherkin_fingerprints 更新
 impl_files:

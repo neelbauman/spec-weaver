@@ -15,6 +15,21 @@ Doorstop と Gherkin から仕様データとテストタグを正確に抽出�
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
+#### 📋 Execution Log (Failure)
+
+```text
+Traceback (most recent call last):
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
+    match.run(runner.context)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
+    self.func(context, *args, **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "specification/features/steps/step_data_extraction.py", line 41, in when_e56707cb
+    from spec_weaver.doorstop import get_specs
+ModuleNotFoundError: No module named 'spec_weaver.doorstop'
+```
+
 #### Given Doorstopプロジェクトにアクティブな仕様アイテムが存在する
 
 ```python
@@ -81,6 +96,21 @@ def then_6823b180(context):
 - **Then** 非アクティブなアイテムは結果に含まれないこと
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
+
+#### 📋 Execution Log (Failure)
+
+```text
+Traceback (most recent call last):
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
+    match.run(runner.context)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
+    self.func(context, *args, **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "specification/features/steps/step_data_extraction.py", line 41, in when_e56707cb
+    from spec_weaver.doorstop import get_specs
+ModuleNotFoundError: No module named 'spec_weaver.doorstop'
+```
 
 #### Given Doorstopプロジェクトに active: false のアイテムが存在する
 
@@ -149,6 +179,21 @@ def then_99bfaa46(context):
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
+#### 📋 Execution Log (Failure)
+
+```text
+Traceback (most recent call last):
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
+    match.run(runner.context)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
+    self.func(context, *args, **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "specification/features/steps/step_data_extraction.py", line 41, in when_e56707cb
+    from spec_weaver.doorstop import get_specs
+ModuleNotFoundError: No module named 'spec_weaver.doorstop'
+```
+
 #### Given Doorstopプロジェクトに testable: false のアイテムが存在する
 
 ```python
@@ -215,6 +260,21 @@ def then_f3fad2a6(context):
 - **Then** SPECプレフィックスのアイテムのみが返されること
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
+
+#### 📋 Execution Log (Failure)
+
+```text
+Traceback (most recent call last):
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
+    match.run(runner.context)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
+    self.func(context, *args, **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "specification/features/steps/step_data_extraction.py", line 154, in when_1d11bcd6
+    from spec_weaver.doorstop import get_specs
+ModuleNotFoundError: No module named 'spec_weaver.doorstop'
+```
 
 #### Given DoorstopプロジェクトにREQアイテムとSPECアイテムが混在する
 

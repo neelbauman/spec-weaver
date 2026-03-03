@@ -2,7 +2,7 @@ active: true
 derived: false
 gherkin_fingerprints:
 - ./specification/features/semantic_review.feature: |
-    1f0d1125418eb94a5e8445595c56bd0ec5681fd03ff31964c090b3eb683b017e
+    c49fe8e649223eccc77206d3b8083a864a5fc9682137b891586d0c3bf2385b2c
 header: |
   semantic-review コマンド — セマンティックレビュー
 impl_files:

@@ -90,7 +90,10 @@ def test_prepare_trace_data_full(
     # Assert impl map
     # "docs/design.md" from get_ref_files + "src/login.py" from annotation map
     assert "SPEC-001" in data.impl_map
-    assert data.impl_map["SPEC-001"] == {"src/login.py", "docs/design.md"}
+    assert data.impl_map["SPEC-001"] == [
+        {"path": "docs/design.md", "source": "ref", "exists": False},
+        {"path": "src/login.py", "source": "annotation", "exists": False}
+    ]
 
 
 @patch("spec_weaver.services.trace_service.get_item_map")

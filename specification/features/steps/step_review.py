@@ -37,7 +37,9 @@ def given_1fcf216b(context, param0):
 
     Scenarios:
       - .feature ファイルを指定してフィンガープリントが書き込まれる
+      - 指定ファイルが .feature でない場合にエラーになる
     """
+    create_doorstop_project_api(context.temp_dir)
     src = context.project_root / _FEATURE_FIXTURE
     dest = context.temp_dir / _FEATURE_FIXTURE.name
     shutil.copy(src, dest)
@@ -51,6 +53,7 @@ def given_6d4c1005(context, param0):
     Scenarios:
       - 既存のフィンガープリントコメントが新しいハッシュで上書きされる
     """
+    create_doorstop_project_api(context.temp_dir)
     src = context.project_root / _FEATURE_FIXTURE
     dest = context.temp_dir / _FEATURE_FIXTURE.name
     content = src.read_text(encoding="utf-8")
@@ -74,7 +77,7 @@ def when_9feea5cb(context):
       - 既存のフィンガープリントコメントが新しいハッシュで上書きされる
     """
     target = getattr(context, "review_target", context.project_root / _FEATURE_FIXTURE)
-    _invoke_review(context, ["review", str(target)])
+    _invoke_review(context, ["review", str(target), "-r", str(context.temp_dir), "-f", str(context.temp_dir)])
 
 
 @when('`spec-weaver review nonexistent.feature` を実行する')  # type: ignore
@@ -84,13 +87,23 @@ def when_a5bfc0eb(context):
     Scenarios:
       - 存在しないファイルを指定するとエラーになる
     """
-    _invoke_review(context, ["review", "nonexistent.feature"])
+    _invoke_review(context, ["review", "nonexistent.feature", "-r", str(context.temp_dir), "-f", str(context.temp_dir)])
 
 
 # ======================================================================
 # Then — 検証
 # ======================================================================
 
+@when('`spec-weaver review not_feature.txt` を実行する')  # type: ignore
+def when_da1afe24(context):
+    """`spec-weaver review not_feature.txt` を実行する
+
+    Scenarios:
+      - 指定ファイルが .feature でない場合にエラーになる
+    """
+    target = context.temp_dir / "not_feature.txt"
+    target.write_text("Hello", encoding="utf-8")
+    _invoke_review(context, ["review", str(target), "-r", str(context.temp_dir), "-f", str(context.temp_dir)])
 @then('ファイル先頭に "{param0}" コメントが追加される')  # type: ignore
 def then_22d76672(context, param0):
     """ファイル先頭に "# spec-weaver-fingerprint:" コメントが追加される

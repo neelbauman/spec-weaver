@@ -97,6 +97,7 @@ class ClearService:
 
         if len(target_tags) == 1 and not result.updated_items and result.is_success:
             # 更新すべきGherkinシナリオもsuspectリンクもなかった場合
-            pass # エラーにはしないが更新もなし
+            result.is_success = False
+            result.error_message = f"警告: {item_id_or_path} に紐づく Gherkin シナリオまたは Suspect リンクが見つかりません。"
 
         return result

@@ -1,4 +1,4 @@
-# spec-weaver-fingerprint: 747a067a366f71279c1117cac9de1de2defd17db0b57a350b3806f514bd482a0
+# spec-weaver-fingerprint: ec3fe7950dd3bd4c3bd04815b3820a604d3148298794bacbf50928c87945fd64
 # spec-weaver-fingerprint-VIS-003: vkjlHhlge0Un5uAGQCyff68rJGP3jp7vGCvSQVAsuNM=
 @VIS-003
 Feature: status コマンド
@@ -36,3 +36,9 @@ Feature: status コマンド
     Then  終了コード 0 が返ること
     And   レビューステータス列が表示されること
     And   最終更新日列が表示されること
+
+  Scenario: buildコマンドで生成されるドキュメントに実装状況が反映される
+    Given SPEC-001 が status: implemented に設定されている
+    When  build コマンドを実行する
+    Then  一覧ページの実装状況列にバッジが表示されること
+    And   詳細ページの本文に "**実装状況**: ✅ implemented" が表示されること

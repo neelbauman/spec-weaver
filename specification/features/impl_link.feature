@@ -1,4 +1,4 @@
-# spec-weaver-fingerprint: b811f33b65429d4bb62aa6ed1e234420882eb37e2a3270541e5030282efd3be7
+# spec-weaver-fingerprint: 65ff254d4a83f4cbeea7986ac74182c94ea7e57819958dc5879dda097c4e0898
 # spec-weaver-fingerprint-QA-003: R7lU5c_GYfAMywWH7ga7C5bNWLi0BcEk_ct5FCCzLOg=
 # spec-weaver-fingerprint-TRC-002: CsNYG2kwoAL2aGQ4OMJZPbq_BdQL1XO9mD52BES64WU=
 # spec-weaver-fingerprint-TRC-003: HejBnkVVAXr50mezShqlLJuFqDQgnm2Ll2xq1IrX7wY=
@@ -22,6 +22,12 @@ Feature: 仕様アイテムと実装ファイルのリンク管理
     Given TRC-003 の impl_files に ["src/spec_weaver/impl_scanner.py"] が設定されている
     When impl_files を読み取る
     Then ファイルパスのリスト ["src/spec_weaver/impl_scanner.py"] が得られること
+
+  @TRC-002
+  Scenario: impl_files が文字列形式で記述されている場合は単一要素リストとして解釈される
+    Given TRC-003 の impl_files に "src/spec_weaver/cli.py" が文字列として設定されている
+    When impl_files を読み取る
+    Then ファイルパスのリスト ["src/spec_weaver/cli.py"] が得られること
 
   @TRC-002
   Scenario: impl_files が未設定の場合はリンクなしとして扱われる
@@ -57,6 +63,12 @@ Feature: 仕様アイテムと実装ファイルのリンク管理
     When impl-scanner でリポジトリをスキャンする
     Then エラーが発生しないこと
 
+  @TRC-003
+  Scenario: .gitignore 相当のパターンは除外対象となる
+    Given ".git/ignored_file.py" の行頭に "# implements: TRC-003" が記述されている
+    When impl-scanner でリポジトリをスキャンする
+    Then ".git/ignored_file.py" は結果に含まれないこと
+
   # ---- QA-003: audit 拡張 ----
 
   @QA-003
@@ -91,15 +103,22 @@ Feature: 仕様アイテムと実装ファイルのリンク管理
   @TRC-004
   Scenario: --show-impl オプションで trace ツリーに実装ファイルを表示する
     Given TRC-003 の impl_files に "src/spec_weaver/impl_scanner.py" が設定されている
+    And "src/spec_weaver/impl_scanner.py" が存在する
     When "spec-weaver trace TRC-003 -f ./specification/features --show-impl" を実行する
-    Then 出力ツリーに "src/spec_weaver/impl_scanner.py" が含まれること
+    Then 出力ツリーに "📁 src/spec_weaver/impl_scanner.py" が含まれること
 
   @TRC-004
   Scenario: アノテーション由来のファイルも trace ツリーに表示される
     Given "src/spec_weaver/cli.py" の行頭に "# implements: TRC-003" が記述されている
     And TRC-003 の impl_files が未設定である
     When "spec-weaver trace TRC-003 -f ./specification/features --show-impl" を実行する
-    Then 出力ツリーに "src/spec_weaver/cli.py" が含まれること
+    Then 出力ツリーに "📝 src/spec_weaver/cli.py" が含まれること
+
+  @TRC-004
+  Scenario: 存在しないファイルはエラーアイコンとともに表示される
+    Given TRC-003 の impl_files に "src/spec_weaver/nonexistent.py" が設定されている
+    When "spec-weaver trace TRC-003 -f ./specification/features --show-impl" を実行する
+    Then 出力ツリーに "❌ src/spec_weaver/nonexistent.py (not found)" が含まれること
 
   @TRC-004
   Scenario: --show-impl なしでは実装ファイルは表示されない

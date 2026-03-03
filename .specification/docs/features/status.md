@@ -464,12 +464,94 @@ def then_49bd7463(context):
 </details>
 
 
+---
+## Scenario: buildコマンドで生成されるドキュメントに実装状況が反映される {: #line-40 }
+
+- **Given** SPEC-001 が status: implemented に設定されている
+- **When** build コマンドを実行する
+- **Then** 一覧ページの実装状況列にバッジが表示されること
+- **And** 詳細ページの本文に "**実装状況**: ✅ implemented" が表示されること
+
+<details><summary><b>Step Definitions (Source Code)</b></summary>
+
+#### 📋 Execution Log (Failure)
+
+```text
+Traceback (most recent call last):
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
+    match.run(runner.context)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
+    self.func(context, *args, **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "specification/features/steps/step_status.py", line 228, in given_0f39b2ed
+    raise NotImplementedError('STEP: SPEC-001 が status: implemented に設定されている')
+NotImplementedError: STEP: SPEC-001 が status: implemented に設定されている
+```
+
+#### Given SPEC-001 が status: implemented に設定されている
+
+```python
+@given('SPEC-001 が status: implemented に設定されている')  # type: ignore
+def given_0f39b2ed(context):
+    """SPEC-001 が status: implemented に設定されている
+
+    Scenarios:
+      - buildコマンドで生成されるドキュメントに実装状況が反映される
+    """
+    raise NotImplementedError('STEP: SPEC-001 が status: implemented に設定されている')
+```
+
+#### When build コマンドを実行する
+
+```python
+@when('build コマンドを実行する')  # type: ignore
+def when_40f323b6(context):
+    """build コマンドを実行する
+
+    Scenarios:
+      - 一覧テーブルにタイムスタンプ列が表示される
+      - 詳細ページにタイムスタンプが表示される
+      - Git情報がない場合の一覧テーブル表示
+    """
+    pass
+```
+
+#### Then 一覧ページの実装状況列にバッジが表示されること
+
+```python
+@then('一覧ページの実装状況列にバッジが表示されること')  # type: ignore
+def then_f35a3316(context):
+    """一覧ページの実装状況列にバッジが表示されること
+
+    Scenarios:
+      - buildコマンドで生成されるドキュメントに実装状況が反映される
+    """
+    raise NotImplementedError('STEP: 一覧ページの実装状況列にバッジが表示されること')
+```
+
+#### And 詳細ページの本文に "**実装状況**: ✅ implemented" が表示されること
+
+```python
+@then('詳細ページの本文に "{param0}" が表示されること')  # type: ignore
+def then_d4f7509c(context, param0):
+    """詳細ページの本文に "**実装状況**: ✅ implemented" が表示されること
+
+    Scenarios:
+      - buildコマンドで生成されるドキュメントに実装状況が反映される
+    """
+    raise NotImplementedError('STEP: 詳細ページの本文に "{param0}" が表示されること')
+```
+
+</details>
+
+
 
 ---
 <details><summary>Raw .feature source</summary>
 
 ```gherkin
-# spec-weaver-fingerprint: 747a067a366f71279c1117cac9de1de2defd17db0b57a350b3806f514bd482a0
+# spec-weaver-fingerprint: ec3fe7950dd3bd4c3bd04815b3820a604d3148298794bacbf50928c87945fd64
 # spec-weaver-fingerprint-VIS-003: vkjlHhlge0Un5uAGQCyff68rJGP3jp7vGCvSQVAsuNM=
 @VIS-003
 Feature: status コマンド
@@ -507,6 +589,12 @@ Feature: status コマンド
     Then  終了コード 0 が返ること
     And   レビューステータス列が表示されること
     And   最終更新日列が表示されること
+
+  Scenario: buildコマンドで生成されるドキュメントに実装状況が反映される
+    Given SPEC-001 が status: implemented に設定されている
+    When  build コマンドを実行する
+    Then  一覧ページの実装状況列にバッジが表示されること
+    And   詳細ページの本文に "**実装状況**: ✅ implemented" が表示されること
 
 ```
 </details>

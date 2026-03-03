@@ -128,6 +128,24 @@ def _audit_cmd(
             table.add_row(uid, p)
         console.print(table)
 
+    if report.ref_only:
+        console.print("\n[bold yellow]⚠️ impl_files のみ（アノテーションなし）(Ref Only):[/bold yellow]")
+        table = Table(show_header=True, header_style="bold yellow")
+        table.add_column("Spec ID")
+        table.add_column("Path")
+        for uid, p in sorted(report.ref_only):
+            table.add_row(uid, f"{uid} → {p}")
+        console.print(table)
+
+    if report.annotation_only:
+        console.print("\n[bold yellow]⚠️ アノテーションのみ（impl_files なし）(Annotation Only):[/bold yellow]")
+        table = Table(show_header=True, header_style="bold yellow")
+        table.add_column("Spec ID")
+        table.add_column("Path")
+        for uid, p in sorted(report.annotation_only):
+            table.add_row(uid, f"{uid} ← {p}")
+        console.print(table)
+
     if report.stale_items:
         console.print("\n[bold yellow]⏳ 最終更新から長期間経過しているアイテム (Stale Items):[/bold yellow]")
         table = Table(show_header=True, header_style="bold yellow")

@@ -9,6 +9,8 @@
 **上位アイテム**: [REQ-004](REQ-004.md) / **兄弟アイテム**: [SPEC-024](SPEC-024.md), [SPEC-025](SPEC-025.md)
 
 **テスト対象**: Yes
+ / **テストカバレッジ**: -
+
 ---
 
 ## 概要
@@ -55,6 +57,8 @@ DoorstopのSuspect機能を活用した変更波及の検知と可視化の仕�
   - Suspect の SPEC のアクションには、`spec-weaver clear <SPEC_ID>` を表示する
 - build の一覧テーブル: Suspect状態の行を紫色、Unreviewed状態の行を赤色でハイライト表示する。従来の状態列は廃止する。
 - build の詳細ページ: Suspect Link バナー（対象リンク付き）、Unreviewed Changes バナーを表示
+
+**テスト実行結果**: -
 
 ### 🧪 検証シナリオ
 

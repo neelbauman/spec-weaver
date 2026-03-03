@@ -1,4 +1,4 @@
-# spec-weaver-fingerprint: 6b53cf78ccd167d8a82ddbd5b5f2e7a694ad6ba14dbe956b7fc1209dc02ad749
+# spec-weaver-fingerprint: da191d2e4724ecd8ae92af47b1508866117b34863797bc3f9789eef8992ef1fc
 # spec-weaver-fingerprint-QA-004: zJZ8rKdo5j3CC50cStOQT-dYQz3fw8w45YpbYNLYs6o=
 @QA-004
 Feature: review コマンド — .feature ファイルへのフィンガープリント書き込み
@@ -20,5 +20,11 @@ Feature: review コマンド — .feature ファイルへのフィンガープ�
 
   Scenario: 存在しないファイルを指定するとエラーになる
     When `spec-weaver review nonexistent.feature` を実行する
+    Then 終了コードが1である
+    And エラーメッセージが表示される
+
+  Scenario: 指定ファイルが .feature でない場合にエラーになる
+    Given ".txt" ファイルが存在する
+    When `spec-weaver review not_feature.txt` を実行する
     Then 終了コードが1である
     And エラーメッセージが表示される

@@ -22,11 +22,12 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent  # spec-weav
 
 
 def run_spec_weaver(
-    args: list[str], cwd: Path | None = None
+    args: list[str], cwd: Path | None = None, input: str | None = None
 ) -> subprocess.CompletedProcess:
     """spec-weaver CLI を uv run 経由で実行し、結果を返す。"""
     return subprocess.run(
         ["uv", "run", "spec-weaver"] + args,
+        input=input,
         capture_output=True,
         text=True,
         cwd=str(cwd or PROJECT_ROOT),

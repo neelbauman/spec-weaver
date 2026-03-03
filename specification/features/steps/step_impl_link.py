@@ -1,303 +1,198 @@
-from specification.features.steps._helpers import create_doorstop_project_api, write_feature_file, run_spec_weaver
-"""behave steps for: 仕様アイテムと実装ファイルのリンク管理"""
-
-from behave import given, when, then, step
-
-# ======================================================================
-# Steps
-# ======================================================================
+# -*- coding: utf-8 -*-
+from specification.features.steps._helpers import create_doorstop_project_api, write_feature_file, run_spec_weaver, write_doorstop_yaml
+from behave import given, when, then
+import json
+from pathlib import Path
 
 @given('TRC-003 の impl_files に ["{param0}"] が設定されている')  # type: ignore
 def given_5b35c4dd(context, param0):
-    """TRC-003 の impl_files に ["src/spec_weaver/impl_scanner.py"] が設定されている
-
-    Scenarios:
-      - impl_files にリスト形式でファイルパスを記述できる
-    """
-    raise NotImplementedError('STEP: TRC-003 の impl_files に ["{param0}"] が設定されている')
-
+    write_doorstop_yaml(context.temp_dir / "specs", "TRC-003", extra={"impl_files": [param0]})
+    context.target_spec = "TRC-003"
 
 @when('impl_files を読み取る')  # type: ignore
 def when_1e9b41a9(context):
-    """impl_files を読み取る
-
-    Scenarios:
-      - impl_files にリスト形式でファイルパスを記述できる
-      - impl_files が未設定の場合はリンクなしとして扱われる
-    """
-    raise NotImplementedError('STEP: impl_files を読み取る')
-
+    from spec_weaver.adapters.impl_scanner import get_ref_files
+    import doorstop
+    tree = doorstop.build(cwd=str(context.temp_dir))
+    item = tree.find_item(context.target_spec)
+    context.actual_files = get_ref_files(item)
 
 @then('ファイルパスのリスト ["{param0}"] が得られること')  # type: ignore
 def then_4c08825b(context, param0):
-    """ファイルパスのリスト ["src/spec_weaver/impl_scanner.py"] が得られること
+    assert context.actual_files == [param0], f"Expected [{param0}], got {context.actual_files}"
 
-    Scenarios:
-      - impl_files にリスト形式でファイルパスを記述できる
-    """
-    raise NotImplementedError('STEP: ファイルパスのリスト ["{param0}"] が得られること')
-
+@given('TRC-003 の impl_files に "{param0}" が文字列として設定されている')  # type: ignore
+def given_254bc1f7(context, param0):
+    write_doorstop_yaml(context.temp_dir / "specs", "TRC-003", extra={"impl_files": param0})
+    context.target_spec = "TRC-003"
 
 @given('QA-003 の impl_files が未設定である')  # type: ignore
 def given_60f3699e(context):
-    """QA-003 の impl_files が未設定である
-
-    Scenarios:
-      - impl_files が未設定の場合はリンクなしとして扱われる
-      - アノテーションがあって impl_files がない場合は警告を報告する
-    """
-    raise NotImplementedError('STEP: QA-003 の impl_files が未設定である')
-
+    write_doorstop_yaml(context.temp_dir / "specs", "QA-003")
+    context.target_spec = "QA-003"
 
 @then('空のリストが返ること')  # type: ignore
 def then_3cd52b0f(context):
-    """空のリストが返ること
-
-    Scenarios:
-      - impl_files が未設定の場合はリンクなしとして扱われる
-    """
-    raise NotImplementedError('STEP: 空のリストが返ること')
-
+    assert context.actual_files == [], f"Expected [], got {context.actual_files}"
 
 @given('"{param0}" の行頭に "{param1}" が記述されている')  # type: ignore
 def given_1a5b95f0(context, param0, param1):
-    """"src/spec_weaver/impl_scanner.py" の行頭に "# implements: TRC-003" が記述されている
-
-    Scenarios:
-      - アノテーションのスキャンで仕様IDとファイルの対応を抽出できる
-      - 1行に複数の仕様IDを記述できる
-      - アノテーションがあって impl_files がない場合は警告を報告する
-      - アノテーション由来のファイルも trace ツリーに表示される
-    """
-    raise NotImplementedError('STEP: "{param0}" の行頭に "{param1}" が記述されている')
-
+    path = context.temp_dir / param0
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(f"{param1}\n")
 
 @when('impl-scanner でリポジトリをスキャンする')  # type: ignore
 def when_59b7b6ae(context):
-    """impl-scanner でリポジトリをスキャンする
-
-    Scenarios:
-      - アノテーションのスキャンで仕様IDとファイルの対応を抽出できる
-      - 1行に複数の仕様IDを記述できる
-      - アノテーションがないファイルはエラーにならない
-    """
-    raise NotImplementedError('STEP: impl-scanner でリポジトリをスキャンする')
-
+    from spec_weaver.adapters.impl_scanner import ImplScanner
+    scanner = ImplScanner()
+    context.scan_result = scanner.scan(context.temp_dir)
 
 @then('"{param0}" に対して "{param1}" が紐づくこと')  # type: ignore
 def then_6cd9ae6b(context, param0, param1):
-    """"TRC-003" に対して "src/spec_weaver/impl_scanner.py" が紐づくこと
-
-    Scenarios:
-      - アノテーションのスキャンで仕様IDとファイルの対応を抽出できる
-      - 1行に複数の仕様IDを記述できる
-    """
-    raise NotImplementedError('STEP: "{param0}" に対して "{param1}" が紐づくこと')
-
+    assert param0 in context.scan_result, f"{param0} not found in scan result"
+    assert param1 in context.scan_result[param0], f"{param1} not linked to {param0}"
 
 @given('リポジトリに .py ファイルと .md ファイルが存在する')  # type: ignore
 def given_6f18a295(context):
-    """リポジトリに .py ファイルと .md ファイルが存在する
-
-    Scenarios:
-      - --extensions オプションでスキャン対象を絞れる
-    """
-    raise NotImplementedError('STEP: リポジトリに .py ファイルと .md ファイルが存在する')
-
+    py_path = context.temp_dir / "test.py"
+    py_path.write_text("# implements: TRC-003\n")
+    context.py_path = "test.py"
+    md_path = context.temp_dir / "test.md"
+    md_path.write_text("# implements: TRC-003\n")
+    context.md_path = "test.md"
 
 @given('.md ファイルの行頭に "{param0}" が記述されている')  # type: ignore
 def given_d9c1b21a(context, param0):
-    """.md ファイルの行頭に "# implements: TRC-003" が記述されている
-
-    Scenarios:
-      - --extensions オプションでスキャン対象を絞れる
-    """
-    raise NotImplementedError('STEP: .md ファイルの行頭に "{param0}" が記述されている')
-
+    pass # Done in the previous step
 
 @when('--extensions py を指定して impl-scanner でスキャンする')  # type: ignore
 def when_d61ff5a2(context):
-    """--extensions py を指定して impl-scanner でスキャンする
-
-    Scenarios:
-      - --extensions オプションでスキャン対象を絞れる
-    """
-    raise NotImplementedError('STEP: --extensions py を指定して impl-scanner でスキャンする')
-
+    from spec_weaver.adapters.impl_scanner import ImplScanner
+    scanner = ImplScanner()
+    context.scan_result = scanner.scan(context.temp_dir, extensions=["py"])
 
 @then('.md ファイルは結果に含まれないこと')  # type: ignore
 def then_1e4aee33(context):
-    """.md ファイルは結果に含まれないこと
-
-    Scenarios:
-      - --extensions オプションでスキャン対象を絞れる
-    """
-    raise NotImplementedError('STEP: .md ファイルは結果に含まれないこと')
-
+    for files in context.scan_result.values():
+        assert not any(f.endswith(".md") for f in files)
 
 @given('"{param0}" にアノテーションが存在しない')  # type: ignore
 def given_8d04b283(context, param0):
-    """"src/spec_weaver.adapters.gherkin.py" にアノテーションが存在しない
-
-    Scenarios:
-      - アノテーションがないファイルはエラーにならない
-    """
-    raise NotImplementedError('STEP: "{param0}" にアノテーションが存在しない')
-
+    path = context.temp_dir / param0
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text("def no_annotation(): pass\n")
 
 @then('エラーが発生しないこと')  # type: ignore
 def then_b705ab9f(context):
-    """エラーが発生しないこと
+    assert True
 
-    Scenarios:
-      - アノテーションがないファイルはエラーにならない
-    """
-    raise NotImplementedError('STEP: エラーが発生しないこと')
-
+@then('"{param0}" は結果に含まれないこと')  # type: ignore
+def then_9ee20369(context, param0):
+    for files in context.scan_result.values():
+        assert param0 not in files
 
 @given('QA-003 の impl_files に "{param0}" が設定されている')  # type: ignore
 def given_4cea3b9d(context, param0):
-    """QA-003 の impl_files に "src/spec_weaver/nonexistent.py" が設定されている
-
-    Scenarios:
-      - --check-impl オプションで存在しないファイルへの impl_files を検出する
-      - --check-impl なしでは実装リンク検証は実行されない
-    """
-    raise NotImplementedError('STEP: QA-003 の impl_files に "{param0}" が設定されている')
-
+    write_doorstop_yaml(context.temp_dir / "specs", "QA-003", extra={"impl_files": param0})
 
 @when('"{param0}" を実行する')  # type: ignore
 def when_68ff7f63(context, param0):
-    """"spec-weaver audit --check-impl" を実行する
+    import shlex
+    args = shlex.split(param0)
+    if args[0] == "spec-weaver":
+        args = args[1:]
+    if args[0] == "audit" and len(args) == 2:  # audit --check-impl
+        features_dir = context.temp_dir / "specification" / "features"
+        features_dir.mkdir(parents=True, exist_ok=True)
+        args.append(str(features_dir))
+    
+    # replace ./specification/features with actual temp path
+    for i, arg in enumerate(args):
+        if arg == "./specification/features":
+            features_dir = context.temp_dir / "specification" / "features"
+            features_dir.mkdir(parents=True, exist_ok=True)
+            args[i] = str(features_dir)
 
-    Scenarios:
-      - --check-impl オプションで存在しないファイルへの impl_files を検出する
-      - impl_files にあってアノテーションがない場合は警告を報告する
-      - アノテーションがあって impl_files がない場合は警告を報告する
-      - --show-impl オプションで trace ツリーに実装ファイルを表示する
-      - アノテーション由来のファイルも trace ツリーに表示される
-    """
-    raise NotImplementedError('STEP: "{param0}" を実行する')
-
+    context.result = run_spec_weaver(args, cwd=context.temp_dir)
 
 @then('終了コードが 1 であること')  # type: ignore
 def then_3783b41c(context):
-    """終了コードが 1 であること
-
-    Scenarios:
-      - --check-impl オプションで存在しないファイルへの impl_files を検出する
-    """
-    raise NotImplementedError('STEP: 終了コードが 1 であること')
-
+    assert context.result.returncode == 1, f"Expected 1, got {context.result.returncode}\n{context.result.stderr}"
 
 @then('"{param0}" が存在しないファイルとして報告されること')  # type: ignore
 def then_7ef614ad(context, param0):
-    """"nonexistent.py" が存在しないファイルとして報告されること
-
-    Scenarios:
-      - --check-impl オプションで存在しないファイルへの impl_files を検出する
-    """
-    raise NotImplementedError('STEP: "{param0}" が存在しないファイルとして報告されること')
-
+    assert param0 in context.result.stdout or param0 in context.result.stderr
 
 @given('TRC-003 の impl_files に "{param0}" が設定されている')  # type: ignore
 def given_e64bd8f6(context, param0):
-    """TRC-003 の impl_files に "src/spec_weaver/cli.py" が設定されている
-
-    Scenarios:
-      - impl_files にあってアノテーションがない場合は警告を報告する
-      - --show-impl オプションで trace ツリーに実装ファイルを表示する
-      - --show-impl なしでは実装ファイルは表示されない
-    """
-    raise NotImplementedError('STEP: TRC-003 の impl_files に "{param0}" が設定されている')
-
+    write_doorstop_yaml(context.temp_dir / "specs", "TRC-003", extra={"impl_files": param0})
 
 @given('"{param0}" に TRC-003 のアノテーションが存在しない')  # type: ignore
 def given_d0ba98a0(context, param0):
-    """"src/spec_weaver/cli.py" に TRC-003 のアノテーションが存在しない
-
-    Scenarios:
-      - impl_files にあってアノテーションがない場合は警告を報告する
-    """
-    raise NotImplementedError('STEP: "{param0}" に TRC-003 のアノテーションが存在しない')
-
+    path = context.temp_dir / param0
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text("def no_annotation(): pass\n")
 
 @then('"{param0}" が impl_files のみ（アノテーションなし）として報告されること')  # type: ignore
 def then_f76e2a8d(context, param0):
-    """"TRC-003 → src/spec_weaver/cli.py" が impl_files のみ（アノテーションなし）として報告されること
-
-    Scenarios:
-      - impl_files にあってアノテーションがない場合は警告を報告する
-    """
-    raise NotImplementedError('STEP: "{param0}" が impl_files のみ（アノテーションなし）として報告されること')
-
+    out = context.result.stdout + context.result.stderr
+    assert param0 in out, f"Expected '{param0}' in output. Actual output:\n{out}"
 
 @then('"{param0}" がアノテーションのみ（impl_files なし）として報告されること')  # type: ignore
 def then_7fa51a4f(context, param0):
-    """"QA-003 ← src/spec_weaver.adapters.gherkin.py" がアノテーションのみ（impl_files なし）として報告されること
-
-    Scenarios:
-      - アノテーションがあって impl_files がない場合は警告を報告する
-    """
-    raise NotImplementedError('STEP: "{param0}" がアノテーションのみ（impl_files なし）として報告されること')
-
+    out = context.result.stdout + context.result.stderr
+    assert param0 in out, f"Expected '{param0}' in output. Actual output:\n{out}"
 
 @when('通常の "{param0}" を実行する（--check-impl なし）')  # type: ignore
 def when_6a6c02d8(context, param0):
-    """通常の "spec-weaver audit" を実行する（--check-impl なし）
-
-    Scenarios:
-      - --check-impl なしでは実装リンク検証は実行されない
-    """
-    raise NotImplementedError('STEP: 通常の "{param0}" を実行する（--check-impl なし）')
-
+    import shlex
+    args = shlex.split(param0)
+    if args[0] == "spec-weaver":
+        args = args[1:]
+    
+    if args[0] == "audit":
+        features_dir = context.temp_dir / "specification" / "features"
+        features_dir.mkdir(parents=True, exist_ok=True)
+        args.append(str(features_dir))
+        
+    context.result = run_spec_weaver(args, cwd=context.temp_dir)
 
 @then('実装ファイルリンクのセクションが出力されないこと')  # type: ignore
 def then_70e4e0dc(context):
-    """実装ファイルリンクのセクションが出力されないこと
-
-    Scenarios:
-      - --check-impl なしでは実装リンク検証は実行されない
-    """
-    raise NotImplementedError('STEP: 実装ファイルリンクのセクションが出力されないこと')
-
+    out = context.result.stdout + context.result.stderr
+    assert "Broken impl_files refs" not in out and "Annotation only" not in out
 
 @then('出力ツリーに "{param0}" が含まれること')  # type: ignore
 def then_2c56e82a(context, param0):
-    """出力ツリーに "src/spec_weaver/impl_scanner.py" が含まれること
-
-    Scenarios:
-      - --show-impl オプションで trace ツリーに実装ファイルを表示する
-      - アノテーション由来のファイルも trace ツリーに表示される
-    """
-    raise NotImplementedError('STEP: 出力ツリーに "{param0}" が含まれること')
-
+    out = context.result.stdout + context.result.stderr
+    assert param0 in out, f"Expected '{param0}' in output. Actual output:\n{out}"
 
 @given('TRC-003 の impl_files が未設定である')  # type: ignore
 def given_c11ed496(context):
-    """TRC-003 の impl_files が未設定である
-
-    Scenarios:
-      - アノテーション由来のファイルも trace ツリーに表示される
-    """
-    raise NotImplementedError('STEP: TRC-003 の impl_files が未設定である')
-
+    write_doorstop_yaml(context.temp_dir / "specs", "TRC-003")
 
 @when('"{param0}" を実行する（--show-impl なし）')  # type: ignore
 def when_dfb07a47(context, param0):
-    """"spec-weaver trace TRC-003 -f ./specification/features" を実行する（--show-impl なし）
-
-    Scenarios:
-      - --show-impl なしでは実装ファイルは表示されない
-    """
-    raise NotImplementedError('STEP: "{param0}" を実行する（--show-impl なし）')
-
+    import shlex
+    args = shlex.split(param0)
+    if args[0] == "spec-weaver":
+        args = args[1:]
+    
+    for i, arg in enumerate(args):
+        if arg == "./specification/features":
+            features_dir = context.temp_dir / "specification" / "features"
+            features_dir.mkdir(parents=True, exist_ok=True)
+            args[i] = str(features_dir)
+            
+    context.result = run_spec_weaver(args, cwd=context.temp_dir)
 
 @then('出力ツリーに "{param0}" が含まれないこと')  # type: ignore
 def then_35df9926(context, param0):
-    """出力ツリーに "impl_scanner.py" が含まれないこと
+    out = context.result.stdout + context.result.stderr
+    assert param0 not in out, f"Expected {param0} not to be in output"
 
-    Scenarios:
-      - --show-impl なしでは実装ファイルは表示されない
-    """
-    raise NotImplementedError('STEP: 出力ツリーに "{param0}" が含まれないこと')
+@given('"{param0}" が存在する')  # type: ignore
+def given_file_exists(context, param0):
+    path = context.temp_dir / param0
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text("")

@@ -86,6 +86,21 @@ def given_a838a6ff(context):
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
+#### 📋 Execution Log (Failure)
+
+```text
+Traceback (most recent call last):
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
+    match.run(runner.context)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
+    self.func(context, *args, **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "specification/features/steps/step_trace.py", line 27, in given_28140be4
+    raise NotImplementedError('STEP: 以下のREQアイテムが存在する:')
+NotImplementedError: STEP: 以下のREQアイテムが存在する:
+```
+
 #### When `spec-weaver trace REQ-001 -f ./specification/features` を実行する
 
 ```python
@@ -96,6 +111,7 @@ def when_6629a1b8(context):
     Scenarios:
       - REQを起点としたトップダウンのツリー表示
       - 各ノードにステータスバッジが表示される
+      - Doorstopツリーが未初期化の場合のエラー
     """
     raise NotImplementedError('STEP: `spec-weaver trace REQ-001 -f ./specification/features` を実行する')
 ```
@@ -210,6 +226,21 @@ def then_5c046e43(context, param0, param1):
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
+#### 📋 Execution Log (Failure)
+
+```text
+Traceback (most recent call last):
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
+    match.run(runner.context)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
+    self.func(context, *args, **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "specification/features/steps/step_trace.py", line 27, in given_28140be4
+    raise NotImplementedError('STEP: 以下のREQアイテムが存在する:')
+NotImplementedError: STEP: 以下のREQアイテムが存在する:
+```
+
 #### When `spec-weaver trace SPEC-003 -f ./specification/features` を実行する
 
 ```python
@@ -306,6 +337,21 @@ def then_b2f19b22(context, param0):
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
+#### 📋 Execution Log (Failure)
+
+```text
+Traceback (most recent call last):
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
+    match.run(runner.context)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
+    self.func(context, *args, **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "specification/features/steps/step_trace.py", line 27, in given_28140be4
+    raise NotImplementedError('STEP: 以下のREQアイテムが存在する:')
+NotImplementedError: STEP: 以下のREQアイテムが存在する:
+```
+
 #### When `spec-weaver trace audit.feature -f ./specification/features` を実行する
 
 ```python
@@ -346,6 +392,7 @@ def then_1b9fcb6e(context, param0):
       - Gherkin Featureファイルを起点としたボトムアップ表示
       - --direction up で上方向のみ探索
       - --direction down で下方向のみ探索
+      - .feature ディレクトリが存在しない場合の警告と継続
     """
     raise NotImplementedError('STEP: 出力に "{param0}" が表示される')
 ```
@@ -361,6 +408,7 @@ def then_1b9fcb6e(context, param0):
       - Gherkin Featureファイルを起点としたボトムアップ表示
       - --direction up で上方向のみ探索
       - --direction down で下方向のみ探索
+      - .feature ディレクトリが存在しない場合の警告と継続
     """
     raise NotImplementedError('STEP: 出力に "{param0}" が表示される')
 ```
@@ -376,6 +424,7 @@ def then_1b9fcb6e(context, param0):
       - Gherkin Featureファイルを起点としたボトムアップ表示
       - --direction up で上方向のみ探索
       - --direction down で下方向のみ探索
+      - .feature ディレクトリが存在しない場合の警告と継続
     """
     raise NotImplementedError('STEP: 出力に "{param0}" が表示される')
 ```
@@ -393,6 +442,21 @@ def then_1b9fcb6e(context, param0):
 - **And** 出力に "audit.feature" が表示されない
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
+
+#### 📋 Execution Log (Failure)
+
+```text
+Traceback (most recent call last):
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
+    match.run(runner.context)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
+    self.func(context, *args, **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "specification/features/steps/step_trace.py", line 27, in given_28140be4
+    raise NotImplementedError('STEP: 以下のREQアイテムが存在する:')
+NotImplementedError: STEP: 以下のREQアイテムが存在する:
+```
 
 #### When `spec-weaver trace SPEC-003 -f ./specification/features --direction up` を実行する
 
@@ -434,6 +498,7 @@ def then_1b9fcb6e(context, param0):
       - Gherkin Featureファイルを起点としたボトムアップ表示
       - --direction up で上方向のみ探索
       - --direction down で下方向のみ探索
+      - .feature ディレクトリが存在しない場合の警告と継続
     """
     raise NotImplementedError('STEP: 出力に "{param0}" が表示される')
 ```
@@ -449,6 +514,7 @@ def then_1b9fcb6e(context, param0):
       - Gherkin Featureファイルを起点としたボトムアップ表示
       - --direction up で上方向のみ探索
       - --direction down で下方向のみ探索
+      - .feature ディレクトリが存在しない場合の警告と継続
     """
     raise NotImplementedError('STEP: 出力に "{param0}" が表示される')
 ```
@@ -479,6 +545,21 @@ def then_1c0ce4ff(context, param0):
 - **And** 出力に "audit.feature" が表示される
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
+
+#### 📋 Execution Log (Failure)
+
+```text
+Traceback (most recent call last):
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
+    match.run(runner.context)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
+    self.func(context, *args, **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "specification/features/steps/step_trace.py", line 27, in given_28140be4
+    raise NotImplementedError('STEP: 以下のREQアイテムが存在する:')
+NotImplementedError: STEP: 以下のREQアイテムが存在する:
+```
 
 #### When `spec-weaver trace REQ-001 -f ./specification/features --direction down` を実行する
 
@@ -520,6 +601,7 @@ def then_1b9fcb6e(context, param0):
       - Gherkin Featureファイルを起点としたボトムアップ表示
       - --direction up で上方向のみ探索
       - --direction down で下方向のみ探索
+      - .feature ディレクトリが存在しない場合の警告と継続
     """
     raise NotImplementedError('STEP: 出力に "{param0}" が表示される')
 ```
@@ -535,6 +617,7 @@ def then_1b9fcb6e(context, param0):
       - Gherkin Featureファイルを起点としたボトムアップ表示
       - --direction up で上方向のみ探索
       - --direction down で下方向のみ探索
+      - .feature ディレクトリが存在しない場合の警告と継続
     """
     raise NotImplementedError('STEP: 出力に "{param0}" が表示される')
 ```
@@ -550,6 +633,7 @@ def then_1b9fcb6e(context, param0):
       - Gherkin Featureファイルを起点としたボトムアップ表示
       - --direction up で上方向のみ探索
       - --direction down で下方向のみ探索
+      - .feature ディレクトリが存在しない場合の警告と継続
     """
     raise NotImplementedError('STEP: 出力に "{param0}" が表示される')
 ```
@@ -566,6 +650,21 @@ def then_1b9fcb6e(context, param0):
 - **And** 各行に "REQ" または "SPEC" または "TEST" のラベルが含まれる
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
+
+#### 📋 Execution Log (Failure)
+
+```text
+Traceback (most recent call last):
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
+    match.run(runner.context)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
+    self.func(context, *args, **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "specification/features/steps/step_trace.py", line 27, in given_28140be4
+    raise NotImplementedError('STEP: 以下のREQアイテムが存在する:')
+NotImplementedError: STEP: 以下のREQアイテムが存在する:
+```
 
 #### When `spec-weaver trace REQ-001 -f ./specification/features --format flat` を実行する
 
@@ -634,6 +733,21 @@ def then_29017220(context, param0, param1, param2):
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
+#### 📋 Execution Log (Failure)
+
+```text
+Traceback (most recent call last):
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
+    match.run(runner.context)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
+    self.func(context, *args, **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "specification/features/steps/step_trace.py", line 27, in given_28140be4
+    raise NotImplementedError('STEP: 以下のREQアイテムが存在する:')
+NotImplementedError: STEP: 以下のREQアイテムが存在する:
+```
+
 #### When `spec-weaver trace NONEXIST-999 -f ./specification/features` を実行する
 
 ```python
@@ -656,6 +770,7 @@ def then_9b731a71(context):
 
     Scenarios:
       - 存在しないアイテムIDを指定するとエラーになる
+      - 紐づくGherkinシナリオが存在しないアイテムを指定するとエラーになる
     """
     raise NotImplementedError('STEP: 終了コードが1である')
 ```
@@ -669,6 +784,7 @@ def then_9998fad9(context, param0):
 
     Scenarios:
       - 存在しないIDを指定した場合のエラー
+      - Doorstopツリーが未初期化の場合のエラー
     """
     raise NotImplementedError('STEP: エラーメッセージに "{param0}" が含まれる')
 ```
@@ -677,14 +793,42 @@ def then_9998fad9(context, param0):
 
 
 ---
-## Scenario: 各ノードにステータスバッジが表示される {: #line-72 }
+## Scenario: Doorstopツリーが未初期化の場合のエラー {: #line-72 }
 
+- **Given** Doorstopツリーが初期化されていない
 - **When** `spec-weaver trace REQ-001 -f ./specification/features` を実行する
-- **Then** 終了コードが0である
-- **And** "REQ-001" のノードに "implemented" のステータスバッジが表示される
-- **And** "SPEC-003" のノードに "implemented" のステータスバッジが表示される
+- **Then** 終了コードが1である
+- **And** エラーメッセージに "No Doorstop tree found" が含まれる
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
+
+#### 📋 Execution Log (Failure)
+
+```text
+Traceback (most recent call last):
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
+    match.run(runner.context)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
+    self.func(context, *args, **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "specification/features/steps/step_trace.py", line 27, in given_28140be4
+    raise NotImplementedError('STEP: 以下のREQアイテムが存在する:')
+NotImplementedError: STEP: 以下のREQアイテムが存在する:
+```
+
+#### Given Doorstopツリーが初期化されていない
+
+```python
+@given('Doorstopツリーが初期化されていない')  # type: ignore
+def given_1b5b3d28(context):
+    """Doorstopツリーが初期化されていない
+
+    Scenarios:
+      - Doorstopツリーが未初期化の場合のエラー
+    """
+    raise NotImplementedError('STEP: Doorstopツリーが初期化されていない')
+```
 
 #### When `spec-weaver trace REQ-001 -f ./specification/features` を実行する
 
@@ -696,6 +840,164 @@ def when_6629a1b8(context):
     Scenarios:
       - REQを起点としたトップダウンのツリー表示
       - 各ノードにステータスバッジが表示される
+      - Doorstopツリーが未初期化の場合のエラー
+    """
+    raise NotImplementedError('STEP: `spec-weaver trace REQ-001 -f ./specification/features` を実行する')
+```
+
+#### Then 終了コードが1である
+
+```python
+@then('終了コードが1である')  # type: ignore
+def then_9b731a71(context):
+    """終了コードが1である
+
+    Scenarios:
+      - 存在しないアイテムIDを指定するとエラーになる
+      - 紐づくGherkinシナリオが存在しないアイテムを指定するとエラーになる
+    """
+    raise NotImplementedError('STEP: 終了コードが1である')
+```
+
+#### And エラーメッセージに "No Doorstop tree found" が含まれる
+
+```python
+@then('エラーメッセージに "{param0}" が含まれる')  # type: ignore
+def then_9998fad9(context, param0):
+    """エラーメッセージに "not found" が含まれる
+
+    Scenarios:
+      - 存在しないIDを指定した場合のエラー
+      - Doorstopツリーが未初期化の場合のエラー
+    """
+    raise NotImplementedError('STEP: エラーメッセージに "{param0}" が含まれる')
+```
+
+</details>
+
+
+---
+## Scenario: .feature ディレクトリが存在しない場合の警告と継続 {: #line-78 }
+
+- **When** `spec-weaver trace REQ-001 -f ./nonexistent/features` を実行する
+- **Then** 終了コードが0である
+- **And** 警告メッセージが表示される
+- **And** 出力に "REQ-001" が表示される
+
+<details><summary><b>Step Definitions (Source Code)</b></summary>
+
+#### 📋 Execution Log (Failure)
+
+```text
+Traceback (most recent call last):
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
+    match.run(runner.context)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
+    self.func(context, *args, **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "specification/features/steps/step_trace.py", line 27, in given_28140be4
+    raise NotImplementedError('STEP: 以下のREQアイテムが存在する:')
+NotImplementedError: STEP: 以下のREQアイテムが存在する:
+```
+
+#### When `spec-weaver trace REQ-001 -f ./nonexistent/features` を実行する
+
+```python
+@when('`spec-weaver trace REQ-001 -f ./nonexistent/features` を実行する')  # type: ignore
+def when_64ec2c6c(context):
+    """`spec-weaver trace REQ-001 -f ./nonexistent/features` を実行する
+
+    Scenarios:
+      - .feature ディレクトリが存在しない場合の警告と継続
+    """
+    raise NotImplementedError('STEP: `spec-weaver trace REQ-001 -f ./nonexistent/features` を実行する')
+```
+
+#### Then 終了コードが0である
+
+```python
+@then('終了コードが0である')  # type: ignore
+def then_0f800e56(context):
+    """終了コードが0である
+
+    Scenarios:
+      - アイテムIDを指定して test_fingerprint を更新できる
+      - .feature ファイルを指定して複数アイテムの test_fingerprint を一括更新できる
+      - アイテムIDを指定して gherkin_fingerprints を更新できる
+      - .feature ファイルを指定して複数アイテムの gherkin_fingerprints を一括更新できる
+    """
+    raise NotImplementedError('STEP: 終了コードが0である')
+```
+
+#### And 警告メッセージが表示される
+
+```python
+@then('警告メッセージが表示される')  # type: ignore
+def then_a11d14f9(context):
+    """警告メッセージが表示される
+
+    Scenarios:
+      - 紐づくGherkinシナリオが存在しないアイテムを指定するとエラーになる
+    """
+    raise NotImplementedError('STEP: 警告メッセージが表示される')
+```
+
+#### And 出力に "REQ-001" が表示される
+
+```python
+@then('出力に "{param0}" が表示される')  # type: ignore
+def then_1b9fcb6e(context, param0):
+    """出力に "SPEC-003" が表示される
+
+    Scenarios:
+      - Gherkin Featureファイルを起点としたボトムアップ表示
+      - --direction up で上方向のみ探索
+      - --direction down で下方向のみ探索
+      - .feature ディレクトリが存在しない場合の警告と継続
+    """
+    raise NotImplementedError('STEP: 出力に "{param0}" が表示される')
+```
+
+</details>
+
+
+---
+## Scenario: 各ノードにステータスバッジが表示される {: #line-84 }
+
+- **When** `spec-weaver trace REQ-001 -f ./specification/features` を実行する
+- **Then** 終了コードが0である
+- **And** "REQ-001" のノードに "implemented" のステータスバッジが表示される
+- **And** "SPEC-003" のノードに "implemented" のステータスバッジが表示される
+
+<details><summary><b>Step Definitions (Source Code)</b></summary>
+
+#### 📋 Execution Log (Failure)
+
+```text
+Traceback (most recent call last):
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
+    match.run(runner.context)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
+    self.func(context, *args, **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "specification/features/steps/step_trace.py", line 27, in given_28140be4
+    raise NotImplementedError('STEP: 以下のREQアイテムが存在する:')
+NotImplementedError: STEP: 以下のREQアイテムが存在する:
+```
+
+#### When `spec-weaver trace REQ-001 -f ./specification/features` を実行する
+
+```python
+@when('`spec-weaver trace REQ-001 -f ./specification/features` を実行する')  # type: ignore
+def when_6629a1b8(context):
+    """`spec-weaver trace REQ-001 -f ./specification/features` を実行する
+
+    Scenarios:
+      - REQを起点としたトップダウンのツリー表示
+      - 各ノードにステータスバッジが表示される
+      - Doorstopツリーが未初期化の場合のエラー
     """
     raise NotImplementedError('STEP: `spec-weaver trace REQ-001 -f ./specification/features` を実行する')
 ```
@@ -750,7 +1052,7 @@ def then_f676df97(context, param0, param1):
 <details><summary>Raw .feature source</summary>
 
 ```gherkin
-# spec-weaver-fingerprint: 800e543e22e3ca019b5ccbd6efea879aa5ea3dbb2a3afafc7f4e63db24015318
+# spec-weaver-fingerprint: e2f6c162837e372a66f90d9da12115f7c082abd968f4dae0b9ea804e419f5fa5
 # spec-weaver-fingerprint-TRC-001: HKeXIyGAgfYrCuLXM9S1YOKJTFIxClAO5GHOWxFVehI=
 @TRC-001
 Feature: trace コマンド — トレーサビリティ・ツリー表示
@@ -820,6 +1122,18 @@ Feature: trace コマンド — トレーサビリティ・ツリー表示
     When `spec-weaver trace NONEXIST-999 -f ./specification/features` を実行する
     Then 終了コードが1である
     And エラーメッセージに "not found" が含まれる
+
+  Scenario: Doorstopツリーが未初期化の場合のエラー
+    Given Doorstopツリーが初期化されていない
+    When `spec-weaver trace REQ-001 -f ./specification/features` を実行する
+    Then 終了コードが1である
+    And エラーメッセージに "No Doorstop tree found" が含まれる
+
+  Scenario: .feature ディレクトリが存在しない場合の警告と継続
+    When `spec-weaver trace REQ-001 -f ./nonexistent/features` を実行する
+    Then 終了コードが0である
+    And 警告メッセージが表示される
+    And 出力に "REQ-001" が表示される
 
   Scenario: 各ノードにステータスバッジが表示される
     When `spec-weaver trace REQ-001 -f ./specification/features` を実行する

@@ -16,6 +16,21 @@
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
+#### 📋 Execution Log (Failure)
+
+```text
+Traceback (most recent call last):
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
+    match.run(runner.context)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
+    self.func(context, *args, **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "specification/features/steps/step_timestamp.py", line 18, in given_5c08ab27
+    raise NotImplementedError('STEP: DoorstopアイテムのYAMLファイルがGitにコミットされている')
+NotImplementedError: STEP: DoorstopアイテムのYAMLファイルがGitにコミットされている
+```
+
 #### Given DoorstopアイテムのYAMLファイルがGitにコミットされている
 
 ```python
@@ -70,6 +85,21 @@ def then_c495b67c(context):
 - **Then** created_at として初回コミット日が YYYY-MM-DD 形式で返されること
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
+
+#### 📋 Execution Log (Failure)
+
+```text
+Traceback (most recent call last):
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
+    match.run(runner.context)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
+    self.func(context, *args, **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "specification/features/steps/step_timestamp.py", line 18, in given_5c08ab27
+    raise NotImplementedError('STEP: DoorstopアイテムのYAMLファイルがGitにコミットされている')
+NotImplementedError: STEP: DoorstopアイテムのYAMLファイルがGitにコミットされている
+```
 
 #### Given DoorstopアイテムのYAMLファイルがGitにコミットされている
 
@@ -126,6 +156,21 @@ def then_c016ae72(context):
 - **Then** created_at として "2026-01-15" が返されること
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
+
+#### 📋 Execution Log (Failure)
+
+```text
+Traceback (most recent call last):
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
+    match.run(runner.context)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
+    self.func(context, *args, **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "specification/features/steps/step_timestamp.py", line 62, in given_02feb7b0
+    raise NotImplementedError('STEP: DoorstopアイテムのYAMLファイルがGit管理外である')
+NotImplementedError: STEP: DoorstopアイテムのYAMLファイルがGit管理外である
+```
 
 #### Given DoorstopアイテムのYAMLファイルがGit管理外である
 
@@ -195,6 +240,21 @@ def then_afecb621(context, param0):
 - **Then** 両方とも "-" が返されること
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
+
+#### 📋 Execution Log (Failure)
+
+```text
+Traceback (most recent call last):
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
+    match.run(runner.context)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
+    self.func(context, *args, **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "specification/features/steps/step_timestamp.py", line 62, in given_02feb7b0
+    raise NotImplementedError('STEP: DoorstopアイテムのYAMLファイルがGit管理外である')
+NotImplementedError: STEP: DoorstopアイテムのYAMLファイルがGit管理外である
+```
 
 #### Given DoorstopアイテムのYAMLファイルがGit管理外である
 
@@ -267,6 +327,21 @@ def then_6f3caa07(context, param0):
 - **And** Git履歴から取得した日付が正しく表示されること
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
+
+#### 📋 Execution Log (Failure)
+
+```text
+Traceback (most recent call last):
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
+    match.run(runner.context)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
+    self.func(context, *args, **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "specification/features/steps/step_timestamp.py", line 113, in given_cc8e9bef
+    raise NotImplementedError('STEP: DoorstopアイテムがGitにコミットされている')
+NotImplementedError: STEP: DoorstopアイテムがGitにコミットされている
+```
 
 #### Given DoorstopアイテムがGitにコミットされている
 
@@ -351,6 +426,21 @@ def then_232626f7(context):
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
+#### 📋 Execution Log (Failure)
+
+```text
+Traceback (most recent call last):
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
+    match.run(runner.context)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
+    self.func(context, *args, **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "specification/features/steps/step_timestamp.py", line 113, in given_cc8e9bef
+    raise NotImplementedError('STEP: DoorstopアイテムがGitにコミットされている')
+NotImplementedError: STEP: DoorstopアイテムがGitにコミットされている
+```
+
 #### Given DoorstopアイテムがGitにコミットされている
 
 ```python
@@ -420,6 +510,21 @@ def then_1a39f98b(context):
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
+#### 📋 Execution Log (Failure)
+
+```text
+Traceback (most recent call last):
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
+    match.run(runner.context)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
+    self.func(context, *args, **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "specification/features/steps/step_timestamp.py", line 185, in given_8798cdab
+    raise NotImplementedError('STEP: DoorstopアイテムがGit管理外でYAMLにもタイムスタンプがない')
+NotImplementedError: STEP: DoorstopアイテムがGit管理外でYAMLにもタイムスタンプがない
+```
+
 #### Given DoorstopアイテムがGit管理外でYAMLにもタイムスタンプがない
 
 ```python
@@ -474,8 +579,24 @@ def then_645670cf(context, param0):
 - **When** audit コマンドを --stale-days 90 で実行する
 - **Then** そのアイテムが stale として報告されること
 - **And** 経過日数が表示されること
+- **And** 終了コードが 0 であること
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
+
+#### 📋 Execution Log (Failure)
+
+```text
+Traceback (most recent call last):
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
+    match.run(runner.context)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
+    self.func(context, *args, **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "specification/features/steps/step_timestamp.py", line 205, in given_6998f2b6
+    raise NotImplementedError('STEP: Doorstopアイテムの最終コミット日が 91日前である')
+NotImplementedError: STEP: Doorstopアイテムの最終コミット日が 91日前である
+```
 
 #### Given Doorstopアイテムの最終コミット日が 91日前である
 
@@ -545,11 +666,24 @@ def then_9500bbae(context):
     raise NotImplementedError('STEP: 経過日数が表示されること')
 ```
 
+#### And 終了コードが 0 であること
+
+```python
+@then('終了コードが 0 であること')  # type: ignore
+def then_ab1e81e6(context):
+    """終了コードが 0 であること
+
+    Scenarios:
+      - stale アイテムの検出（Git履歴ベース）
+    """
+    raise NotImplementedError('STEP: 終了コードが 0 であること')
+```
+
 </details>
 
 
 ---
-## Scenario: 閾値内のアイテムは stale と判定されない {: #line-68 }
+## Scenario: 閾値内のアイテムは stale と判定されない {: #line-69 }
 
 **タグ**: `@QA-002`
 
@@ -558,6 +692,21 @@ def then_9500bbae(context):
 - **Then** そのアイテムは stale として報告されないこと
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
+
+#### 📋 Execution Log (Failure)
+
+```text
+Traceback (most recent call last):
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
+    match.run(runner.context)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
+    self.func(context, *args, **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "specification/features/steps/step_timestamp.py", line 268, in given_32d4fe40
+    raise NotImplementedError('STEP: Doorstopアイテムの最終コミット日が 30日前である')
+NotImplementedError: STEP: Doorstopアイテムの最終コミット日が 30日前である
+```
 
 #### Given Doorstopアイテムの最終コミット日が 30日前である
 
@@ -607,7 +756,7 @@ def then_e9c88743(context):
 
 
 ---
-## Scenario: Git情報もupdated_atもないアイテムは stale 判定の対象外 {: #line-74 }
+## Scenario: Git情報もupdated_atもないアイテムは stale 判定の対象外 {: #line-75 }
 
 **タグ**: `@QA-002`
 
@@ -616,6 +765,21 @@ def then_e9c88743(context):
 - **Then** そのアイテムは stale として報告されないこと
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
+
+#### 📋 Execution Log (Failure)
+
+```text
+Traceback (most recent call last):
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
+    match.run(runner.context)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
+    self.func(context, *args, **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "specification/features/steps/step_timestamp.py", line 290, in given_9da29b97
+    raise NotImplementedError('STEP: DoorstopアイテムがGit管理外でupdated_atも設定されていない')
+NotImplementedError: STEP: DoorstopアイテムがGit管理外でupdated_atも設定されていない
+```
 
 #### Given DoorstopアイテムがGit管理外でupdated_atも設定されていない
 
@@ -665,7 +829,7 @@ def then_e9c88743(context):
 
 
 ---
-## Scenario: deprecated アイテムは stale 判定の対象外 {: #line-80 }
+## Scenario: deprecated アイテムは stale 判定の対象外 {: #line-81 }
 
 **タグ**: `@QA-002`
 
@@ -675,6 +839,21 @@ def then_e9c88743(context):
 - **Then** そのアイテムは stale として報告されないこと
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
+
+#### 📋 Execution Log (Failure)
+
+```text
+Traceback (most recent call last):
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
+    match.run(runner.context)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
+    self.func(context, *args, **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "specification/features/steps/step_timestamp.py", line 310, in given_1588d2c1
+    raise NotImplementedError('STEP: 最終コミット日が 180日前である')
+NotImplementedError: STEP: 最終コミット日が 180日前である
+```
 
 #### Given Doorstopアイテムの status が "deprecated" である
 
@@ -737,7 +916,7 @@ def then_e9c88743(context):
 
 
 ---
-## Scenario: --stale-days 0 で鮮度チェックを無効化 {: #line-87 }
+## Scenario: --stale-days 0 で鮮度チェックを無効化 {: #line-88 }
 
 **タグ**: `@QA-002`
 
@@ -746,6 +925,21 @@ def then_e9c88743(context):
 - **Then** stale に関する報告は表示されないこと
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
+
+#### 📋 Execution Log (Failure)
+
+```text
+Traceback (most recent call last):
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
+    match.run(runner.context)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
+    self.func(context, *args, **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "specification/features/steps/step_timestamp.py", line 320, in given_45c0cb00
+    raise NotImplementedError('STEP: Doorstopアイテムの最終コミット日が 365日前である')
+NotImplementedError: STEP: Doorstopアイテムの最終コミット日が 365日前である
+```
 
 #### Given Doorstopアイテムの最終コミット日が 365日前である
 
@@ -794,7 +988,7 @@ def then_e6a9cec1(context):
 <details><summary>Raw .feature source</summary>
 
 ```gherkin
-# spec-weaver-fingerprint: d9ec5f68b155b88ee2491dc6b24ef7b9f724d4aa34fe4e8643280f9a6a01aef0
+# spec-weaver-fingerprint: e3987b29813b5d5fa8a1bf13f8eb8dd1232fc3eaa35e4a1a941a9f376706edbd
 # spec-weaver-fingerprint-QA-002: pIUDUCm2SbEPeLzmScATm5kxQXhzHgfNLVTet64j5OY=
 # spec-weaver-fingerprint-VIS-006: X_KRBM_YhZCFigeGpRMit5ZIjnIx1JMby0egIg10egw=
 # spec-weaver-fingerprint-VIS-007: yOFv-Mqqd6cmn9y-BMHTC3-5N_plpH_vbw4UzEypfk8=
@@ -859,6 +1053,7 @@ Feature: タイムスタンプ管理
     When  audit コマンドを --stale-days 90 で実行する
     Then  そのアイテムが stale として報告されること
     And   経過日数が表示されること
+    And   終了コードが 0 であること
 
   @QA-002
   Scenario: 閾値内のアイテムは stale と判定されない

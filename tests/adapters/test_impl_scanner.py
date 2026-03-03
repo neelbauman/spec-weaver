@@ -290,7 +290,7 @@ def test_show_impl_file_shown_in_tree(tmp_path):
     items = {"SPEC-001": _make_trace_item("SPEC-001", impl_files=["src/impl.py"])}
     child_map: dict = {}
     tag_map: dict = {}
-    impl_map = {"SPEC-001": {"src/impl.py"}}
+    impl_map = {"SPEC-001": [{"path": "src/impl.py", "source": "annotation", "exists": True}]}
 
     from rich.console import Console
     from io import StringIO

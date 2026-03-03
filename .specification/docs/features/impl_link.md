@@ -55,6 +55,21 @@ def given_14c0b615(context):
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
+#### 📋 Execution Log (Failure)
+
+```text
+Traceback (most recent call last):
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
+    match.run(runner.context)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
+    self.func(context, *args, **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "specification/features/steps/step_impl_link.py", line 17, in given_5b35c4dd
+    raise NotImplementedError('STEP: TRC-003 の impl_files に ["{param0}"] が設定されている')
+NotImplementedError: STEP: TRC-003 の impl_files に ["{param0}"] が設定されている
+```
+
 #### Given TRC-003 の impl_files に ["src/spec_weaver/impl_scanner.py"] が設定されている
 
 ```python
@@ -78,6 +93,7 @@ def when_1e9b41a9(context):
     Scenarios:
       - impl_files にリスト形式でファイルパスを記述できる
       - impl_files が未設定の場合はリンクなしとして扱われる
+      - impl_files が文字列形式で記述されている場合は単一要素リストとして解釈される
     """
     raise NotImplementedError('STEP: impl_files を読み取る')
 ```
@@ -91,6 +107,7 @@ def then_4c08825b(context, param0):
 
     Scenarios:
       - impl_files にリスト形式でファイルパスを記述できる
+      - impl_files が文字列形式で記述されている場合は単一要素リストとして解釈される
     """
     raise NotImplementedError('STEP: ファイルパスのリスト ["{param0}"] が得られること')
 ```
@@ -99,7 +116,80 @@ def then_4c08825b(context, param0):
 
 
 ---
-## Scenario: impl_files が未設定の場合はリンクなしとして扱われる {: #line-27 }
+## Scenario: impl_files が文字列形式で記述されている場合は単一要素リストとして解釈される {: #line-27 }
+
+**タグ**: `@TRC-002`
+
+- **Given** TRC-003 の impl_files に "src/spec_weaver/cli.py" が文字列として設定されている
+- **When** impl_files を読み取る
+- **Then** ファイルパスのリスト ["src/spec_weaver/cli.py"] が得られること
+
+<details><summary><b>Step Definitions (Source Code)</b></summary>
+
+#### 📋 Execution Log (Failure)
+
+```text
+Traceback (most recent call last):
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
+    match.run(runner.context)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
+    self.func(context, *args, **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "specification/features/steps/step_impl_link.py", line 52, in given_254bc1f7
+    raise NotImplementedError('STEP: TRC-003 の impl_files に "{param0}" が文字列として設定されている')
+NotImplementedError: STEP: TRC-003 の impl_files に "{param0}" が文字列として設定されている
+```
+
+#### Given TRC-003 の impl_files に "src/spec_weaver/cli.py" が文字列として設定されている
+
+```python
+@given('TRC-003 の impl_files に "{param0}" が文字列として設定されている')  # type: ignore
+def given_254bc1f7(context, param0):
+    """TRC-003 の impl_files に "src/spec_weaver/cli.py" が文字列として設定されている
+
+    Scenarios:
+      - impl_files が文字列形式で記述されている場合は単一要素リストとして解釈される
+      - impl_files が未設定の場合はリンクなしとして扱われる
+      - アノテーションがあって impl_files がない場合は警告を報告する
+    """
+    raise NotImplementedError('STEP: TRC-003 の impl_files に "{param0}" が文字列として設定されている')
+```
+
+#### When impl_files を読み取る
+
+```python
+@when('impl_files を読み取る')  # type: ignore
+def when_1e9b41a9(context):
+    """impl_files を読み取る
+
+    Scenarios:
+      - impl_files にリスト形式でファイルパスを記述できる
+      - impl_files が未設定の場合はリンクなしとして扱われる
+      - impl_files が文字列形式で記述されている場合は単一要素リストとして解釈される
+    """
+    raise NotImplementedError('STEP: impl_files を読み取る')
+```
+
+#### Then ファイルパスのリスト ["src/spec_weaver/cli.py"] が得られること
+
+```python
+@then('ファイルパスのリスト ["{param0}"] が得られること')  # type: ignore
+def then_4c08825b(context, param0):
+    """ファイルパスのリスト ["src/spec_weaver/impl_scanner.py"] が得られること
+
+    Scenarios:
+      - impl_files にリスト形式でファイルパスを記述できる
+      - impl_files が文字列形式で記述されている場合は単一要素リストとして解釈される
+    """
+    raise NotImplementedError('STEP: ファイルパスのリスト ["{param0}"] が得られること')
+```
+
+</details>
+
+
+---
+## Scenario: impl_files が未設定の場合はリンクなしとして扱われる {: #line-33 }
 
 **タグ**: `@TRC-002`
 
@@ -108,6 +198,21 @@ def then_4c08825b(context, param0):
 - **Then** 空のリストが返ること
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
+
+#### 📋 Execution Log (Failure)
+
+```text
+Traceback (most recent call last):
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
+    match.run(runner.context)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
+    self.func(context, *args, **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "specification/features/steps/step_impl_link.py", line 63, in given_60f3699e
+    raise NotImplementedError('STEP: QA-003 の impl_files が未設定である')
+NotImplementedError: STEP: QA-003 の impl_files が未設定である
+```
 
 #### Given QA-003 の impl_files が未設定である
 
@@ -133,6 +238,7 @@ def when_1e9b41a9(context):
     Scenarios:
       - impl_files にリスト形式でファイルパスを記述できる
       - impl_files が未設定の場合はリンクなしとして扱われる
+      - impl_files が文字列形式で記述されている場合は単一要素リストとして解釈される
     """
     raise NotImplementedError('STEP: impl_files を読み取る')
 ```
@@ -154,7 +260,7 @@ def then_3cd52b0f(context):
 
 
 ---
-## Scenario: アノテーションのスキャンで仕様IDとファイルの対応を抽出できる {: #line-35 }
+## Scenario: アノテーションのスキャンで仕様IDとファイルの対応を抽出できる {: #line-41 }
 
 **タグ**: `@TRC-003`
 
@@ -163,6 +269,21 @@ def then_3cd52b0f(context):
 - **Then** "TRC-003" に対して "src/spec_weaver/impl_scanner.py" が紐づくこと
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
+
+#### 📋 Execution Log (Failure)
+
+```text
+Traceback (most recent call last):
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
+    match.run(runner.context)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
+    self.func(context, *args, **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "specification/features/steps/step_impl_link.py", line 87, in given_1a5b95f0
+    raise NotImplementedError('STEP: "{param0}" の行頭に "{param1}" が記述されている')
+NotImplementedError: STEP: "{param0}" の行頭に "{param1}" が記述されている
+```
 
 #### Given "src/spec_weaver/impl_scanner.py" の行頭に "# implements: TRC-003" が記述されている
 
@@ -176,6 +297,7 @@ def given_1a5b95f0(context, param0, param1):
       - 1行に複数の仕様IDを記述できる
       - アノテーションがあって impl_files がない場合は警告を報告する
       - アノテーション由来のファイルも trace ツリーに表示される
+      - .gitignore 相当のパターンは除外対象となる
     """
     raise NotImplementedError('STEP: "{param0}" の行頭に "{param1}" が記述されている')
 ```
@@ -191,6 +313,7 @@ def when_59b7b6ae(context):
       - アノテーションのスキャンで仕様IDとファイルの対応を抽出できる
       - 1行に複数の仕様IDを記述できる
       - アノテーションがないファイルはエラーにならない
+      - .gitignore 相当のパターンは除外対象となる
     """
     raise NotImplementedError('STEP: impl-scanner でリポジトリをスキャンする')
 ```
@@ -213,7 +336,7 @@ def then_6cd9ae6b(context, param0, param1):
 
 
 ---
-## Scenario: 1行に複数の仕様IDを記述できる {: #line-41 }
+## Scenario: 1行に複数の仕様IDを記述できる {: #line-47 }
 
 **タグ**: `@TRC-003`
 
@@ -223,6 +346,21 @@ def then_6cd9ae6b(context, param0, param1):
 - **And** "TRC-004" に対して "src/spec_weaver/cli.py" が紐づくこと
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
+
+#### 📋 Execution Log (Failure)
+
+```text
+Traceback (most recent call last):
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
+    match.run(runner.context)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
+    self.func(context, *args, **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "specification/features/steps/step_impl_link.py", line 87, in given_1a5b95f0
+    raise NotImplementedError('STEP: "{param0}" の行頭に "{param1}" が記述されている')
+NotImplementedError: STEP: "{param0}" の行頭に "{param1}" が記述されている
+```
 
 #### Given "src/spec_weaver/cli.py" の行頭に "# implements: QA-003, TRC-004" が記述されている
 
@@ -236,6 +374,7 @@ def given_1a5b95f0(context, param0, param1):
       - 1行に複数の仕様IDを記述できる
       - アノテーションがあって impl_files がない場合は警告を報告する
       - アノテーション由来のファイルも trace ツリーに表示される
+      - .gitignore 相当のパターンは除外対象となる
     """
     raise NotImplementedError('STEP: "{param0}" の行頭に "{param1}" が記述されている')
 ```
@@ -251,6 +390,7 @@ def when_59b7b6ae(context):
       - アノテーションのスキャンで仕様IDとファイルの対応を抽出できる
       - 1行に複数の仕様IDを記述できる
       - アノテーションがないファイルはエラーにならない
+      - .gitignore 相当のパターンは除外対象となる
     """
     raise NotImplementedError('STEP: impl-scanner でリポジトリをスキャンする')
 ```
@@ -287,7 +427,7 @@ def then_6cd9ae6b(context, param0, param1):
 
 
 ---
-## Scenario: --extensions オプションでスキャン対象を絞れる {: #line-48 }
+## Scenario: --extensions オプションでスキャン対象を絞れる {: #line-54 }
 
 **タグ**: `@TRC-003`
 
@@ -297,6 +437,21 @@ def then_6cd9ae6b(context, param0, param1):
 - **Then** .md ファイルは結果に含まれないこと
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
+
+#### 📋 Execution Log (Failure)
+
+```text
+Traceback (most recent call last):
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
+    match.run(runner.context)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
+    self.func(context, *args, **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "specification/features/steps/step_impl_link.py", line 121, in given_6f18a295
+    raise NotImplementedError('STEP: リポジトリに .py ファイルと .md ファイルが存在する')
+NotImplementedError: STEP: リポジトリに .py ファイルと .md ファイルが存在する
+```
 
 #### Given リポジトリに .py ファイルと .md ファイルが存在する
 
@@ -354,7 +509,7 @@ def then_1e4aee33(context):
 
 
 ---
-## Scenario: アノテーションがないファイルはエラーにならない {: #line-55 }
+## Scenario: アノテーションがないファイルはエラーにならない {: #line-61 }
 
 **タグ**: `@TRC-003`
 
@@ -363,6 +518,21 @@ def then_1e4aee33(context):
 - **Then** エラーが発生しないこと
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
+
+#### 📋 Execution Log (Failure)
+
+```text
+Traceback (most recent call last):
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
+    match.run(runner.context)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
+    self.func(context, *args, **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "specification/features/steps/step_impl_link.py", line 161, in given_8d04b283
+    raise NotImplementedError('STEP: "{param0}" にアノテーションが存在しない')
+NotImplementedError: STEP: "{param0}" にアノテーションが存在しない
+```
 
 #### Given "src/spec_weaver/gherkin.py" にアノテーションが存在しない
 
@@ -388,6 +558,7 @@ def when_59b7b6ae(context):
       - アノテーションのスキャンで仕様IDとファイルの対応を抽出できる
       - 1行に複数の仕様IDを記述できる
       - アノテーションがないファイルはエラーにならない
+      - .gitignore 相当のパターンは除外対象となる
     """
     raise NotImplementedError('STEP: impl-scanner でリポジトリをスキャンする')
 ```
@@ -401,6 +572,8 @@ def then_b705ab9f(context):
 
     Scenarios:
       - アノテーションがないファイルはエラーにならない
+      - --check-impl オプションで存在しないファイルへの impl_files を検出する
+      - --check-impl なしでは実装リンク検証は実行されない
     """
     raise NotImplementedError('STEP: エラーが発生しないこと')
 ```
@@ -409,7 +582,82 @@ def then_b705ab9f(context):
 
 
 ---
-## Scenario: --check-impl オプションで存在しないファイルへの impl_files を検出する {: #line-63 }
+## Scenario: .gitignore 相当のパターンは除外対象となる {: #line-67 }
+
+**タグ**: `@TRC-003`
+
+- **Given** ".git/ignored_file.py" の行頭に "# implements: TRC-003" が記述されている
+- **When** impl-scanner でリポジトリをスキャンする
+- **Then** ".git/ignored_file.py" は結果に含まれないこと
+
+<details><summary><b>Step Definitions (Source Code)</b></summary>
+
+#### 📋 Execution Log (Failure)
+
+```text
+Traceback (most recent call last):
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
+    match.run(runner.context)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
+    self.func(context, *args, **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "specification/features/steps/step_impl_link.py", line 87, in given_1a5b95f0
+    raise NotImplementedError('STEP: "{param0}" の行頭に "{param1}" が記述されている')
+NotImplementedError: STEP: "{param0}" の行頭に "{param1}" が記述されている
+```
+
+#### Given ".git/ignored_file.py" の行頭に "# implements: TRC-003" が記述されている
+
+```python
+@given('"{param0}" の行頭に "{param1}" が記述されている')  # type: ignore
+def given_1a5b95f0(context, param0, param1):
+    """"src/spec_weaver/impl_scanner.py" の行頭に "# implements: TRC-003" が記述されている
+
+    Scenarios:
+      - アノテーションのスキャンで仕様IDとファイルの対応を抽出できる
+      - 1行に複数の仕様IDを記述できる
+      - アノテーションがあって impl_files がない場合は警告を報告する
+      - アノテーション由来のファイルも trace ツリーに表示される
+      - .gitignore 相当のパターンは除外対象となる
+    """
+    raise NotImplementedError('STEP: "{param0}" の行頭に "{param1}" が記述されている')
+```
+
+#### When impl-scanner でリポジトリをスキャンする
+
+```python
+@when('impl-scanner でリポジトリをスキャンする')  # type: ignore
+def when_59b7b6ae(context):
+    """impl-scanner でリポジトリをスキャンする
+
+    Scenarios:
+      - アノテーションのスキャンで仕様IDとファイルの対応を抽出できる
+      - 1行に複数の仕様IDを記述できる
+      - アノテーションがないファイルはエラーにならない
+      - .gitignore 相当のパターンは除外対象となる
+    """
+    raise NotImplementedError('STEP: impl-scanner でリポジトリをスキャンする')
+```
+
+#### Then ".git/ignored_file.py" は結果に含まれないこと
+
+```python
+@then('"{param0}" は結果に含まれないこと')  # type: ignore
+def then_9ee20369(context, param0):
+    """".git/ignored_file.py" は結果に含まれないこと
+
+    Scenarios:
+      - .gitignore 相当のパターンは除外対象となる
+    """
+    raise NotImplementedError('STEP: "{param0}" は結果に含まれないこと')
+```
+
+</details>
+
+
+---
+## Scenario: --check-impl オプションで存在しないファイルへの impl_files を検出する {: #line-75 }
 
 **タグ**: `@QA-003`
 
@@ -419,6 +667,21 @@ def then_b705ab9f(context):
 - **And** "nonexistent.py" が存在しないファイルとして報告されること
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
+
+#### 📋 Execution Log (Failure)
+
+```text
+Traceback (most recent call last):
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
+    match.run(runner.context)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
+    self.func(context, *args, **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "specification/features/steps/step_impl_link.py", line 194, in given_4cea3b9d
+    raise NotImplementedError('STEP: QA-003 の impl_files に "{param0}" が設定されている')
+NotImplementedError: STEP: QA-003 の impl_files に "{param0}" が設定されている
+```
 
 #### Given QA-003 の impl_files に "src/spec_weaver/nonexistent.py" が設定されている
 
@@ -447,6 +710,7 @@ def when_68ff7f63(context, param0):
       - アノテーションがあって impl_files がない場合は警告を報告する
       - --show-impl オプションで trace ツリーに実装ファイルを表示する
       - アノテーション由来のファイルも trace ツリーに表示される
+      - 存在しないファイルはエラーアイコンとともに表示される
     """
     raise NotImplementedError('STEP: "{param0}" を実行する')
 ```
@@ -460,6 +724,10 @@ def then_3783b41c(context):
 
     Scenarios:
       - --check-impl オプションで存在しないファイルへの impl_files を検出する
+      - impl_files にあってアノテーションがない場合は警告を報告する
+      - --show-impl オプションで trace ツリーに実装ファイルを表示する
+      - 存在しないファイルはエラーアイコンとともに表示される
+      - --show-impl なしでは実装ファイルは表示されない
     """
     raise NotImplementedError('STEP: 終了コードが 1 であること')
 ```
@@ -473,6 +741,7 @@ def then_7ef614ad(context, param0):
 
     Scenarios:
       - --check-impl オプションで存在しないファイルへの impl_files を検出する
+      - impl_files にあってアノテーションがない場合は警告を報告する
     """
     raise NotImplementedError('STEP: "{param0}" が存在しないファイルとして報告されること')
 ```
@@ -481,7 +750,7 @@ def then_7ef614ad(context, param0):
 
 
 ---
-## Scenario: impl_files にあってアノテーションがない場合は警告を報告する {: #line-70 }
+## Scenario: impl_files にあってアノテーションがない場合は警告を報告する {: #line-82 }
 
 **タグ**: `@QA-003`
 
@@ -491,6 +760,21 @@ def then_7ef614ad(context, param0):
 - **Then** "TRC-003 → src/spec_weaver/cli.py" が impl_files のみ（アノテーションなし）として報告されること
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
+
+#### 📋 Execution Log (Failure)
+
+```text
+Traceback (most recent call last):
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
+    match.run(runner.context)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
+    self.func(context, *args, **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "specification/features/steps/step_impl_link.py", line 247, in given_e64bd8f6
+    raise NotImplementedError('STEP: TRC-003 の impl_files に "{param0}" が設定されている')
+NotImplementedError: STEP: TRC-003 の impl_files に "{param0}" が設定されている
+```
 
 #### Given TRC-003 の impl_files に "src/spec_weaver/cli.py" が設定されている
 
@@ -503,6 +787,7 @@ def given_e64bd8f6(context, param0):
       - impl_files にあってアノテーションがない場合は警告を報告する
       - --show-impl オプションで trace ツリーに実装ファイルを表示する
       - --show-impl なしでは実装ファイルは表示されない
+      - 存在しないファイルはエラーアイコンとともに表示される
     """
     raise NotImplementedError('STEP: TRC-003 の impl_files に "{param0}" が設定されている')
 ```
@@ -533,6 +818,7 @@ def when_68ff7f63(context, param0):
       - アノテーションがあって impl_files がない場合は警告を報告する
       - --show-impl オプションで trace ツリーに実装ファイルを表示する
       - アノテーション由来のファイルも trace ツリーに表示される
+      - 存在しないファイルはエラーアイコンとともに表示される
     """
     raise NotImplementedError('STEP: "{param0}" を実行する')
 ```
@@ -554,7 +840,7 @@ def then_f76e2a8d(context, param0):
 
 
 ---
-## Scenario: アノテーションがあって impl_files がない場合は警告を報告する {: #line-77 }
+## Scenario: アノテーションがあって impl_files がない場合は警告を報告する {: #line-89 }
 
 **タグ**: `@QA-003`
 
@@ -564,6 +850,21 @@ def then_f76e2a8d(context, param0):
 - **Then** "QA-003 ← src/spec_weaver/gherkin.py" がアノテーションのみ（impl_files なし）として報告されること
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
+
+#### 📋 Execution Log (Failure)
+
+```text
+Traceback (most recent call last):
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
+    match.run(runner.context)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
+    self.func(context, *args, **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "specification/features/steps/step_impl_link.py", line 87, in given_1a5b95f0
+    raise NotImplementedError('STEP: "{param0}" の行頭に "{param1}" が記述されている')
+NotImplementedError: STEP: "{param0}" の行頭に "{param1}" が記述されている
+```
 
 #### Given "src/spec_weaver/gherkin.py" の行頭に "# implements: QA-003" が記述されている
 
@@ -577,6 +878,7 @@ def given_1a5b95f0(context, param0, param1):
       - 1行に複数の仕様IDを記述できる
       - アノテーションがあって impl_files がない場合は警告を報告する
       - アノテーション由来のファイルも trace ツリーに表示される
+      - .gitignore 相当のパターンは除外対象となる
     """
     raise NotImplementedError('STEP: "{param0}" の行頭に "{param1}" が記述されている')
 ```
@@ -608,6 +910,7 @@ def when_68ff7f63(context, param0):
       - アノテーションがあって impl_files がない場合は警告を報告する
       - --show-impl オプションで trace ツリーに実装ファイルを表示する
       - アノテーション由来のファイルも trace ツリーに表示される
+      - 存在しないファイルはエラーアイコンとともに表示される
     """
     raise NotImplementedError('STEP: "{param0}" を実行する')
 ```
@@ -629,7 +932,7 @@ def then_7fa51a4f(context, param0):
 
 
 ---
-## Scenario: --check-impl なしでは実装リンク検証は実行されない {: #line-84 }
+## Scenario: --check-impl なしでは実装リンク検証は実行されない {: #line-96 }
 
 **タグ**: `@QA-003`
 
@@ -638,6 +941,21 @@ def then_7fa51a4f(context, param0):
 - **Then** 実装ファイルリンクのセクションが出力されないこと
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
+
+#### 📋 Execution Log (Failure)
+
+```text
+Traceback (most recent call last):
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
+    match.run(runner.context)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
+    self.func(context, *args, **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "specification/features/steps/step_impl_link.py", line 194, in given_4cea3b9d
+    raise NotImplementedError('STEP: QA-003 の impl_files に "{param0}" が設定されている')
+NotImplementedError: STEP: QA-003 の impl_files に "{param0}" が設定されている
+```
 
 #### Given QA-003 の impl_files に "src/spec_weaver/nonexistent.py" が設定されている
 
@@ -675,6 +993,7 @@ def then_70e4e0dc(context):
 
     Scenarios:
       - --check-impl なしでは実装リンク検証は実行されない
+      - アノテーション由来のファイルも trace ツリーに表示される
     """
     raise NotImplementedError('STEP: 実装ファイルリンクのセクションが出力されないこと')
 ```
@@ -683,15 +1002,30 @@ def then_70e4e0dc(context):
 
 
 ---
-## Scenario: --show-impl オプションで trace ツリーに実装ファイルを表示する {: #line-92 }
+## Scenario: --show-impl オプションで trace ツリーに実装ファイルを表示する {: #line-104 }
 
 **タグ**: `@TRC-004`
 
 - **Given** TRC-003 の impl_files に "src/spec_weaver/impl_scanner.py" が設定されている
 - **When** "spec-weaver trace TRC-003 -f ./specification/features --show-impl" を実行する
-- **Then** 出力ツリーに "src/spec_weaver/impl_scanner.py" が含まれること
+- **Then** 出力ツリーに "📁 src/spec_weaver/impl_scanner.py" が含まれること
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
+
+#### 📋 Execution Log (Failure)
+
+```text
+Traceback (most recent call last):
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
+    match.run(runner.context)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
+    self.func(context, *args, **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "specification/features/steps/step_impl_link.py", line 247, in given_e64bd8f6
+    raise NotImplementedError('STEP: TRC-003 の impl_files に "{param0}" が設定されている')
+NotImplementedError: STEP: TRC-003 の impl_files に "{param0}" が設定されている
+```
 
 #### Given TRC-003 の impl_files に "src/spec_weaver/impl_scanner.py" が設定されている
 
@@ -704,6 +1038,7 @@ def given_e64bd8f6(context, param0):
       - impl_files にあってアノテーションがない場合は警告を報告する
       - --show-impl オプションで trace ツリーに実装ファイルを表示する
       - --show-impl なしでは実装ファイルは表示されない
+      - 存在しないファイルはエラーアイコンとともに表示される
     """
     raise NotImplementedError('STEP: TRC-003 の impl_files に "{param0}" が設定されている')
 ```
@@ -721,11 +1056,12 @@ def when_68ff7f63(context, param0):
       - アノテーションがあって impl_files がない場合は警告を報告する
       - --show-impl オプションで trace ツリーに実装ファイルを表示する
       - アノテーション由来のファイルも trace ツリーに表示される
+      - 存在しないファイルはエラーアイコンとともに表示される
     """
     raise NotImplementedError('STEP: "{param0}" を実行する')
 ```
 
-#### Then 出力ツリーに "src/spec_weaver/impl_scanner.py" が含まれること
+#### Then 出力ツリーに "📁 src/spec_weaver/impl_scanner.py" が含まれること
 
 ```python
 @then('出力ツリーに "{param0}" が含まれること')  # type: ignore
@@ -735,6 +1071,7 @@ def then_2c56e82a(context, param0):
     Scenarios:
       - --show-impl オプションで trace ツリーに実装ファイルを表示する
       - アノテーション由来のファイルも trace ツリーに表示される
+      - 存在しないファイルはエラーアイコンとともに表示される
     """
     raise NotImplementedError('STEP: 出力ツリーに "{param0}" が含まれること')
 ```
@@ -743,16 +1080,31 @@ def then_2c56e82a(context, param0):
 
 
 ---
-## Scenario: アノテーション由来のファイルも trace ツリーに表示される {: #line-98 }
+## Scenario: アノテーション由来のファイルも trace ツリーに表示される {: #line-110 }
 
 **タグ**: `@TRC-004`
 
 - **Given** "src/spec_weaver/cli.py" の行頭に "# implements: TRC-003" が記述されている
 - **And** TRC-003 の impl_files が未設定である
 - **When** "spec-weaver trace TRC-003 -f ./specification/features --show-impl" を実行する
-- **Then** 出力ツリーに "src/spec_weaver/cli.py" が含まれること
+- **Then** 出力ツリーに "📝 src/spec_weaver/cli.py" が含まれること
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
+
+#### 📋 Execution Log (Failure)
+
+```text
+Traceback (most recent call last):
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
+    match.run(runner.context)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
+    self.func(context, *args, **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "specification/features/steps/step_impl_link.py", line 87, in given_1a5b95f0
+    raise NotImplementedError('STEP: "{param0}" の行頭に "{param1}" が記述されている')
+NotImplementedError: STEP: "{param0}" の行頭に "{param1}" が記述されている
+```
 
 #### Given "src/spec_weaver/cli.py" の行頭に "# implements: TRC-003" が記述されている
 
@@ -766,6 +1118,7 @@ def given_1a5b95f0(context, param0, param1):
       - 1行に複数の仕様IDを記述できる
       - アノテーションがあって impl_files がない場合は警告を報告する
       - アノテーション由来のファイルも trace ツリーに表示される
+      - .gitignore 相当のパターンは除外対象となる
     """
     raise NotImplementedError('STEP: "{param0}" の行頭に "{param1}" が記述されている')
 ```
@@ -796,11 +1149,12 @@ def when_68ff7f63(context, param0):
       - アノテーションがあって impl_files がない場合は警告を報告する
       - --show-impl オプションで trace ツリーに実装ファイルを表示する
       - アノテーション由来のファイルも trace ツリーに表示される
+      - 存在しないファイルはエラーアイコンとともに表示される
     """
     raise NotImplementedError('STEP: "{param0}" を実行する')
 ```
 
-#### Then 出力ツリーに "src/spec_weaver/cli.py" が含まれること
+#### Then 出力ツリーに "📝 src/spec_weaver/cli.py" が含まれること
 
 ```python
 @then('出力ツリーに "{param0}" が含まれること')  # type: ignore
@@ -810,6 +1164,7 @@ def then_2c56e82a(context, param0):
     Scenarios:
       - --show-impl オプションで trace ツリーに実装ファイルを表示する
       - アノテーション由来のファイルも trace ツリーに表示される
+      - 存在しないファイルはエラーアイコンとともに表示される
     """
     raise NotImplementedError('STEP: 出力ツリーに "{param0}" が含まれること')
 ```
@@ -818,7 +1173,85 @@ def then_2c56e82a(context, param0):
 
 
 ---
-## Scenario: --show-impl なしでは実装ファイルは表示されない {: #line-105 }
+## Scenario: 存在しないファイルはエラーアイコンとともに表示される {: #line-117 }
+
+**タグ**: `@TRC-004`
+
+- **Given** TRC-003 の impl_files に "src/spec_weaver/nonexistent.py" が設定されている
+- **When** "spec-weaver trace TRC-003 -f ./specification/features --show-impl" を実行する
+- **Then** 出力ツリーに "❌ src/spec_weaver/nonexistent.py (not found)" が含まれること
+
+<details><summary><b>Step Definitions (Source Code)</b></summary>
+
+#### 📋 Execution Log (Failure)
+
+```text
+Traceback (most recent call last):
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
+    match.run(runner.context)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
+    self.func(context, *args, **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "specification/features/steps/step_impl_link.py", line 247, in given_e64bd8f6
+    raise NotImplementedError('STEP: TRC-003 の impl_files に "{param0}" が設定されている')
+NotImplementedError: STEP: TRC-003 の impl_files に "{param0}" が設定されている
+```
+
+#### Given TRC-003 の impl_files に "src/spec_weaver/nonexistent.py" が設定されている
+
+```python
+@given('TRC-003 の impl_files に "{param0}" が設定されている')  # type: ignore
+def given_e64bd8f6(context, param0):
+    """TRC-003 の impl_files に "src/spec_weaver/cli.py" が設定されている
+
+    Scenarios:
+      - impl_files にあってアノテーションがない場合は警告を報告する
+      - --show-impl オプションで trace ツリーに実装ファイルを表示する
+      - --show-impl なしでは実装ファイルは表示されない
+      - 存在しないファイルはエラーアイコンとともに表示される
+    """
+    raise NotImplementedError('STEP: TRC-003 の impl_files に "{param0}" が設定されている')
+```
+
+#### When "spec-weaver trace TRC-003 -f ./specification/features --show-impl" を実行する
+
+```python
+@when('"{param0}" を実行する')  # type: ignore
+def when_68ff7f63(context, param0):
+    """"spec-weaver audit --check-impl" を実行する
+
+    Scenarios:
+      - --check-impl オプションで存在しないファイルへの impl_files を検出する
+      - impl_files にあってアノテーションがない場合は警告を報告する
+      - アノテーションがあって impl_files がない場合は警告を報告する
+      - --show-impl オプションで trace ツリーに実装ファイルを表示する
+      - アノテーション由来のファイルも trace ツリーに表示される
+      - 存在しないファイルはエラーアイコンとともに表示される
+    """
+    raise NotImplementedError('STEP: "{param0}" を実行する')
+```
+
+#### Then 出力ツリーに "❌ src/spec_weaver/nonexistent.py (not found)" が含まれること
+
+```python
+@then('出力ツリーに "{param0}" が含まれること')  # type: ignore
+def then_2c56e82a(context, param0):
+    """出力ツリーに "src/spec_weaver/impl_scanner.py" が含まれること
+
+    Scenarios:
+      - --show-impl オプションで trace ツリーに実装ファイルを表示する
+      - アノテーション由来のファイルも trace ツリーに表示される
+      - 存在しないファイルはエラーアイコンとともに表示される
+    """
+    raise NotImplementedError('STEP: 出力ツリーに "{param0}" が含まれること')
+```
+
+</details>
+
+
+---
+## Scenario: --show-impl なしでは実装ファイルは表示されない {: #line-123 }
 
 **タグ**: `@TRC-004`
 
@@ -827,6 +1260,21 @@ def then_2c56e82a(context, param0):
 - **Then** 出力ツリーに "impl_scanner.py" が含まれないこと
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
+
+#### 📋 Execution Log (Failure)
+
+```text
+Traceback (most recent call last):
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
+    match.run(runner.context)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
+    self.func(context, *args, **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "specification/features/steps/step_impl_link.py", line 247, in given_e64bd8f6
+    raise NotImplementedError('STEP: TRC-003 の impl_files に "{param0}" が設定されている')
+NotImplementedError: STEP: TRC-003 の impl_files に "{param0}" が設定されている
+```
 
 #### Given TRC-003 の impl_files に "src/spec_weaver/impl_scanner.py" が設定されている
 
@@ -839,6 +1287,7 @@ def given_e64bd8f6(context, param0):
       - impl_files にあってアノテーションがない場合は警告を報告する
       - --show-impl オプションで trace ツリーに実装ファイルを表示する
       - --show-impl なしでは実装ファイルは表示されない
+      - 存在しないファイルはエラーアイコンとともに表示される
     """
     raise NotImplementedError('STEP: TRC-003 の impl_files に "{param0}" が設定されている')
 ```
@@ -877,7 +1326,7 @@ def then_35df9926(context, param0):
 <details><summary>Raw .feature source</summary>
 
 ```gherkin
-# spec-weaver-fingerprint: b811f33b65429d4bb62aa6ed1e234420882eb37e2a3270541e5030282efd3be7
+# spec-weaver-fingerprint: 65ff254d4a83f4cbeea7986ac74182c94ea7e57819958dc5879dda097c4e0898
 # spec-weaver-fingerprint-QA-003: R7lU5c_GYfAMywWH7ga7C5bNWLi0BcEk_ct5FCCzLOg=
 # spec-weaver-fingerprint-TRC-002: CsNYG2kwoAL2aGQ4OMJZPbq_BdQL1XO9mD52BES64WU=
 # spec-weaver-fingerprint-TRC-003: HejBnkVVAXr50mezShqlLJuFqDQgnm2Ll2xq1IrX7wY=
@@ -901,6 +1350,12 @@ Feature: 仕様アイテムと実装ファイルのリンク管理
     Given TRC-003 の impl_files に ["src/spec_weaver/impl_scanner.py"] が設定されている
     When impl_files を読み取る
     Then ファイルパスのリスト ["src/spec_weaver/impl_scanner.py"] が得られること
+
+  @TRC-002
+  Scenario: impl_files が文字列形式で記述されている場合は単一要素リストとして解釈される
+    Given TRC-003 の impl_files に "src/spec_weaver/cli.py" が文字列として設定されている
+    When impl_files を読み取る
+    Then ファイルパスのリスト ["src/spec_weaver/cli.py"] が得られること
 
   @TRC-002
   Scenario: impl_files が未設定の場合はリンクなしとして扱われる
@@ -935,6 +1390,12 @@ Feature: 仕様アイテムと実装ファイルのリンク管理
     Given "src/spec_weaver/gherkin.py" にアノテーションが存在しない
     When impl-scanner でリポジトリをスキャンする
     Then エラーが発生しないこと
+
+  @TRC-003
+  Scenario: .gitignore 相当のパターンは除外対象となる
+    Given ".git/ignored_file.py" の行頭に "# implements: TRC-003" が記述されている
+    When impl-scanner でリポジトリをスキャンする
+    Then ".git/ignored_file.py" は結果に含まれないこと
 
   # ---- QA-003: audit 拡張 ----
 
@@ -971,14 +1432,20 @@ Feature: 仕様アイテムと実装ファイルのリンク管理
   Scenario: --show-impl オプションで trace ツリーに実装ファイルを表示する
     Given TRC-003 の impl_files に "src/spec_weaver/impl_scanner.py" が設定されている
     When "spec-weaver trace TRC-003 -f ./specification/features --show-impl" を実行する
-    Then 出力ツリーに "src/spec_weaver/impl_scanner.py" が含まれること
+    Then 出力ツリーに "📁 src/spec_weaver/impl_scanner.py" が含まれること
 
   @TRC-004
   Scenario: アノテーション由来のファイルも trace ツリーに表示される
     Given "src/spec_weaver/cli.py" の行頭に "# implements: TRC-003" が記述されている
     And TRC-003 の impl_files が未設定である
     When "spec-weaver trace TRC-003 -f ./specification/features --show-impl" を実行する
-    Then 出力ツリーに "src/spec_weaver/cli.py" が含まれること
+    Then 出力ツリーに "📝 src/spec_weaver/cli.py" が含まれること
+
+  @TRC-004
+  Scenario: 存在しないファイルはエラーアイコンとともに表示される
+    Given TRC-003 の impl_files に "src/spec_weaver/nonexistent.py" が設定されている
+    When "spec-weaver trace TRC-003 -f ./specification/features --show-impl" を実行する
+    Then 出力ツリーに "❌ src/spec_weaver/nonexistent.py (not found)" が含まれること
 
   @TRC-004
   Scenario: --show-impl なしでは実装ファイルは表示されない

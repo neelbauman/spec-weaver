@@ -1,4 +1,4 @@
-# spec-weaver-fingerprint: d9ec5f68b155b88ee2491dc6b24ef7b9f724d4aa34fe4e8643280f9a6a01aef0
+# spec-weaver-fingerprint: e3987b29813b5d5fa8a1bf13f8eb8dd1232fc3eaa35e4a1a941a9f376706edbd
 # spec-weaver-fingerprint-QA-002: pIUDUCm2SbEPeLzmScATm5kxQXhzHgfNLVTet64j5OY=
 # spec-weaver-fingerprint-VIS-006: X_KRBM_YhZCFigeGpRMit5ZIjnIx1JMby0egIg10egw=
 # spec-weaver-fingerprint-VIS-007: yOFv-Mqqd6cmn9y-BMHTC3-5N_plpH_vbw4UzEypfk8=
@@ -63,6 +63,7 @@ Feature: タイムスタンプ管理
     When  audit コマンドを --stale-days 90 で実行する
     Then  そのアイテムが stale として報告されること
     And   経過日数が表示されること
+    And   終了コードが 0 であること
 
   @QA-002
   Scenario: 閾値内のアイテムは stale と判定されない

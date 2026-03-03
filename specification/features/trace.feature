@@ -1,4 +1,4 @@
-# spec-weaver-fingerprint: 800e543e22e3ca019b5ccbd6efea879aa5ea3dbb2a3afafc7f4e63db24015318
+# spec-weaver-fingerprint: e2f6c162837e372a66f90d9da12115f7c082abd968f4dae0b9ea804e419f5fa5
 # spec-weaver-fingerprint-TRC-001: HKeXIyGAgfYrCuLXM9S1YOKJTFIxClAO5GHOWxFVehI=
 @TRC-001
 Feature: trace コマンド — トレーサビリティ・ツリー表示
@@ -68,6 +68,18 @@ Feature: trace コマンド — トレーサビリティ・ツリー表示
     When `spec-weaver trace NONEXIST-999 -f ./specification/features` を実行する
     Then 終了コードが1である
     And エラーメッセージに "not found" が含まれる
+
+  Scenario: Doorstopツリーが未初期化の場合のエラー
+    Given Doorstopツリーが初期化されていない
+    When `spec-weaver trace REQ-001 -f ./specification/features` を実行する
+    Then 終了コードが1である
+    And エラーメッセージに "No Doorstop tree found" が含まれる
+
+  Scenario: .feature ディレクトリが存在しない場合の警告と継続
+    When `spec-weaver trace REQ-001 -f ./nonexistent/features` を実行する
+    Then 終了コードが0である
+    And 警告メッセージが表示される
+    And 出力に "REQ-001" が表示される
 
   Scenario: 各ノードにステータスバッジが表示される
     When `spec-weaver trace REQ-001 -f ./specification/features` を実行する

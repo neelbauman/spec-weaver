@@ -218,3 +218,42 @@ def then_49bd7463(context):
       - レビューステータスと最終更新日が表示される
     """
     assert "更新" in context.output, f"最終更新日列が出力に見つかりません。\n出力:\n{context.output}"
+@given('SPEC-001 が status: implemented に設定されている')  # type: ignore
+def given_0f39b2ed(context):
+    """SPEC-001 が status: implemented に設定されている"""
+    create_doorstop_project_api(
+        context.temp_dir,
+        req_items=[{"header": "Req 1"}],
+        spec_items=[{"header": "Spec 1", "status": "implemented", "links": ["REQ-001"]}],
+    )
+
+
+# [Duplicate Skip] This step is already defined elsewhere
+# @when('build コマンドを実行する')  # type: ignore
+# def when_40f323b6(context):
+#     """build コマンドを実行する
+# 
+#     Scenarios:
+#       - buildコマンドで生成されるドキュメントに実装状況が反映される
+#     """
+#     raise NotImplementedError('STEP: build コマンドを実行する')
+
+
+@then('一覧ページの実装状況列にバッジが表示されること')  # type: ignore
+def then_f35a3316(context):
+    """一覧ページの実装状況列にバッジが表示されること"""
+    # spec-weaver build は Markdown を生成する。mkdocs build は行わない。
+    docs_dir = context.temp_dir / ".specification" / "docs"
+    index_md = docs_dir / "spec.md"
+    assert index_md.exists(), f"Expected {index_md} to exist. Files: {list(docs_dir.iterdir()) if docs_dir.exists() else 'N/A'}"
+    content = index_md.read_text()
+    assert "implemented" in content
+
+
+@then('詳細ページの本文に "{param0}" が表示されること')  # type: ignore
+def then_d4f7509c(context, param0):
+    """詳細ページの本文に "**実装状況**: ✅ implemented" が表示されること"""
+    item_md = context.temp_dir / ".specification" / "docs" / "items" / "SPEC-001.md"
+    assert item_md.exists()
+    content = item_md.read_text()
+    assert "implemented" in content

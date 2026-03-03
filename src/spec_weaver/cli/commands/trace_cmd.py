@@ -40,15 +40,22 @@ def _format_trace_node(uid: str, item, is_origin: bool = False, review_state=Non
 
 def _add_impl_files_to_node(node, uid: str, impl_map: dict, repo_root: Path) -> None:
     """実装ファイルノードを Rich Tree ノードに追加する（TRC-004）。"""
-    files = impl_map.get(uid)
-    if not files:
+    impl_list = impl_map.get(uid)
+    if not impl_list:
         return
-    for path_str in sorted(files):
-        full_path = repo_root / path_str
-        if not full_path.exists():
+    for item in impl_list:
+        path_str = item["path"]
+        source = item["source"]
+        exists = item["exists"]
+        
+        icon = "📁"
+        if source == "annotation":
+            icon = "📝"
+            
+        if not exists:
             node.add(f"❌ {path_str} [red](not found)[/red]")
         else:
-            node.add(f"📁 {path_str}")
+            node.add(f"{icon} {path_str}")
 
 def _add_descendants_to_rich_node(
     node, uid: str, all_items: dict, child_map: dict, tag_map: dict,
@@ -171,6 +178,7 @@ def _trace_flat_output(
     origin_uid: str, all_items_str: dict, child_map: dict, direction: str, review_state=None
 ) -> None:
     """flat形式でトレース結果をテーブル表示する。"""
+    from rich import box
     all_relevant: Set[str] = set()
     if direction in ("up", "both"):
         all_relevant.update(_collect_all_ancestors(origin_uid, all_items_str))
@@ -183,7 +191,7 @@ def _trace_flat_output(
                     _collect_descendants(child_uid, collected)
         _collect_descendants(origin_uid, all_relevant)
 
-    table = Table(show_header=True, header_style="bold magenta")
+    table = Table(show_header=True, header_style="bold magenta", box=None)
     table.add_column("種別", style="bold")
     table.add_column("ID", style="bold cyan")
     table.add_column("タイトル")
@@ -205,8 +213,8 @@ def _trace_flat_output(
 
 def _trace_cmd(
     item_id: str = typer.Argument(..., help="探索起点ID (例: REQ-001, SPEC-003, audit.feature)"),
-    feature_dir: Optional[Path] = typer.Option(None, "--feature-dir", "-f", exists=True, file_okay=False, dir_okay=True, resolve_path=True),
-    repo_root: Path = typer.Option(Path.cwd(), "--repo-root", "-r", exists=True, file_okay=False, dir_okay=True, resolve_path=True),
+    feature_dir: Optional[Path] = typer.Option(None, "--feature-dir", "-f", help="Gherkin feature ディレクトリ"),
+    repo_root: Path = typer.Option(Path.cwd(), "--repo-root", "-r", help="リポジトリルート"),
     direction: str = typer.Option("both", "--direction", "-d", help="探索方向: up / down / both (デフォルト: both)"),
     output_format: str = typer.Option("tree", "--format", help="出力形式: tree (デフォルト) / flat"),
     show_impl: bool = typer.Option(False, "--show-impl", help="実装ファイルをツリーに表示する"),
@@ -214,14 +222,19 @@ def _trace_cmd(
 ) -> None:
     """指定したアイテムを起点として、上位・下位のトレーサビリティツリーを表示します。"""
     try:
+        actual_feature_dir = feature_dir
+        if feature_dir and not feature_dir.exists():
+            console.print(f"[yellow]⚠️  Warning: Feature directory '{feature_dir}' does not exist. Skipping Gherkin trace.[/yellow]")
+            actual_feature_dir = None
+
         with console.status("[bold cyan]データを読み込み中...[/bold cyan]"):
             ext_list = [e.strip() for e in extensions.split(",")] if extensions else None
-            data = TraceService().prepare_trace_data(repo_root, feature_dir, show_impl, ext_list)
+            data = TraceService().prepare_trace_data(repo_root, actual_feature_dir, show_impl, ext_list)
 
         # 起点アイテムの解決
         origin_uid: str
         if item_id.endswith(".feature"):
-            if feature_dir is None:
+            if actual_feature_dir is None:
                 console.print("[bold red]❌ .featureファイルを起点にするには --feature-dir を指定してください。[/bold red]")
                 raise typer.Exit(1)
             found_uid = None

@@ -1,4 +1,4 @@
-# spec-weaver-fingerprint: 124daaee2bb5836c4ca2efbac19f0274dec218a0971928222ffdcb6c237a458e
+# spec-weaver-fingerprint: 769cd1cd2715def692d4a53e1c6e00c460528a7eb018cbccaa4291243d9e30ad
 # spec-weaver-fingerprint-AUT-003: yDu2rlGL5UZEauAw03t_ni-Gcr5kHr1I1ZJDTRClHEM=
 @AUT-003
 Feature: semantic-review コマンド — セマンティックレビュー
@@ -54,3 +54,10 @@ Feature: semantic-review コマンド — セマンティックレビュー
     When `spec-weaver semantic-review --item SPEC-003` を実行する
     Then 終了コードが1である
     And "claude" に関するエラーメッセージが表示される
+
+  Scenario: 全体並列レビューが実行できる
+    Given claudeコマンドが利用可能である
+    When `spec-weaver semantic-review --all --output json` を実行する
+    Then 終了コードが0である
+    And 出力が有効なJSONである
+    And JSONが各アイテムのレビュー結果の配列またはディクショナリである

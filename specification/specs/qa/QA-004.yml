@@ -2,7 +2,7 @@ active: true
 derived: false
 gherkin_fingerprints:
 - ./specification/features/review.feature: |
-    131b01bcbcb2e275b268da61dc1c8b25ee650b735b8f35d27f111099bfc7ad60
+    6cbb9f1d0de7ec36050ce134163cc48a86306e73dcdc60679b72219062efd7d4
 header: |
   review コマンド — .feature ファイルへのフィンガープリント書き込み
 impl_files:
