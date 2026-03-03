@@ -34,6 +34,16 @@ def given_efa9578a(context, param0):
     context.feature_dir = feature_dir
 
 
+@when('`spec-weaver clear SPEC-003 --feature-dir ./specification/features` を実行する')  # type: ignore
+def when_81d90ca5(context):
+    """`spec-weaver clear SPEC-003 --feature-dir ./specification/features` を実行する
+
+    Scenarios:
+      - アイテムIDを指定して gherkin_fingerprints を更新できる
+    """
+    raise NotImplementedError('STEP: `spec-weaver clear SPEC-003 --feature-dir ./specification/features` を実行する')
+
+
 @given('"{param0}" ファイルに複数の仕様IDタグが含まれる')  # type: ignore
 def given_dfa4c4a3(context, param0):
     create_doorstop_project_yaml(
@@ -56,6 +66,17 @@ def given_dfa4c4a3(context, param0):
     context.feature_dir = feature_dir
 
 
+@when('`spec-weaver clear specification/features/audit.feature --feature-dir ./specification/features` を実行する')  # type: ignore
+def when_f5108e70(context):
+    """`spec-weaver clear specification/features/audit.feature --feature-dir ./specification/features` を実行する
+
+    Scenarios:
+      - .feature ファイルを指定して複数アイテムの gherkin_fingerprints を一括更新できる
+      - .feature ファイルを指定してファイル自身の suspect 状態も解除できる
+    """
+    raise NotImplementedError('STEP: `spec-weaver clear specification/features/audit.feature --feature-dir ./specification/features` を実行する')
+
+
 @when('`spec-weaver clear {target}` を実行する')  # type: ignore
 def when_clear_generic(context, target):
     args = shlex.split(f"clear {target}")
@@ -75,7 +96,13 @@ def when_clear_generic(context, target):
 
 @then('終了コードが0である')  # type: ignore
 def then_0f800e56(context):
-    """終了コードが0である"""
+    """終了コードが0である
+
+    Scenarios:
+      - アイテムIDを指定して gherkin_fingerprints を更新できる
+      - .feature ファイルを指定して複数アイテムの gherkin_fingerprints を一括更新できる
+      - .feature ファイルを指定してファイル自身の suspect 状態も解除できる
+    """
     exit_code = getattr(context, "exit_code", None)
     if exit_code is None and hasattr(context, "result") and context.result is not None:
         exit_code = context.result.returncode
@@ -89,7 +116,12 @@ def then_0f800e56(context):
 
 @then('終了コードが1である')  # type: ignore
 def then_9b731a71(context):
-    """終了コードが1である"""
+    """終了コードが1である
+
+    Scenarios:
+      - 存在しないアイテムIDを指定するとエラーになる
+      - 紐づくGherkinシナリオが存在しないアイテムを指定するとエラーになる
+    """
     exit_code = getattr(context, "exit_code", None)
     if exit_code is None and hasattr(context, "result") and context.result is not None:
         exit_code = context.result.returncode
@@ -124,6 +156,52 @@ def then_b31aa65d(context):
     assert "更新しました" in context.result.stdout or "updated" in context.result.stdout
 
 
+@given('"{param0}" ファイルが "{param1}" 状態である')  # type: ignore
+def given_d4ac810a(context, param0, param1):
+    # SPEC-001 created
+    create_doorstop_project_yaml(
+        context.temp_dir,
+        [
+            {
+                "dir": "specs",
+                "prefix": "SPEC",
+                "items": [{"uid": "SPEC-001", "testable": True}]
+            }
+        ]
+    )
+    feature_dir = context.temp_dir / "specification" / "features"
+    feature_dir.mkdir(parents=True, exist_ok=True)
+    f = feature_dir / "audit.feature"
+    # Write feature with old stamp for SPEC-001
+    # We use a dummy stamp to simulate suspect
+    write_feature_file(f, "# spec-weaver-fingerprint: dummy-hash\n# spec-weaver-fingerprint-SPEC-001: OLD_STAMP\n@SPEC-001\nFeature: Test\n  Scenario: Test\n    Given test\n")
+    context.feature_dir = feature_dir
+
+
+@then('"{param0}" の内部フィンガープリントが最新の Doorstop スタンプで更新される')  # type: ignore
+def then_d6213e80(context, param0):
+    feature_path = context.temp_dir / param0
+    content = feature_path.read_text()
+    assert "# spec-weaver-fingerprint-SPEC-001:" in content
+    assert "OLD_STAMP" not in content
+
+
+@then('`spec-weaver status` で当該ファイルが "{param0}" となる')  # type: ignore
+def then_6caa1cf0(context, param0):
+    result = run_spec_weaver(["status"], cwd=context.temp_dir)
+    assert param0 in result.stdout
+
+
+@when('`spec-weaver clear SPEC-999 --feature-dir ./specification/features` を実行する')  # type: ignore
+def when_9a4cc39b(context):
+    """`spec-weaver clear SPEC-999 --feature-dir ./specification/features` を実行する
+
+    Scenarios:
+      - 存在しないアイテムIDを指定するとエラーになる
+    """
+    raise NotImplementedError('STEP: `spec-weaver clear SPEC-999 --feature-dir ./specification/features` を実行する')
+
+
 @then('エラーメッセージが表示される')  # type: ignore
 def then_d53287cf(context):
     output = getattr(context, "output", "")
@@ -137,6 +215,16 @@ def given_b669b903(context, param0):
     feature_dir = context.temp_dir / "specification" / "features"
     feature_dir.mkdir(parents=True, exist_ok=True)
     context.feature_dir = feature_dir
+
+
+@when('`spec-weaver clear SPEC-004 --feature-dir ./specification/features` を実行する')  # type: ignore
+def when_254d955f(context):
+    """`spec-weaver clear SPEC-004 --feature-dir ./specification/features` を実行する
+
+    Scenarios:
+      - 紐づくGherkinシナリオが存在しないアイテムを指定するとエラーになる
+    """
+    raise NotImplementedError('STEP: `spec-weaver clear SPEC-004 --feature-dir ./specification/features` を実行する')
 
 
 @then('警告メッセージが表示される')  # type: ignore

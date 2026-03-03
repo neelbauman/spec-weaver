@@ -474,47 +474,29 @@ def then_49bd7463(context):
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
-#### 📋 Execution Log (Failure)
-
-```text
-Traceback (most recent call last):
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
-    match.run(runner.context)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
-    self.func(context, *args, **kwargs)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "specification/features/steps/step_status.py", line 228, in given_0f39b2ed
-    raise NotImplementedError('STEP: SPEC-001 が status: implemented に設定されている')
-NotImplementedError: STEP: SPEC-001 が status: implemented に設定されている
-```
-
 #### Given SPEC-001 が status: implemented に設定されている
 
 ```python
 @given('SPEC-001 が status: implemented に設定されている')  # type: ignore
 def given_0f39b2ed(context):
-    """SPEC-001 が status: implemented に設定されている
-
-    Scenarios:
-      - buildコマンドで生成されるドキュメントに実装状況が反映される
-    """
-    raise NotImplementedError('STEP: SPEC-001 が status: implemented に設定されている')
+    """SPEC-001 が status: implemented に設定されている"""
+    create_doorstop_project_api(
+        context.temp_dir,
+        req_items=[{"header": "Req 1"}],
+        spec_items=[{"header": "Spec 1", "status": "implemented", "links": ["REQ-001"]}],
+    )
 ```
 
 #### When build コマンドを実行する
 
 ```python
 @when('build コマンドを実行する')  # type: ignore
-def when_40f323b6(context):
-    """build コマンドを実行する
-
-    Scenarios:
-      - 一覧テーブルにタイムスタンプ列が表示される
-      - 詳細ページにタイムスタンプが表示される
-      - Git情報がない場合の一覧テーブル表示
-    """
-    pass
+def when_build_impl(context):
+    feature_dir = context.temp_dir / "specification" / "features"
+    feature_dir.mkdir(parents=True, exist_ok=True)
+    # create dummy feature to avoid empty feature warning
+    write_feature_file(feature_dir / "dummy.feature", "Feature: Dummy\n  Scenario: Dummy\n    Given test\n")
+    context.result = run_spec_weaver(["build", str(feature_dir)], cwd=context.temp_dir)
 ```
 
 #### Then 一覧ページの実装状況列にバッジが表示されること
@@ -522,12 +504,13 @@ def when_40f323b6(context):
 ```python
 @then('一覧ページの実装状況列にバッジが表示されること')  # type: ignore
 def then_f35a3316(context):
-    """一覧ページの実装状況列にバッジが表示されること
-
-    Scenarios:
-      - buildコマンドで生成されるドキュメントに実装状況が反映される
-    """
-    raise NotImplementedError('STEP: 一覧ページの実装状況列にバッジが表示されること')
+    """一覧ページの実装状況列にバッジが表示されること"""
+    # spec-weaver build は Markdown を生成する。mkdocs build は行わない。
+    docs_dir = context.temp_dir / ".specification" / "docs"
+    index_md = docs_dir / "spec.md"
+    assert index_md.exists(), f"Expected {index_md} to exist. Files: {list(docs_dir.iterdir()) if docs_dir.exists() else 'N/A'}"
+    content = index_md.read_text()
+    assert "implemented" in content
 ```
 
 #### And 詳細ページの本文に "**実装状況**: ✅ implemented" が表示されること
@@ -535,12 +518,11 @@ def then_f35a3316(context):
 ```python
 @then('詳細ページの本文に "{param0}" が表示されること')  # type: ignore
 def then_d4f7509c(context, param0):
-    """詳細ページの本文に "**実装状況**: ✅ implemented" が表示されること
-
-    Scenarios:
-      - buildコマンドで生成されるドキュメントに実装状況が反映される
-    """
-    raise NotImplementedError('STEP: 詳細ページの本文に "{param0}" が表示されること')
+    """詳細ページの本文に "**実装状況**: ✅ implemented" が表示されること"""
+    item_md = context.temp_dir / ".specification" / "docs" / "items" / "SPEC-001.md"
+    assert item_md.exists()
+    content = item_md.read_text()
+    assert "implemented" in content
 ```
 
 </details>

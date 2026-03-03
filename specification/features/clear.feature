@@ -1,4 +1,4 @@
-# spec-weaver-fingerprint: 2e8d8c0281c99ccdbf3588ded6eb0cba0c1049b13b636b7acad9755c1f843ef3
+# spec-weaver-fingerprint: 0c0424f9b232677c9c2cb4b197f3442a1154c7ddfe9307911dad7333a0311c66
 # spec-weaver-fingerprint-QA-005: sF4bXqVCp0C7Q2T3NpRXT26Hdj_FTb7yqGfcnXQcYkU=
 @QA-005
 Feature: clear コマンド — Doorstop gherkin_fingerprints 更新
@@ -19,6 +19,13 @@ Feature: clear コマンド — Doorstop gherkin_fingerprints 更新
     Then 終了コードが0である
     And ファイル内の各アイテムの gherkin_fingerprints が更新される
     And 更新件数が表示される
+
+  Scenario: .feature ファイルを指定してファイル自身の suspect 状態も解除できる
+    Given ".feature" ファイルが "suspect-with-reviewed" 状態である
+    When `spec-weaver clear specification/features/audit.feature --feature-dir ./specification/features` を実行する
+    Then 終了コードが0である
+    And "specification/features/audit.feature" の内部フィンガープリントが最新の Doorstop スタンプで更新される
+    And `spec-weaver status` で当該ファイルが "✅ reviewed" となる
 
   Scenario: 存在しないアイテムIDを指定するとエラーになる
     When `spec-weaver clear SPEC-999 --feature-dir ./specification/features` を実行する

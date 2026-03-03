@@ -2,7 +2,7 @@ active: true
 derived: false
 gherkin_fingerprints:
 - ./specification/features/impl_link.feature: |
-    1aa055ed4091f28d69fc1477ce8def1fd3a3cd126cb05c001e50967dbb9419bc
+    ce6a306301223d62fa8782f6c7b0616344f68e525901fa9821895790da1ab969
 header: |
   impl_files カスタム属性による実装ファイル参照の定義
 impl_files:
@@ -13,14 +13,14 @@ links:
 - REQ-012: W1M-g8bMakjNSi3dVoSS2rEjVb7A3bfA2f3UYepGHok=
 normative: true
 ref: ''
-reviewed: MQZjU1RwlI3ko0d_EPDN8uowbfHPg_v_tosLWWbRyNQ=
+reviewed: Ia7bNk8-qcB8DcZY-0hb4rlBfj0KAC2buehEkdKtq_c=
 status: implemented
 test_fingerprint: |
   41dcbf4a7faa415e07ef63246c95e474b424447dfdad377e0db239885ff3b30f
 testable: true
 text: |
   ## 概要
-  DoorstopのYAMLアイテムにカスタム属性 `IMPL_FILES` を追加し、
+  DoorstopのYAMLアイテムにカスタム属性 `impl_files` を追加し、
   実装ファイルパスのリストを記録する規約を定める。
 
   ## 詳細仕様

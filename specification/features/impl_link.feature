@@ -1,6 +1,6 @@
-# spec-weaver-fingerprint: 65ff254d4a83f4cbeea7986ac74182c94ea7e57819958dc5879dda097c4e0898
+# spec-weaver-fingerprint: 72d891bd698202f2c4859359036d7db09d23a01dd78d84d7552bd4e87d60c401
 # spec-weaver-fingerprint-QA-003: R7lU5c_GYfAMywWH7ga7C5bNWLi0BcEk_ct5FCCzLOg=
-# spec-weaver-fingerprint-TRC-002: CsNYG2kwoAL2aGQ4OMJZPbq_BdQL1XO9mD52BES64WU=
+# spec-weaver-fingerprint-TRC-002: A_AtKMCuxp1mjop9_YlIvCzI6ZPuUN_Vmxm3-69zK6A=
 # spec-weaver-fingerprint-TRC-003: HejBnkVVAXr50mezShqlLJuFqDQgnm2Ll2xq1IrX7wY=
 # spec-weaver-fingerprint-TRC-004: taSaPJAOYmNABY3Fq9QzpfuL400jN9dj2MpQSufRkT8=
 @TRC-002 @TRC-003 @QA-003 @TRC-004

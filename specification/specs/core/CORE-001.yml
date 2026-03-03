@@ -2,7 +2,7 @@ active: true
 derived: false
 gherkin_fingerprints:
 - ./specification/features/data_extraction.feature: |
-    bfb97c507a8e3e23e58c4c6e0bc437d7d98c1d27c8c9accfcc20affd9fe0aa20
+    94fef768d8c88132b2a4457867d408e46b114533d92c9ba78fbe97ceb7c2f55a
 header: |
   データ抽出基盤
 level: 1.0

@@ -234,6 +234,8 @@ def given_0f39b2ed(context):
 #     """build コマンドを実行する
 # 
 #     Scenarios:
+      - buildコマンドで生成されるドキュメントに実装状況が反映される
+#       - buildコマンドで生成されるドキュメントに実装状況が反映される
 #       - buildコマンドで生成されるドキュメントに実装状況が反映される
 #     """
 #     raise NotImplementedError('STEP: build コマンドを実行する')
@@ -241,7 +243,11 @@ def given_0f39b2ed(context):
 
 @then('一覧ページの実装状況列にバッジが表示されること')  # type: ignore
 def then_f35a3316(context):
-    """一覧ページの実装状況列にバッジが表示されること"""
+    """一覧ページの実装状況列にバッジが表示されること
+
+    Scenarios:
+      - buildコマンドで生成されるドキュメントに実装状況が反映される
+    """
     # spec-weaver build は Markdown を生成する。mkdocs build は行わない。
     docs_dir = context.temp_dir / ".specification" / "docs"
     index_md = docs_dir / "spec.md"
@@ -252,7 +258,11 @@ def then_f35a3316(context):
 
 @then('詳細ページの本文に "{param0}" が表示されること')  # type: ignore
 def then_d4f7509c(context, param0):
-    """詳細ページの本文に "**実装状況**: ✅ implemented" が表示されること"""
+    """詳細ページの本文に "**実装状況**: ✅ implemented" が表示されること
+
+    Scenarios:
+      - buildコマンドで生成されるドキュメントに実装状況が反映される
+    """
     item_md = context.temp_dir / ".specification" / "docs" / "items" / "SPEC-001.md"
     assert item_md.exists()
     content = item_md.read_text()

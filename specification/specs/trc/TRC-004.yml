@@ -2,7 +2,7 @@ active: true
 derived: false
 gherkin_fingerprints:
 - ./specification/features/impl_link.feature: |
-    1aa055ed4091f28d69fc1477ce8def1fd3a3cd126cb05c001e50967dbb9419bc
+    ce6a306301223d62fa8782f6c7b0616344f68e525901fa9821895790da1ab969
 header: |
   trace コマンドへの実装ファイル表示の追加
 impl_files:

@@ -10,7 +10,7 @@ links:
 - REQ-011: L8Bl65UQLRlIMAdIbMBwE7YNvvUDNz-IySWal4X7iNI=
 normative: true
 ref: ''
-reviewed: j_uKPjNGNCd-bVTXlWxkXZ_7t5YBsKzCBrEJaalXn0A=
+reviewed: zXyMhdxGaYBxLYAMOiJFpADkc5xwnSUne3p5Xw1jd7E=
 status: implemented
 test_fingerprint: |
   70791a8012582a2b5aed53a74b13b3e639541f9ac7331f8c681ad36efb43c8ca
@@ -33,14 +33,15 @@ text: |
 
   ### テストコード生成ロジック
   1. 指定ディレクトリの `.feature` ファイルを Gherkin AST で解析する
-  2. 各 Feature に対して `step_<feature_stem>.py` を生成・マージする
-  3. 各ステップ（Given/When/Then）に対して以下を生成する:
+  2. 指定ディレクトリの steps/ 配下の .py ファイルを、python AST で解析する
+  3. 各 Feature に対して `step_<feature_stem>.py` を生成・マージする
+  4. 各ステップ（Given/When/Then）に対して以下を生成する:
      - `@given` / `@when` / `@then` デコレータ付きのステップ関数
      - 関数名はステップ文のハッシュ先頭8文字: `<prefix>_<hash8>`
      - docstring にオリジナルのステップ文と Scenarios セクションを記載
-  4. 同一ステップ文が複数シナリオで使われる場合、関数は1回のみ生成する（重複排除）
-  5. Docstring の Scenarios セクションには、そのステップを使用する全シナリオを列挙する
-  6. 出力先ディレクトリの他ファイルに同一ステップが定義済みの場合（スタブを含む）、
+  5. 同一ステップ文が複数シナリオで使われる場合、関数は1回のみ生成する（重複排除）
+  6. Docstring の Scenarios セクションには、そのステップを使用する全シナリオを列挙する
+  7. 出力先ディレクトリの他ファイルに同一ステップが定義済みの場合（スタブを含む）、
      そのステップは通常のスタブではなく Duplicate コメントブロックとして出力する。
      behave はステップをグローバルに解決するため、同一パターンが複数定義されると
      AmbiguousStep エラーになる。これを防ぐための措置。

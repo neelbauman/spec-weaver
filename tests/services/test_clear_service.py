@@ -16,6 +16,8 @@ def mock_feature_dir():
 def clear_service():
     return ClearService()
 
+@patch("spec_weaver.services.clear_service.write_feature_fingerprints")
+@patch("spec_weaver.services.clear_service.compute_feature_file_hash")
 @patch("spec_weaver.services.clear_service.get_tags")
 @patch("spec_weaver.services.clear_service.compute_review_state")
 @patch("spec_weaver.services.clear_service.AuditService")
@@ -31,13 +33,18 @@ def test_run_clear_feature_file_success(
     mock_audit_service_cls,
     mock_compute_review_state,
     mock_get_tags,
+    mock_compute_hash,
+    mock_write_fp,
     clear_service,
     mock_repo_root,
     mock_feature_dir
 ):
     mock_get_all_prefixes.return_value = {"SPEC"}
-    mock_get_item_map.return_value = {"SPEC-001": MagicMock()}
+    mock_item = MagicMock()
+    mock_item.stamp.return_value = "new-stamp"
+    mock_get_item_map.return_value = {"SPEC-001": mock_item}
     mock_get_spec_fingerprints.return_value = {"SPEC-001": ["hash"]}
+    mock_get_tag_map.return_value = {"SPEC-001": [{"file": "dummy.feature"}]}
     
     mock_review_state = MagicMock()
     mock_review_state.unreviewed_nodes = set()
@@ -45,12 +52,14 @@ def test_run_clear_feature_file_success(
     mock_compute_review_state.return_value = mock_review_state
 
     mock_get_tags.return_value = {"SPEC-001"}
+    mock_compute_hash.return_value = "feature-hash"
 
     # Mock Path to say it's a file and exists
     with patch("spec_weaver.services.clear_service.Path") as mock_path_cls:
         mock_path_obj = MagicMock()
         mock_path_obj.suffix = ".feature"
         mock_path_obj.exists.return_value = True
+        mock_path_obj.resolve.return_value = mock_path_obj
         mock_path_cls.return_value = mock_path_obj
         
         with patch("spec_weaver.services.clear_service.update_item_attribute") as mock_update:
@@ -62,8 +71,12 @@ def test_run_clear_feature_file_success(
 
                 assert result.is_success is True
                 assert "SPEC-001" in result.updated_items
+                assert "dummy.feature" in result.updated_items
                 mock_update.assert_called_once_with(mock_repo_root, "SPEC-001", "gherkin_fingerprints", ["hash"])
                 mock_doorstop_clear.assert_called_once_with(mock_repo_root, "SPEC-001")
+                
+                # Check if feature fingerprints were written
+                mock_write_fp.assert_called_once_with(mock_path_obj, "feature-hash", {"SPEC-001": "new-stamp"})
 
 
 @patch("spec_weaver.services.clear_service.compute_review_state")

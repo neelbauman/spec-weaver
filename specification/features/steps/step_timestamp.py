@@ -69,6 +69,26 @@ def given_02feb7b0(context):
     context.target_item_id = "SPEC-001"
 
 
+@given('YAMLに created_at: \'2026-01-15\' が設定されている')  # type: ignore
+def given_78ddd292(context):
+    """YAMLに created_at: '2026-01-15' が設定されている
+
+    Scenarios:
+      - Git情報がない場合はYAML属性にフォールバック
+    """
+    raise NotImplementedError('STEP: YAMLに created_at: \'2026-01-15\' が設定されている')
+
+
+@then('created_at として "{param0}" が返されること')  # type: ignore
+def then_afecb621(context, param0):
+    """created_at として "2026-01-15" が返されること
+
+    Scenarios:
+      - Git情報がない場合はYAML属性にフォールバック
+    """
+    raise NotImplementedError('STEP: created_at として "{param0}" が返されること')
+
+
 @given("YAMLに created_at: '{date}' が設定されている")  # type: ignore
 def step_impl(context, date):
     yaml_path = context.temp_dir / "specs" / "SPEC-001.yml"
@@ -92,6 +112,16 @@ def step_impl(context, expected):
 @given('YAMLに created_at も updated_at も設定されていない')  # type: ignore
 def given_20d06697(context):
     pass
+
+
+@then('両方とも "{param0}" が返されること')  # type: ignore
+def then_6f3caa07(context, param0):
+    """両方とも "-" が返されること
+
+    Scenarios:
+      - Git情報もYAML属性もない場合のフォールバック
+    """
+    raise NotImplementedError('STEP: 両方とも "{param0}" が返されること')
 
 
 @then('両方とも "{expected}" が返されること')  # type: ignore
@@ -157,6 +187,16 @@ def given_8798cdab(context):
     given_02feb7b0(context)
 
 
+@then('一覧テーブルの作成日・更新日列に "{param0}" が表示されること')  # type: ignore
+def then_645670cf(context, param0):
+    """一覧テーブルの作成日・更新日列に "-" が表示されること
+
+    Scenarios:
+      - Git情報がない場合の一覧テーブル表示
+    """
+    raise NotImplementedError('STEP: 一覧テーブルの作成日・更新日列に "{param0}" が表示されること')
+
+
 @then('一覧テーブルの作成日・更新日列に "{expected}" が表示されること')  # type: ignore
 def step_impl(context, expected):
     index_md = context.temp_dir / ".specification" / "docs" / "spec.md"
@@ -171,6 +211,16 @@ def given_6998f2b6(context):
     create_doorstop_project_yaml(context.temp_dir, [{"dir": "specs", "prefix": "SPEC", "items": [{"uid": "SPEC-001", "status": "implemented"}]}])
     _git_commit_at(context.temp_dir, "old commit", date)
     context.target_item_id = "SPEC-001"
+
+
+@given('そのアイテムの status が "{param0}" である')  # type: ignore
+def given_a61b1d71(context, param0):
+    """そのアイテムの status が "implemented" である
+
+    Scenarios:
+      - stale アイテムの検出（Git履歴ベース）
+    """
+    raise NotImplementedError('STEP: そのアイテムの status が "{param0}" である')
 
 
 @given('そのアイテムの status が "{status}" である')  # type: ignore
@@ -218,6 +268,16 @@ def then_e9c88743(context):
 @given('DoorstopアイテムがGit管理外でupdated_atも設定されていない')  # type: ignore
 def given_9da29b97(context):
     given_02feb7b0(context)
+
+
+@given('Doorstopアイテムの status が "{param0}" である')  # type: ignore
+def given_e5e93deb(context, param0):
+    """Doorstopアイテムの status が "deprecated" である
+
+    Scenarios:
+      - deprecated アイテムは stale 判定の対象外
+    """
+    raise NotImplementedError('STEP: Doorstopアイテムの status が "{param0}" である')
 
 
 @given('Doorstopアイテムの status が "{status}" である')  # type: ignore

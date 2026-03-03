@@ -1,5 +1,5 @@
 # spec-weaver-fingerprint: ac749f5b22acae3a56e7afe46f7303fcc05eeb9fe7aa5007ce208559648dc4e4
-# spec-weaver-fingerprint-AUT-001: FnmTOZIIA7Vf35CV-yoWSn5nUOY43-qpxJP98jDBnew=
+# spec-weaver-fingerprint-AUT-001: UTfJmEYPmcQuHrgOv1vN08apU6dXlB-qvJ9nQVVfUts=
 @AUT-001
 Feature: scaffold コマンド
   .feature ファイルから behave テストコードの雛形を自動生成・差分マージする。

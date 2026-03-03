@@ -7,7 +7,10 @@ from spec_weaver.adapters.doorstop import (
     update_item_attribute, clear_doorstop_suspects, delete_item_attribute
 )
 # ※delete_item_attributeは元のcli.pyで使われていましたがimport漏れがあったためここで追加します
-from spec_weaver.adapters.gherkin import get_tags, get_spec_fingerprints, get_tag_map
+from spec_weaver.adapters.gherkin import (
+    get_tags, get_spec_fingerprints, get_tag_map,
+    compute_feature_file_hash, write_feature_fingerprints
+)
 from spec_weaver.core.review_state import compute_review_state
 from spec_weaver.services.audit_service import AuditService
 
@@ -94,6 +97,32 @@ class ClearService:
                     result.updated_items.append(tag)
             except Exception:
                 pass
+
+        # 3. .feature ファイル自身のクリア処理 (QA-005 改修)
+        # リンク先のアイテム更新により、feature ファイルが suspect になるのを防ぐ、または既存 suspect を解除する
+        if item_path.suffix == ".feature" and item_path.exists():
+            # アイテムが更新されたので、最新の stamp を取得するためにアイテムマップを再取得
+            reloaded_items = get_item_map(repo_root)
+            
+            fp = compute_feature_file_hash(item_path)
+            
+            # この .feature ファイルに紐づくタグとそのスタンプを取得
+            linked_tags = set()
+            for tag, scenarios in tag_map.items():
+                for s in scenarios:
+                    if Path(s["file"]).resolve() == item_path.resolve():
+                        linked_tags.add(tag)
+                        break
+            
+            item_fps = {}
+            for tag in linked_tags:
+                if tag in reloaded_items:
+                    it = reloaded_items[tag]
+                    item_fps[tag] = it.stamp() if hasattr(it, "stamp") else ""
+            
+            write_feature_fingerprints(item_path, fp, item_fps)
+            if item_id_or_path not in result.updated_items:
+                result.updated_items.append(item_id_or_path)
 
         if len(target_tags) == 1 and not result.updated_items and result.is_success:
             # 更新すべきGherkinシナリオもsuspectリンクもなかった場合

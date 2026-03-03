@@ -100,7 +100,7 @@ def _audit_cmd(
                 else:
                     causes_list.append(c)
             causes = ", ".join(causes_list) or "不明"
-            action = f"spec-weaver clear {spec}"
+            action = f"必要に応じて変化に応じた編集をし、spec-weaver review {spec} 後、 spec-weaver clear {spec}"
             table.add_row(spec, causes, action)
         for fpath in sorted(report.suspect_features):
             fname = Path(fpath).name
