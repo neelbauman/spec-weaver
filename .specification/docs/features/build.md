@@ -17,21 +17,6 @@ Doorstopの仕様データとGherkinテストを統合した
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
-#### 📋 Execution Log (Failure)
-
-```text
-Traceback (most recent call last):
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
-    match.run(runner.context)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
-    self.func(context, *args, **kwargs)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "specification/features/steps/step_build.py", line 18, in given_8a7b1a87
-    raise NotImplementedError('STEP: DoorstopプロジェクトとGherkin featureファイルが存在する')
-NotImplementedError: STEP: DoorstopプロジェクトとGherkin featureファイルが存在する
-```
-
 #### Given DoorstopプロジェクトとGherkin featureファイルが存在する
 
 ```python
@@ -100,21 +85,6 @@ def then_281c0fa4(context):
 - **And** 関連仕様への相互リンクが含まれること
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
-
-#### 📋 Execution Log (Failure)
-
-```text
-Traceback (most recent call last):
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
-    match.run(runner.context)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
-    self.func(context, *args, **kwargs)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "specification/features/steps/step_build.py", line 48, in given_ce6845b7
-    raise NotImplementedError('STEP: DoorstopプロジェクトにREQアイテムが存在する')
-NotImplementedError: STEP: DoorstopプロジェクトにREQアイテムが存在する
-```
 
 #### Given DoorstopプロジェクトにREQアイテムが存在する
 
@@ -196,21 +166,6 @@ def then_ef9d25c2(context):
 - **And** 上位要件への相互リンクが含まれること
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
-
-#### 📋 Execution Log (Failure)
-
-```text
-Traceback (most recent call last):
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
-    match.run(runner.context)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
-    self.func(context, *args, **kwargs)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "specification/features/steps/step_build.py", line 135, in then_9b5808a6
-    raise NotImplementedError('STEP: docs/spec.md が生成されること')
-NotImplementedError: STEP: docs/spec.md が生成されること
-```
 
 #### Given DoorstopプロジェクトにSPECアイテムが存在する
 
@@ -331,21 +286,6 @@ def then_d1af9a65(context):
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
-#### 📋 Execution Log (Failure)
-
-```text
-Traceback (most recent call last):
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
-    match.run(runner.context)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
-    self.func(context, *args, **kwargs)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "specification/features/steps/step_build.py", line 165, in given_73c18566
-    raise NotImplementedError('STEP: DoorstopプロジェクトにアイテムとGherkinテストが存在する')
-NotImplementedError: STEP: DoorstopプロジェクトにアイテムとGherkinテストが存在する
-```
-
 #### Given DoorstopプロジェクトにアイテムとGherkinテストが存在する
 
 ```python
@@ -441,21 +381,6 @@ def then_ae3c7159(context):
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
-#### 📋 Execution Log (Failure)
-
-```text
-Traceback (most recent call last):
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
-    match.run(runner.context)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
-    self.func(context, *args, **kwargs)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "specification/features/steps/step_build.py", line 215, in given_93d749da
-    raise NotImplementedError('STEP: Doorstopプロジェクトにアイテムが存在する')
-NotImplementedError: STEP: Doorstopプロジェクトにアイテムが存在する
-```
-
 #### Given Doorstopプロジェクトにアイテムが存在する
 
 ```python
@@ -523,21 +448,6 @@ def then_ca03093b(context):
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
-#### 📋 Execution Log (Failure)
-
-```text
-Traceback (most recent call last):
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
-    match.run(runner.context)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
-    self.func(context, *args, **kwargs)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "specification/features/steps/step_build.py", line 245, in given_b7341593
-    raise NotImplementedError('STEP: プロジェクトに既存のドキュメントが存在する')
-NotImplementedError: STEP: プロジェクトに既存のドキュメントが存在する
-```
-
 #### Given プロジェクトに既存のドキュメントが存在する
 
 ```python
@@ -602,21 +512,6 @@ def then_56c968de(context):
 - **Then** "./custom_docs" ディレクトリに出力されること
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
-
-#### 📋 Execution Log (Failure)
-
-```text
-Traceback (most recent call last):
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
-    match.run(runner.context)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
-    self.func(context, *args, **kwargs)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "specification/features/steps/step_build.py", line 18, in given_8a7b1a87
-    raise NotImplementedError('STEP: DoorstopプロジェクトとGherkin featureファイルが存在する')
-NotImplementedError: STEP: DoorstopプロジェクトとGherkin featureファイルが存在する
-```
 
 #### Given DoorstopプロジェクトとGherkin featureファイルが存在する
 
@@ -797,21 +692,6 @@ def then_d670dbfb(context, param0, param1, param2):
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
-#### 📋 Execution Log (Failure)
-
-```text
-Traceback (most recent call last):
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
-    match.run(runner.context)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
-    self.func(context, *args, **kwargs)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "specification/features/steps/step_build.py", line 346, in given_486efd83
-    raise NotImplementedError('STEP: どのDoorstopアイテムからも参照されていないfeatureが存在する')
-NotImplementedError: STEP: どのDoorstopアイテムからも参照されていないfeatureが存在する
-```
-
 #### Given どのDoorstopアイテムからも参照されていないfeatureが存在する
 
 ```python
@@ -867,21 +747,6 @@ def then_7458537c(context, param0):
 - **And** 詳細ページに Suspect Link バナーが表示されること
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
-
-#### 📋 Execution Log (Failure)
-
-```text
-Traceback (most recent call last):
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
-    match.run(runner.context)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
-    self.func(context, *args, **kwargs)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "specification/features/steps/step_build.py", line 366, in given_5951291a
-    raise NotImplementedError('STEP: アイテムの上位リンク先が変更されている（cleared=false）')
-NotImplementedError: STEP: アイテムの上位リンク先が変更されている（cleared=false）
-```
 
 #### Given アイテムの上位リンク先が変更されている（cleared=false）
 
@@ -954,21 +819,6 @@ def then_b9db4871(context):
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
-#### 📋 Execution Log (Failure)
-
-```text
-Traceback (most recent call last):
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
-    match.run(runner.context)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
-    self.func(context, *args, **kwargs)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "specification/features/steps/step_build.py", line 398, in given_60830b9f
-    raise NotImplementedError('STEP: アイテム自体に未レビューの変更がある（reviewed=false）')
-NotImplementedError: STEP: アイテム自体に未レビューの変更がある（reviewed=false）
-```
-
 #### Given アイテム自体に未レビューの変更がある（reviewed=false）
 
 ```python
@@ -1038,21 +888,6 @@ def then_e1fe71d4(context):
 - **Then** 一覧テーブルの行に "{: .suspect-row }" が適用されていること
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
-
-#### 📋 Execution Log (Failure)
-
-```text
-Traceback (most recent call last):
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
-    match.run(runner.context)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
-    self.func(context, *args, **kwargs)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "specification/features/steps/step_build.py", line 418, in given_89f3d16e
-    raise NotImplementedError('STEP: アイテムに Suspect Link と Unreviewed Changes の両方がある')
-NotImplementedError: STEP: アイテムに Suspect Link と Unreviewed Changes の両方がある
-```
 
 #### Given アイテムに Suspect Link と Unreviewed Changes の両方がある
 

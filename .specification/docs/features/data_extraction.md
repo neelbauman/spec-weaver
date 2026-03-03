@@ -318,7 +318,7 @@ def when_a12b8a55(context):
       - サブディレクトリ内のfeatureファイルの再帰探索
       - Gherkin構文エラーの検出
     """
-    from spec_weaver.gherkin import get_tag_map
+    from spec_weaver.adapters.gherkin import get_tag_map
     try:
         tag_map = get_tag_map(context.feature_dir, context.temp_dir, {"SPEC", "REQ", "CORE"})
         context.tag_ids = set(tag_map.keys())
@@ -385,7 +385,7 @@ def when_a12b8a55(context):
       - サブディレクトリ内のfeatureファイルの再帰探索
       - Gherkin構文エラーの検出
     """
-    from spec_weaver.gherkin import get_tag_map
+    from spec_weaver.adapters.gherkin import get_tag_map
     try:
         tag_map = get_tag_map(context.feature_dir, context.temp_dir, {"SPEC", "REQ", "CORE"})
         context.tag_ids = set(tag_map.keys())
@@ -454,7 +454,7 @@ def when_a12b8a55(context):
       - サブディレクトリ内のfeatureファイルの再帰探索
       - Gherkin構文エラーの検出
     """
-    from spec_weaver.gherkin import get_tag_map
+    from spec_weaver.adapters.gherkin import get_tag_map
     try:
         tag_map = get_tag_map(context.feature_dir, context.temp_dir, {"SPEC", "REQ", "CORE"})
         context.tag_ids = set(tag_map.keys())
@@ -522,7 +522,7 @@ def when_a12b8a55(context):
       - サブディレクトリ内のfeatureファイルの再帰探索
       - Gherkin構文エラーの検出
     """
-    from spec_weaver.gherkin import get_tag_map
+    from spec_weaver.adapters.gherkin import get_tag_map
     try:
         tag_map = get_tag_map(context.feature_dir, context.temp_dir, {"SPEC", "REQ", "CORE"})
         context.tag_ids = set(tag_map.keys())

@@ -16,21 +16,6 @@
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
-#### 📋 Execution Log (Failure)
-
-```text
-Traceback (most recent call last):
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
-    match.run(runner.context)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
-    self.func(context, *args, **kwargs)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "specification/features/steps/step_scaffold.py", line 31, in when_4cda1d3b
-    raise NotImplementedError('STEP: scaffold コマンドを実行する')
-NotImplementedError: STEP: scaffold コマンドを実行する
-```
-
 #### Given ".feature" ファイルが存在するディレクトリがある
 
 ```python
@@ -100,21 +85,6 @@ def then_398bb2af(context, param0, param1, param2):
 - **And** docstring にオリジナルのステップ文が記載されること
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
-
-#### 📋 Execution Log (Failure)
-
-```text
-Traceback (most recent call last):
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
-    match.run(runner.context)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
-    self.func(context, *args, **kwargs)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "specification/features/steps/step_scaffold.py", line 61, in given_a87fa38a
-    raise NotImplementedError('STEP: 日本語のシナリオ名を持つ .feature ファイルがある')
-NotImplementedError: STEP: 日本語のシナリオ名を持つ .feature ファイルがある
-```
 
 #### Given 日本語のシナリオ名を持つ .feature ファイルがある
 
@@ -196,21 +166,6 @@ def then_c876ede8(context):
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
-#### 📋 Execution Log (Failure)
-
-```text
-Traceback (most recent call last):
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
-    match.run(runner.context)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
-    self.func(context, *args, **kwargs)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "specification/features/steps/step_scaffold.py", line 101, in given_ae2a90a1
-    raise NotImplementedError('STEP: 複数のシナリオで同一のステップ文が使用されている')
-NotImplementedError: STEP: 複数のシナリオで同一のステップ文が使用されている
-```
-
 #### Given 複数のシナリオで同一のステップ文が使用されている
 
 ```python
@@ -265,21 +220,6 @@ def then_67099eaf(context):
 - **And** そのステップを使用するシナリオ名が列挙されること
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
-
-#### 📋 Execution Log (Failure)
-
-```text
-Traceback (most recent call last):
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
-    match.run(runner.context)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
-    self.func(context, *args, **kwargs)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "specification/features/steps/step_scaffold.py", line 31, in when_4cda1d3b
-    raise NotImplementedError('STEP: scaffold コマンドを実行する')
-NotImplementedError: STEP: scaffold コマンドを実行する
-```
 
 #### Given ".feature" ファイルが存在するディレクトリがある
 
@@ -351,21 +291,6 @@ def then_6fd54334(context):
 - **And** 新規ステップは .feature の出現順で挿入されること
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
-
-#### 📋 Execution Log (Failure)
-
-```text
-Traceback (most recent call last):
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
-    match.run(runner.context)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
-    self.func(context, *args, **kwargs)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "specification/features/steps/step_scaffold.py", line 143, in given_f54fe40f
-    raise NotImplementedError('STEP: 出力先に既存のテストファイルが存在する')
-NotImplementedError: STEP: 出力先に既存のテストファイルが存在する
-```
 
 #### Given 出力先に既存のテストファイルが存在する
 
@@ -464,21 +389,6 @@ def then_5c2cc2d3(context):
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
-#### 📋 Execution Log (Failure)
-
-```text
-Traceback (most recent call last):
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
-    match.run(runner.context)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
-    self.func(context, *args, **kwargs)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "specification/features/steps/step_scaffold.py", line 207, in given_fdb17660
-    raise NotImplementedError('STEP: 出力先の既存テストファイルが .feature と完全に同期している')
-NotImplementedError: STEP: 出力先の既存テストファイルが .feature と完全に同期している
-```
-
 #### Given 出力先の既存テストファイルが .feature と完全に同期している
 
 ```python
@@ -547,21 +457,6 @@ def then_f45c0000(context):
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
-#### 📋 Execution Log (Failure)
-
-```text
-Traceback (most recent call last):
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
-    match.run(runner.context)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
-    self.func(context, *args, **kwargs)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "specification/features/steps/step_scaffold.py", line 143, in given_f54fe40f
-    raise NotImplementedError('STEP: 出力先に既存のテストファイルが存在する')
-NotImplementedError: STEP: 出力先に既存のテストファイルが存在する
-```
-
 #### Given 出力先に既存のテストファイルが存在する
 
 ```python
@@ -616,21 +511,6 @@ def then_6f27dfe3(context):
 - **And** キャンセルするとそのファイルはスキップされること
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
-
-#### 📋 Execution Log (Failure)
-
-```text
-Traceback (most recent call last):
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
-    match.run(runner.context)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
-    self.func(context, *args, **kwargs)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "specification/features/steps/step_scaffold.py", line 259, in given_3f60de62
-    raise NotImplementedError('STEP: 出力先のテストファイルに未コミットの変更がある')
-NotImplementedError: STEP: 出力先のテストファイルに未コミットの変更がある
-```
 
 #### Given 出力先のテストファイルに未コミットの変更がある
 
@@ -701,21 +581,6 @@ def then_c8096039(context):
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
-#### 📋 Execution Log (Failure)
-
-```text
-Traceback (most recent call last):
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
-    match.run(runner.context)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
-    self.func(context, *args, **kwargs)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "specification/features/steps/step_scaffold.py", line 259, in given_3f60de62
-    raise NotImplementedError('STEP: 出力先のテストファイルに未コミットの変更がある')
-NotImplementedError: STEP: 出力先のテストファイルに未コミットの変更がある
-```
-
 #### Given 出力先のテストファイルに未コミットの変更がある
 
 ```python
@@ -770,21 +635,6 @@ def then_4b7c11ee(context):
 - **And** 他のステップのスタブは保持されること
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
-
-#### 📋 Execution Log (Failure)
-
-```text
-Traceback (most recent call last):
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
-    match.run(runner.context)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
-    self.func(context, *args, **kwargs)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "specification/features/steps/step_scaffold.py", line 143, in given_f54fe40f
-    raise NotImplementedError('STEP: 出力先に既存のテストファイルが存在する')
-NotImplementedError: STEP: 出力先に既存のテストファイルが存在する
-```
 
 #### Given 出力先に既存のテストファイルが存在する
 
@@ -869,21 +719,6 @@ def then_d0e8d8d6(context):
 - **Then** そのステップが Duplicate としてではなくスタブとして生成されること
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
-
-#### 📋 Execution Log (Failure)
-
-```text
-Traceback (most recent call last):
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
-    match.run(runner.context)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
-    self.func(context, *args, **kwargs)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "specification/features/steps/step_scaffold.py", line 329, in given_e0006816
-    raise NotImplementedError('STEP: 別のステップファイルに同一ステップが Duplicate コメントとして記載されている')
-NotImplementedError: STEP: 別のステップファイルに同一ステップが Duplicate コメントとして記載されている
-```
 
 #### Given 別のステップファイルに同一ステップが Duplicate コメントとして記載されている
 

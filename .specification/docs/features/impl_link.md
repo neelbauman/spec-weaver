@@ -55,21 +55,6 @@ def given_14c0b615(context):
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
-#### 📋 Execution Log (Failure)
-
-```text
-Traceback (most recent call last):
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
-    match.run(runner.context)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
-    self.func(context, *args, **kwargs)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "specification/features/steps/step_impl_link.py", line 17, in given_5b35c4dd
-    raise NotImplementedError('STEP: TRC-003 の impl_files に ["{param0}"] が設定されている')
-NotImplementedError: STEP: TRC-003 の impl_files に ["{param0}"] が設定されている
-```
-
 #### Given TRC-003 の impl_files に ["src/spec_weaver/impl_scanner.py"] が設定されている
 
 ```python
@@ -123,21 +108,6 @@ def then_4c08825b(context, param0):
 - **Then** 空のリストが返ること
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
-
-#### 📋 Execution Log (Failure)
-
-```text
-Traceback (most recent call last):
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
-    match.run(runner.context)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
-    self.func(context, *args, **kwargs)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "specification/features/steps/step_impl_link.py", line 49, in given_60f3699e
-    raise NotImplementedError('STEP: QA-003 の impl_files が未設定である')
-NotImplementedError: STEP: QA-003 の impl_files が未設定である
-```
 
 #### Given QA-003 の impl_files が未設定である
 
@@ -193,21 +163,6 @@ def then_3cd52b0f(context):
 - **Then** "TRC-003" に対して "src/spec_weaver/impl_scanner.py" が紐づくこと
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
-
-#### 📋 Execution Log (Failure)
-
-```text
-Traceback (most recent call last):
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
-    match.run(runner.context)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
-    self.func(context, *args, **kwargs)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "specification/features/steps/step_impl_link.py", line 72, in given_1a5b95f0
-    raise NotImplementedError('STEP: "{param0}" の行頭に "{param1}" が記述されている')
-NotImplementedError: STEP: "{param0}" の行頭に "{param1}" が記述されている
-```
 
 #### Given "src/spec_weaver/impl_scanner.py" の行頭に "# implements: TRC-003" が記述されている
 
@@ -268,21 +223,6 @@ def then_6cd9ae6b(context, param0, param1):
 - **And** "TRC-004" に対して "src/spec_weaver/cli.py" が紐づくこと
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
-
-#### 📋 Execution Log (Failure)
-
-```text
-Traceback (most recent call last):
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
-    match.run(runner.context)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
-    self.func(context, *args, **kwargs)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "specification/features/steps/step_impl_link.py", line 72, in given_1a5b95f0
-    raise NotImplementedError('STEP: "{param0}" の行頭に "{param1}" が記述されている')
-NotImplementedError: STEP: "{param0}" の行頭に "{param1}" が記述されている
-```
 
 #### Given "src/spec_weaver/cli.py" の行頭に "# implements: QA-003, TRC-004" が記述されている
 
@@ -358,21 +298,6 @@ def then_6cd9ae6b(context, param0, param1):
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
-#### 📋 Execution Log (Failure)
-
-```text
-Traceback (most recent call last):
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
-    match.run(runner.context)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
-    self.func(context, *args, **kwargs)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "specification/features/steps/step_impl_link.py", line 105, in given_6f18a295
-    raise NotImplementedError('STEP: リポジトリに .py ファイルと .md ファイルが存在する')
-NotImplementedError: STEP: リポジトリに .py ファイルと .md ファイルが存在する
-```
-
 #### Given リポジトリに .py ファイルと .md ファイルが存在する
 
 ```python
@@ -439,27 +364,12 @@ def then_1e4aee33(context):
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
-#### 📋 Execution Log (Failure)
-
-```text
-Traceback (most recent call last):
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
-    match.run(runner.context)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
-    self.func(context, *args, **kwargs)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "specification/features/steps/step_impl_link.py", line 145, in given_8d04b283
-    raise NotImplementedError('STEP: "{param0}" にアノテーションが存在しない')
-NotImplementedError: STEP: "{param0}" にアノテーションが存在しない
-```
-
 #### Given "src/spec_weaver/gherkin.py" にアノテーションが存在しない
 
 ```python
 @given('"{param0}" にアノテーションが存在しない')  # type: ignore
 def given_8d04b283(context, param0):
-    """"src/spec_weaver/gherkin.py" にアノテーションが存在しない
+    """"src/spec_weaver.adapters.gherkin.py" にアノテーションが存在しない
 
     Scenarios:
       - アノテーションがないファイルはエラーにならない
@@ -509,21 +419,6 @@ def then_b705ab9f(context):
 - **And** "nonexistent.py" が存在しないファイルとして報告されること
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
-
-#### 📋 Execution Log (Failure)
-
-```text
-Traceback (most recent call last):
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
-    match.run(runner.context)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
-    self.func(context, *args, **kwargs)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "specification/features/steps/step_impl_link.py", line 166, in given_4cea3b9d
-    raise NotImplementedError('STEP: QA-003 の impl_files に "{param0}" が設定されている')
-NotImplementedError: STEP: QA-003 の impl_files に "{param0}" が設定されている
-```
 
 #### Given QA-003 の impl_files に "src/spec_weaver/nonexistent.py" が設定されている
 
@@ -596,21 +491,6 @@ def then_7ef614ad(context, param0):
 - **Then** "TRC-003 → src/spec_weaver/cli.py" が impl_files のみ（アノテーションなし）として報告されること
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
-
-#### 📋 Execution Log (Failure)
-
-```text
-Traceback (most recent call last):
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
-    match.run(runner.context)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
-    self.func(context, *args, **kwargs)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "specification/features/steps/step_impl_link.py", line 212, in given_e64bd8f6
-    raise NotImplementedError('STEP: TRC-003 の impl_files に "{param0}" が設定されている')
-NotImplementedError: STEP: TRC-003 の impl_files に "{param0}" が設定されている
-```
 
 #### Given TRC-003 の impl_files に "src/spec_weaver/cli.py" が設定されている
 
@@ -685,21 +565,6 @@ def then_f76e2a8d(context, param0):
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
-#### 📋 Execution Log (Failure)
-
-```text
-Traceback (most recent call last):
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
-    match.run(runner.context)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
-    self.func(context, *args, **kwargs)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "specification/features/steps/step_impl_link.py", line 72, in given_1a5b95f0
-    raise NotImplementedError('STEP: "{param0}" の行頭に "{param1}" が記述されている')
-NotImplementedError: STEP: "{param0}" の行頭に "{param1}" が記述されている
-```
-
 #### Given "src/spec_weaver/gherkin.py" の行頭に "# implements: QA-003" が記述されている
 
 ```python
@@ -752,7 +617,7 @@ def when_68ff7f63(context, param0):
 ```python
 @then('"{param0}" がアノテーションのみ（impl_files なし）として報告されること')  # type: ignore
 def then_7fa51a4f(context, param0):
-    """"QA-003 ← src/spec_weaver/gherkin.py" がアノテーションのみ（impl_files なし）として報告されること
+    """"QA-003 ← src/spec_weaver.adapters.gherkin.py" がアノテーションのみ（impl_files なし）として報告されること
 
     Scenarios:
       - アノテーションがあって impl_files がない場合は警告を報告する
@@ -773,21 +638,6 @@ def then_7fa51a4f(context, param0):
 - **Then** 実装ファイルリンクのセクションが出力されないこと
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
-
-#### 📋 Execution Log (Failure)
-
-```text
-Traceback (most recent call last):
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
-    match.run(runner.context)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
-    self.func(context, *args, **kwargs)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "specification/features/steps/step_impl_link.py", line 166, in given_4cea3b9d
-    raise NotImplementedError('STEP: QA-003 の impl_files に "{param0}" が設定されている')
-NotImplementedError: STEP: QA-003 の impl_files に "{param0}" が設定されている
-```
 
 #### Given QA-003 の impl_files に "src/spec_weaver/nonexistent.py" が設定されている
 
@@ -842,21 +692,6 @@ def then_70e4e0dc(context):
 - **Then** 出力ツリーに "src/spec_weaver/impl_scanner.py" が含まれること
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
-
-#### 📋 Execution Log (Failure)
-
-```text
-Traceback (most recent call last):
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
-    match.run(runner.context)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
-    self.func(context, *args, **kwargs)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "specification/features/steps/step_impl_link.py", line 212, in given_e64bd8f6
-    raise NotImplementedError('STEP: TRC-003 の impl_files に "{param0}" が設定されている')
-NotImplementedError: STEP: TRC-003 の impl_files に "{param0}" が設定されている
-```
 
 #### Given TRC-003 の impl_files に "src/spec_weaver/impl_scanner.py" が設定されている
 
@@ -918,21 +753,6 @@ def then_2c56e82a(context, param0):
 - **Then** 出力ツリーに "src/spec_weaver/cli.py" が含まれること
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
-
-#### 📋 Execution Log (Failure)
-
-```text
-Traceback (most recent call last):
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
-    match.run(runner.context)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
-    self.func(context, *args, **kwargs)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "specification/features/steps/step_impl_link.py", line 72, in given_1a5b95f0
-    raise NotImplementedError('STEP: "{param0}" の行頭に "{param1}" が記述されている')
-NotImplementedError: STEP: "{param0}" の行頭に "{param1}" が記述されている
-```
 
 #### Given "src/spec_weaver/cli.py" の行頭に "# implements: TRC-003" が記述されている
 
@@ -1007,21 +827,6 @@ def then_2c56e82a(context, param0):
 - **Then** 出力ツリーに "impl_scanner.py" が含まれないこと
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
-
-#### 📋 Execution Log (Failure)
-
-```text
-Traceback (most recent call last):
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
-    match.run(runner.context)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
-    self.func(context, *args, **kwargs)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "specification/features/steps/step_impl_link.py", line 212, in given_e64bd8f6
-    raise NotImplementedError('STEP: TRC-003 の impl_files に "{param0}" が設定されている')
-NotImplementedError: STEP: TRC-003 の impl_files に "{param0}" が設定されている
-```
 
 #### Given TRC-003 の impl_files に "src/spec_weaver/impl_scanner.py" が設定されている
 
