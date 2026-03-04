@@ -2,6 +2,7 @@ active: true
 derived: false
 header: |
   コア・アーキテクチャ
+layer: architecture
 level: 1.0
 links:
 - REQ-001: r8HLD3Bp9ilMNgxhGINfuTj969G6-xvhIcjcnYrl-J0=

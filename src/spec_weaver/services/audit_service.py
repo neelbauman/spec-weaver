@@ -1,3 +1,4 @@
+# implements: QA-006
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Optional, Set, Dict, List, Tuple
@@ -37,6 +38,10 @@ class AuditReport:
     broken_refs: List[Tuple[str, str]] = field(default_factory=list)
     ref_only: List[Tuple[str, str]] = field(default_factory=list)
     annotation_only: List[Tuple[str, str]] = field(default_factory=list)
+    # layer-aware audit ルール (QA-006)
+    behavior_without_gherkin: Set[str] = field(default_factory=set)   # error
+    architecture_with_gherkin: Set[str] = field(default_factory=set)  # warning
+    layer_unset: Set[str] = field(default_factory=set)                 # info
 
 
 class AuditService:
@@ -147,10 +152,36 @@ class AuditService:
         # 7. Behaveステップ検証
         unused_defs, undefined_steps = check_behave_steps(feature_dir)
 
-        # 8. 全体成功判定
-        is_success = not (untested_specs or orphaned_tags or suspect_specs or 
-                          suspect_features or unreviewed_specs or unreviewed_features or 
-                          broken_refs or undefined_steps)
+        # 8. layer-aware audit ルール (QA-006)
+        behavior_without_gherkin: Set[str] = set()
+        architecture_with_gherkin: Set[str] = set()
+        layer_unset: Set[str] = set()
+
+        all_tagged_ids = set(tags_in_code)
+        for uid, item in raw_items.items():
+            if not item.active:
+                continue
+            if prefix and not str(uid).startswith(prefix):
+                continue
+            layer = _get_custom_attribute(item, "layer", None)
+            is_testable = _get_custom_attribute(item, "testable", True)
+            has_gherkin = str(uid) in all_tagged_ids
+
+            if layer == "behavior":
+                if is_testable and not has_gherkin:
+                    behavior_without_gherkin.add(str(uid))
+            elif layer == "architecture":
+                if has_gherkin:
+                    architecture_with_gherkin.add(str(uid))
+            else:
+                # layer 未設定（testable: true のアイテムのみ通知対象）
+                if is_testable:
+                    layer_unset.add(str(uid))
+
+        # 9. 全体成功判定（behavior_without_gherkin のみ is_success に影響）
+        is_success = not (untested_specs or orphaned_tags or suspect_specs or
+                          suspect_features or unreviewed_specs or unreviewed_features or
+                          broken_refs or undefined_steps or behavior_without_gherkin)
 
         return AuditReport(
             is_success=is_success,
@@ -169,6 +200,9 @@ class AuditService:
             broken_refs=broken_refs,
             ref_only=ref_only,
             annotation_only=annotation_only,
+            behavior_without_gherkin=behavior_without_gherkin,
+            architecture_with_gherkin=architecture_with_gherkin,
+            layer_unset=layer_unset,
         )
 
     def _compute_feature_file_states(self, feature_dir: Path, repo_root: Path) -> dict:

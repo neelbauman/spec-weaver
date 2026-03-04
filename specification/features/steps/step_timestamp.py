@@ -126,15 +126,7 @@ def given_cc8e9bef(context):
     given_5c08ab27(context)
 
 
-@when('build コマンドを実行する')  # type: ignore
-def when_build_impl(context):
-    feature_dir = context.temp_dir / "specification" / "features"
-    feature_dir.mkdir(parents=True, exist_ok=True)
-    # create dummy feature to avoid empty feature warning
-    write_feature_file(feature_dir / "dummy.feature", "Feature: Dummy\n  Scenario: Dummy\n    Given test\n")
-    context.result = run_spec_weaver(["build", str(feature_dir)], cwd=context.temp_dir)
-
-
+# [Dup→step_build.py] @when('build コマンドを実行する')  # type: ignore
 @then('一覧テーブルに「作成日」列が含まれること')  # type: ignore
 def then_ed934883(context):
     index_md = context.temp_dir / ".specification" / "docs" / "spec.md"

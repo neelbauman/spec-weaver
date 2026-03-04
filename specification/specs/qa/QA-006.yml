@@ -1,0 +1,51 @@
+active: true
+derived: false
+gherkin_fingerprints:
+- ./specification/features/audit.feature: |
+    15872c5828fc3b0e280107ac96384dae143ceb1c482b9401ccbf61af0b2b454e
+header: |
+  layer属性によるGherkinリンク整合性の監査ルール
+impl_files:
+- src/spec_weaver/services/audit_service.py
+- src/spec_weaver/cli/commands/audit_cmd.py
+layer: behavior
+level: 5.1
+links:
+- REQ-014: da3hReaCbca6Xc2gdQatqOcxrkwGDCEmANfK86-N1KE=
+normative: true
+ref: ''
+reviewed: UaR_wfgWgF9DOJADCR-KTvTDxSvtRgTU0wTA0m0XLjc=
+status: implemented
+testable: true
+text: |
+  ## 概要
+  `layer` 属性に基づき、Gherkin タグと仕様アイテムの対応関係が
+  適切な抽象レベルを維持しているかを検証するauditルール群の仕様。
+
+  ## layer 属性の定義
+
+  ### `layer: behavior`
+  - 外部から観察可能な振る舞い（CLIコマンドの出力・副作用等）を定義したアイテム
+  - `testable: true` の場合、対応する Gherkin シナリオが必須
+  - Gherkin タグでリンクされることが期待される
+
+  ### `layer: architecture`
+  - 内部のアーキテクチャ判断・技術方針・実装制約を定義したアイテム
+  - 単体テスト（pytest等）で検証され、Gherkin とのリンクは不適切
+
+  ## 検出ルール
+
+  ### behavior-without-gherkin（エラー）
+  - 条件: `layer: behavior` かつ `testable: true` かつ Gherkin タグが存在しない
+  - 意味: 外部仕様として定義されているが、振る舞いテストが未整備
+  - 既存の `untested_specs` とは独立して報告する
+
+  ### architecture-with-gherkin（警告）
+  - 条件: `layer: architecture` かつ Gherkin タグが存在する
+  - 意味: 内部設計をGherkinでテストしており、技術的負債の可能性がある
+  - `testable` 属性の値によらず検出する
+
+  ### layer-unset（情報）
+  - 条件: アクティブかつ `testable: true` かつ `layer` 属性が未設定
+  - 意味: layer による分類がまだ行われていない
+  - エラーではなく、段階的な移行を支援するための通知

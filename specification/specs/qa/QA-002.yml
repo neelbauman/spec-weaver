@@ -5,6 +5,7 @@ gherkin_fingerprints:
     bb616c546eb461c2d73c88217f32746aff8775fa3b4677609f021afb59d5b48e
 header: |
   タイムスタンプ鮮度の監査チェック
+layer: behavior
 level: 2.0
 links:
 - REQ-002: AL9bDV_13Z_dFORw5rjP1YoJvrpxV9BwxqcTBuTGPsA=

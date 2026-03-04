@@ -7,6 +7,7 @@ header: |
   clear コマンド — Doorstop gherkin_fingerprints 更新
 impl_files:
 - src/spec_weaver/cli.py
+layer: behavior
 level: 5.0
 links:
 - REQ-004: KXm5cZc2wXUhF29d-4lpSPbclfjN4ruCBIwDvWX93tg=

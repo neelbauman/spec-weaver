@@ -6,6 +6,7 @@ gherkin_fingerprints:
     f8dca681ef818075b4380e7e5f191a826fedc63badeaaa82420750d50426d32d
 header: |
   feature MDページのバックリンク生成
+layer: behavior
 level: 8.0
 links:
 - REQ-003: Rb8ehO6TwgTYIqN3kXtu3nzq6LWHqvsE0-d2B9HrUWM=

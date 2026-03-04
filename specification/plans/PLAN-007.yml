@@ -1,0 +1,60 @@
+active: true
+derived: false
+header: |
+  layer属性 + layer-aware audit ルール 実装計画
+layer: architecture
+level: 1.7
+links:
+- QA-006: IQO1lBdAvEzVzJofPO_jiIFF1WjLNsCMUhlLQTXCk6A=
+normative: true
+ref: ''
+reviewed: TyNl1TBFCmjBnh7WvrVhxEBT1E57Ldcu7N5uOe1YVQU=
+status: implemented
+testable: false
+text: |
+  ## 概要
+  REQ-014 / QA-006 に基づく `layer` 属性サポートと audit 拡張の実装計画。
+
+  ## タスク一覧
+
+  ### T1: AuditReport に新フィールド追加
+  - ファイル: `src/spec_weaver/services/audit_service.py`
+  - 内容: `behavior_without_gherkin`, `architecture_with_gherkin`, `layer_unset` フィールドを `AuditReport` に追加
+  - 完了条件: dataclass のフィールドが定義され、型が正しい
+  - 依存: なし
+
+  ### T2: AuditService.run_audit() にlayer評価ロジック追加
+  - ファイル: `src/spec_weaver/services/audit_service.py`
+  - 内容: 全アクティブアイテムを走査し、`layer` 属性と Gherkin tag_map を突き合わせて3ルールを評価
+  - 完了条件: 3つの Set が正しく計算される
+  - 依存: T1
+
+  ### T3: is_success に behavior_without_gherkin を追加
+  - ファイル: `src/spec_weaver/services/audit_service.py`
+  - 内容: `is_success` 判定に `behavior_without_gherkin` を追加（warningとinfoは除外）
+  - 完了条件: behavior_without_gherkin が空でない場合に is_success=False
+  - 依存: T2
+
+  ### T4: audit_cmd.py に新セクション表示を追加
+  - ファイル: `src/spec_weaver/cli/commands/audit_cmd.py`
+  - 内容: 3つの新フィールドを Rich テーブルで表示（error/warning/info の色分け）
+  - 完了条件: CLIが3種類の違反を適切な色・ラベルで表示する
+  - 依存: T1
+
+  ### T5: step_audit.py のステップ定義実装
+  - ファイル: `specification/features/steps/step_audit.py`
+  - 内容: scaffold で生成された3シナリオのステップを実装
+  - 完了条件: `behave --tags @QA-006` が通過する
+  - 依存: T3, T4
+
+  ### T6: impl_files と annotation の更新
+  - ファイル: `specification/specs/qa/QA-006.yml`
+  - 内容: `impl_files` に実装ファイルパスを記載、各実装ファイルに `# implements: QA-006` 追加
+  - 依存: T5
+
+  ## 実行順序
+  T1 → T2 → T3 → T4（並列可） → T5 → T6
+
+  ## リスク
+  - CORE-001/CORE-002 の `architecture-with-gherkin` 違反が新たに表示される（意図的）
+  - 既存の `untested_specs` と `behavior_without_gherkin` が一部重複する可能性（別フィールドで分離）

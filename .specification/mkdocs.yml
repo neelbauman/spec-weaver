@@ -31,6 +31,7 @@ nav:
       - PLAN-004: items/PLAN-004.md
       - PLAN-005: items/PLAN-005.md
       - PLAN-006: items/PLAN-006.md
+      - PLAN-007: items/PLAN-007.md
   - QA:
       - QA一覧: qa.md
       - QA-001: items/QA-001.md
@@ -38,6 +39,7 @@ nav:
       - QA-003: items/QA-003.md
       - QA-004: items/QA-004.md
       - QA-005: items/QA-005.md
+      - QA-006: items/QA-006.md
   - REQ:
       - REQ一覧: req.md
       - REQ-001: items/REQ-001.md
@@ -53,6 +55,7 @@ nav:
       - REQ-012: items/REQ-012.md
       - REQ-011: items/REQ-011.md
       - REQ-013: items/REQ-013.md
+      - REQ-014: items/REQ-014.md
   - SPEC:
       - SPEC一覧: spec.md
       - SPEC-001: items/SPEC-001.md

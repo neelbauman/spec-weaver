@@ -7,6 +7,7 @@ header: |
   Gherkinタグ継承（Effective Tags）
 impl_files:
 - src/spec_weaver/gherkin.py
+layer: architecture
 level: 2.0
 links:
 - REQ-001: r8HLD3Bp9ilMNgxhGINfuTj969G6-xvhIcjcnYrl-J0=

@@ -210,38 +210,23 @@ def then_f3fad2a6(context):
 ---
 ## Scenario: プレフィックスによるフィルタリング {: #line-25 }
 
-- **Given** DoorstopプロジェクトにREQアイテムとSPECアイテムが混在する
+- **Given** Doorstopプロジェクトに複数ドキュメントが混在する
 - **When** プレフィックス "SPEC" で仕様ID集合を取得する
 - **Then** SPECプレフィックスのアイテムのみが返されること
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
-#### Given DoorstopプロジェクトにREQアイテムとSPECアイテムが混在する
+#### Given Doorstopプロジェクトに複数ドキュメントが混在する
 
 ```python
-@given('DoorstopプロジェクトにREQアイテムとSPECアイテムが混在する')  # type: ignore
-def given_7f8e9c65(context):
-    """DoorstopプロジェクトにREQアイテムとSPECアイテムが混在する
+@given('Doorstopプロジェクトに複数ドキュメントが混在する')  # type: ignore
+def given_b87d27cd(context):
+    """Doorstopプロジェクトに複数ドキュメントが混在する
 
     Scenarios:
       - プレフィックスによるフィルタリング
     """
-    create_doorstop_project_yaml(
-        context.temp_dir,
-        [
-            {
-                "dir": "reqs",
-                "prefix": "REQ",
-                "items": [{"uid": "REQ-001", "testable": False}],
-            },
-            {
-                "dir": "specs",
-                "prefix": "SPEC",
-                "parent": "REQ",
-                "items": [{"uid": "SPEC-001", "testable": True, "links": ["REQ-001"]}],
-            },
-        ],
-    )
+    raise NotImplementedError('STEP: Doorstopプロジェクトに複数ドキュメントが混在する')
 ```
 
 #### When プレフィックス "SPEC" で仕様ID集合を取得する
@@ -554,7 +539,7 @@ def then_c5d0b4fe(context):
 <details><summary>Raw .feature source</summary>
 
 ```gherkin
-# spec-weaver-fingerprint: 15d5fb6f482561665a6a41ec38e7d3dff795a95d4f7ab3c2a60a10a322b36fcb
+# spec-weaver-fingerprint: 8564f8bc6887655b230830f50c6112d98d091da108b2757fa92af6cc2c5f8762
 # spec-weaver-fingerprint-CORE-001: HJLpd5cD5tt456G9mN57y5Z4dhnDtpUhGVBTdx00XRk=
 # spec-weaver-fingerprint-CORE-002: eTEKht1I_h9S6wF4F2pVW4dUOyI2ti7EwNBY1aAZIPQ=
 @CORE-001
@@ -579,7 +564,7 @@ Feature: データ抽出基盤
     Then  testable: false のアイテムは結果に含まれないこと
 
   Scenario: プレフィックスによるフィルタリング
-    Given DoorstopプロジェクトにREQアイテムとSPECアイテムが混在する
+    Given Doorstopプロジェクトに複数ドキュメントが混在する
     When  プレフィックス "SPEC" で仕様ID集合を取得する
     Then  SPECプレフィックスのアイテムのみが返されること
 

@@ -35,6 +35,11 @@ def given_488529e3(context, param0):
         Given a step
         When I do something
         Then result is ok
+    
+
+    Scenarios:
+      - 基本的なテストコード生成
+      - Docstring にシナリオリストを記載
     """)
     context.feature_dir = features_dir
     context.out_dir = context.temp_dir / "specification" / "features" / "steps"
@@ -102,6 +107,10 @@ def given_a87fa38a(context):
     Feature: 日本語テスト
       Scenario: 日本語シナリオ
         Given 日本語のステップ
+    
+
+    Scenarios:
+      - ハッシュベースの関数名生成
     """)
     context.feature_dir = features_dir
     context.out_dir = context.temp_dir / "specification" / "features" / "steps"
@@ -173,6 +182,10 @@ def given_ae2a90a1(context):
         Given same step
       Scenario: S2
         Given same step
+    
+
+    Scenarios:
+      - ステップ関数の生成と重複排除
     """)
     context.feature_dir = features_dir
     context.out_dir = context.temp_dir / "specification" / "features" / "steps"
@@ -229,6 +242,11 @@ def given_488529e3(context, param0):
         Given a step
         When I do something
         Then result is ok
+    
+
+    Scenarios:
+      - 基本的なテストコード生成
+      - Docstring にシナリオリストを記載
     """)
     context.feature_dir = features_dir
     context.out_dir = context.temp_dir / "specification" / "features" / "steps"
@@ -307,7 +325,13 @@ from behave import given
 @given('existing step')
 def step_impl(context):
     pass
-""")
+
+
+    Scenarios:
+      - 差分マージ（新規ステップ追記）
+      - 既存ファイルの上書き
+      - 差分マージ時の Duplicate スタブのコメント化
+    """)
     subprocess.run(["git", "add", "."], cwd=context.temp_dir)
     subprocess.run(["git", "commit", "-m", "init step"], cwd=context.temp_dir)
 ```
@@ -322,6 +346,10 @@ def given_63fcef57(context):
       Scenario: S1
         Given existing step
         And new step
+    
+
+    Scenarios:
+      - 差分マージ（新規ステップ追記）
     """)
 ```
 
@@ -394,6 +422,10 @@ def given_fdb17660(context):
     Feature: Sync
       Scenario: S1
         Given step1
+    
+
+    Scenarios:
+      - 差分なし時のスキップ
     """)
     context.feature_dir = features_dir
     context.out_dir = context.temp_dir / "specification" / "features" / "steps"
@@ -471,7 +503,13 @@ from behave import given
 @given('existing step')
 def step_impl(context):
     pass
-""")
+
+
+    Scenarios:
+      - 差分マージ（新規ステップ追記）
+      - 既存ファイルの上書き
+      - 差分マージ時の Duplicate スタブのコメント化
+    """)
     subprocess.run(["git", "add", "."], cwd=context.temp_dir)
     subprocess.run(["git", "commit", "-m", "init step"], cwd=context.temp_dir)
 ```
@@ -631,7 +669,13 @@ from behave import given
 @given('existing step')
 def step_impl(context):
     pass
-""")
+
+
+    Scenarios:
+      - 差分マージ（新規ステップ追記）
+      - 既存ファイルの上書き
+      - 差分マージ時の Duplicate スタブのコメント化
+    """)
     subprocess.run(["git", "add", "."], cwd=context.temp_dir)
     subprocess.run(["git", "commit", "-m", "init step"], cwd=context.temp_dir)
 ```
@@ -663,7 +707,11 @@ from behave import given
 @given('shared step')
 def step_impl(context):
     pass
-""")
+
+
+    Scenarios:
+      - 差分マージ時の Duplicate スタブのコメント化
+    """)
 ```
 
 #### When scaffold コマンドをデフォルトオプションで実行する
@@ -748,7 +796,7 @@ def then_35ff3425(context):
 
 ```gherkin
 # spec-weaver-fingerprint: ac749f5b22acae3a56e7afe46f7303fcc05eeb9fe7aa5007ce208559648dc4e4
-# spec-weaver-fingerprint-AUT-001: FnmTOZIIA7Vf35CV-yoWSn5nUOY43-qpxJP98jDBnew=
+# spec-weaver-fingerprint-AUT-001: UTfJmEYPmcQuHrgOv1vN08apU6dXlB-qvJ9nQVVfUts=
 @AUT-001
 Feature: scaffold コマンド
   .feature ファイルから behave テストコードの雛形を自動生成・差分マージする。

@@ -2,6 +2,7 @@ active: true
 derived: false
 header: |
   動的プレフィックス検知とマルチインデックス生成
+layer: behavior
 level: 4.0
 links:
 - REQ-007: ZZ6hRtAF6TR-t46aH2ltp1fBZxSwRYWUKcEdsSbudn4=

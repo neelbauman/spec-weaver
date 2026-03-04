@@ -2,6 +2,7 @@ active: true
 derived: false
 header: |
   テスト結果統合
+layer: behavior
 level: 2.0
 links:
 - REQ-005: Gg6zWXQn7051SFUpy4jSQxj7PHpCAVhcpXNoieLBql4=

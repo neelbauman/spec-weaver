@@ -5,6 +5,7 @@ gherkin_fingerprints:
     a4a2d569a03cb048dc0056cc4acc09efcf6184bc37d58c9bf009cccd0b4e3535
 header: |
   trace コマンド — トレーサビリティ・ツリー表示
+layer: behavior
 level: 1.0
 links:
 - REQ-009: pkF08weee7PhnkKk5I1Z77rBsyoSdxA8GKAILfZP8yw=

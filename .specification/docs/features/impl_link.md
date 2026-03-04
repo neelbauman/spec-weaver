@@ -20,9 +20,12 @@ DoorstopのYAML impl_files カスタム属性とコードアノテーション�
 ```python
 @given('Doorstopツリーが初期化されている')  # type: ignore
 def given_6df87eb3(context):
-    """Doorstopツリーが初期化されている"""
-    create_doorstop_project_api(context.temp_dir)
-    context.repo_root = context.temp_dir
+    """Doorstopツリーが初期化されている
+
+    Scenarios:
+      - 
+    """
+    raise NotImplementedError('STEP: Doorstopツリーが初期化されている')
 ```
 
 #### And 以下のSPECアイテムが存在する:
@@ -30,22 +33,12 @@ def given_6df87eb3(context):
 ```python
 @given('以下のSPECアイテムが存在する:')  # type: ignore
 def given_14c0b615(context):
-    """以下のSPECアイテムが存在する:"""
-    import json
-    for row in context.table:
-        extra = {}
-        if "impl_files" in row.headings and row["impl_files"]:
-            try:
-                extra["impl_files"] = json.loads(row["impl_files"])
-            except json.JSONDecodeError:
-                extra["impl_files"] = row["impl_files"]
-        
-        links = []
-        if "Links" in row.headings and row["Links"]:
-            links = [l.strip() for l in row["Links"].split(",") if l.strip()]
-            
-        status = row.get("Status", "implemented")
-        write_doorstop_yaml(context.temp_dir / "specs", row["ID"], header=row.get("Header", ""), extra=extra, links=links, status=status)
+    """以下のSPECアイテムが存在する:
+
+    Scenarios:
+      - 
+    """
+    raise NotImplementedError('STEP: 以下のSPECアイテムが存在する:')
 ```
 
 </details>
@@ -905,7 +898,7 @@ def then_35df9926(context, param0):
 ```gherkin
 # spec-weaver-fingerprint: 72d891bd698202f2c4859359036d7db09d23a01dd78d84d7552bd4e87d60c401
 # spec-weaver-fingerprint-QA-003: R7lU5c_GYfAMywWH7ga7C5bNWLi0BcEk_ct5FCCzLOg=
-# spec-weaver-fingerprint-TRC-002: CsNYG2kwoAL2aGQ4OMJZPbq_BdQL1XO9mD52BES64WU=
+# spec-weaver-fingerprint-TRC-002: A_AtKMCuxp1mjop9_YlIvCzI6ZPuUN_Vmxm3-69zK6A=
 # spec-weaver-fingerprint-TRC-003: HejBnkVVAXr50mezShqlLJuFqDQgnm2Ll2xq1IrX7wY=
 # spec-weaver-fingerprint-TRC-004: taSaPJAOYmNABY3Fq9QzpfuL400jN9dj2MpQSufRkT8=
 @TRC-002 @TRC-003 @QA-003 @TRC-004

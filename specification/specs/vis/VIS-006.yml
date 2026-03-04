@@ -5,6 +5,7 @@ gherkin_fingerprints:
     ae9371686ef77c9470deade29668fe6a32a4c422b3e8a78924acdd9001a0b95c
 header: |
   タイムスタンプ・カスタム属性の定義
+layer: behavior
 level: 6.0
 links:
 - REQ-010: ECPuWqjRylWWFNUNmco_ygq9reO2BgGgFUNtymMh_HU=

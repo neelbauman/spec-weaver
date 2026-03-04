@@ -8,6 +8,7 @@ header: |
 impl_files:
 - src/spec_weaver/cli.py
 - src/spec_weaver/gherkin.py
+layer: behavior
 level: 4.0
 links:
 - REQ-004: KXm5cZc2wXUhF29d-4lpSPbclfjN4ruCBIwDvWX93tg=

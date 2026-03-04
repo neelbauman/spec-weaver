@@ -5,6 +5,7 @@ gherkin_fingerprints:
     2bc84a47536c8894a901597b0876c8acb811ab57a30fbfc10aebd70c77a5e138
 header: |
   一覧テーブルのフィルタリング機能
+layer: behavior
 level: 5.0
 links:
 - REQ-008: O9VIOrrKyJ85dw8M2ZmFhANwo2DOlpuX0mijvY509xA=

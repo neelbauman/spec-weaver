@@ -479,7 +479,11 @@ def then_49bd7463(context):
 ```python
 @given('SPEC-001 が status: implemented に設定されている')  # type: ignore
 def given_0f39b2ed(context):
-    """SPEC-001 が status: implemented に設定されている"""
+    """SPEC-001 が status: implemented に設定されている
+
+    Scenarios:
+      - buildコマンドで生成されるドキュメントに実装状況が反映される
+    """
     create_doorstop_project_api(
         context.temp_dir,
         req_items=[{"header": "Req 1"}],
@@ -491,12 +495,25 @@ def given_0f39b2ed(context):
 
 ```python
 @when('build コマンドを実行する')  # type: ignore
-def when_build_impl(context):
-    feature_dir = context.temp_dir / "specification" / "features"
-    feature_dir.mkdir(parents=True, exist_ok=True)
-    # create dummy feature to avoid empty feature warning
-    write_feature_file(feature_dir / "dummy.feature", "Feature: Dummy\n  Scenario: Dummy\n    Given test\n")
-    context.result = run_spec_weaver(["build", str(feature_dir)], cwd=context.temp_dir)
+def when_40f323b6(context):
+    """build コマンドを実行する
+
+    Scenarios:
+      - MkDocs設定ファイルの生成
+      - 要件一覧ページの生成
+      - 仕様一覧ページの生成
+      - 個別アイテム詳細ページの生成
+      - 一覧テーブルのフィルタリング機能
+      - feature MDページへのバックリンク生成
+      - 複数アイテムを参照するfeatureのバックリンク
+      - タグのないfeatureにはバックリンクを表示しない
+      - Suspect Link 警告の一覧テーブル表示
+      - Unreviewed Changes 警告の一覧テーブル表示
+      - 複合警告の表示
+      - 一覧テーブルのGherkinカバレッジ列はシナリオ数を表示すること
+      - 一覧テーブルにレビューステータス列が表示されること
+    """
+    raise NotImplementedError('STEP: build コマンドを実行する')
 ```
 
 #### Then 一覧ページの実装状況列にバッジが表示されること
@@ -504,7 +521,11 @@ def when_build_impl(context):
 ```python
 @then('一覧ページの実装状況列にバッジが表示されること')  # type: ignore
 def then_f35a3316(context):
-    """一覧ページの実装状況列にバッジが表示されること"""
+    """一覧ページの実装状況列にバッジが表示されること
+
+    Scenarios:
+      - buildコマンドで生成されるドキュメントに実装状況が反映される
+    """
     # spec-weaver build は Markdown を生成する。mkdocs build は行わない。
     docs_dir = context.temp_dir / ".specification" / "docs"
     index_md = docs_dir / "spec.md"
@@ -518,7 +539,11 @@ def then_f35a3316(context):
 ```python
 @then('詳細ページの本文に "{param0}" が表示されること')  # type: ignore
 def then_d4f7509c(context, param0):
-    """詳細ページの本文に "**実装状況**: ✅ implemented" が表示されること"""
+    """詳細ページの本文に "**実装状況**: ✅ implemented" が表示されること
+
+    Scenarios:
+      - buildコマンドで生成されるドキュメントに実装状況が反映される
+    """
     item_md = context.temp_dir / ".specification" / "docs" / "items" / "SPEC-001.md"
     assert item_md.exists()
     content = item_md.read_text()

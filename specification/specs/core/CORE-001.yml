@@ -5,6 +5,7 @@ gherkin_fingerprints:
     94fef768d8c88132b2a4457867d408e46b114533d92c9ba78fbe97ceb7c2f55a
 header: |
   データ抽出基盤
+layer: architecture
 level: 1.0
 links:
 - REQ-001: r8HLD3Bp9ilMNgxhGINfuTj969G6-xvhIcjcnYrl-J0=

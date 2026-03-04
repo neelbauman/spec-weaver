@@ -5,6 +5,7 @@ gherkin_fingerprints:
     72ac1ce4a2997f6706804ec8c5abfe2ff9fd0bd496d923626c60f441fbfd1e30
 header: |
   実装ステータス管理
+layer: behavior
 level: 3.0
 links:
 - REQ-006: J-LURfiXF04YgRlNJpeWohPMtFwvYfPQ3NsKp4LKzgc=

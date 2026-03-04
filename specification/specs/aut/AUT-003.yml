@@ -11,6 +11,7 @@ impl_files:
 - tests/test_review.py
 - specification/features/steps/step_review.py
 - specification/features/semantic_review.feature
+layer: behavior
 level: 3.0
 links:
 - REQ-013: mlYsN4aIR9VbxHA-yfOSM2Kvja2WM53jkqu9QVTeP3E=

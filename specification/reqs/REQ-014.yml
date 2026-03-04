@@ -1,0 +1,29 @@
+active: true
+derived: false
+header: |
+  仕様アイテムの抽象層（layer）に基づくGherkinリンク整合性の検証
+level: 6.0
+links: []
+normative: true
+ref: ''
+reviewed: da3hReaCbca6Xc2gdQatqOcxrkwGDCEmANfK86-N1KE=
+status: implemented
+testable: false
+text: |
+  ## 概要
+  Doorstop 仕様アイテムに `layer` 属性を付与することで、アイテムの抽象度を
+  明示的に分類し、Gherkin との適切なリンク関係を自動検証できること。
+
+  ## 背景
+  Gherkin は外部から観察可能な振る舞い（behavior）にのみリンクすべきであり、
+  内部アーキテクチャ判断（architecture）への Gherkin リンクは技術的負債となる。
+  spec-weaver はこの原則を `layer` 属性とauditルールで強制する。
+
+  ## 要求
+  1. 仕様アイテムに `layer: behavior` または `layer: architecture` を付与できること
+  2. `layer: behavior` かつ `testable: true` のアイテムに Gherkin タグが存在しない場合、
+     audit コマンドがエラーとして報告すること（`behavior-without-gherkin`）
+  3. `layer: architecture` のアイテムに Gherkin タグが紐づいている場合、
+     audit コマンドが警告として報告すること（`architecture-with-gherkin`）
+  4. `layer` が未設定のアクティブかつ `testable: true` アイテムを
+     audit コマンドが情報として報告すること（`layer-unset`）

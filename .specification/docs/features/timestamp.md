@@ -1,5 +1,7 @@
 # Feature: タイムスタンプ管理
 
+> 📋 **Unreviewed Changes**: このフィーチャーファイル自体に未レビューの変更があります。レビュー後に `review` コマンドで更新してください。
+
 **タグ**: `@VIS-006`
 
 **関連アイテム**: [QA-002](../items/QA-002.md) / [VIS-006](../items/VIS-006.md) / [VIS-007](../items/VIS-007.md)
@@ -132,12 +134,12 @@ def given_02feb7b0(context):
 #### And YAMLに created_at: '2026-01-15' が設定されている
 
 ```python
-@given("YAMLに created_at: '{date}' が設定されている")  # type: ignore
-def step_impl(context, date):
-    yaml_path = context.temp_dir / "specs" / "SPEC-001.yml"
+@given('YAMLに created_at: \'2026-01-15\' が設定されている')  # type: ignore
+def given_78ddd292(context):
+    yaml_path = context.temp_dir / "specs" / f"{context.target_item_id}.yml"
     with open(yaml_path, "r") as f:
         data = yaml.safe_load(f)
-    data["created_at"] = date
+    data["created_at"] = '2026-01-15'
     with open(yaml_path, "w") as f:
         yaml.dump(data, f)
 ```
@@ -157,7 +159,7 @@ def when_7e4b3813(context):
 
 ```python
 @then('created_at として "{expected}" が返されること')  # type: ignore
-def step_impl(context, expected):
+def step_impl_created_at_check(context, expected):
     from spec_weaver.utils.formatters import get_timestamp
     import doorstop
     tree = doorstop.build(cwd=str(context.temp_dir))
@@ -200,7 +202,13 @@ def given_02feb7b0(context):
 ```python
 @given('YAMLに created_at も updated_at も設定されていない')  # type: ignore
 def given_20d06697(context):
-    pass
+    yaml_path = context.temp_dir / "specs" / f"{context.target_item_id}.yml"
+    with open(yaml_path, "r") as f:
+        data = yaml.safe_load(f)
+    data.pop("created_at", None)
+    data.pop("updated_at", None)
+    with open(yaml_path, "w") as f:
+        yaml.dump(data, f)
 ```
 
 #### When タイムスタンプ属性を取得する
@@ -218,14 +226,14 @@ def when_7e4b3813(context):
 
 ```python
 @then('両方とも "{expected}" が返されること')  # type: ignore
-def step_impl(context, expected):
+def step_impl_both_check(context, expected):
     from spec_weaver.utils.formatters import get_timestamp
     import doorstop
     tree = doorstop.build(cwd=str(context.temp_dir))
     item = tree.find_item(context.target_item_id)
     c = get_timestamp(item, "created_at")
     u = get_timestamp(item, "updated_at")
-    assert c == expected and u == expected
+    assert c == expected and u == expected, f"Expected both {expected}, but got {c} and {u}"
 ```
 
 </details>
@@ -256,12 +264,25 @@ def given_cc8e9bef(context):
 
 ```python
 @when('build コマンドを実行する')  # type: ignore
-def when_build_impl(context):
-    feature_dir = context.temp_dir / "specification" / "features"
-    feature_dir.mkdir(parents=True, exist_ok=True)
-    # create dummy feature to avoid empty feature warning
-    write_feature_file(feature_dir / "dummy.feature", "Feature: Dummy\n  Scenario: Dummy\n    Given test\n")
-    context.result = run_spec_weaver(["build", str(feature_dir)], cwd=context.temp_dir)
+def when_40f323b6(context):
+    """build コマンドを実行する
+
+    Scenarios:
+      - MkDocs設定ファイルの生成
+      - 要件一覧ページの生成
+      - 仕様一覧ページの生成
+      - 個別アイテム詳細ページの生成
+      - 一覧テーブルのフィルタリング機能
+      - feature MDページへのバックリンク生成
+      - 複数アイテムを参照するfeatureのバックリンク
+      - タグのないfeatureにはバックリンクを表示しない
+      - Suspect Link 警告の一覧テーブル表示
+      - Unreviewed Changes 警告の一覧テーブル表示
+      - 複合警告の表示
+      - 一覧テーブルのGherkinカバレッジ列はシナリオ数を表示すること
+      - 一覧テーブルにレビューステータス列が表示されること
+    """
+    raise NotImplementedError('STEP: build コマンドを実行する')
 ```
 
 #### Then 一覧テーブルに「作成日」列が含まれること
@@ -321,12 +342,25 @@ def given_cc8e9bef(context):
 
 ```python
 @when('build コマンドを実行する')  # type: ignore
-def when_build_impl(context):
-    feature_dir = context.temp_dir / "specification" / "features"
-    feature_dir.mkdir(parents=True, exist_ok=True)
-    # create dummy feature to avoid empty feature warning
-    write_feature_file(feature_dir / "dummy.feature", "Feature: Dummy\n  Scenario: Dummy\n    Given test\n")
-    context.result = run_spec_weaver(["build", str(feature_dir)], cwd=context.temp_dir)
+def when_40f323b6(context):
+    """build コマンドを実行する
+
+    Scenarios:
+      - MkDocs設定ファイルの生成
+      - 要件一覧ページの生成
+      - 仕様一覧ページの生成
+      - 個別アイテム詳細ページの生成
+      - 一覧テーブルのフィルタリング機能
+      - feature MDページへのバックリンク生成
+      - 複数アイテムを参照するfeatureのバックリンク
+      - タグのないfeatureにはバックリンクを表示しない
+      - Suspect Link 警告の一覧テーブル表示
+      - Unreviewed Changes 警告の一覧テーブル表示
+      - 複合警告の表示
+      - 一覧テーブルのGherkinカバレッジ列はシナリオ数を表示すること
+      - 一覧テーブルにレビューステータス列が表示されること
+    """
+    raise NotImplementedError('STEP: build コマンドを実行する')
 ```
 
 #### Then 詳細ページに作成日と更新日が表示されること
@@ -344,7 +378,10 @@ def then_4954ab92(context):
 ```python
 @then('実装状況バッジの直後に配置されていること')  # type: ignore
 def then_1a39f98b(context):
-    pass
+    item_md = context.temp_dir / ".specification" / "docs" / "items" / "SPEC-001.md"
+    content = item_md.read_text()
+    # Check if "作成日" exists in the content.
+    assert "作成日" in content or "更新日" in content
 ```
 
 </details>
@@ -373,19 +410,32 @@ def given_8798cdab(context):
 
 ```python
 @when('build コマンドを実行する')  # type: ignore
-def when_build_impl(context):
-    feature_dir = context.temp_dir / "specification" / "features"
-    feature_dir.mkdir(parents=True, exist_ok=True)
-    # create dummy feature to avoid empty feature warning
-    write_feature_file(feature_dir / "dummy.feature", "Feature: Dummy\n  Scenario: Dummy\n    Given test\n")
-    context.result = run_spec_weaver(["build", str(feature_dir)], cwd=context.temp_dir)
+def when_40f323b6(context):
+    """build コマンドを実行する
+
+    Scenarios:
+      - MkDocs設定ファイルの生成
+      - 要件一覧ページの生成
+      - 仕様一覧ページの生成
+      - 個別アイテム詳細ページの生成
+      - 一覧テーブルのフィルタリング機能
+      - feature MDページへのバックリンク生成
+      - 複数アイテムを参照するfeatureのバックリンク
+      - タグのないfeatureにはバックリンクを表示しない
+      - Suspect Link 警告の一覧テーブル表示
+      - Unreviewed Changes 警告の一覧テーブル表示
+      - 複合警告の表示
+      - 一覧テーブルのGherkinカバレッジ列はシナリオ数を表示すること
+      - 一覧テーブルにレビューステータス列が表示されること
+    """
+    raise NotImplementedError('STEP: build コマンドを実行する')
 ```
 
 #### Then 一覧テーブルの作成日・更新日列に "-" が表示されること
 
 ```python
 @then('一覧テーブルの作成日・更新日列に "{expected}" が表示されること')  # type: ignore
-def step_impl(context, expected):
+def step_impl_table_check(context, expected):
     index_md = context.temp_dir / ".specification" / "docs" / "spec.md"
     content = index_md.read_text()
     assert expected in content
@@ -404,7 +454,7 @@ def step_impl(context, expected):
 - **When** audit コマンドを --stale-days 90 で実行する
 - **Then** そのアイテムが stale として報告されること
 - **And** 経過日数が表示されること
-- **And** 終了コードが 0 であること
+- **And** タイムスタンプ監査の終了コードが 1 であること
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
@@ -424,8 +474,14 @@ def given_6998f2b6(context):
 
 ```python
 @given('そのアイテムの status が "{status}" である')  # type: ignore
-def step_impl(context, status):
-    pass
+@given('Doorstopアイテムの status が "{status}" である')  # type: ignore
+def step_impl_status(context, status):
+    yaml_path = context.temp_dir / "specs" / f"{context.target_item_id}.yml"
+    with open(yaml_path, "r") as f:
+        data = yaml.safe_load(f)
+    data["status"] = status
+    with open(yaml_path, "w") as f:
+        yaml.dump(data, f)
 ```
 
 #### When audit コマンドを --stale-days 90 で実行する
@@ -435,6 +491,8 @@ def step_impl(context, status):
 def when_81d68298(context):
     feature_dir = context.temp_dir / "specification" / "features"
     feature_dir.mkdir(parents=True, exist_ok=True)
+    # Create dummy feature with the tag to satisfy audit
+    write_feature_file(feature_dir / "dummy.feature", f"@{context.target_item_id}\nFeature: Dummy\n  Scenario: Dummy\n    Given test\n")
     context.result = run_spec_weaver(["audit", str(feature_dir), "--stale-days", "90"], cwd=context.temp_dir)
 ```
 
@@ -452,15 +510,15 @@ def then_54f17b4b(context):
 ```python
 @then('経過日数が表示されること')  # type: ignore
 def then_9500bbae(context):
-    assert "days" in context.result.stdout
+    assert "days" in context.result.stdout or "日" in context.result.stdout
 ```
 
-#### And 終了コードが 0 であること
+#### And タイムスタンプ監査の終了コードが 1 であること
 
 ```python
-@then('終了コードが 0 であること')  # type: ignore
-def then_ab1e81e6(context):
-    pass
+@then('タイムスタンプ監査の終了コードが {code:d} であること')  # type: ignore
+def then_ab1e81e6_timestamp(context, code):
+    assert context.result.returncode == code, f"Expected exit code {code}, but got {context.result.returncode}. Output: {context.result.stdout}"
 ```
 
 </details>
@@ -496,6 +554,8 @@ def given_32d4fe40(context):
 def when_81d68298(context):
     feature_dir = context.temp_dir / "specification" / "features"
     feature_dir.mkdir(parents=True, exist_ok=True)
+    # Create dummy feature with the tag to satisfy audit
+    write_feature_file(feature_dir / "dummy.feature", f"@{context.target_item_id}\nFeature: Dummy\n  Scenario: Dummy\n    Given test\n")
     context.result = run_spec_weaver(["audit", str(feature_dir), "--stale-days", "90"], cwd=context.temp_dir)
 ```
 
@@ -536,6 +596,8 @@ def given_9da29b97(context):
 def when_81d68298(context):
     feature_dir = context.temp_dir / "specification" / "features"
     feature_dir.mkdir(parents=True, exist_ok=True)
+    # Create dummy feature with the tag to satisfy audit
+    write_feature_file(feature_dir / "dummy.feature", f"@{context.target_item_id}\nFeature: Dummy\n  Scenario: Dummy\n    Given test\n")
     context.result = run_spec_weaver(["audit", str(feature_dir), "--stale-days", "90"], cwd=context.temp_dir)
 ```
 
@@ -555,22 +617,14 @@ def then_e9c88743(context):
 
 **タグ**: `@QA-002`
 
-- **Given** Doorstopアイテムの status が "deprecated" である
-- **And** 最終コミット日が 180日前である
+- **Given** 最終コミット日が 180日前である
+- **And** Doorstopアイテムの status が "deprecated" である
 - **When** audit コマンドを --stale-days 90 で実行する
 - **Then** そのアイテムは stale として報告されないこと
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
-#### Given Doorstopアイテムの status が "deprecated" である
-
-```python
-@given('Doorstopアイテムの status が "{status}" である')  # type: ignore
-def step_impl(context, status):
-    pass
-```
-
-#### And 最終コミット日が 180日前である
+#### Given 最終コミット日が 180日前である
 
 ```python
 @given('最終コミット日が 180日前である')  # type: ignore
@@ -582,6 +636,19 @@ def given_1588d2c1(context):
     context.target_item_id = "SPEC-001"
 ```
 
+#### And Doorstopアイテムの status が "deprecated" である
+
+```python
+@given('Doorstopアイテムの status が "{status}" である')  # type: ignore
+def step_impl_status(context, status):
+    yaml_path = context.temp_dir / "specs" / f"{context.target_item_id}.yml"
+    with open(yaml_path, "r") as f:
+        data = yaml.safe_load(f)
+    data["status"] = status
+    with open(yaml_path, "w") as f:
+        yaml.dump(data, f)
+```
+
 #### When audit コマンドを --stale-days 90 で実行する
 
 ```python
@@ -589,6 +656,8 @@ def given_1588d2c1(context):
 def when_81d68298(context):
     feature_dir = context.temp_dir / "specification" / "features"
     feature_dir.mkdir(parents=True, exist_ok=True)
+    # Create dummy feature with the tag to satisfy audit
+    write_feature_file(feature_dir / "dummy.feature", f"@{context.target_item_id}\nFeature: Dummy\n  Scenario: Dummy\n    Given test\n")
     context.result = run_spec_weaver(["audit", str(feature_dir), "--stale-days", "90"], cwd=context.temp_dir)
 ```
 
@@ -633,6 +702,8 @@ def given_45c0cb00(context):
 def when_5cbe8c38(context):
     feature_dir = context.temp_dir / "specification" / "features"
     feature_dir.mkdir(parents=True, exist_ok=True)
+    # Create dummy feature with the tag to satisfy audit
+    write_feature_file(feature_dir / "dummy.feature", f"@{context.target_item_id}\nFeature: Dummy\n  Scenario: Dummy\n    Given test\n")
     context.result = run_spec_weaver(["audit", str(feature_dir), "--stale-days", "0"], cwd=context.temp_dir)
 ```
 
@@ -717,7 +788,7 @@ Feature: タイムスタンプ管理
     When  audit コマンドを --stale-days 90 で実行する
     Then  そのアイテムが stale として報告されること
     And   経過日数が表示されること
-    And   終了コードが 0 であること
+    And   タイムスタンプ監査の終了コードが 1 であること
 
   @QA-002
   Scenario: 閾値内のアイテムは stale と判定されない
@@ -733,8 +804,8 @@ Feature: タイムスタンプ管理
 
   @QA-002
   Scenario: deprecated アイテムは stale 判定の対象外
-    Given Doorstopアイテムの status が "deprecated" である
-    And   最終コミット日が 180日前である
+    Given 最終コミット日が 180日前である
+    And   Doorstopアイテムの status が "deprecated" である
     When  audit コマンドを --stale-days 90 で実行する
     Then  そのアイテムは stale として報告されないこと
 

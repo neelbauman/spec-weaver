@@ -1,5 +1,6 @@
-# spec-weaver-fingerprint: 482d0d3cc0550cd81612f7b5482ced1e27599656a96356d22af44921e893edd1
+# spec-weaver-fingerprint: bcdfb25f894f72de41a0499a31984a64e890c1f9500c0c309c6ae9961f990c95
 # spec-weaver-fingerprint-QA-001: IVjwbWJI8Xga_1LFrHA_SqnpsZ_-MHzjo-w7D9zwEYE=
+# spec-weaver-fingerprint-QA-006: IQO1lBdAvEzVzJofPO_jiIFF1WjLNsCMUhlLQTXCk6A=
 
 Feature: audit コマンド
   仕様とテストの乖離を静的に検知し、CI/CD品質ゲートとして機能する。
@@ -55,3 +56,26 @@ Feature: audit コマンド
     When  audit コマンドを実行する
     Then  終了コード 1 が返ること
     And   Unreviewed テーブルに対応する feature ファイル名が表示されること
+
+  @QA-006
+  Scenario: behavior-without-gherkin の検出
+    Given 仕様 "VIS-003" が "layer: behavior" かつ "testable: true" に設定されている
+    And   "VIS-003" に対応するGherkinタグが存在しない
+    When  audit コマンドを実行する
+    Then  終了コード 1 が返ること
+    And   "VIS-003" が behavior-without-gherkin として報告されること
+
+  @QA-006
+  Scenario: architecture-with-gherkin の検出（警告）
+    Given 仕様 "CORE-001" が "layer: architecture" に設定されている
+    And   "CORE-001" に対応するGherkinタグが存在する
+    When  audit コマンドを実行する
+    Then  "CORE-001" が architecture-with-gherkin として警告表示されること
+    And   architecture-with-gherkin は終了コードに影響しないこと
+
+  @QA-006
+  Scenario: layer-unset の通知（情報）
+    Given アクティブかつ "testable: true" の仕様に "layer" 属性が設定されていない
+    When  audit コマンドを実行する
+    Then  当該仕様IDが layer-unset として情報表示されること
+    And   layer-unset は終了コードに影響しないこと

@@ -1,3 +1,4 @@
+# implements: QA-006
 import typer
 from pathlib import Path
 from typing import Optional
@@ -149,6 +150,35 @@ def _audit_cmd(
         table.add_column("Path")
         for uid, p in sorted(report.annotation_only):
             table.add_row(uid, f"{uid} ← {p}")
+        wide_console.print(table)
+
+    if report.behavior_without_gherkin:
+        wide_console.print("\n[bold red]❌ layer: behavior なのにGherkinテストがない (Behavior Without Gherkin):[/bold red]")
+        table = Table(show_header=True, header_style="bold red")
+        table.add_column("Spec ID", style="dim")
+        table.add_column("layer", style="dim")
+        table.add_column("アクション", style="dim")
+        for spec in sorted(report.behavior_without_gherkin):
+            table.add_row(spec, "behavior", f".feature ファイルに @{spec} タグを追加してください")
+        wide_console.print(table)
+
+    if report.architecture_with_gherkin:
+        wide_console.print("\n[bold yellow]⚠️ layer: architecture なのにGherkinタグが存在する (Architecture With Gherkin):[/bold yellow]")
+        table = Table(show_header=True, header_style="bold yellow")
+        table.add_column("Spec ID", style="dim")
+        table.add_column("layer", style="dim")
+        table.add_column("推奨アクション", style="dim")
+        for spec in sorted(report.architecture_with_gherkin):
+            table.add_row(spec, "architecture", "Gherkin テストを単体テスト（pytest）へ移行を検討してください")
+        wide_console.print(table)
+
+    if report.layer_unset:
+        wide_console.print("\n[bold blue]ℹ️ layer 属性が未設定のアイテム (Layer Unset):[/bold blue]")
+        table = Table(show_header=True, header_style="bold blue")
+        table.add_column("Spec ID", style="dim")
+        table.add_column("推奨アクション", style="dim")
+        for spec in sorted(report.layer_unset):
+            table.add_row(spec, "layer: behavior または layer: architecture を設定してください")
         wide_console.print(table)
 
     if report.stale_items:

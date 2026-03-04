@@ -7,6 +7,7 @@ gherkin_fingerprints:
     c78c8aeb49c42b2b5dda0512d95b3008cb75368b52c30cbcd520c2269e4bd4db
 header: |
   Suspect（変更波及）対応
+layer: behavior
 level: 1.0
 links:
 - REQ-004: KXm5cZc2wXUhF29d-4lpSPbclfjN4ruCBIwDvWX93tg=

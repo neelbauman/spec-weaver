@@ -4,6 +4,7 @@ header: |
   semantic-review-skill — Claude Code セマンティックレビュースキル
 impl_files:
 - .claude/skills/semantic-review-skill/SKILL.md
+layer: behavior
 level: 4.0
 links:
 - REQ-013: mlYsN4aIR9VbxHA-yfOSM2Kvja2WM53jkqu9QVTeP3E=

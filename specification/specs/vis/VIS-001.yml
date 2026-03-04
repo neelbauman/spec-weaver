@@ -5,6 +5,7 @@ gherkin_fingerprints:
     a3c8485c990c593190b9084d05d577187e0ab6ad5bce17cf705f1a4b3ea2c4f9
 header: |
   build コマンド仕様
+layer: behavior
 level: 1.0
 links:
 - REQ-003: Rb8ehO6TwgTYIqN3kXtu3nzq6LWHqvsE0-d2B9HrUWM=

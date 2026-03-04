@@ -40,12 +40,25 @@ def given_8a7b1a87(context):
 
 ```python
 @when('build コマンドを実行する')  # type: ignore
-def when_build_impl(context):
-    feature_dir = context.temp_dir / "specification" / "features"
-    feature_dir.mkdir(parents=True, exist_ok=True)
-    # create dummy feature to avoid empty feature warning
-    write_feature_file(feature_dir / "dummy.feature", "Feature: Dummy\n  Scenario: Dummy\n    Given test\n")
-    context.result = run_spec_weaver(["build", str(feature_dir)], cwd=context.temp_dir)
+def when_40f323b6(context):
+    """build コマンドを実行する
+
+    Scenarios:
+      - MkDocs設定ファイルの生成
+      - 要件一覧ページの生成
+      - 仕様一覧ページの生成
+      - 個別アイテム詳細ページの生成
+      - 一覧テーブルのフィルタリング機能
+      - feature MDページへのバックリンク生成
+      - 複数アイテムを参照するfeatureのバックリンク
+      - タグのないfeatureにはバックリンクを表示しない
+      - Suspect Link 警告の一覧テーブル表示
+      - Unreviewed Changes 警告の一覧テーブル表示
+      - 複合警告の表示
+      - 一覧テーブルのGherkinカバレッジ列はシナリオ数を表示すること
+      - 一覧テーブルにレビューステータス列が表示されること
+    """
+    raise NotImplementedError('STEP: build コマンドを実行する')
 ```
 
 #### Then 出力ディレクトリに mkdocs.yml が生成されること
@@ -116,12 +129,25 @@ def given_ce6845b7(context):
 
 ```python
 @when('build コマンドを実行する')  # type: ignore
-def when_build_impl(context):
-    feature_dir = context.temp_dir / "specification" / "features"
-    feature_dir.mkdir(parents=True, exist_ok=True)
-    # create dummy feature to avoid empty feature warning
-    write_feature_file(feature_dir / "dummy.feature", "Feature: Dummy\n  Scenario: Dummy\n    Given test\n")
-    context.result = run_spec_weaver(["build", str(feature_dir)], cwd=context.temp_dir)
+def when_40f323b6(context):
+    """build コマンドを実行する
+
+    Scenarios:
+      - MkDocs設定ファイルの生成
+      - 要件一覧ページの生成
+      - 仕様一覧ページの生成
+      - 個別アイテム詳細ページの生成
+      - 一覧テーブルのフィルタリング機能
+      - feature MDページへのバックリンク生成
+      - 複数アイテムを参照するfeatureのバックリンク
+      - タグのないfeatureにはバックリンクを表示しない
+      - Suspect Link 警告の一覧テーブル表示
+      - Unreviewed Changes 警告の一覧テーブル表示
+      - 複合警告の表示
+      - 一覧テーブルのGherkinカバレッジ列はシナリオ数を表示すること
+      - 一覧テーブルにレビューステータス列が表示されること
+    """
+    raise NotImplementedError('STEP: build コマンドを実行する')
 ```
 
 #### Then docs/req.md が生成されること
@@ -216,12 +242,25 @@ def given_ae2b8b7d(context):
 
 ```python
 @when('build コマンドを実行する')  # type: ignore
-def when_build_impl(context):
-    feature_dir = context.temp_dir / "specification" / "features"
-    feature_dir.mkdir(parents=True, exist_ok=True)
-    # create dummy feature to avoid empty feature warning
-    write_feature_file(feature_dir / "dummy.feature", "Feature: Dummy\n  Scenario: Dummy\n    Given test\n")
-    context.result = run_spec_weaver(["build", str(feature_dir)], cwd=context.temp_dir)
+def when_40f323b6(context):
+    """build コマンドを実行する
+
+    Scenarios:
+      - MkDocs設定ファイルの生成
+      - 要件一覧ページの生成
+      - 仕様一覧ページの生成
+      - 個別アイテム詳細ページの生成
+      - 一覧テーブルのフィルタリング機能
+      - feature MDページへのバックリンク生成
+      - 複数アイテムを参照するfeatureのバックリンク
+      - タグのないfeatureにはバックリンクを表示しない
+      - Suspect Link 警告の一覧テーブル表示
+      - Unreviewed Changes 警告の一覧テーブル表示
+      - 複合警告の表示
+      - 一覧テーブルのGherkinカバレッジ列はシナリオ数を表示すること
+      - 一覧テーブルにレビューステータス列が表示されること
+    """
+    raise NotImplementedError('STEP: build コマンドを実行する')
 ```
 
 #### Then docs/spec.md が生成されること
@@ -307,12 +346,25 @@ def given_73c18566(context):
 
 ```python
 @when('build コマンドを実行する')  # type: ignore
-def when_build_impl(context):
-    feature_dir = context.temp_dir / "specification" / "features"
-    feature_dir.mkdir(parents=True, exist_ok=True)
-    # create dummy feature to avoid empty feature warning
-    write_feature_file(feature_dir / "dummy.feature", "Feature: Dummy\n  Scenario: Dummy\n    Given test\n")
-    context.result = run_spec_weaver(["build", str(feature_dir)], cwd=context.temp_dir)
+def when_40f323b6(context):
+    """build コマンドを実行する
+
+    Scenarios:
+      - MkDocs設定ファイルの生成
+      - 要件一覧ページの生成
+      - 仕様一覧ページの生成
+      - 個別アイテム詳細ページの生成
+      - 一覧テーブルのフィルタリング機能
+      - feature MDページへのバックリンク生成
+      - 複数アイテムを参照するfeatureのバックリンク
+      - タグのないfeatureにはバックリンクを表示しない
+      - Suspect Link 警告の一覧テーブル表示
+      - Unreviewed Changes 警告の一覧テーブル表示
+      - 複合警告の表示
+      - 一覧テーブルのGherkinカバレッジ列はシナリオ数を表示すること
+      - 一覧テーブルにレビューステータス列が表示されること
+    """
+    raise NotImplementedError('STEP: build コマンドを実行する')
 ```
 
 #### Then docs/items/ 配下に各アイテムのMarkdownファイルが生成されること
@@ -415,12 +467,25 @@ def given_93d749da(context):
 
 ```python
 @when('build コマンドを実行する')  # type: ignore
-def when_build_impl(context):
-    feature_dir = context.temp_dir / "specification" / "features"
-    feature_dir.mkdir(parents=True, exist_ok=True)
-    # create dummy feature to avoid empty feature warning
-    write_feature_file(feature_dir / "dummy.feature", "Feature: Dummy\n  Scenario: Dummy\n    Given test\n")
-    context.result = run_spec_weaver(["build", str(feature_dir)], cwd=context.temp_dir)
+def when_40f323b6(context):
+    """build コマンドを実行する
+
+    Scenarios:
+      - MkDocs設定ファイルの生成
+      - 要件一覧ページの生成
+      - 仕様一覧ページの生成
+      - 個別アイテム詳細ページの生成
+      - 一覧テーブルのフィルタリング機能
+      - feature MDページへのバックリンク生成
+      - 複数アイテムを参照するfeatureのバックリンク
+      - タグのないfeatureにはバックリンクを表示しない
+      - Suspect Link 警告の一覧テーブル表示
+      - Unreviewed Changes 警告の一覧テーブル表示
+      - 複合警告の表示
+      - 一覧テーブルのGherkinカバレッジ列はシナリオ数を表示すること
+      - 一覧テーブルにレビューステータス列が表示されること
+    """
+    raise NotImplementedError('STEP: build コマンドを実行する')
 ```
 
 #### Then 生成された一覧ページのテーブルにフィルタリング用入力欄が表示されること
@@ -612,23 +677,46 @@ def then_32de837a(context, param0):
 #### Given "@SPEC-003" タグを持つ "audit.feature" が存在する
 
 ```python
-@given('"{param0}" が存在する')  # type: ignore
-def given_file_exists(context, param0):
-    path = context.temp_dir / param0
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text("")
+@given('"{param0}" タグを持つ "{param1}" が存在する')  # type: ignore
+def given_8c5d7037(context, param0, param1):
+    """"@SPEC-003" タグを持つ "audit.feature" が存在する
+
+    Scenarios:
+      - feature MDページへのバックリンク生成
+    """
+    from specification.features.steps._helpers import create_doorstop_project_yaml, write_feature_file
+    uid = param0.replace("@", "")
+    create_doorstop_project_yaml(context.temp_dir, [
+        {"dir": "specs", "prefix": "SPEC", "items": [{"uid": uid, "header": "Spec 3"}]}
+    ])
+    feature_dir = context.temp_dir / "specification" / "features"
+    feature_dir.mkdir(parents=True, exist_ok=True)
+    write_feature_file(feature_dir / param1, f"{param0}\nFeature: Test\n  Scenario: S1\n    Given G\n")
 ```
 
 #### When build コマンドを実行する
 
 ```python
 @when('build コマンドを実行する')  # type: ignore
-def when_build_impl(context):
-    feature_dir = context.temp_dir / "specification" / "features"
-    feature_dir.mkdir(parents=True, exist_ok=True)
-    # create dummy feature to avoid empty feature warning
-    write_feature_file(feature_dir / "dummy.feature", "Feature: Dummy\n  Scenario: Dummy\n    Given test\n")
-    context.result = run_spec_weaver(["build", str(feature_dir)], cwd=context.temp_dir)
+def when_40f323b6(context):
+    """build コマンドを実行する
+
+    Scenarios:
+      - MkDocs設定ファイルの生成
+      - 要件一覧ページの生成
+      - 仕様一覧ページの生成
+      - 個別アイテム詳細ページの生成
+      - 一覧テーブルのフィルタリング機能
+      - feature MDページへのバックリンク生成
+      - 複数アイテムを参照するfeatureのバックリンク
+      - タグのないfeatureにはバックリンクを表示しない
+      - Suspect Link 警告の一覧テーブル表示
+      - Unreviewed Changes 警告の一覧テーブル表示
+      - 複合警告の表示
+      - 一覧テーブルのGherkinカバレッジ列はシナリオ数を表示すること
+      - 一覧テーブルにレビューステータス列が表示されること
+    """
+    raise NotImplementedError('STEP: build コマンドを実行する')
 ```
 
 #### Then "docs/features/audit.md" の冒頭に "関連アイテム" セクションが含まれること
@@ -705,12 +793,25 @@ def given_1d9c057d(context, param0, param1):
 
 ```python
 @when('build コマンドを実行する')  # type: ignore
-def when_build_impl(context):
-    feature_dir = context.temp_dir / "specification" / "features"
-    feature_dir.mkdir(parents=True, exist_ok=True)
-    # create dummy feature to avoid empty feature warning
-    write_feature_file(feature_dir / "dummy.feature", "Feature: Dummy\n  Scenario: Dummy\n    Given test\n")
-    context.result = run_spec_weaver(["build", str(feature_dir)], cwd=context.temp_dir)
+def when_40f323b6(context):
+    """build コマンドを実行する
+
+    Scenarios:
+      - MkDocs設定ファイルの生成
+      - 要件一覧ページの生成
+      - 仕様一覧ページの生成
+      - 個別アイテム詳細ページの生成
+      - 一覧テーブルのフィルタリング機能
+      - feature MDページへのバックリンク生成
+      - 複数アイテムを参照するfeatureのバックリンク
+      - タグのないfeatureにはバックリンクを表示しない
+      - Suspect Link 警告の一覧テーブル表示
+      - Unreviewed Changes 警告の一覧テーブル表示
+      - 複合警告の表示
+      - 一覧テーブルのGherkinカバレッジ列はシナリオ数を表示すること
+      - 一覧テーブルにレビューステータス列が表示されること
+    """
+    raise NotImplementedError('STEP: build コマンドを実行する')
 ```
 
 #### Then 生成されたfeature MDの "関連アイテム" に "VIS-001" と "VIS-005" の両方のリンクが含まれること
@@ -770,12 +871,25 @@ def given_486efd83(context):
 
 ```python
 @when('build コマンドを実行する')  # type: ignore
-def when_build_impl(context):
-    feature_dir = context.temp_dir / "specification" / "features"
-    feature_dir.mkdir(parents=True, exist_ok=True)
-    # create dummy feature to avoid empty feature warning
-    write_feature_file(feature_dir / "dummy.feature", "Feature: Dummy\n  Scenario: Dummy\n    Given test\n")
-    context.result = run_spec_weaver(["build", str(feature_dir)], cwd=context.temp_dir)
+def when_40f323b6(context):
+    """build コマンドを実行する
+
+    Scenarios:
+      - MkDocs設定ファイルの生成
+      - 要件一覧ページの生成
+      - 仕様一覧ページの生成
+      - 個別アイテム詳細ページの生成
+      - 一覧テーブルのフィルタリング機能
+      - feature MDページへのバックリンク生成
+      - 複数アイテムを参照するfeatureのバックリンク
+      - タグのないfeatureにはバックリンクを表示しない
+      - Suspect Link 警告の一覧テーブル表示
+      - Unreviewed Changes 警告の一覧テーブル表示
+      - 複合警告の表示
+      - 一覧テーブルのGherkinカバレッジ列はシナリオ数を表示すること
+      - 一覧テーブルにレビューステータス列が表示されること
+    """
+    raise NotImplementedError('STEP: build コマンドを実行する')
 ```
 
 #### Then 生成されたfeature MDに "関連アイテム" 行が含まれないこと
@@ -854,12 +968,25 @@ def given_5951291a(context):
 
 ```python
 @when('build コマンドを実行する')  # type: ignore
-def when_build_impl(context):
-    feature_dir = context.temp_dir / "specification" / "features"
-    feature_dir.mkdir(parents=True, exist_ok=True)
-    # create dummy feature to avoid empty feature warning
-    write_feature_file(feature_dir / "dummy.feature", "Feature: Dummy\n  Scenario: Dummy\n    Given test\n")
-    context.result = run_spec_weaver(["build", str(feature_dir)], cwd=context.temp_dir)
+def when_40f323b6(context):
+    """build コマンドを実行する
+
+    Scenarios:
+      - MkDocs設定ファイルの生成
+      - 要件一覧ページの生成
+      - 仕様一覧ページの生成
+      - 個別アイテム詳細ページの生成
+      - 一覧テーブルのフィルタリング機能
+      - feature MDページへのバックリンク生成
+      - 複数アイテムを参照するfeatureのバックリンク
+      - タグのないfeatureにはバックリンクを表示しない
+      - Suspect Link 警告の一覧テーブル表示
+      - Unreviewed Changes 警告の一覧テーブル表示
+      - 複合警告の表示
+      - 一覧テーブルのGherkinカバレッジ列はシナリオ数を表示すること
+      - 一覧テーブルにレビューステータス列が表示されること
+    """
+    raise NotImplementedError('STEP: build コマンドを実行する')
 ```
 
 #### Then 一覧テーブルの行に "{: .suspect-row }" が適用されていること
@@ -953,12 +1080,25 @@ def given_60830b9f(context):
 
 ```python
 @when('build コマンドを実行する')  # type: ignore
-def when_build_impl(context):
-    feature_dir = context.temp_dir / "specification" / "features"
-    feature_dir.mkdir(parents=True, exist_ok=True)
-    # create dummy feature to avoid empty feature warning
-    write_feature_file(feature_dir / "dummy.feature", "Feature: Dummy\n  Scenario: Dummy\n    Given test\n")
-    context.result = run_spec_weaver(["build", str(feature_dir)], cwd=context.temp_dir)
+def when_40f323b6(context):
+    """build コマンドを実行する
+
+    Scenarios:
+      - MkDocs設定ファイルの生成
+      - 要件一覧ページの生成
+      - 仕様一覧ページの生成
+      - 個別アイテム詳細ページの生成
+      - 一覧テーブルのフィルタリング機能
+      - feature MDページへのバックリンク生成
+      - 複数アイテムを参照するfeatureのバックリンク
+      - タグのないfeatureにはバックリンクを表示しない
+      - Suspect Link 警告の一覧テーブル表示
+      - Unreviewed Changes 警告の一覧テーブル表示
+      - 複合警告の表示
+      - 一覧テーブルのGherkinカバレッジ列はシナリオ数を表示すること
+      - 一覧テーブルにレビューステータス列が表示されること
+    """
+    raise NotImplementedError('STEP: build コマンドを実行する')
 ```
 
 #### Then 一覧テーブルの行に "{: .unreviewed-row }" が適用されていること
@@ -1065,12 +1205,25 @@ def given_89f3d16e(context):
 
 ```python
 @when('build コマンドを実行する')  # type: ignore
-def when_build_impl(context):
-    feature_dir = context.temp_dir / "specification" / "features"
-    feature_dir.mkdir(parents=True, exist_ok=True)
-    # create dummy feature to avoid empty feature warning
-    write_feature_file(feature_dir / "dummy.feature", "Feature: Dummy\n  Scenario: Dummy\n    Given test\n")
-    context.result = run_spec_weaver(["build", str(feature_dir)], cwd=context.temp_dir)
+def when_40f323b6(context):
+    """build コマンドを実行する
+
+    Scenarios:
+      - MkDocs設定ファイルの生成
+      - 要件一覧ページの生成
+      - 仕様一覧ページの生成
+      - 個別アイテム詳細ページの生成
+      - 一覧テーブルのフィルタリング機能
+      - feature MDページへのバックリンク生成
+      - 複数アイテムを参照するfeatureのバックリンク
+      - タグのないfeatureにはバックリンクを表示しない
+      - Suspect Link 警告の一覧テーブル表示
+      - Unreviewed Changes 警告の一覧テーブル表示
+      - 複合警告の表示
+      - 一覧テーブルのGherkinカバレッジ列はシナリオ数を表示すること
+      - 一覧テーブルにレビューステータス列が表示されること
+    """
+    raise NotImplementedError('STEP: build コマンドを実行する')
 ```
 
 #### Then 一覧テーブルの行に "{: .suspect-row }" が適用されていること
@@ -1157,12 +1310,25 @@ def given_a5569e86(context):
 
 ```python
 @when('build コマンドを実行する')  # type: ignore
-def when_build_impl(context):
-    feature_dir = context.temp_dir / "specification" / "features"
-    feature_dir.mkdir(parents=True, exist_ok=True)
-    # create dummy feature to avoid empty feature warning
-    write_feature_file(feature_dir / "dummy.feature", "Feature: Dummy\n  Scenario: Dummy\n    Given test\n")
-    context.result = run_spec_weaver(["build", str(feature_dir)], cwd=context.temp_dir)
+def when_40f323b6(context):
+    """build コマンドを実行する
+
+    Scenarios:
+      - MkDocs設定ファイルの生成
+      - 要件一覧ページの生成
+      - 仕様一覧ページの生成
+      - 個別アイテム詳細ページの生成
+      - 一覧テーブルのフィルタリング機能
+      - feature MDページへのバックリンク生成
+      - 複数アイテムを参照するfeatureのバックリンク
+      - タグのないfeatureにはバックリンクを表示しない
+      - Suspect Link 警告の一覧テーブル表示
+      - Unreviewed Changes 警告の一覧テーブル表示
+      - 複合警告の表示
+      - 一覧テーブルのGherkinカバレッジ列はシナリオ数を表示すること
+      - 一覧テーブルにレビューステータス列が表示されること
+    """
+    raise NotImplementedError('STEP: build コマンドを実行する')
 ```
 
 #### Then 一覧テーブルの Gherkinカバレッジ列に "🟢 2" が含まれること
@@ -1232,12 +1398,25 @@ def given_ae2b8b7d(context):
 
 ```python
 @when('build コマンドを実行する')  # type: ignore
-def when_build_impl(context):
-    feature_dir = context.temp_dir / "specification" / "features"
-    feature_dir.mkdir(parents=True, exist_ok=True)
-    # create dummy feature to avoid empty feature warning
-    write_feature_file(feature_dir / "dummy.feature", "Feature: Dummy\n  Scenario: Dummy\n    Given test\n")
-    context.result = run_spec_weaver(["build", str(feature_dir)], cwd=context.temp_dir)
+def when_40f323b6(context):
+    """build コマンドを実行する
+
+    Scenarios:
+      - MkDocs設定ファイルの生成
+      - 要件一覧ページの生成
+      - 仕様一覧ページの生成
+      - 個別アイテム詳細ページの生成
+      - 一覧テーブルのフィルタリング機能
+      - feature MDページへのバックリンク生成
+      - 複数アイテムを参照するfeatureのバックリンク
+      - タグのないfeatureにはバックリンクを表示しない
+      - Suspect Link 警告の一覧テーブル表示
+      - Unreviewed Changes 警告の一覧テーブル表示
+      - 複合警告の表示
+      - 一覧テーブルのGherkinカバレッジ列はシナリオ数を表示すること
+      - 一覧テーブルにレビューステータス列が表示されること
+    """
+    raise NotImplementedError('STEP: build コマンドを実行する')
 ```
 
 #### Then 一覧テーブルのヘッダーに "レビュー" 列が含まれること

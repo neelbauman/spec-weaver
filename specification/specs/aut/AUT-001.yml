@@ -5,6 +5,7 @@ gherkin_fingerprints:
     70791a8012582a2b5aed53a74b13b3e639541f9ac7331f8c681ad36efb43c8ca
 header: |
   scaffold コマンド —  behave テストコード自動生成
+layer: behavior
 level: 1.0
 links:
 - REQ-011: L8Bl65UQLRlIMAdIbMBwE7YNvvUDNz-IySWal4X7iNI=

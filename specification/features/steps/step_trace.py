@@ -11,13 +11,7 @@ import shutil
 # Steps
 # ======================================================================
 
-@given('Doorstopツリーが初期化されている')  # type: ignore
-def given_6df87eb3(context):
-    """Doorstopツリーが初期化されている"""
-    create_doorstop_project_api(context.temp_dir)
-    context.repo_root = context.temp_dir
-
-
+# [Dup→step_impl_link.py] @given('Doorstopツリーが初期化されている')  # type: ignore
 @given('以下のREQアイテムが存在する:')  # type: ignore
 def given_28140be4(context):
     """以下のREQアイテムが存在する:"""
@@ -29,26 +23,7 @@ def given_28140be4(context):
         write_doorstop_yaml(context.temp_dir / "reqs", row["ID"], header=row.get("Header", ""), links=links, status=status)
 
 
-@given('以下のSPECアイテムが存在する:')  # type: ignore
-def given_14c0b615(context):
-    """以下のSPECアイテムが存在する:"""
-    import json
-    for row in context.table:
-        extra = {}
-        if "impl_files" in row.headings and row["impl_files"]:
-            try:
-                extra["impl_files"] = json.loads(row["impl_files"])
-            except json.JSONDecodeError:
-                extra["impl_files"] = row["impl_files"]
-        
-        links = []
-        if "Links" in row.headings and row["Links"]:
-            links = [l.strip() for l in row["Links"].split(",") if l.strip()]
-            
-        status = row.get("Status", "implemented")
-        write_doorstop_yaml(context.temp_dir / "specs", row["ID"], header=row.get("Header", ""), extra=extra, links=links, status=status)
-
-
+# [Dup→step_impl_link.py] @given('以下のSPECアイテムが存在する:')  # type: ignore
 @given('以下のfeatureファイルが存在する:')  # type: ignore
 def given_a838a6ff(context):
     """以下のfeatureファイルが存在する:"""
@@ -77,23 +52,7 @@ def given_a838a6ff(context):
 #     """
 #     raise NotImplementedError('STEP: 終了コードが0である')
 
-@then('終了コードが0である')  # type: ignore
-def then_0f800e56(context):
-    """終了コードが0である
-
-    Scenarios:
-      - REQを起点としたトップダウンのツリー表示
-      - SPECを起点とした双方向のツリー表示
-      - Gherkin Featureファイルを起点としたボトムアップ表示
-      - --direction up で上方向のみ探索
-      - --direction down で下方向のみ探索
-      - --format flat でフラットリスト表示
-      - .feature ディレクトリが存在しない場合の警告と継続
-      - 各ノードにステータスバッジが表示される
-    """
-    raise NotImplementedError('STEP: 終了コードが0である')
-
-
+# [Dup→step_semantic_review.py] @then('終了コードが0である')  # type: ignore
 @when('`spec-weaver trace {target}` を実行する')  # type: ignore
 @when('`spec-weaver trace {target}` を実行する（--show-impl なし）')  # type: ignore
 def when_trace_generic(context, target):
@@ -249,17 +208,7 @@ def then_29017220(context, param0, param1, param2):
 #     """
 #     raise NotImplementedError('STEP: 終了コードが1である')
 
-@then('終了コードが1である')  # type: ignore
-def then_9b731a71(context):
-    """終了コードが1である
-
-    Scenarios:
-      - 存在しないIDを指定した場合のエラー
-      - Doorstopツリーが未初期化の場合のエラー
-    """
-    raise NotImplementedError('STEP: 終了コードが1である')
-
-
+# [Dup→step_semantic_review.py] @then('終了コードが1である')  # type: ignore
 @then('エラーメッセージに "{param0}" が含まれる')  # type: ignore
 def then_9998fad9(context, param0):
     """エラーメッセージに "not found" が含まれる
@@ -311,6 +260,7 @@ def given_1b5b3d28(context):
 #     """
 #     raise NotImplementedError('STEP: 警告メッセージが表示される')
 
+# [Dup→step_clear.py] @then('警告メッセージが表示される')  # type: ignore
 @then('"{param0}" のノードに "{param1}" のステータスバッジが表示される')  # type: ignore
 def then_f676df97(context, param0, param1):
     """"REQ-001" のノードに "implemented" のステータスバッジが表示される

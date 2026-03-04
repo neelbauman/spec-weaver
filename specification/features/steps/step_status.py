@@ -262,6 +262,7 @@ def given_0f39b2ed(context):
 #     """
 #     raise NotImplementedError('STEP: build コマンドを実行する')
 
+# [Dup→step_build.py] @when('build コマンドを実行する')  # type: ignore
 @then('一覧ページの実装状況列にバッジが表示されること')  # type: ignore
 def then_f35a3316(context):
     """一覧ページの実装状況列にバッジが表示されること

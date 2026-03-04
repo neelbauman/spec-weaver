@@ -90,6 +90,28 @@ def given_8a7b1a87(context):
 #     """
 #     raise NotImplementedError('STEP: build コマンドを実行する')
 
+@when('build コマンドを実行する')  # type: ignore
+def when_40f323b6(context):
+    """build コマンドを実行する
+
+    Scenarios:
+      - MkDocs設定ファイルの生成
+      - 要件一覧ページの生成
+      - 仕様一覧ページの生成
+      - 個別アイテム詳細ページの生成
+      - 一覧テーブルのフィルタリング機能
+      - feature MDページへのバックリンク生成
+      - 複数アイテムを参照するfeatureのバックリンク
+      - タグのないfeatureにはバックリンクを表示しない
+      - Suspect Link 警告の一覧テーブル表示
+      - Unreviewed Changes 警告の一覧テーブル表示
+      - 複合警告の表示
+      - 一覧テーブルのGherkinカバレッジ列はシナリオ数を表示すること
+      - 一覧テーブルにレビューステータス列が表示されること
+    """
+    raise NotImplementedError('STEP: build コマンドを実行する')
+
+
 @then('出力ディレクトリに mkdocs.yml が生成されること')  # type: ignore
 def then_453d91c1(context):
     """出力ディレクトリに mkdocs.yml が生成されること
