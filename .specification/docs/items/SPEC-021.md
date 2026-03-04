@@ -2,6 +2,9 @@
 
 > 🚫 **非活性 (active: false)**: このアイテムは非活性です。[CORE-002](CORE-002.md) に移行されました。
 
+> ⚠️ **Suspect**: 関連するアイテムやテストが変更されました。影響範囲のレビューが必要です。
+> **原因 (Unreviewed)**: `Doorstop native suspect link`
+
 **実装状況**: ✅ implemented
 
 **作成日**: 2026-02-27　|　**更新日**: 2026-03-03
@@ -9,6 +12,8 @@
 **上位アイテム**: [REQ-001](REQ-001.md) / **兄弟アイテム**: [SPEC-001](SPEC-001.md), [SPEC-002](SPEC-002.md)
 
 **テスト対象**: Yes
+ / **テストカバレッジ**: -
+
 ---
 
 ## 概要
@@ -75,6 +80,8 @@ def _extract_scenarios_with_inherited_tags(
 ## 削除対象
 
 - `_extract_tag_map_recursive()`: 本仕様実装後、コアジェネレータに完全に置き換えられ不要となる
+
+**テスト実行結果**: -
 
 ### 🧪 検証シナリオ
 

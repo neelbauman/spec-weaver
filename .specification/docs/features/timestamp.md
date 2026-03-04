@@ -115,6 +115,21 @@ def then_c016ae72(context):
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
+#### 📋 Execution Log (Failure)
+
+```text
+Traceback (most recent call last):
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
+    match.run(runner.context)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
+    self.func(context, *args, **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "specification/features/steps/step_timestamp.py", line 79, in given_78ddd292
+    raise NotImplementedError('STEP: YAMLに created_at: \'2026-01-15\' が設定されている')
+NotImplementedError: STEP: YAMLに created_at: '2026-01-15' が設定されている
+```
+
 #### Given DoorstopアイテムのYAMLファイルがGit管理外である
 
 ```python
