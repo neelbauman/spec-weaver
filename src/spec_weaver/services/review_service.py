@@ -1,9 +1,8 @@
-import subprocess
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional, Dict
 
-from spec_weaver.adapters.doorstop import get_item_map, get_all_prefixes
+from spec_weaver.adapters.doorstop import get_item_map, get_all_prefixes, get_doorstop_tree
 from spec_weaver.adapters.gherkin import get_tag_map, compute_feature_file_hash, write_feature_fingerprints
 
 @dataclass
@@ -53,17 +52,24 @@ class ReviewService:
 
         # 2. Doorstop アイテム (.yml または ID) の場合
         item_id = target.stem if target.exists() and target.suffix == ".yml" else target_path
-        
+
         item_map = get_item_map(repo_root)
         if item_id in item_map:
             try:
-                cmd = ["doorstop", "review", "-i", item_id, "-f", "-j", str(repo_root)]
-                subprocess.run(cmd, check=True, capture_output=True)
+                multi_tree = get_doorstop_tree(repo_root)
+                item = multi_tree.find_item(item_id)
+                if item is None:
+                    return ReviewResult(
+                        is_success=False, target_type="doorstop",
+                        error_message=f"アイテムが見つかりません: {item_id}"
+                    )
+                item.review()
+                item.save()
                 return ReviewResult(is_success=True, target_type="doorstop", item_id=item_id)
-            except subprocess.CalledProcessError as e:
+            except Exception as e:
                 return ReviewResult(
                     is_success=False, target_type="doorstop",
-                    error_message=f"doorstopコマンドが失敗しました: {e.stderr.decode('utf-8')}"
+                    error_message=f"レビュー処理に失敗しました: {e}"
                 )
 
         # 3. どちらでもない場合
