@@ -1,48 +1,52 @@
 from unittest.mock import MagicMock
 from spec_weaver.services.build_service import BuildService
+from spec_weaver.adapters.doorstop import MultiTree
+
+
+def _make_tree_node(prefix: str, children=None):
+    """MagicMock で doorstop.Tree ノードを模倣するヘルパー。"""
+    doc = MagicMock()
+    doc.prefix = prefix
+    node = MagicMock()
+    node.document = doc
+    node.children = children or []
+    return node
 
 
 def test_build_hierarchy_tree_only_prefixes():
-    # Mock Document and Tree structure
-    doc_req = MagicMock()
-    doc_req.prefix = "REQ"
+    node_spec = _make_tree_node("SPEC")
+    node_req = _make_tree_node("REQ", children=[node_spec])
 
-    doc_spec = MagicMock()
-    doc_spec.prefix = "SPEC"
-
-    node_spec = MagicMock()
-    node_spec.document = doc_spec
-    node_spec.children = []
-
-    node_req = MagicMock()
-    node_req.document = doc_req
-    node_req.children = [node_spec]
-
-    # Actually _build_hierarchy_tree starts from doorstop_tree
-    # Which seems to have a .document and .children in _build_hierarchy_tree logic
-
+    multi_tree = MultiTree([node_req])
     prefix_to_file = {"REQ": "requirements.md", "SPEC": "specifications.md"}
-    # BuildService()._build_hierarchy_tree を使用
-    result = BuildService()._build_hierarchy_tree(node_req, prefix_to_file)
+
+    result = BuildService()._build_hierarchy_tree(multi_tree, prefix_to_file)
 
     assert "- [**REQ**](requirements.md)" in result
     assert "    - [**SPEC**](specifications.md)" in result
-    # Ensure items are NOT there
     assert "REQ-001" not in result
     assert "SPEC-001" not in result
 
 
 def test_build_hierarchy_tree_unknown_prefix():
-    doc_xyz = MagicMock()
-    doc_xyz.prefix = "XYZ"
+    node_xyz = _make_tree_node("XYZ")
+    multi_tree = MultiTree([node_xyz])
 
-    node_xyz = MagicMock()
-    node_xyz.document = doc_xyz
-    node_xyz.children = []
+    result = BuildService()._build_hierarchy_tree(multi_tree, {})
 
-    # BuildService()._build_hierarchy_tree を使用
-    result = BuildService()._build_hierarchy_tree(node_xyz, {})
-
-    # Link should not be there for unknown prefix, just bold
     assert "- **XYZ**" in result
     assert "](xyz.md)" not in result
+
+
+def test_build_hierarchy_tree_multiple_roots():
+    """複数ルートを持つ MultiTree が両方レンダリングされる。"""
+    node_req = _make_tree_node("REQ")
+    node_core = _make_tree_node("CORE")
+
+    multi_tree = MultiTree([node_req, node_core])
+    prefix_to_file = {"REQ": "req.md", "CORE": "core.md"}
+
+    result = BuildService()._build_hierarchy_tree(multi_tree, prefix_to_file)
+
+    assert "- [**REQ**](req.md)" in result
+    assert "- [**CORE**](core.md)" in result
