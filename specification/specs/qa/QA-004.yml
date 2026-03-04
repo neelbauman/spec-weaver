@@ -6,8 +6,8 @@ gherkin_fingerprints:
 header: |
   review コマンド — .feature ファイルへのフィンガープリント書き込み
 impl_files:
-- src/spec_weaver/cli.py
-- src/spec_weaver/gherkin.py
+- src/spec_weaver/cli/commands/review_cmd.py
+- src/spec_weaver/services/review_service.py
 layer: behavior
 level: 4.0
 links:
