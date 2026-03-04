@@ -1,0 +1,64 @@
+<testsuite name="clear.clear コマンド — Doorstop gherkin_fingerprints 更新" tests="5" errors="0" failures="0" skipped="0" time="3.052129" timestamp="2026-03-04T00:35:17.732063" hostname="penguin"><testcase classname="clear.clear コマンド — Doorstop gherkin_fingerprints 更新" name="アイテムIDを指定して gherkin_fingerprints を更新できる" status="passed" time="0.490747"><system-out>
+<![CDATA[
+@scenario.begin
+  Scenario: アイテムIDを指定して gherkin_fingerprints を更新できる
+    Given 仕様アイテム "SPEC-003" が存在する ... passed in 0.025s
+    And "SPEC-003" に紐づく Gherkin シナリオが存在する ... passed in 0.000s
+    When `spec-weaver clear SPEC-003 --feature-dir ./specification/features` を実行する ... passed in 0.463s
+    Then clear 終了コードが0である ... passed in 0.000s
+    And "SPEC-003" の YAML に gherkin_fingerprints が書き込まれる ... passed in 0.002s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="clear.clear コマンド — Doorstop gherkin_fingerprints 更新" name=".feature ファイルを指定して複数アイテムの gherkin_fingerprints を一括更新できる" status="passed" time="0.512103"><system-out>
+<![CDATA[
+@scenario.begin
+  Scenario: .feature ファイルを指定して複数アイテムの gherkin_fingerprints を一括更新できる
+    Given ".feature" ファイルに複数の仕様IDタグが含まれる ... passed in 0.035s
+    When `spec-weaver clear specification/features/audit.feature --feature-dir ./specification/features` を実行する ... passed in 0.474s
+    Then clear 終了コードが0である ... passed in 0.000s
+    And ファイル内の各アイテムの gherkin_fingerprints が更新される ... passed in 0.003s
+    And 更新件数が表示される ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="clear.clear コマンド — Doorstop gherkin_fingerprints 更新" name=".feature ファイルを指定してファイル自身の suspect 状態も解除できる" status="passed" time="1.107879"><system-out>
+<![CDATA[
+@scenario.begin
+  Scenario: .feature ファイルを指定してファイル自身の suspect 状態も解除できる
+    Given ".feature" ファイルが "suspect-with-reviewed" 状態である ... passed in 0.023s
+    When `spec-weaver clear specification/features/audit.feature --feature-dir ./specification/features` を実行する ... passed in 0.458s
+    Then clear 終了コードが0である ... passed in 0.000s
+    And "specification/features/audit.feature" の内部フィンガープリントが最新の Doorstop スタンプで更新される ... passed in 0.000s
+    And `spec-weaver status` で当該ファイルが "✅ reviewed" となる ... passed in 0.626s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="clear.clear コマンド — Doorstop gherkin_fingerprints 更新" name="存在しないアイテムIDを指定するとエラーになる" status="passed" time="0.460971"><system-out>
+<![CDATA[
+@scenario.begin
+  Scenario: 存在しないアイテムIDを指定するとエラーになる
+    When `spec-weaver clear SPEC-999 --feature-dir ./specification/features` を実行する ... passed in 0.460s
+    Then clear 終了コードが1である ... passed in 0.000s
+    And エラーメッセージが表示される ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="clear.clear コマンド — Doorstop gherkin_fingerprints 更新" name="紐づくGherkinシナリオが存在しないアイテムを指定するとエラーになる" status="passed" time="0.480429"><system-out>
+<![CDATA[
+@scenario.begin
+  Scenario: 紐づくGherkinシナリオが存在しないアイテムを指定するとエラーになる
+    Given 仕様アイテム "SPEC-004" が存在する ... passed in 0.026s
+    And "SPEC-004" に紐づく Gherkin シナリオが存在しない ... passed in 0.000s
+    When `spec-weaver clear SPEC-004 --feature-dir ./specification/features` を実行する ... passed in 0.454s
+    Then clear 終了コードが1である ... passed in 0.000s
+    And 警告メッセージが表示される ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase></testsuite>

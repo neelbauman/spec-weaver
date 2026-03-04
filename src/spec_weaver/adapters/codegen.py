@@ -66,19 +66,30 @@ def _step_keyword_to_prefix(keyword: str) -> str:
 
 def _parameterize_step(text: str) -> tuple[str, list[str]]:
     """
-    ステップ文の中の "..." を検知し、behave 形式のパラメータ {param0}, {param1} に置換する。
+    ステップ文の中の "..." や <placeholder> を検知し、
+    behave 形式のパラメータ {param0}, {placeholder} に置換する。
 
     Returns:
         tuple[str, list[str]]: (パラメータ化されたテキスト, パラメータ名のリスト)
     """
     params: list[str] = []
 
-    def replacer(match: re.Match) -> str:
+    # 1. ダブルクォーテーションで囲まれた部分を {paramN} に置換
+    def quote_replacer(match: re.Match) -> str:
         param_name = f"param{len(params)}"
         params.append(param_name)
         return f'"{{{param_name}}}"'
 
-    parameterized_text = re.sub(r'"([^"]*)"', replacer, text)
+    text = re.sub(r'"([^"]*)"', quote_replacer, text)
+
+    # 2. <placeholder> 部分を {placeholder} に置換 (Scenario Outline)
+    def angle_replacer(match: re.Match) -> str:
+        param_name = match.group(1)
+        if param_name not in params:
+            params.append(param_name)
+        return f"{{{param_name}}}"
+
+    parameterized_text = re.sub(r"<([\w\d_-]+)>", angle_replacer, text)
     parameterized_text = parameterized_text.replace("'", "\\'")
     return parameterized_text, params
 
@@ -593,14 +604,39 @@ def generate_environment_file(
     env_file.write_text(ENVIRONMENT_PY_TEMPLATE, encoding="utf-8")
     return env_file, "created", ""
 
-def generate_test_file(
+def collect_all_feature_steps(feature_files: list[Path]) -> set[tuple[str, str]]:
+    """
+    全 .feature ファイルから使われているステップの (prefix, raw_text) のセットを返す。
+    """
+    all_steps: set[tuple[str, str]] = set()
+    for fpath in feature_files:
+        try:
+            content = fpath.read_text(encoding="utf-8")
+            ast = Parser().parse(TokenScanner(content))
+            for sc in _collect_scenarios(ast):
+                for prefix, raw_text in _resolve_step_prefixes(sc.get("steps", [])):
+                    all_steps.add((prefix, raw_text))
+        except Exception:
+            continue
+    return all_steps
+
+
+def prepare_test_file_content(
     feature_path: Path,
     out_dir: Path,
     features_base_dir: Path,
     overwrite: bool = False,
-) -> tuple[Path, str, str] | None:
-    """単一の .feature ファイルから behave ステップ定義ファイルを生成・マージする。"""
-    out_dir.mkdir(parents=True, exist_ok=True)
+) -> tuple[str, str, str] | None:
+    """
+    テストファイルの新規作成またはマージ後の内容を計算する。
+
+    Returns:
+        tuple[str, str, str] | None: (status, new_content, diff_text)
+        status: "created" or "updated"
+        new_content: 生成されたファイル全体の内容
+        diff_text: 差分（新規作成時は空文字列）
+        変更がない場合は None を返す。
+    """
     out_file = out_dir / f"step_{feature_path.stem}.py"
 
     content = feature_path.read_text(encoding="utf-8")
@@ -620,13 +656,15 @@ def generate_test_file(
         new_content = _generate_file_content(
             feature_name, step_registry, existing_resolver
         )
-        out_file.write_text(new_content, encoding="utf-8")
-        return out_file, "created", ""
+        return "created", new_content, ""
 
     # --- 差分マージ ---
     existing_resolver = _load_existing_resolver(out_dir, exclude_file=out_file)
+    
+    # ideal_content 生成時は、すべてのステップを FunctionDef として出力させるため
+    # 空の Resolver を使用する（そうしないと重複ステップがコメントアウトされ AST パースで消えてしまう）
     ideal_content = _generate_file_content(
-        feature_name, step_registry, existing_resolver
+        feature_name, step_registry, StepResolver()
     )
 
     _, ideal_infos = _parse_step_file(ideal_content)
@@ -645,7 +683,6 @@ def generate_test_file(
         out_file,
     )
 
-
     if new_content == existing_content:
         return None
 
@@ -660,5 +697,23 @@ def generate_test_file(
     )
     diff_text = "\n".join(diff_lines)
 
+    return "updated", new_content, diff_text
+
+
+def generate_test_file(
+    feature_path: Path,
+    out_dir: Path,
+    features_base_dir: Path,
+    overwrite: bool = False,
+) -> tuple[Path, str, str] | None:
+    """単一の .feature ファイルから behave ステップ定義ファイルを生成・マージする。"""
+    out_dir.mkdir(parents=True, exist_ok=True)
+    out_file = out_dir / f"step_{feature_path.stem}.py"
+
+    res = prepare_test_file_content(feature_path, out_dir, features_base_dir, overwrite)
+    if res is None:
+        return None
+
+    status, new_content, diff_text = res
     out_file.write_text(new_content, encoding="utf-8")
-    return out_file, "updated", diff_text
+    return out_file, status, diff_text

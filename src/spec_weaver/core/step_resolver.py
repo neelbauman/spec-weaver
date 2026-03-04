@@ -53,41 +53,35 @@ class StepResolver:
                         if isinstance(decorator, ast.Call):
                             func_name = self._get_name(decorator.func)
                             if func_name in ("given", "when", "then", "step"):
-                                if decorator.args and isinstance(
-                                    decorator.args[0], ast.Constant
-                                ):
-                                    pattern = decorator.args[0].value
-
-                                    # 関数のソースコードを抽出
-                                    # node.lineno は 1-indexed
-                                    start_line = node.lineno - 1
-                                    # デコレータも含めるために少し前に戻る
-                                    # 簡単のため、関数の開始行から終了行までを取得
-                                    # end_lineno は 3.8+
-                                    end_line = getattr(
-                                        node, "end_lineno", node.lineno + 5
-                                    )
-
-                                    # デコレータの行も特定したい
-                                    # 実際には ast.get_source_segment があれば楽だが、
-                                    # ここでは単純に行番号で切り出す
-
-                                    # デコレータの開始行を探す
-                                    dec_start = decorator.lineno - 1
-                                    source_lines = lines[dec_start:end_line]
-                                    source = "\n".join(source_lines)
-
-                                    self.steps.append(
-                                        StepDefinition(
-                                            keyword=func_name,
-                                            pattern=pattern,
-                                            source=source,
-                                            file=str(py_file),
-                                            line=node.lineno,
+                                if decorator.args:
+                                    arg0 = decorator.args[0]
+                                    pattern = None
+                                    if isinstance(arg0, ast.Constant) and isinstance(arg0.value, str):
+                                        pattern = arg0.value
+                                    elif isinstance(arg0, (ast.Str, ast.Bytes)): # Fallback
+                                        pattern = getattr(arg0, 's', getattr(arg0, 'value', None))
+                                    
+                                    if pattern is not None:
+                                        # 関数のソースコードを抽出
+                                        start_line = node.lineno - 1
+                                        end_line = getattr(
+                                            node, "end_lineno", node.lineno + 5
                                         )
-                                    )
+                                        dec_start = decorator.lineno - 1
+                                        source_lines = lines[dec_start:end_line]
+                                        source = "\n".join(source_lines)
+
+                                        self.steps.append(
+                                            StepDefinition(
+                                                keyword=func_name,
+                                                pattern=pattern,
+                                                source=source,
+                                                file=str(py_file),
+                                                line=node.lineno,
+                                            )
+                                        )
         except Exception as e:
-            # パースエラーなどは無視（またはログ）
+            # print(f"DEBUG Error parsing {py_file}: {e}", file=sys.stderr)
             pass
 
     def _get_name(self, node) -> str:

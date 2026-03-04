@@ -1,0 +1,152 @@
+<testsuite name="semantic_review.semantic-review コマンド — セマンティックレビュー" tests="9" errors="8" failures="0" skipped="0" time="11.612491" timestamp="2026-03-04T00:35:40.491155" hostname="penguin"><testcase classname="semantic_review.semantic-review コマンド — セマンティックレビュー" name="単一アイテムのレビューが実行できる" status="error" time="4.327844"><error type="NoneType" message="None">
+<![CDATA[
+Failing step: Then 終了コードが0である ... undefined in 0.000s
+Location: specification/features/semantic_review.feature:12
+None]]>
+</error><system-out>
+<![CDATA[
+@scenario.begin
+  Scenario: 単一アイテムのレビューが実行できる
+    Given claudeコマンドが利用可能である ... passed in 0.000s
+    And 仕様アイテム "SPEC-003" が存在する ... passed in 0.026s
+    When `spec-weaver semantic-review --item SPEC-003 --feature-dir ./specification/features` を実行する ... passed in 4.302s
+    Then 終了コードが0である ... undefined in 0.000s
+    And 出力にレビュー結果が含まれる ... skipped in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="semantic_review.semantic-review コマンド — セマンティックレビュー" name="単一アイテムをJSON形式で出力できる" status="error" time="4.015396"><error type="NoneType" message="None">
+<![CDATA[
+Failing step: Then 終了コードが0である ... undefined in 0.000s
+Location: specification/features/semantic_review.feature:19
+None]]>
+</error><system-out>
+<![CDATA[
+@scenario.begin
+  Scenario: 単一アイテムをJSON形式で出力できる
+    Given claudeコマンドが利用可能である ... passed in 0.000s
+    And 仕様アイテム "SPEC-003" が存在する ... passed in 0.025s
+    When `spec-weaver semantic-review --item SPEC-003 --output json` を実行する ... passed in 3.990s
+    Then 終了コードが0である ... undefined in 0.000s
+    And 出力が有効なJSONである ... skipped in 0.000s
+    And JSONに "item_id" フィールドが含まれる ... skipped in 0.000s
+    And JSONに "findings" フィールドが含まれる ... skipped in 0.000s
+    And JSONに "summary" フィールドが含まれる ... skipped in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="semantic_review.semantic-review コマンド — セマンティックレビュー" name="存在しないアイテムIDを指定するとエラーになる" status="error" time="0.5235"><error type="NoneType" message="None">
+<![CDATA[
+Failing step: Then 終了コードが1である ... undefined in 0.000s
+Location: specification/features/semantic_review.feature:27
+None]]>
+</error><system-out>
+<![CDATA[
+@scenario.begin
+  Scenario: 存在しないアイテムIDを指定するとエラーになる
+    When `spec-weaver semantic-review --item NOTEXIST-999` を実行する ... passed in 0.523s
+    Then 終了コードが1である ... undefined in 0.000s
+    And エラーメッセージが表示される ... skipped in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="semantic_review.semantic-review コマンド — セマンティックレビュー" name="--item と --all は同時に指定できない" status="passed" time="0.47068"><system-out>
+<![CDATA[
+@scenario.begin
+  Scenario: --item と --all は同時に指定できない
+    When `spec-weaver semantic-review --item SPEC-003 --all` を実行する ... passed in 0.470s
+    Then 終了コードが2である ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="semantic_review.semantic-review コマンド — セマンティックレビュー" name="--fail-on high でhigh findingがある場合に終了コード1を返す" status="error" time="0.484218"><error type="NoneType" message="None">
+<![CDATA[
+Failing step: Then 終了コードが1である ... undefined in 0.000s
+Location: specification/features/semantic_review.feature:38
+None]]>
+</error><system-out>
+<![CDATA[
+@scenario.begin
+  Scenario: --fail-on high でhigh findingがある場合に終了コード1を返す
+    Given claudeコマンドが利用可能である ... passed in 0.000s
+    And レビュー結果に severity "high" のfindingが含まれる ... passed in 0.000s
+    When `spec-weaver semantic-review --item SPEC-003 --fail-on high` を実行する ... passed in 0.484s
+    Then 終了コードが1である ... undefined in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="semantic_review.semantic-review コマンド — セマンティックレビュー" name="--fail-on high でhigh findingがない場合に終了コード0を返す" status="error" time="0.452068"><error type="NoneType" message="None">
+<![CDATA[
+Failing step: Then 終了コードが0である ... undefined in 0.000s
+Location: specification/features/semantic_review.feature:44
+None]]>
+</error><system-out>
+<![CDATA[
+@scenario.begin
+  Scenario: --fail-on high でhigh findingがない場合に終了コード0を返す
+    Given claudeコマンドが利用可能である ... passed in 0.000s
+    And レビュー結果に severity "high" のfindingが含まれない ... passed in 0.000s
+    When `spec-weaver semantic-review --item SPEC-003 --fail-on high` を実行する ... passed in 0.452s
+    Then 終了コードが0である ... undefined in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="semantic_review.semantic-review コマンド — セマンティックレビュー" name="--min-severity medium で low の finding が非表示になる" status="error" time="0.449599"><error type="NoneType" message="None">
+<![CDATA[
+Failing step: Then 終了コードが0である ... undefined in 0.000s
+Location: specification/features/semantic_review.feature:49
+None]]>
+</error><system-out>
+<![CDATA[
+@scenario.begin
+  Scenario: --min-severity medium で low の finding が非表示になる
+    Given claudeコマンドが利用可能である ... passed in 0.000s
+    When `spec-weaver semantic-review --item SPEC-003 --min-severity medium` を実行する ... passed in 0.449s
+    Then 終了コードが0である ... undefined in 0.000s
+    And severity "low" のfindingは出力に含まれない ... skipped in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="semantic_review.semantic-review コマンド — セマンティックレビュー" name="claudeコマンドが見つからない場合にエラーになる" status="error" time="0.442351"><error type="NoneType" message="None">
+<![CDATA[
+Failing step: Then 終了コードが1である ... undefined in 0.000s
+Location: specification/features/semantic_review.feature:55
+None]]>
+</error><system-out>
+<![CDATA[
+@scenario.begin
+  Scenario: claudeコマンドが見つからない場合にエラーになる
+    Given claudeコマンドが利用不可能である ... passed in 0.000s
+    When `spec-weaver semantic-review --item SPEC-003` を実行する ... passed in 0.442s
+    Then 終了コードが1である ... undefined in 0.000s
+    And "claude" に関するエラーメッセージが表示される ... skipped in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="semantic_review.semantic-review コマンド — セマンティックレビュー" name="全体並列レビューが実行できる" status="error" time="0.446837"><error type="NoneType" message="None">
+<![CDATA[
+Failing step: Then 終了コードが0である ... undefined in 0.000s
+Location: specification/features/semantic_review.feature:61
+None]]>
+</error><system-out>
+<![CDATA[
+@scenario.begin
+  Scenario: 全体並列レビューが実行できる
+    Given claudeコマンドが利用可能である ... passed in 0.000s
+    When `spec-weaver semantic-review --all --output json` を実行する ... passed in 0.447s
+    Then 終了コードが0である ... undefined in 0.000s
+    And 出力が有効なJSONである ... skipped in 0.000s
+    And JSONが各アイテムのレビュー結果の配列またはディクショナリである ... skipped in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase></testsuite>

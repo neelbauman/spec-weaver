@@ -1,0 +1,158 @@
+<testsuite name="timestamp.タイムスタンプ管理" tests="12" errors="0" failures="0" skipped="0" time="4.862749" timestamp="2026-03-04T00:35:49.505802" hostname="penguin"><testcase classname="timestamp.タイムスタンプ管理" name="Git履歴から updated_at を自動取得する" status="passed" time="0.045823"><system-out>
+<![CDATA[
+@scenario.begin
+  Scenario: Git履歴から updated_at を自動取得する
+    Given DoorstopアイテムのYAMLファイルがGitにコミットされている ... passed in 0.041s
+    When タイムスタンプ属性を取得する ... passed in 0.004s
+    Then updated_at として最終コミット日が YYYY-MM-DD 形式で返されること ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="timestamp.タイムスタンプ管理" name="Git履歴から created_at を自動取得する" status="passed" time="0.044942"><system-out>
+<![CDATA[
+@scenario.begin
+  Scenario: Git履歴から created_at を自動取得する
+    Given DoorstopアイテムのYAMLファイルがGitにコミットされている ... passed in 0.040s
+    When タイムスタンプ属性を取得する ... passed in 0.005s
+    Then created_at として初回コミット日が YYYY-MM-DD 形式で返されること ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="timestamp.タイムスタンプ管理" name="Git情報がない場合はYAML属性にフォールバック" status="passed" time="0.01719"><system-out>
+<![CDATA[
+@scenario.begin
+  Scenario: Git情報がない場合はYAML属性にフォールバック
+    Given DoorstopアイテムのYAMLファイルがGit管理外である ... passed in 0.008s
+    And YAMLに created_at: '2026-01-15' が設定されている ... passed in 0.002s
+    When タイムスタンプ属性を取得する ... passed in 0.004s
+    Then created_at として "2026-01-15" が返されること ... passed in 0.004s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="timestamp.タイムスタンプ管理" name="Git情報もYAML属性もない場合のフォールバック" status="passed" time="0.019163"><system-out>
+<![CDATA[
+@scenario.begin
+  Scenario: Git情報もYAML属性もない場合のフォールバック
+    Given DoorstopアイテムのYAMLファイルがGit管理外である ... passed in 0.007s
+    And YAMLに created_at も updated_at も設定されていない ... passed in 0.001s
+    When タイムスタンプ属性を取得する ... passed in 0.004s
+    Then 両方とも "-" が返されること ... passed in 0.007s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="timestamp.タイムスタンプ管理" name="一覧テーブルにタイムスタンプ列が表示される" status="passed" time="0.48145"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @VIS-007
+  Scenario: 一覧テーブルにタイムスタンプ列が表示される
+    Given DoorstopアイテムがGitにコミットされている ... passed in 0.039s
+    When build コマンドを実行する ... passed in 0.442s
+    Then 一覧テーブルに「作成日」列が含まれること ... passed in 0.000s
+    And 一覧テーブルに「更新日」列が含まれること ... passed in 0.000s
+    And Git履歴から取得した日付が正しく表示されること ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="timestamp.タイムスタンプ管理" name="詳細ページにタイムスタンプが表示される" status="passed" time="0.495344"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @VIS-007
+  Scenario: 詳細ページにタイムスタンプが表示される
+    Given DoorstopアイテムがGitにコミットされている ... passed in 0.040s
+    When build コマンドを実行する ... passed in 0.454s
+    Then 詳細ページに作成日と更新日が表示されること ... passed in 0.000s
+    And 実装状況バッジの直後に配置されていること ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="timestamp.タイムスタンプ管理" name="Git情報がない場合の一覧テーブル表示" status="passed" time="0.462904"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @VIS-007
+  Scenario: Git情報がない場合の一覧テーブル表示
+    Given DoorstopアイテムがGit管理外でYAMLにもタイムスタンプがない ... passed in 0.011s
+    When build コマンドを実行する ... passed in 0.452s
+    Then 一覧テーブルの作成日・更新日列に "-" が表示されること ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="timestamp.タイムスタンプ管理" name="stale アイテムの検出（Git履歴ベース）" status="passed" time="0.671792"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @QA-002
+  Scenario: stale アイテムの検出（Git履歴ベース）
+    Given Doorstopアイテムの最終コミット日が 91日前である ... passed in 0.037s
+    And そのアイテムの status が "implemented" である ... passed in 0.002s
+    When audit コマンドを --stale-days 90 で実行する ... passed in 0.632s
+    Then そのアイテムが stale として報告されること ... passed in 0.000s
+    And 経過日数が表示されること ... passed in 0.000s
+    And タイムスタンプ監査の終了コードが 1 であること ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="timestamp.タイムスタンプ管理" name="閾値内のアイテムは stale と判定されない" status="passed" time="0.655797"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @QA-002
+  Scenario: 閾値内のアイテムは stale と判定されない
+    Given Doorstopアイテムの最終コミット日が 30日前である ... passed in 0.035s
+    When audit コマンドを --stale-days 90 で実行する ... passed in 0.621s
+    Then そのアイテムは stale として報告されないこと ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="timestamp.タイムスタンプ管理" name="Git情報もupdated_atもないアイテムは stale 判定の対象外" status="passed" time="0.627315"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @QA-002
+  Scenario: Git情報もupdated_atもないアイテムは stale 判定の対象外
+    Given DoorstopアイテムがGit管理外でupdated_atも設定されていない ... passed in 0.009s
+    When audit コマンドを --stale-days 90 で実行する ... passed in 0.618s
+    Then そのアイテムは stale として報告されないこと ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="timestamp.タイムスタンプ管理" name="deprecated アイテムは stale 判定の対象外" status="passed" time="0.66316"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @QA-002
+  Scenario: deprecated アイテムは stale 判定の対象外
+    Given 最終コミット日が 180日前である ... passed in 0.041s
+    And Doorstopアイテムの status が "deprecated" である ... passed in 0.002s
+    When audit コマンドを --stale-days 90 で実行する ... passed in 0.620s
+    Then そのアイテムは stale として報告されないこと ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="timestamp.タイムスタンプ管理" name="--stale-days 0 で鮮度チェックを無効化" status="passed" time="0.677871"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @QA-002
+  Scenario: --stale-days 0 で鮮度チェックを無効化
+    Given Doorstopアイテムの最終コミット日が 365日前である ... passed in 0.037s
+    When audit コマンドを --stale-days 0 で実行する ... passed in 0.641s
+    Then stale に関する報告は表示されないこと ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase></testsuite>

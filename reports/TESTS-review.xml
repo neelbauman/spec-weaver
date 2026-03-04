@@ -1,0 +1,54 @@
+<testsuite name="review.review コマンド — .feature ファイルへのフィンガープリント書き込み" tests="4" errors="0" failures="1" skipped="0" time="0.429221" timestamp="2026-03-04T00:35:23.188211" hostname="penguin"><testcase classname="review.review コマンド — .feature ファイルへのフィンガープリント書き込み" name=".feature ファイルを指定してフィンガープリントが書き込まれる" status="passed" time="0.203453"><system-out>
+<![CDATA[
+@scenario.begin
+  Scenario: .feature ファイルを指定してフィンガープリントが書き込まれる
+    Given ".feature" ファイルが存在する ... passed in 0.025s
+    When `spec-weaver review specification/features/audit.feature` を実行する ... passed in 0.178s
+    Then review 終了コードが0である ... passed in 0.000s
+    And ファイル先頭に "# spec-weaver-fingerprint:" コメントが追加される ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="review.review コマンド — .feature ファイルへのフィンガープリント書き込み" name="既存のフィンガープリントコメントが新しいハッシュで上書きされる" status="passed" time="0.189577"><system-out>
+<![CDATA[
+@scenario.begin
+  Scenario: 既存のフィンガープリントコメントが新しいハッシュで上書きされる
+    Given ".feature" ファイルの先頭に古いフィンガープリントコメントが存在する ... passed in 0.025s
+    When `spec-weaver review specification/features/audit.feature` を実行する ... passed in 0.165s
+    Then review 終了コードが0である ... passed in 0.000s
+    And ファイル先頭のコメントが新しいハッシュ値で上書きされる ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="review.review コマンド — .feature ファイルへのフィンガープリント書き込み" name="存在しないファイルを指定するとエラーになる" status="passed" time="0.005285"><system-out>
+<![CDATA[
+@scenario.begin
+  Scenario: 存在しないファイルを指定するとエラーになる
+    When `spec-weaver review nonexistent.feature` を実行する ... passed in 0.005s
+    Then review 終了コードが1である ... passed in 0.000s
+    And review エラーメッセージが表示される ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="review.review コマンド — .feature ファイルへのフィンガープリント書き込み" name="指定ファイルが .feature でない場合にエラーになる" status="failed" time="0.030906"><failure type="AssertionError" message="Expected error message not found in output: [1;31m❌ 未対応のファイル形式です: [0m[1;31m/tmp/sw_test_twgpa7y9/[0m[1;31mnot_feature.txt[0m">
+<![CDATA[
+Failing step: And review エラーメッセージが表示される ... failed in 0.000s
+Location: specification/features/review.feature:30
+ASSERT FAILED: Expected error message not found in output: U+0027[1;31m❌ 未対応のファイル形式です: U+0027[1;31m/tmp/sw_test_twgpa7y9/U+0027[1;31mnot_feature.txt
+]]>
+</failure><system-out>
+<![CDATA[
+@scenario.begin
+  Scenario: 指定ファイルが .feature でない場合にエラーになる
+    Given ".txt" ファイルが存在する ... passed in 0.023s
+    When `spec-weaver review not_feature.txt` を実行する ... passed in 0.008s
+    Then review 終了コードが1である ... passed in 0.000s
+    And review エラーメッセージが表示される ... failed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase></testsuite>

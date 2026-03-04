@@ -1,0 +1,194 @@
+<testsuite name="build.build コマンド" tests="15" errors="0" failures="0" skipped="0" time="7.532547" timestamp="2026-03-04T00:35:14.650510" hostname="penguin"><testcase classname="build.build コマンド" name="MkDocs設定ファイルの生成" status="passed" time="0.476922"><system-out>
+<![CDATA[
+@scenario.begin
+  Scenario: MkDocs設定ファイルの生成
+    Given DoorstopプロジェクトとGherkin featureファイルが存在する ... passed in 0.022s
+    When build コマンドを実行する ... passed in 0.454s
+    Then 出力ディレクトリに mkdocs.yml が生成されること ... passed in 0.000s
+    And Material テーマが設定されていること ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="build.build コマンド" name="要件一覧ページの生成" status="passed" time="0.499599"><system-out>
+<![CDATA[
+@scenario.begin
+  Scenario: 要件一覧ページの生成
+    Given DoorstopプロジェクトにREQアイテムが存在する ... passed in 0.036s
+    When build コマンドを実行する ... passed in 0.462s
+    Then docs/req.md が生成されること ... passed in 0.001s
+    And 各REQアイテムがテーブル行として含まれること ... passed in 0.000s
+    And 関連仕様への相互リンクが含まれること ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="build.build コマンド" name="仕様一覧ページの生成" status="passed" time="0.504183"><system-out>
+<![CDATA[
+@scenario.begin
+  Scenario: 仕様一覧ページの生成
+    Given DoorstopプロジェクトにSPECアイテムが存在する ... passed in 0.034s
+    When build コマンドを実行する ... passed in 0.469s
+    Then docs/spec.md が生成されること ... passed in 0.000s
+    And 各SPECアイテムがテーブル行として含まれること ... passed in 0.000s
+    And 上位要件への相互リンクが含まれること ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="build.build コマンド" name="個別アイテム詳細ページの生成" status="passed" time="0.513877"><system-out>
+<![CDATA[
+@scenario.begin
+  Scenario: 個別アイテム詳細ページの生成
+    Given DoorstopプロジェクトにアイテムとGherkinテストが存在する ... passed in 0.040s
+    When build コマンドを実行する ... passed in 0.473s
+    Then docs/items/ 配下に各アイテムのMarkdownファイルが生成されること ... passed in 0.001s
+    And アイテムの本文が含まれること ... passed in 0.000s
+    And 上位・下位リンクが含まれること ... passed in 0.000s
+    And 対応するテストシナリオのファイルパスと行番号が含まれること ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="build.build コマンド" name="一覧テーブルのフィルタリング機能" status="passed" time="0.479216"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @VIS-005
+  Scenario: 一覧テーブルのフィルタリング機能
+    Given Doorstopプロジェクトにアイテムが存在する ... passed in 0.023s
+    When build コマンドを実行する ... passed in 0.455s
+    Then 生成された一覧ページのテーブルにフィルタリング用入力欄が表示されること ... passed in 0.000s
+    And ID、タイトル、実装ステータス、レベル等の項目で絞り込みが可能であること ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="build.build コマンド" name="出力ディレクトリの独立性" status="passed" time="0.485227"><system-out>
+<![CDATA[
+@scenario.begin
+  Scenario: 出力ディレクトリの独立性
+    Given プロジェクトに既存のドキュメントが存在する ... passed in 0.026s
+    When build コマンドをデフォルト出力先で実行する ... passed in 0.459s
+    Then ".specification" ディレクトリに出力されること ... passed in 0.000s
+    And 既存のドキュメントファイルは変更されないこと ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="build.build コマンド" name="カスタム出力ディレクトリの指定" status="passed" time="0.494315"><system-out>
+<![CDATA[
+@scenario.begin
+  Scenario: カスタム出力ディレクトリの指定
+    Given DoorstopプロジェクトとGherkin featureファイルが存在する ... passed in 0.025s
+    When build コマンドを --out-dir "./custom_docs" で実行する ... passed in 0.469s
+    Then "./custom_docs" ディレクトリに出力されること ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="build.build コマンド" name="feature MDページへのバックリンク生成" status="passed" time="0.483537"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @VIS-008
+  Scenario: feature MDページへのバックリンク生成
+    Given "@SPEC-003" タグを持つ "audit.feature" が存在する ... passed in 0.024s
+    When build コマンドを実行する ... passed in 0.458s
+    Then "docs/features/audit.md" の冒頭に "関連アイテム" セクションが含まれること ... passed in 0.000s
+    And "[SPEC-003](../items/SPEC-003.md)" へのリンクが含まれること ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="build.build コマンド" name="複数アイテムを参照するfeatureのバックリンク" status="passed" time="0.518237"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @VIS-008
+  Scenario: 複数アイテムを参照するfeatureのバックリンク
+    Given "@VIS-001" と "@VIS-005" の両タグを持つfeatureが存在する ... passed in 0.036s
+    When build コマンドを実行する ... passed in 0.481s
+    Then 生成されたfeature MDの "関連アイテム" に "VIS-001" と "VIS-005" の両方のリンクが含まれること ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="build.build コマンド" name="タグのないfeatureにはバックリンクを表示しない" status="passed" time="0.502298"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @VIS-008
+  Scenario: タグのないfeatureにはバックリンクを表示しない
+    Given どのDoorstopアイテムからも参照されていないfeatureが存在する ... passed in 0.026s
+    When build コマンドを実行する ... passed in 0.476s
+    Then 生成されたfeature MDに "関連アイテム" 行が含まれないこと ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="build.build コマンド" name="Suspect Link 警告の一覧テーブル表示" status="passed" time="0.518171"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @QA-001
+  Scenario: Suspect Link 警告の一覧テーブル表示
+    Given アイテムの上位リンク先が変更されている（cleared=false） ... passed in 0.045s
+    When build コマンドを実行する ... passed in 0.473s
+    Then 一覧テーブルの行に "{: .suspect-row }" が適用されていること ... passed in 0.000s
+    And 詳細ページに Suspect Link バナーが表示されること ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="build.build コマンド" name="Unreviewed Changes 警告の一覧テーブル表示" status="passed" time="0.490205"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @QA-001
+  Scenario: Unreviewed Changes 警告の一覧テーブル表示
+    Given アイテム自体に未レビューの変更がある（reviewed=false） ... passed in 0.025s
+    When build コマンドを実行する ... passed in 0.464s
+    Then 一覧テーブルの行に "{: .unreviewed-row }" が適用されていること ... passed in 0.000s
+    And 詳細ページに Unreviewed Changes バナーが表示されること ... passed in 0.001s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="build.build コマンド" name="複合警告の表示" status="passed" time="0.505666"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @QA-001
+  Scenario: 複合警告の表示
+    Given アイテムに Suspect Link と Unreviewed Changes の両方がある ... passed in 0.043s
+    When build コマンドを実行する ... passed in 0.462s
+    Then 一覧テーブルの行に "{: .suspect-row }" が適用されていること ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="build.build コマンド" name="一覧テーブルのGherkinカバレッジ列はシナリオ数を表示すること" status="passed" time="0.54215"><system-out>
+<![CDATA[
+@scenario.begin
+  Scenario: 一覧テーブルのGherkinカバレッジ列はシナリオ数を表示すること
+    Given 2つのシナリオを持つfeatureファイルにタグで紐づいたSPECアイテムが存在する ... passed in 0.041s
+    When build コマンドを実行する ... passed in 0.501s
+    Then 一覧テーブルの Gherkinカバレッジ列に "🟢 2" が含まれること ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="build.build コマンド" name="一覧テーブルにレビューステータス列が表示されること" status="passed" time="0.518946"><system-out>
+<![CDATA[
+@scenario.begin
+  Scenario: 一覧テーブルにレビューステータス列が表示されること
+    Given DoorstopプロジェクトにSPECアイテムが存在する ... passed in 0.038s
+    When build コマンドを実行する ... passed in 0.480s
+    Then 一覧テーブルのヘッダーに "レビュー" 列が含まれること ... passed in 0.001s
+    And 各行にレビューステータスが表示されること ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase></testsuite>

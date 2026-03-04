@@ -34,16 +34,6 @@ def given_efa9578a(context, param0):
     context.feature_dir = feature_dir
 
 
-@when('`spec-weaver clear SPEC-003 --feature-dir ./specification/features` を実行する')  # type: ignore
-def when_81d90ca5(context):
-    """`spec-weaver clear SPEC-003 --feature-dir ./specification/features` を実行する
-
-    Scenarios:
-      - アイテムIDを指定して gherkin_fingerprints を更新できる
-    """
-    raise NotImplementedError('STEP: `spec-weaver clear SPEC-003 --feature-dir ./specification/features` を実行する')
-
-
 @given('"{param0}" ファイルに複数の仕様IDタグが含まれる')  # type: ignore
 def given_dfa4c4a3(context, param0):
     create_doorstop_project_yaml(
@@ -66,17 +56,6 @@ def given_dfa4c4a3(context, param0):
     context.feature_dir = feature_dir
 
 
-@when('`spec-weaver clear specification/features/audit.feature --feature-dir ./specification/features` を実行する')  # type: ignore
-def when_f5108e70(context):
-    """`spec-weaver clear specification/features/audit.feature --feature-dir ./specification/features` を実行する
-
-    Scenarios:
-      - .feature ファイルを指定して複数アイテムの gherkin_fingerprints を一括更新できる
-      - .feature ファイルを指定してファイル自身の suspect 状態も解除できる
-    """
-    raise NotImplementedError('STEP: `spec-weaver clear specification/features/audit.feature --feature-dir ./specification/features` を実行する')
-
-
 @when('`spec-weaver clear {target}` を実行する')  # type: ignore
 def when_clear_generic(context, target):
     args = shlex.split(f"clear {target}")
@@ -94,15 +73,8 @@ def when_clear_generic(context, target):
     context.result = run_spec_weaver(args, cwd=context.temp_dir)
 
 
-@then('終了コードが0である')  # type: ignore
-def then_0f800e56(context):
-    """終了コードが0である
-
-    Scenarios:
-      - アイテムIDを指定して gherkin_fingerprints を更新できる
-      - .feature ファイルを指定して複数アイテムの gherkin_fingerprints を一括更新できる
-      - .feature ファイルを指定してファイル自身の suspect 状態も解除できる
-    """
+@then('clear 終了コードが0である')  # type: ignore
+def then_exit_code_0_clear(context):
     exit_code = getattr(context, "exit_code", None)
     if exit_code is None and hasattr(context, "result") and context.result is not None:
         exit_code = context.result.returncode
@@ -114,14 +86,8 @@ def then_0f800e56(context):
     assert exit_code == 0, f"Expected exit code 0, got {exit_code}. Output:\n{output}"
 
 
-@then('終了コードが1である')  # type: ignore
-def then_9b731a71(context):
-    """終了コードが1である
-
-    Scenarios:
-      - 存在しないアイテムIDを指定するとエラーになる
-      - 紐づくGherkinシナリオが存在しないアイテムを指定するとエラーになる
-    """
+@then('clear 終了コードが1である')  # type: ignore
+def then_exit_code_1_clear(context):
     exit_code = getattr(context, "exit_code", None)
     if exit_code is None and hasattr(context, "result") and context.result is not None:
         exit_code = context.result.returncode
@@ -192,16 +158,6 @@ def then_6caa1cf0(context, param0):
     assert param0 in result.stdout
 
 
-@when('`spec-weaver clear SPEC-999 --feature-dir ./specification/features` を実行する')  # type: ignore
-def when_9a4cc39b(context):
-    """`spec-weaver clear SPEC-999 --feature-dir ./specification/features` を実行する
-
-    Scenarios:
-      - 存在しないアイテムIDを指定するとエラーになる
-    """
-    raise NotImplementedError('STEP: `spec-weaver clear SPEC-999 --feature-dir ./specification/features` を実行する')
-
-
 @then('エラーメッセージが表示される')  # type: ignore
 def then_d53287cf(context):
     output = getattr(context, "output", "")
@@ -215,16 +171,6 @@ def given_b669b903(context, param0):
     feature_dir = context.temp_dir / "specification" / "features"
     feature_dir.mkdir(parents=True, exist_ok=True)
     context.feature_dir = feature_dir
-
-
-@when('`spec-weaver clear SPEC-004 --feature-dir ./specification/features` を実行する')  # type: ignore
-def when_254d955f(context):
-    """`spec-weaver clear SPEC-004 --feature-dir ./specification/features` を実行する
-
-    Scenarios:
-      - 紐づくGherkinシナリオが存在しないアイテムを指定するとエラーになる
-    """
-    raise NotImplementedError('STEP: `spec-weaver clear SPEC-004 --feature-dir ./specification/features` を実行する')
 
 
 @then('警告メッセージが表示される')  # type: ignore

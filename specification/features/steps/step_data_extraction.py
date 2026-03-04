@@ -119,6 +119,16 @@ def then_f3fad2a6(context):
     assert "SPEC-002" not in context.spec_ids
 
 
+@given('Doorstopプロジェクトに複数ドキュメントが混在する')  # type: ignore
+def given_b87d27cd(context):
+    """Doorstopプロジェクトに複数ドキュメントが混在する
+
+    Scenarios:
+      - プレフィックスによるフィルタリング
+    """
+    raise NotImplementedError('STEP: Doorstopプロジェクトに複数ドキュメントが混在する')
+
+
 @given('DoorstopプロジェクトにREQアイテムとSPECアイテムが混在する')  # type: ignore
 def given_7f8e9c65(context):
     """DoorstopプロジェクトにREQアイテムとSPECアイテムが混在する

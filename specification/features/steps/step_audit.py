@@ -24,6 +24,17 @@ def when_20ad7547(context):
     context.exit_code = res.returncode
     context.output = res.stdout + '\n' + res.stderr
 
+
+@then('終了コード 0 が返ること')  # type: ignore
+def then_4f25c571(context):
+    """終了コード 0 が返ること
+
+    Scenarios:
+      - 完全一致で、監査が成功する
+    """
+    raise NotImplementedError('STEP: 終了コード 0 が返ること')
+
+
 @then('成功メッセージが表示されること')  # type: ignore
 def then_f7642361(context):
     assert "完璧です" in context.output or "Success" in context.output
@@ -231,3 +242,223 @@ def given_f066bd3a(context, param0):
 @then('Unreviewed テーブルに対応する feature ファイル名が表示されること')  # type: ignore
 def then_c1e4063b(context):
     assert "test.feature" in context.output
+@given('すべてのtestable仕様に対応するGherkinテストが存在する')  # type: ignore
+def given_a7b8516a(context):
+    """すべてのtestable仕様に対応するGherkinテストが存在する
+
+    Scenarios:
+      - 完全一致で、監査が成功する
+    """
+    raise NotImplementedError('STEP: すべてのtestable仕様に対応するGherkinテストが存在する')
+
+
+@when('audit コマンドを実行する')  # type: ignore
+def when_20ad7547(context):
+    """audit コマンドを実行する
+
+    Scenarios:
+      - 完全一致で、監査が成功する
+      - テスト漏れの検出
+      - orphanタグの検出
+      - テスト漏れとorphanタグの同時検出
+      - testable: false の仕様はスキップされる
+      - Suspect Link の検出
+      - Unreviewed Changes の検出
+      - feature ファイルが Unreviewed として検出される
+    """
+    raise NotImplementedError('STEP: audit コマンドを実行する')
+
+
+@then('終了コード 0 が返ること')  # type: ignore
+def then_4f25c571(context):
+    """終了コード 0 が返ること
+
+    Scenarios:
+      - 完全一致で、監査が成功する
+    """
+    raise NotImplementedError('STEP: 終了コード 0 が返ること')
+
+
+@then('成功メッセージが表示されること')  # type: ignore
+def then_f7642361(context):
+    """成功メッセージが表示されること
+
+    Scenarios:
+      - 完全一致で、監査が成功する
+    """
+    raise NotImplementedError('STEP: 成功メッセージが表示されること')
+
+
+@given('testable な仕様 "{param0}" に対応するGherkinテストが存在しない')  # type: ignore
+def given_03339ad7(context, param0):
+    """testable な仕様 "CORE-001" に対応するGherkinテストが存在しない
+
+    Scenarios:
+      - テスト漏れの検出
+    """
+    raise NotImplementedError('STEP: testable な仕様 "{param0}" に対応するGherkinテストが存在しない')
+
+
+@then('終了コード 1 が返ること')  # type: ignore
+def then_4dccc2fd(context):
+    """終了コード 1 が返ること
+
+    Scenarios:
+      - テスト漏れの検出
+      - orphanタグの検出
+      - テスト漏れとorphanタグの同時検出
+      - Suspect Link の検出
+      - Unreviewed Changes の検出
+      - feature ファイルが Unreviewed として検出される
+    """
+    raise NotImplementedError('STEP: 終了コード 1 が返ること')
+
+
+@then('テストが実装されていない仕様として "{param0}" が報告されること')  # type: ignore
+def then_6664aa42(context, param0):
+    """テストが実装されていない仕様として "CORE-001" が報告されること
+
+    Scenarios:
+      - テスト漏れの検出
+    """
+    raise NotImplementedError('STEP: テストが実装されていない仕様として "{param0}" が報告されること')
+
+
+@given('Gherkinに仕様書に存在しない "{param0}" タグが含まれている')  # type: ignore
+def given_3aa00113(context, param0):
+    """Gherkinに仕様書に存在しない "@SPEC-999" タグが含まれている
+
+    Scenarios:
+      - orphanタグの検出
+    """
+    raise NotImplementedError('STEP: Gherkinに仕様書に存在しない "{param0}" タグが含まれている')
+
+
+@then('orphanタグとして "{param0}" が報告されること')  # type: ignore
+def then_7be6aa31(context, param0):
+    """orphanタグとして "@SPEC-999" が報告されること
+
+    Scenarios:
+      - orphanタグの検出
+    """
+    raise NotImplementedError('STEP: orphanタグとして "{param0}" が報告されること')
+
+
+@given('仕様 "{param0}" のテストが未実装で "{param1}" がorphanタグである')  # type: ignore
+def given_f74eb6d0(context, param0, param1):
+    """仕様 "CORE-001" のテストが未実装で "@SPEC-999" がorphanタグである
+
+    Scenarios:
+      - テスト漏れとorphanタグの同時検出
+    """
+    raise NotImplementedError('STEP: 仕様 "{param0}" のテストが未実装で "{param1}" がorphanタグである')
+
+
+@then('テスト漏れとorphanタグの両方が報告されること')  # type: ignore
+def then_755ec6da(context):
+    """テスト漏れとorphanタグの両方が報告されること
+
+    Scenarios:
+      - テスト漏れとorphanタグの同時検出
+    """
+    raise NotImplementedError('STEP: テスト漏れとorphanタグの両方が報告されること')
+
+
+@given('仕様 "{param0}" が testable: false に設定されている')  # type: ignore
+def given_624f5f06(context, param0):
+    """仕様 "SPEC-001" が testable: false に設定されている
+
+    Scenarios:
+      - testable: false の仕様はスキップされる
+    """
+    raise NotImplementedError('STEP: 仕様 "{param0}" が testable: false に設定されている')
+
+
+@given('"{param0}" に対応するGherkinテストが存在しない')  # type: ignore
+def given_ea690d53(context, param0):
+    """"SPEC-001" に対応するGherkinテストが存在しない
+
+    Scenarios:
+      - testable: false の仕様はスキップされる
+    """
+    raise NotImplementedError('STEP: "{param0}" に対応するGherkinテストが存在しない')
+
+
+@then('"{param0}" はテスト漏れとして報告されないこと')  # type: ignore
+def then_55c71a2c(context, param0):
+    """"SPEC-001" はテスト漏れとして報告されないこと
+
+    Scenarios:
+      - testable: false の仕様はスキップされる
+    """
+    raise NotImplementedError('STEP: "{param0}" はテスト漏れとして報告されないこと')
+
+
+@given('仕様 "{param0}" の上位アイテムが変更されている（cleared=false）')  # type: ignore
+def given_db49ffab(context, param0):
+    """仕様 "VIS-005" の上位アイテムが変更されている（cleared=false）
+
+    Scenarios:
+      - Suspect Link の検出
+    """
+    raise NotImplementedError('STEP: 仕様 "{param0}" の上位アイテムが変更されている（cleared=false）')
+
+
+@then('Suspect Link テーブルに "{param0}" が報告されること')  # type: ignore
+def then_0149339a(context, param0):
+    """Suspect Link テーブルに "VIS-005" が報告されること
+
+    Scenarios:
+      - Suspect Link の検出
+    """
+    raise NotImplementedError('STEP: Suspect Link テーブルに "{param0}" が報告されること')
+
+
+@then('変更された上位アイテムのIDが表示されること')  # type: ignore
+def then_407500a2(context):
+    """変更された上位アイテムのIDが表示されること
+
+    Scenarios:
+      - Suspect Link の検出
+    """
+    raise NotImplementedError('STEP: 変更された上位アイテムのIDが表示されること')
+
+
+@given('仕様 "{param0}" 自体に未レビューの変更がある（reviewed=false）')  # type: ignore
+def given_8ceeca7b(context, param0):
+    """仕様 "VIS-005" 自体に未レビューの変更がある（reviewed=false）
+
+    Scenarios:
+      - Unreviewed Changes の検出
+    """
+    raise NotImplementedError('STEP: 仕様 "{param0}" 自体に未レビューの変更がある（reviewed=false）')
+
+
+@then('Unreviewed Changes テーブルに "{param0}" が報告されること')  # type: ignore
+def then_56101a52(context, param0):
+    """Unreviewed Changes テーブルに "VIS-005" が報告されること
+
+    Scenarios:
+      - Unreviewed Changes の検出
+    """
+    raise NotImplementedError('STEP: Unreviewed Changes テーブルに "{param0}" が報告されること')
+
+
+@given('"{param0}" ファイルのフィンガープリントコメントが現在の内容と一致しない')  # type: ignore
+def given_f066bd3a(context, param0):
+    """".feature" ファイルのフィンガープリントコメントが現在の内容と一致しない
+
+    Scenarios:
+      - feature ファイルが Unreviewed として検出される
+    """
+    raise NotImplementedError('STEP: "{param0}" ファイルのフィンガープリントコメントが現在の内容と一致しない')
+
+
+@then('Unreviewed テーブルに対応する feature ファイル名が表示されること')  # type: ignore
+def then_c1e4063b(context):
+    """Unreviewed テーブルに対応する feature ファイル名が表示されること
+
+    Scenarios:
+      - feature ファイルが Unreviewed として検出される
+    """
+    raise NotImplementedError('STEP: Unreviewed テーブルに対応する feature ファイル名が表示されること')

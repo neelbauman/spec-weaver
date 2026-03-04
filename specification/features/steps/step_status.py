@@ -232,6 +232,36 @@ def given_0f39b2ed(context):
     )
 
 
+# [Duplicate Skip] This step is already defined elsewhere
+# @when('build コマンドを実行する')  # type: ignore
+# def when_40f323b6(context):
+#     """build コマンドを実行する
+# 
+#     Scenarios:
+#       - buildコマンドで生成されるドキュメントに実装状況が反映される
+#     """
+#     raise NotImplementedError('STEP: build コマンドを実行する')
+
+# [Duplicate Skip] This step is already defined elsewhere
+# @when('build コマンドを実行する')  # type: ignore
+# def when_40f323b6(context):
+#     """build コマンドを実行する
+# 
+#     Scenarios:
+#       - buildコマンドで生成されるドキュメントに実装状況が反映される
+#     """
+#     raise NotImplementedError('STEP: build コマンドを実行する')
+
+# [Duplicate Skip] This step is already defined elsewhere
+# @when('build コマンドを実行する')  # type: ignore
+# def when_40f323b6(context):
+#     """build コマンドを実行する
+# 
+#     Scenarios:
+#       - buildコマンドで生成されるドキュメントに実装状況が反映される
+#     """
+#     raise NotImplementedError('STEP: build コマンドを実行する')
+
 @then('一覧ページの実装状況列にバッジが表示されること')  # type: ignore
 def then_f35a3316(context):
     """一覧ページの実装状況列にバッジが表示されること

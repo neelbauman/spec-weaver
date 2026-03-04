@@ -9,22 +9,22 @@ Feature: review コマンド — .feature ファイルへのフィンガープ�
   Scenario: .feature ファイルを指定してフィンガープリントが書き込まれる
     Given ".feature" ファイルが存在する
     When `spec-weaver review specification/features/audit.feature` を実行する
-    Then 終了コードが0である
+    Then review 終了コードが0である
     And ファイル先頭に "# spec-weaver-fingerprint:" コメントが追加される
 
   Scenario: 既存のフィンガープリントコメントが新しいハッシュで上書きされる
     Given ".feature" ファイルの先頭に古いフィンガープリントコメントが存在する
     When `spec-weaver review specification/features/audit.feature` を実行する
-    Then 終了コードが0である
+    Then review 終了コードが0である
     And ファイル先頭のコメントが新しいハッシュ値で上書きされる
 
   Scenario: 存在しないファイルを指定するとエラーになる
     When `spec-weaver review nonexistent.feature` を実行する
-    Then 終了コードが1である
-    And エラーメッセージが表示される
+    Then review 終了コードが1である
+    And review エラーメッセージが表示される
 
   Scenario: 指定ファイルが .feature でない場合にエラーになる
     Given ".txt" ファイルが存在する
     When `spec-weaver review not_feature.txt` を実行する
-    Then 終了コードが1である
-    And エラーメッセージが表示される
+    Then review 終了コードが1である
+    And review エラーメッセージが表示される

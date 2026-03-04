@@ -80,6 +80,11 @@ def when_9feea5cb(context):
     _invoke_review(context, ["review", str(target), "-r", str(context.temp_dir), "-f", str(context.temp_dir)])
 
 
+@then('review 終了コードが0である')  # type: ignore
+def then_exit_code_0_review(context):
+    assert context.exit_code == 0, f"Expected exit code 0, got {context.exit_code}. Output:\n{context.output}"
+
+
 @when('`spec-weaver review nonexistent.feature` を実行する')  # type: ignore
 def when_a5bfc0eb(context):
     """`spec-weaver review nonexistent.feature` を実行する
@@ -94,6 +99,16 @@ def when_a5bfc0eb(context):
 # Then — 検証
 # ======================================================================
 
+@then('review 終了コードが1である')  # type: ignore
+def then_exit_code_1_review(context):
+    assert context.exit_code == 1, f"Expected exit code 1, got {context.exit_code}. Output:\n{context.output}"
+
+
+@then('review エラーメッセージが表示される')  # type: ignore
+def then_error_msg_review(context):
+    assert any(msg in context.output.lower() for msg in ["error", "not found", "見つかりません", "エラー"]), f"Expected error message not found in output: {context.output}"
+
+
 @when('`spec-weaver review not_feature.txt` を実行する')  # type: ignore
 def when_da1afe24(context):
     """`spec-weaver review not_feature.txt` を実行する
@@ -104,6 +119,8 @@ def when_da1afe24(context):
     target = context.temp_dir / "not_feature.txt"
     target.write_text("Hello", encoding="utf-8")
     _invoke_review(context, ["review", str(target), "-r", str(context.temp_dir), "-f", str(context.temp_dir)])
+
+
 @then('ファイル先頭に "{param0}" コメントが追加される')  # type: ignore
 def then_22d76672(context, param0):
     """ファイル先頭に "# spec-weaver-fingerprint:" コメントが追加される

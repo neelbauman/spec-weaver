@@ -63,7 +63,7 @@ Feature: タイムスタンプ管理
     When  audit コマンドを --stale-days 90 で実行する
     Then  そのアイテムが stale として報告されること
     And   経過日数が表示されること
-    And   終了コードが 0 であること
+    And   タイムスタンプ監査の終了コードが 1 であること
 
   @QA-002
   Scenario: 閾値内のアイテムは stale と判定されない
@@ -79,8 +79,8 @@ Feature: タイムスタンプ管理
 
   @QA-002
   Scenario: deprecated アイテムは stale 判定の対象外
-    Given Doorstopアイテムの status が "deprecated" である
-    And   最終コミット日が 180日前である
+    Given 最終コミット日が 180日前である
+    And   Doorstopアイテムの status が "deprecated" である
     When  audit コマンドを --stale-days 90 で実行する
     Then  そのアイテムは stale として報告されないこと
 

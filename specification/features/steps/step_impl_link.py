@@ -4,6 +4,66 @@ from behave import given, when, then
 import json
 from pathlib import Path
 
+# [Duplicate Skip] This step is already defined elsewhere
+# @given('Doorstopツリーが初期化されている')  # type: ignore
+# def given_6df87eb3(context):
+#     """Doorstopツリーが初期化されている
+# 
+#     Scenarios:
+#       - 
+#     """
+#     raise NotImplementedError('STEP: Doorstopツリーが初期化されている')
+
+# [Duplicate Skip] This step is already defined elsewhere
+# @given('以下のSPECアイテムが存在する:')  # type: ignore
+# def given_14c0b615(context):
+#     """以下のSPECアイテムが存在する:
+# 
+#     Scenarios:
+#       - 
+#     """
+#     raise NotImplementedError('STEP: 以下のSPECアイテムが存在する:')
+
+# [Duplicate Skip] This step is already defined elsewhere
+# @given('Doorstopツリーが初期化されている')  # type: ignore
+# def given_6df87eb3(context):
+#     """Doorstopツリーが初期化されている
+# 
+#     Scenarios:
+#       - 
+#     """
+#     raise NotImplementedError('STEP: Doorstopツリーが初期化されている')
+
+# [Duplicate Skip] This step is already defined elsewhere
+# @given('以下のSPECアイテムが存在する:')  # type: ignore
+# def given_14c0b615(context):
+#     """以下のSPECアイテムが存在する:
+# 
+#     Scenarios:
+#       - 
+#     """
+#     raise NotImplementedError('STEP: 以下のSPECアイテムが存在する:')
+
+# [Duplicate Skip] This step is already defined elsewhere
+# @given('Doorstopツリーが初期化されている')  # type: ignore
+# def given_6df87eb3(context):
+#     """Doorstopツリーが初期化されている
+# 
+#     Scenarios:
+#       - 
+#     """
+#     raise NotImplementedError('STEP: Doorstopツリーが初期化されている')
+
+# [Duplicate Skip] This step is already defined elsewhere
+# @given('以下のSPECアイテムが存在する:')  # type: ignore
+# def given_14c0b615(context):
+#     """以下のSPECアイテムが存在する:
+# 
+#     Scenarios:
+#       - 
+#     """
+#     raise NotImplementedError('STEP: 以下のSPECアイテムが存在する:')
+
 @given('TRC-003 の impl_files に ["{param0}"] が設定されている')  # type: ignore
 def given_5b35c4dd(context, param0):
     write_doorstop_yaml(context.temp_dir / "specs", "TRC-003", extra={"impl_files": [param0]})

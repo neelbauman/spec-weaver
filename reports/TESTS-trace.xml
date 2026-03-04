@@ -1,0 +1,299 @@
+<testsuite name="trace.trace コマンド — トレーサビリティ・ツリー表示" tests="10" errors="10" failures="0" skipped="0" time="4.913862" timestamp="2026-03-04T00:35:54.499348" hostname="penguin"><testcase classname="trace.trace コマンド — トレーサビリティ・ツリー表示" name="REQを起点としたトップダウンのツリー表示" status="error" time="0.522218"><error type="NoneType" message="None">
+<![CDATA[
+Failing step: Then 終了コードが0である ... undefined in 0.000s
+Location: specification/features/trace.feature:24
+None]]>
+</error><system-out>
+<![CDATA[
+@scenario.begin
+  Scenario: REQを起点としたトップダウンのツリー表示
+    Given Doorstopツリーが初期化されている ... passed in 0.030s
+    And 以下のREQアイテムが存在する: ... passed in 0.002s
+      | ID      | Header     | Status      | Links   |
+      | REQ-001 | トレーサビリティ保証 | implemented |         |
+      | REQ-002 | 監査による品質担保  | implemented | REQ-001 |
+    And 以下のSPECアイテムが存在する: ... passed in 0.002s
+      | ID       | Header       | Status      | Links   |
+      | SPEC-001 | コア・アーキテクチャ   | implemented | REQ-001 |
+      | SPEC-003 | audit コマンド仕様 | implemented | REQ-002 |
+    And 以下のfeatureファイルが存在する: ... passed in 0.001s
+      | File          | Tags      | Scenarios            |
+      | audit.feature | @SPEC-003 | 完全一致時の監査成功, テスト漏れの検出 |
+    When `spec-weaver trace REQ-001 -f ./specification/features` を実行する ... passed in 0.487s
+    Then 終了コードが0である ... undefined in 0.000s
+    And 出力にツリー構造が含まれる ... skipped in 0.000s
+    And "REQ-001" がルートノードとして表示される ... skipped in 0.000s
+    And "REQ-002" が "REQ-001" の子ノードとして表示される ... skipped in 0.000s
+    And "SPEC-001" が "REQ-001" の子ノードとして表示される ... skipped in 0.000s
+    And "SPEC-003" が "REQ-002" の子ノードとして表示される ... skipped in 0.000s
+    And "audit.feature" が "SPEC-003" の子ノードとして表示される ... skipped in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="trace.trace コマンド — トレーサビリティ・ツリー表示" name="SPECを起点とした双方向のツリー表示" status="error" time="0.484891"><error type="NoneType" message="None">
+<![CDATA[
+Failing step: Then 終了コードが0である ... undefined in 0.000s
+Location: specification/features/trace.feature:34
+None]]>
+</error><system-out>
+<![CDATA[
+@scenario.begin
+  Scenario: SPECを起点とした双方向のツリー表示
+    Given Doorstopツリーが初期化されている ... passed in 0.027s
+    And 以下のREQアイテムが存在する: ... passed in 0.002s
+      | ID      | Header     | Status      | Links   |
+      | REQ-001 | トレーサビリティ保証 | implemented |         |
+      | REQ-002 | 監査による品質担保  | implemented | REQ-001 |
+    And 以下のSPECアイテムが存在する: ... passed in 0.002s
+      | ID       | Header       | Status      | Links   |
+      | SPEC-001 | コア・アーキテクチャ   | implemented | REQ-001 |
+      | SPEC-003 | audit コマンド仕様 | implemented | REQ-002 |
+    And 以下のfeatureファイルが存在する: ... passed in 0.001s
+      | File          | Tags      | Scenarios            |
+      | audit.feature | @SPEC-003 | 完全一致時の監査成功, テスト漏れの検出 |
+    When `spec-weaver trace SPEC-003 -f ./specification/features` を実行する ... passed in 0.454s
+    Then 終了コードが0である ... undefined in 0.000s
+    And 出力にツリー構造が含まれる ... skipped in 0.000s
+    And 上位に "REQ-002" が表示される ... skipped in 0.000s
+    And 上位に "REQ-001" が表示される ... skipped in 0.000s
+    And 下位に "audit.feature" のシナリオが表示される ... skipped in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="trace.trace コマンド — トレーサビリティ・ツリー表示" name="Gherkin Featureファイルを起点としたボトムアップ表示" status="error" time="0.486475"><error type="NoneType" message="None">
+<![CDATA[
+Failing step: Then 終了コードが0である ... undefined in 0.000s
+Location: specification/features/trace.feature:42
+None]]>
+</error><system-out>
+<![CDATA[
+@scenario.begin
+  Scenario: Gherkin Featureファイルを起点としたボトムアップ表示
+    Given Doorstopツリーが初期化されている ... passed in 0.030s
+    And 以下のREQアイテムが存在する: ... passed in 0.002s
+      | ID      | Header     | Status      | Links   |
+      | REQ-001 | トレーサビリティ保証 | implemented |         |
+      | REQ-002 | 監査による品質担保  | implemented | REQ-001 |
+    And 以下のSPECアイテムが存在する: ... passed in 0.001s
+      | ID       | Header       | Status      | Links   |
+      | SPEC-001 | コア・アーキテクチャ   | implemented | REQ-001 |
+      | SPEC-003 | audit コマンド仕様 | implemented | REQ-002 |
+    And 以下のfeatureファイルが存在する: ... passed in 0.000s
+      | File          | Tags      | Scenarios            |
+      | audit.feature | @SPEC-003 | 完全一致時の監査成功, テスト漏れの検出 |
+    When `spec-weaver trace audit.feature -f ./specification/features` を実行する ... passed in 0.453s
+    Then 終了コードが0である ... undefined in 0.000s
+    And 出力に "SPEC-003" が表示される ... skipped in 0.000s
+    And 出力に "REQ-002" が表示される ... skipped in 0.000s
+    And 出力に "REQ-001" が表示される ... skipped in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="trace.trace コマンド — トレーサビリティ・ツリー表示" name="--direction up で上方向のみ探索" status="error" time="0.500506"><error type="NoneType" message="None">
+<![CDATA[
+Failing step: Then 終了コードが0である ... undefined in 0.000s
+Location: specification/features/trace.feature:49
+None]]>
+</error><system-out>
+<![CDATA[
+@scenario.begin
+  Scenario: --direction up で上方向のみ探索
+    Given Doorstopツリーが初期化されている ... passed in 0.032s
+    And 以下のREQアイテムが存在する: ... passed in 0.002s
+      | ID      | Header     | Status      | Links   |
+      | REQ-001 | トレーサビリティ保証 | implemented |         |
+      | REQ-002 | 監査による品質担保  | implemented | REQ-001 |
+    And 以下のSPECアイテムが存在する: ... passed in 0.002s
+      | ID       | Header       | Status      | Links   |
+      | SPEC-001 | コア・アーキテクチャ   | implemented | REQ-001 |
+      | SPEC-003 | audit コマンド仕様 | implemented | REQ-002 |
+    And 以下のfeatureファイルが存在する: ... passed in 0.000s
+      | File          | Tags      | Scenarios            |
+      | audit.feature | @SPEC-003 | 完全一致時の監査成功, テスト漏れの検出 |
+    When `spec-weaver trace SPEC-003 -f ./specification/features --direction up` を実行する ... passed in 0.464s
+    Then 終了コードが0である ... undefined in 0.000s
+    And 出力に "REQ-002" が表示される ... skipped in 0.000s
+    And 出力に "REQ-001" が表示される ... skipped in 0.000s
+    And 出力に "audit.feature" が表示されない ... skipped in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="trace.trace コマンド — トレーサビリティ・ツリー表示" name="--direction down で下方向のみ探索" status="error" time="0.494614"><error type="NoneType" message="None">
+<![CDATA[
+Failing step: Then 終了コードが0である ... undefined in 0.000s
+Location: specification/features/trace.feature:56
+None]]>
+</error><system-out>
+<![CDATA[
+@scenario.begin
+  Scenario: --direction down で下方向のみ探索
+    Given Doorstopツリーが初期化されている ... passed in 0.031s
+    And 以下のREQアイテムが存在する: ... passed in 0.002s
+      | ID      | Header     | Status      | Links   |
+      | REQ-001 | トレーサビリティ保証 | implemented |         |
+      | REQ-002 | 監査による品質担保  | implemented | REQ-001 |
+    And 以下のSPECアイテムが存在する: ... passed in 0.002s
+      | ID       | Header       | Status      | Links   |
+      | SPEC-001 | コア・アーキテクチャ   | implemented | REQ-001 |
+      | SPEC-003 | audit コマンド仕様 | implemented | REQ-002 |
+    And 以下のfeatureファイルが存在する: ... passed in 0.001s
+      | File          | Tags      | Scenarios            |
+      | audit.feature | @SPEC-003 | 完全一致時の監査成功, テスト漏れの検出 |
+    When `spec-weaver trace REQ-001 -f ./specification/features --direction down` を実行する ... passed in 0.458s
+    Then 終了コードが0である ... undefined in 0.000s
+    And 出力に "REQ-002" が表示される ... skipped in 0.000s
+    And 出力に "SPEC-003" が表示される ... skipped in 0.000s
+    And 出力に "audit.feature" が表示される ... skipped in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="trace.trace コマンド — トレーサビリティ・ツリー表示" name="--format flat でフラットリスト表示" status="error" time="0.486896"><error type="NoneType" message="None">
+<![CDATA[
+Failing step: Then 終了コードが0である ... undefined in 0.000s
+Location: specification/features/trace.feature:63
+None]]>
+</error><system-out>
+<![CDATA[
+@scenario.begin
+  Scenario: --format flat でフラットリスト表示
+    Given Doorstopツリーが初期化されている ... passed in 0.027s
+    And 以下のREQアイテムが存在する: ... passed in 0.002s
+      | ID      | Header     | Status      | Links   |
+      | REQ-001 | トレーサビリティ保証 | implemented |         |
+      | REQ-002 | 監査による品質担保  | implemented | REQ-001 |
+    And 以下のSPECアイテムが存在する: ... passed in 0.002s
+      | ID       | Header       | Status      | Links   |
+      | SPEC-001 | コア・アーキテクチャ   | implemented | REQ-001 |
+      | SPEC-003 | audit コマンド仕様 | implemented | REQ-002 |
+    And 以下のfeatureファイルが存在する: ... passed in 0.001s
+      | File          | Tags      | Scenarios            |
+      | audit.feature | @SPEC-003 | 完全一致時の監査成功, テスト漏れの検出 |
+    When `spec-weaver trace REQ-001 -f ./specification/features --format flat` を実行する ... passed in 0.457s
+    Then 終了コードが0である ... undefined in 0.000s
+    And 出力がフラットリスト形式である ... skipped in 0.000s
+    And 各行に "REQ" または "SPEC" または "TEST" のラベルが含まれる ... skipped in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="trace.trace コマンド — トレーサビリティ・ツリー表示" name="存在しないIDを指定した場合のエラー" status="error" time="0.48528"><error type="NoneType" message="None">
+<![CDATA[
+Failing step: Then 終了コードが1である ... undefined in 0.000s
+Location: specification/features/trace.feature:69
+None]]>
+</error><system-out>
+<![CDATA[
+@scenario.begin
+  Scenario: 存在しないIDを指定した場合のエラー
+    Given Doorstopツリーが初期化されている ... passed in 0.028s
+    And 以下のREQアイテムが存在する: ... passed in 0.001s
+      | ID      | Header     | Status      | Links   |
+      | REQ-001 | トレーサビリティ保証 | implemented |         |
+      | REQ-002 | 監査による品質担保  | implemented | REQ-001 |
+    And 以下のSPECアイテムが存在する: ... passed in 0.001s
+      | ID       | Header       | Status      | Links   |
+      | SPEC-001 | コア・アーキテクチャ   | implemented | REQ-001 |
+      | SPEC-003 | audit コマンド仕様 | implemented | REQ-002 |
+    And 以下のfeatureファイルが存在する: ... passed in 0.000s
+      | File          | Tags      | Scenarios            |
+      | audit.feature | @SPEC-003 | 完全一致時の監査成功, テスト漏れの検出 |
+    When `spec-weaver trace NONEXIST-999 -f ./specification/features` を実行する ... passed in 0.454s
+    Then 終了コードが1である ... undefined in 0.000s
+    And エラーメッセージに "not found" が含まれる ... skipped in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="trace.trace コマンド — トレーサビリティ・ツリー表示" name="Doorstopツリーが未初期化の場合のエラー" status="error" time="0.472734"><error type="NoneType" message="None">
+<![CDATA[
+Failing step: Then 終了コードが1である ... undefined in 0.000s
+Location: specification/features/trace.feature:75
+None]]>
+</error><system-out>
+<![CDATA[
+@scenario.begin
+  Scenario: Doorstopツリーが未初期化の場合のエラー
+    Given Doorstopツリーが初期化されている ... passed in 0.029s
+    And 以下のREQアイテムが存在する: ... passed in 0.002s
+      | ID      | Header     | Status      | Links   |
+      | REQ-001 | トレーサビリティ保証 | implemented |         |
+      | REQ-002 | 監査による品質担保  | implemented | REQ-001 |
+    And 以下のSPECアイテムが存在する: ... passed in 0.001s
+      | ID       | Header       | Status      | Links   |
+      | SPEC-001 | コア・アーキテクチャ   | implemented | REQ-001 |
+      | SPEC-003 | audit コマンド仕様 | implemented | REQ-002 |
+    And 以下のfeatureファイルが存在する: ... passed in 0.000s
+      | File          | Tags      | Scenarios            |
+      | audit.feature | @SPEC-003 | 完全一致時の監査成功, テスト漏れの検出 |
+    Given Doorstopツリーが初期化されていない ... passed in 0.000s
+    When `spec-weaver trace REQ-001 -f ./specification/features` を実行する ... passed in 0.440s
+    Then 終了コードが1である ... undefined in 0.000s
+    And エラーメッセージに "No Doorstop tree found" が含まれる ... skipped in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="trace.trace コマンド — トレーサビリティ・ツリー表示" name=".feature ディレクトリが存在しない場合の警告と継続" status="error" time="0.495046"><error type="NoneType" message="None">
+<![CDATA[
+Failing step: Then 終了コードが0である ... undefined in 0.000s
+Location: specification/features/trace.feature:80
+None]]>
+</error><system-out>
+<![CDATA[
+@scenario.begin
+  Scenario: .feature ディレクトリが存在しない場合の警告と継続
+    Given Doorstopツリーが初期化されている ... passed in 0.032s
+    And 以下のREQアイテムが存在する: ... passed in 0.002s
+      | ID      | Header     | Status      | Links   |
+      | REQ-001 | トレーサビリティ保証 | implemented |         |
+      | REQ-002 | 監査による品質担保  | implemented | REQ-001 |
+    And 以下のSPECアイテムが存在する: ... passed in 0.002s
+      | ID       | Header       | Status      | Links   |
+      | SPEC-001 | コア・アーキテクチャ   | implemented | REQ-001 |
+      | SPEC-003 | audit コマンド仕様 | implemented | REQ-002 |
+    And 以下のfeatureファイルが存在する: ... passed in 0.001s
+      | File          | Tags      | Scenarios            |
+      | audit.feature | @SPEC-003 | 完全一致時の監査成功, テスト漏れの検出 |
+    When `spec-weaver trace REQ-001 -f ./nonexistent/features` を実行する ... passed in 0.458s
+    Then 終了コードが0である ... undefined in 0.000s
+    And 警告メッセージが表示される ... skipped in 0.000s
+    And 出力に "REQ-001" が表示される ... skipped in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="trace.trace コマンド — トレーサビリティ・ツリー表示" name="各ノードにステータスバッジが表示される" status="error" time="0.4852"><error type="NoneType" message="None">
+<![CDATA[
+Failing step: Then 終了コードが0である ... undefined in 0.000s
+Location: specification/features/trace.feature:86
+None]]>
+</error><system-out>
+<![CDATA[
+@scenario.begin
+  Scenario: 各ノードにステータスバッジが表示される
+    Given Doorstopツリーが初期化されている ... passed in 0.030s
+    And 以下のREQアイテムが存在する: ... passed in 0.002s
+      | ID      | Header     | Status      | Links   |
+      | REQ-001 | トレーサビリティ保証 | implemented |         |
+      | REQ-002 | 監査による品質担保  | implemented | REQ-001 |
+    And 以下のSPECアイテムが存在する: ... passed in 0.002s
+      | ID       | Header       | Status      | Links   |
+      | SPEC-001 | コア・アーキテクチャ   | implemented | REQ-001 |
+      | SPEC-003 | audit コマンド仕様 | implemented | REQ-002 |
+    And 以下のfeatureファイルが存在する: ... passed in 0.000s
+      | File          | Tags      | Scenarios            |
+      | audit.feature | @SPEC-003 | 完全一致時の監査成功, テスト漏れの検出 |
+    When `spec-weaver trace REQ-001 -f ./specification/features` を実行する ... passed in 0.452s
+    Then 終了コードが0である ... undefined in 0.000s
+    And "REQ-001" のノードに "implemented" のステータスバッジが表示される ... skipped in 0.000s
+    And "SPEC-003" のノードに "implemented" のステータスバッジが表示される ... skipped in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase></testsuite>

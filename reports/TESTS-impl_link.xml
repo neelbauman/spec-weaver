@@ -1,0 +1,296 @@
+<testsuite name="impl_link.仕様アイテムと実装ファイルのリンク管理" tests="16" errors="0" failures="0" skipped="0" time="4.760759" timestamp="2026-03-04T00:35:22.741927" hostname="penguin"><testcase classname="impl_link.仕様アイテムと実装ファイルのリンク管理" name="impl_files にリスト形式でファイルパスを記述できる" status="passed" time="0.031143"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @TRC-002
+  Scenario: impl_files にリスト形式でファイルパスを記述できる
+    Given Doorstopツリーが初期化されている ... passed in 0.024s
+    And 以下のSPECアイテムが存在する: ... passed in 0.002s
+      | ID      | Header      | impl_files                      |
+      | TRC-003 | アノテーションスキャン | src/spec_weaver/impl_scanner.py |
+      | QA-003  | audit拡張     |                                 |
+    Given TRC-003 の impl_files に ["src/spec_weaver/impl_scanner.py"] が設定されている ... passed in 0.001s
+    When impl_files を読み取る ... passed in 0.004s
+    Then ファイルパスのリスト ["src/spec_weaver/impl_scanner.py"] が得られること ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="impl_link.仕様アイテムと実装ファイルのリンク管理" name="impl_files が文字列形式で記述されている場合は単一要素リストとして解釈される" status="passed" time="0.029567"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @TRC-002
+  Scenario: impl_files が文字列形式で記述されている場合は単一要素リストとして解釈される
+    Given Doorstopツリーが初期化されている ... passed in 0.022s
+    And 以下のSPECアイテムが存在する: ... passed in 0.002s
+      | ID      | Header      | impl_files                      |
+      | TRC-003 | アノテーションスキャン | src/spec_weaver/impl_scanner.py |
+      | QA-003  | audit拡張     |                                 |
+    Given TRC-003 の impl_files に "src/spec_weaver/cli.py" が文字列として設定されている ... passed in 0.001s
+    When impl_files を読み取る ... passed in 0.005s
+    Then ファイルパスのリスト ["src/spec_weaver/cli.py"] が得られること ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="impl_link.仕様アイテムと実装ファイルのリンク管理" name="impl_files が未設定の場合はリンクなしとして扱われる" status="passed" time="0.028839"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @TRC-002
+  Scenario: impl_files が未設定の場合はリンクなしとして扱われる
+    Given Doorstopツリーが初期化されている ... passed in 0.022s
+    And 以下のSPECアイテムが存在する: ... passed in 0.002s
+      | ID      | Header      | impl_files                      |
+      | TRC-003 | アノテーションスキャン | src/spec_weaver/impl_scanner.py |
+      | QA-003  | audit拡張     |                                 |
+    Given QA-003 の impl_files が未設定である ... passed in 0.001s
+    When impl_files を読み取る ... passed in 0.004s
+    Then 空のリストが返ること ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="impl_link.仕様アイテムと実装ファイルのリンク管理" name="アノテーションのスキャンで仕様IDとファイルの対応を抽出できる" status="passed" time="0.025266"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @TRC-003
+  Scenario: アノテーションのスキャンで仕様IDとファイルの対応を抽出できる
+    Given Doorstopツリーが初期化されている ... passed in 0.022s
+    And 以下のSPECアイテムが存在する: ... passed in 0.001s
+      | ID      | Header      | impl_files                      |
+      | TRC-003 | アノテーションスキャン | src/spec_weaver/impl_scanner.py |
+      | QA-003  | audit拡張     |                                 |
+    Given "src/spec_weaver/impl_scanner.py" の行頭に "# implements: TRC-003" が記述されている ... passed in 0.000s
+    When impl-scanner でリポジトリをスキャンする ... passed in 0.002s
+    Then "TRC-003" に対して "src/spec_weaver/impl_scanner.py" が紐づくこと ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="impl_link.仕様アイテムと実装ファイルのリンク管理" name="1行に複数の仕様IDを記述できる" status="passed" time="0.02651"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @TRC-003
+  Scenario: 1行に複数の仕様IDを記述できる
+    Given Doorstopツリーが初期化されている ... passed in 0.023s
+    And 以下のSPECアイテムが存在する: ... passed in 0.002s
+      | ID      | Header      | impl_files                      |
+      | TRC-003 | アノテーションスキャン | src/spec_weaver/impl_scanner.py |
+      | QA-003  | audit拡張     |                                 |
+    Given "src/spec_weaver/cli.py" の行頭に "# implements: QA-003, TRC-004" が記述されている ... passed in 0.000s
+    When impl-scanner でリポジトリをスキャンする ... passed in 0.002s
+    Then "QA-003" に対して "src/spec_weaver/cli.py" が紐づくこと ... passed in 0.000s
+    And "TRC-004" に対して "src/spec_weaver/cli.py" が紐づくこと ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="impl_link.仕様アイテムと実装ファイルのリンク管理" name="--extensions オプションでスキャン対象を絞れる" status="passed" time="0.026385"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @TRC-003
+  Scenario: --extensions オプションでスキャン対象を絞れる
+    Given Doorstopツリーが初期化されている ... passed in 0.023s
+    And 以下のSPECアイテムが存在する: ... passed in 0.002s
+      | ID      | Header      | impl_files                      |
+      | TRC-003 | アノテーションスキャン | src/spec_weaver/impl_scanner.py |
+      | QA-003  | audit拡張     |                                 |
+    Given リポジトリに .py ファイルと .md ファイルが存在する ... passed in 0.000s
+    And .md ファイルの行頭に "# implements: TRC-003" が記述されている ... passed in 0.000s
+    When --extensions py を指定して impl-scanner でスキャンする ... passed in 0.001s
+    Then .md ファイルは結果に含まれないこと ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="impl_link.仕様アイテムと実装ファイルのリンク管理" name="アノテーションがないファイルはエラーにならない" status="passed" time="0.025626"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @TRC-003
+  Scenario: アノテーションがないファイルはエラーにならない
+    Given Doorstopツリーが初期化されている ... passed in 0.022s
+    And 以下のSPECアイテムが存在する: ... passed in 0.001s
+      | ID      | Header      | impl_files                      |
+      | TRC-003 | アノテーションスキャン | src/spec_weaver/impl_scanner.py |
+      | QA-003  | audit拡張     |                                 |
+    Given "src/spec_weaver/gherkin.py" にアノテーションが存在しない ... passed in 0.000s
+    When impl-scanner でリポジトリをスキャンする ... passed in 0.002s
+    Then エラーが発生しないこと ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="impl_link.仕様アイテムと実装ファイルのリンク管理" name=".gitignore 相当のパターンは除外対象となる" status="passed" time="0.025332"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @TRC-003
+  Scenario: .gitignore 相当のパターンは除外対象となる
+    Given Doorstopツリーが初期化されている ... passed in 0.021s
+    And 以下のSPECアイテムが存在する: ... passed in 0.002s
+      | ID      | Header      | impl_files                      |
+      | TRC-003 | アノテーションスキャン | src/spec_weaver/impl_scanner.py |
+      | QA-003  | audit拡張     |                                 |
+    Given ".git/ignored_file.py" の行頭に "# implements: TRC-003" が記述されている ... passed in 0.001s
+    When impl-scanner でリポジトリをスキャンする ... passed in 0.002s
+    Then ".git/ignored_file.py" は結果に含まれないこと ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="impl_link.仕様アイテムと実装ファイルのリンク管理" name="--check-impl オプションで存在しないファイルへの impl_files を検出する" status="passed" time="0.649833"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @QA-003
+  Scenario: --check-impl オプションで存在しないファイルへの impl_files を検出する
+    Given Doorstopツリーが初期化されている ... passed in 0.022s
+    And 以下のSPECアイテムが存在する: ... passed in 0.001s
+      | ID      | Header      | impl_files                      |
+      | TRC-003 | アノテーションスキャン | src/spec_weaver/impl_scanner.py |
+      | QA-003  | audit拡張     |                                 |
+    Given QA-003 の impl_files に "src/spec_weaver/nonexistent.py" が設定されている ... passed in 0.001s
+    When "spec-weaver audit --check-impl" を実行する ... passed in 0.626s
+    Then 終了コードが 1 であること ... passed in 0.000s
+    And "nonexistent.py" が存在しないファイルとして報告されること ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="impl_link.仕様アイテムと実装ファイルのリンク管理" name="impl_files にあってアノテーションがない場合は警告を報告する" status="passed" time="0.66054"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @QA-003
+  Scenario: impl_files にあってアノテーションがない場合は警告を報告する
+    Given Doorstopツリーが初期化されている ... passed in 0.028s
+    And 以下のSPECアイテムが存在する: ... passed in 0.002s
+      | ID      | Header      | impl_files                      |
+      | TRC-003 | アノテーションスキャン | src/spec_weaver/impl_scanner.py |
+      | QA-003  | audit拡張     |                                 |
+    Given TRC-003 の impl_files に "src/spec_weaver/cli.py" が設定されている ... passed in 0.001s
+    And "src/spec_weaver/cli.py" に TRC-003 のアノテーションが存在しない ... passed in 0.000s
+    When "spec-weaver audit --check-impl" を実行する ... passed in 0.629s
+    Then "TRC-003 → src/spec_weaver/cli.py" が impl_files のみ（アノテーションなし）として報告されること ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="impl_link.仕様アイテムと実装ファイルのリンク管理" name="アノテーションがあって impl_files がない場合は警告を報告する" status="passed" time="0.65153"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @QA-003
+  Scenario: アノテーションがあって impl_files がない場合は警告を報告する
+    Given Doorstopツリーが初期化されている ... passed in 0.022s
+    And 以下のSPECアイテムが存在する: ... passed in 0.002s
+      | ID      | Header      | impl_files                      |
+      | TRC-003 | アノテーションスキャン | src/spec_weaver/impl_scanner.py |
+      | QA-003  | audit拡張     |                                 |
+    Given "src/spec_weaver/gherkin.py" の行頭に "# implements: QA-003" が記述されている ... passed in 0.001s
+    And QA-003 の impl_files が未設定である ... passed in 0.001s
+    When "spec-weaver audit --check-impl" を実行する ... passed in 0.626s
+    Then "QA-003 ← src/spec_weaver/gherkin.py" がアノテーションのみ（impl_files なし）として報告されること ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="impl_link.仕様アイテムと実装ファイルのリンク管理" name="--check-impl なしでは実装リンク検証は実行されない" status="passed" time="0.653764"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @QA-003
+  Scenario: --check-impl なしでは実装リンク検証は実行されない
+    Given Doorstopツリーが初期化されている ... passed in 0.025s
+    And 以下のSPECアイテムが存在する: ... passed in 0.001s
+      | ID      | Header      | impl_files                      |
+      | TRC-003 | アノテーションスキャン | src/spec_weaver/impl_scanner.py |
+      | QA-003  | audit拡張     |                                 |
+    Given QA-003 の impl_files に "src/spec_weaver/nonexistent.py" が設定されている ... passed in 0.001s
+    When 通常の "spec-weaver audit" を実行する（--check-impl なし） ... passed in 0.626s
+    Then 実装ファイルリンクのセクションが出力されないこと ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="impl_link.仕様アイテムと実装ファイルのリンク管理" name="--show-impl オプションで trace ツリーに実装ファイルを表示する" status="passed" time="0.47038"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @TRC-004
+  Scenario: --show-impl オプションで trace ツリーに実装ファイルを表示する
+    Given Doorstopツリーが初期化されている ... passed in 0.026s
+    And 以下のSPECアイテムが存在する: ... passed in 0.001s
+      | ID      | Header      | impl_files                      |
+      | TRC-003 | アノテーションスキャン | src/spec_weaver/impl_scanner.py |
+      | QA-003  | audit拡張     |                                 |
+    Given TRC-003 の impl_files に "src/spec_weaver/impl_scanner.py" が設定されている ... passed in 0.001s
+    And "src/spec_weaver/impl_scanner.py" が存在する ... passed in 0.000s
+    When "spec-weaver trace TRC-003 -f ./specification/features --show-impl" を実行する ... passed in 0.442s
+    Then 出力ツリーに "📁 src/spec_weaver/impl_scanner.py" が含まれること ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="impl_link.仕様アイテムと実装ファイルのリンク管理" name="アノテーション由来のファイルも trace ツリーに表示される" status="passed" time="0.484874"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @TRC-004
+  Scenario: アノテーション由来のファイルも trace ツリーに表示される
+    Given Doorstopツリーが初期化されている ... passed in 0.029s
+    And 以下のSPECアイテムが存在する: ... passed in 0.002s
+      | ID      | Header      | impl_files                      |
+      | TRC-003 | アノテーションスキャン | src/spec_weaver/impl_scanner.py |
+      | QA-003  | audit拡張     |                                 |
+    Given "src/spec_weaver/cli.py" の行頭に "# implements: TRC-003" が記述されている ... passed in 0.000s
+    And TRC-003 の impl_files が未設定である ... passed in 0.001s
+    When "spec-weaver trace TRC-003 -f ./specification/features --show-impl" を実行する ... passed in 0.452s
+    Then 出力ツリーに "📝 src/spec_weaver/cli.py" が含まれること ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="impl_link.仕様アイテムと実装ファイルのリンク管理" name="存在しないファイルはエラーアイコンとともに表示される" status="passed" time="0.492516"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @TRC-004
+  Scenario: 存在しないファイルはエラーアイコンとともに表示される
+    Given Doorstopツリーが初期化されている ... passed in 0.030s
+    And 以下のSPECアイテムが存在する: ... passed in 0.002s
+      | ID      | Header      | impl_files                      |
+      | TRC-003 | アノテーションスキャン | src/spec_weaver/impl_scanner.py |
+      | QA-003  | audit拡張     |                                 |
+    Given TRC-003 の impl_files に "src/spec_weaver/nonexistent.py" が設定されている ... passed in 0.002s
+    When "spec-weaver trace TRC-003 -f ./specification/features --show-impl" を実行する ... passed in 0.458s
+    Then 出力ツリーに "❌ src/spec_weaver/nonexistent.py (not found)" が含まれること ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="impl_link.仕様アイテムと実装ファイルのリンク管理" name="--show-impl なしでは実装ファイルは表示されない" status="passed" time="0.478654"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @TRC-004
+  Scenario: --show-impl なしでは実装ファイルは表示されない
+    Given Doorstopツリーが初期化されている ... passed in 0.027s
+    And 以下のSPECアイテムが存在する: ... passed in 0.002s
+      | ID      | Header      | impl_files                      |
+      | TRC-003 | アノテーションスキャン | src/spec_weaver/impl_scanner.py |
+      | QA-003  | audit拡張     |                                 |
+    Given TRC-003 の impl_files に "src/spec_weaver/impl_scanner.py" が設定されている ... passed in 0.001s
+    When "spec-weaver trace TRC-003 -f ./specification/features" を実行する（--show-impl なし） ... passed in 0.449s
+    Then 出力ツリーに "impl_scanner.py" が含まれないこと ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase></testsuite>

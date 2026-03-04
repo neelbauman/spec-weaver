@@ -60,10 +60,57 @@ def given_a838a6ff(context):
         path = features_dir / filename
         path.write_text(f"{tags}\nFeature: Test Feature\n  Scenario: Test Scenario\n    Given test\n")
 
+# [Duplicate Skip] This step is already defined elsewhere
+# @then('終了コードが0である')  # type: ignore
+# def then_0f800e56(context):
+#     """終了コードが0である
+# 
+#     Scenarios:
+#       - REQを起点としたトップダウンのツリー表示
+#       - SPECを起点とした双方向のツリー表示
+#       - Gherkin Featureファイルを起点としたボトムアップ表示
+#       - --direction up で上方向のみ探索
+#       - --direction down で下方向のみ探索
+#       - --format flat でフラットリスト表示
+#       - .feature ディレクトリが存在しない場合の警告と継続
+#       - 各ノードにステータスバッジが表示される
+#     """
+#     raise NotImplementedError('STEP: 終了コードが0である')
+
+@then('終了コードが0である')  # type: ignore
+def then_0f800e56(context):
+    """終了コードが0である
+
+    Scenarios:
+      - REQを起点としたトップダウンのツリー表示
+      - SPECを起点とした双方向のツリー表示
+      - Gherkin Featureファイルを起点としたボトムアップ表示
+      - --direction up で上方向のみ探索
+      - --direction down で下方向のみ探索
+      - --format flat でフラットリスト表示
+      - .feature ディレクトリが存在しない場合の警告と継続
+      - 各ノードにステータスバッジが表示される
+    """
+    raise NotImplementedError('STEP: 終了コードが0である')
+
+
 @when('`spec-weaver trace {target}` を実行する')  # type: ignore
 @when('`spec-weaver trace {target}` を実行する（--show-impl なし）')  # type: ignore
 def when_trace_generic(context, target):
-    """`spec-weaver trace {target}` を実行する"""
+    """`spec-weaver trace {target}` を実行する
+
+    Scenarios:
+      - REQを起点としたトップダウンのツリー表示
+      - Doorstopツリーが未初期化の場合のエラー
+      - 各ノードにステータスバッジが表示される
+      - SPECを起点とした双方向のツリー表示
+      - Gherkin Featureファイルを起点としたボトムアップ表示
+      - --direction up で上方向のみ探索
+      - --direction down で下方向のみ探索
+      - --format flat でフラットリスト表示
+      - 存在しないIDを指定した場合のエラー
+      - .feature ディレクトリが存在しない場合の警告と継続
+    """
     args = shlex.split(f"trace {target}")
     
     # replace ./specification/features with actual temp path
@@ -191,6 +238,28 @@ def then_29017220(context, param0, param1, param2):
     assert found
 
 
+# [Duplicate Skip] This step is already defined elsewhere
+# @then('終了コードが1である')  # type: ignore
+# def then_9b731a71(context):
+#     """終了コードが1である
+# 
+#     Scenarios:
+#       - 存在しないIDを指定した場合のエラー
+#       - Doorstopツリーが未初期化の場合のエラー
+#     """
+#     raise NotImplementedError('STEP: 終了コードが1である')
+
+@then('終了コードが1である')  # type: ignore
+def then_9b731a71(context):
+    """終了コードが1である
+
+    Scenarios:
+      - 存在しないIDを指定した場合のエラー
+      - Doorstopツリーが未初期化の場合のエラー
+    """
+    raise NotImplementedError('STEP: 終了コードが1である')
+
+
 @then('エラーメッセージに "{param0}" が含まれる')  # type: ignore
 def then_9998fad9(context, param0):
     """エラーメッセージに "not found" が含まれる
@@ -211,6 +280,36 @@ def given_1b5b3d28(context):
     """
     context.repo_root = Path(tempfile.mkdtemp(prefix="sw_empty_"))
 
+
+# [Duplicate Skip] This step is already defined elsewhere
+# @then('警告メッセージが表示される')  # type: ignore
+# def then_a11d14f9(context):
+#     """警告メッセージが表示される
+# 
+#     Scenarios:
+#       - .feature ディレクトリが存在しない場合の警告と継続
+#     """
+#     raise NotImplementedError('STEP: 警告メッセージが表示される')
+
+# [Duplicate Skip] This step is already defined elsewhere
+# @then('警告メッセージが表示される')  # type: ignore
+# def then_a11d14f9(context):
+#     """警告メッセージが表示される
+# 
+#     Scenarios:
+#       - .feature ディレクトリが存在しない場合の警告と継続
+#     """
+#     raise NotImplementedError('STEP: 警告メッセージが表示される')
+
+# [Duplicate Skip] This step is already defined elsewhere
+# @then('警告メッセージが表示される')  # type: ignore
+# def then_a11d14f9(context):
+#     """警告メッセージが表示される
+# 
+#     Scenarios:
+#       - .feature ディレクトリが存在しない場合の警告と継続
+#     """
+#     raise NotImplementedError('STEP: 警告メッセージが表示される')
 
 @then('"{param0}" のノードに "{param1}" のステータスバッジが表示される')  # type: ignore
 def then_f676df97(context, param0, param1):

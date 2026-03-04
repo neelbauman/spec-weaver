@@ -1,0 +1,134 @@
+<testsuite name="scaffold.scaffold コマンド" tests="11" errors="0" failures="0" skipped="0" time="5.593383" timestamp="2026-03-04T00:35:28.844202" hostname="penguin"><testcase classname="scaffold.scaffold コマンド" name="基本的なテストコード生成" status="passed" time="0.465104"><system-out>
+<![CDATA[
+@scenario.begin
+  Scenario: 基本的なテストコード生成
+    Given ".feature" ファイルが存在するディレクトリがある ... passed in 0.015s
+    When scaffold コマンドを実行する ... passed in 0.449s
+    Then 各 .feature に対応する "step_<stem>.py" が生成されること ... passed in 0.000s
+    And 各ステップに "@given", "@when", "@then" デコレータ付き関数が含まれること ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="scaffold.scaffold コマンド" name="ハッシュベースの関数名生成" status="passed" time="0.456708"><system-out>
+<![CDATA[
+@scenario.begin
+  Scenario: ハッシュベースの関数名生成
+    Given 日本語のシナリオ名を持つ .feature ファイルがある ... passed in 0.016s
+    When scaffold コマンドを実行する ... passed in 0.440s
+    Then 生成されたステップ関数名が ASCII 文字のみで構成されること ... passed in 0.001s
+    And 関数名にステップ文の SHA256 ハッシュ先頭8文字が使用されること ... passed in 0.000s
+    And docstring にオリジナルのステップ文が記載されること ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="scaffold.scaffold コマンド" name="ステップ関数の生成と重複排除" status="passed" time="0.447223"><system-out>
+<![CDATA[
+@scenario.begin
+  Scenario: ステップ関数の生成と重複排除
+    Given 複数のシナリオで同一のステップ文が使用されている ... passed in 0.001s
+    When scaffold コマンドを実行する ... passed in 0.446s
+    Then 同一ステップに対する関数は1回のみ生成されること ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="scaffold.scaffold コマンド" name="Docstring にシナリオリストを記載" status="passed" time="0.461961"><system-out>
+<![CDATA[
+@scenario.begin
+  Scenario: Docstring にシナリオリストを記載
+    Given ".feature" ファイルが存在するディレクトリがある ... passed in 0.016s
+    When scaffold コマンドを実行する ... passed in 0.445s
+    Then 各ステップ関数の Docstring に "Scenarios:" セクションが含まれること ... passed in 0.000s
+    And そのステップを使用するシナリオ名が列挙されること ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="scaffold.scaffold コマンド" name="差分マージ（新規ステップ追記）" status="passed" time="0.482594"><system-out>
+<![CDATA[
+@scenario.begin
+  Scenario: 差分マージ（新規ステップ追記）
+    Given 出力先に既存のテストファイルが存在する ... passed in 0.025s
+    And .feature に既存ファイルにないステップが追加されている ... passed in 0.000s
+    When scaffold コマンドをデフォルトオプションで実行する ... passed in 0.456s
+    Then 既存ファイルに新規ステップのみが追記されること ... passed in 0.000s
+    And 既存のステップ定義は保持されること ... passed in 0.000s
+    And 新規ステップは .feature の出現順で挿入されること ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="scaffold.scaffold コマンド" name="差分なし時のスキップ" status="passed" time="0.911735"><system-out>
+<![CDATA[
+@scenario.begin
+  Scenario: 差分なし時のスキップ
+    Given 出力先の既存テストファイルが .feature と完全に同期している ... passed in 0.463s
+    When scaffold コマンドをデフォルトオプションで実行する ... passed in 0.448s
+    Then ファイルへの書き込みは行われないこと ... passed in 0.000s
+    And スキップ（差分なし）が表示されること ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="scaffold.scaffold コマンド" name="既存ファイルの上書き" status="passed" time="0.460656"><system-out>
+<![CDATA[
+@scenario.begin
+  Scenario: 既存ファイルの上書き
+    Given 出力先に既存のテストファイルが存在する ... passed in 0.024s
+    When scaffold コマンドを "--overwrite" オプション付きで実行する ... passed in 0.437s
+    Then 既存ファイルが上書きされること ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="scaffold.scaffold コマンド" name="Git 未コミット変更の確認プロンプト" status="passed" time="0.473292"><system-out>
+<![CDATA[
+@scenario.begin
+  Scenario: Git 未コミット変更の確認プロンプト
+    Given 出力先のテストファイルに未コミットの変更がある ... passed in 0.022s
+    When scaffold コマンドをデフォルトオプションで実行する ... passed in 0.450s
+    Then マージするか確認プロンプトが表示されること ... passed in 0.000s
+    And キャンセルするとそのファイルはスキップされること ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="scaffold.scaffold コマンド" name="--force オプションで確認プロンプトをスキップ" status="passed" time="0.46523"><system-out>
+<![CDATA[
+@scenario.begin
+  Scenario: --force オプションで確認プロンプトをスキップ
+    Given 出力先のテストファイルに未コミットの変更がある ... passed in 0.023s
+    When scaffold コマンドを "--force" オプション付きで実行する ... passed in 0.442s
+    Then 確認プロンプトなしでマージが実行されること ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="scaffold.scaffold コマンド" name="差分マージ時の Duplicate スタブのコメント化" status="passed" time="0.493697"><system-out>
+<![CDATA[
+@scenario.begin
+  Scenario: 差分マージ時の Duplicate スタブのコメント化
+    Given 出力先に既存のテストファイルが存在する ... passed in 0.025s
+    And 別のステップファイルに同一ステップの実装が追加されている ... passed in 0.013s
+    When scaffold コマンドをデフォルトオプションで実行する ... passed in 0.456s
+    Then 既存ファイルのスタブが Duplicate コメントに置き換わること ... passed in 0.000s
+    And 他のステップのスタブは保持されること ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="scaffold.scaffold コマンド" name="差分マージ時の他ファイルコメント行を Duplicate 判定に使用しない" status="passed" time="0.475183"><system-out>
+<![CDATA[
+@scenario.begin
+  Scenario: 差分マージ時の他ファイルコメント行を Duplicate 判定に使用しない
+    Given 別のステップファイルに同一ステップが Duplicate コメントとして記載されている ... passed in 0.000s
+    And その同一ステップを実際に定義しているファイルは存在しない ... passed in 0.000s
+    When scaffold コマンドをデフォルトオプションで実行する ... passed in 0.474s
+    Then そのステップが Duplicate としてではなくスタブとして生成されること ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase></testsuite>

@@ -1,0 +1,104 @@
+<testsuite name="audit.audit コマンド" tests="8" errors="0" failures="0" skipped="0" time="9.205413" timestamp="2026-03-04T00:35:07.024406" hostname="penguin"><testcase classname="audit.audit コマンド" name="完全一致で、監査が成功する" status="passed" time="1.411947"><system-out>
+<![CDATA[
+@scenario.begin
+  Scenario: 完全一致で、監査が成功する
+    Given すべてのtestable仕様に対応するGherkinテストが存在する ... passed in 0.756s
+    When audit コマンドを実行する ... passed in 0.656s
+    Then 終了コード 0 が返ること ... passed in 0.000s
+    And 成功メッセージが表示されること ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="audit.audit コマンド" name="テスト漏れの検出" status="passed" time="0.670752"><system-out>
+<![CDATA[
+@scenario.begin
+  Scenario: テスト漏れの検出
+    Given testable な仕様 "CORE-001" に対応するGherkinテストが存在しない ... passed in 0.023s
+    When audit コマンドを実行する ... passed in 0.647s
+    Then 終了コード 1 が返ること ... passed in 0.000s
+    And テストが実装されていない仕様として "CORE-001" が報告されること ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="audit.audit コマンド" name="orphanタグの検出" status="passed" time="1.307568"><system-out>
+<![CDATA[
+@scenario.begin
+  Scenario: orphanタグの検出
+    Given Gherkinに仕様書に存在しない "@SPEC-999" タグが含まれている ... passed in 0.669s
+    When audit コマンドを実行する ... passed in 0.638s
+    Then 終了コード 1 が返ること ... passed in 0.000s
+    And orphanタグとして "@SPEC-999" が報告されること ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="audit.audit コマンド" name="テスト漏れとorphanタグの同時検出" status="passed" time="1.305655"><system-out>
+<![CDATA[
+@scenario.begin
+  Scenario: テスト漏れとorphanタグの同時検出
+    Given 仕様 "CORE-001" のテストが未実装で "@SPEC-999" がorphanタグである ... passed in 0.677s
+    When audit コマンドを実行する ... passed in 0.629s
+    Then 終了コード 1 が返ること ... passed in 0.000s
+    And テスト漏れとorphanタグの両方が報告されること ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="audit.audit コマンド" name="testable: false の仕様はスキップされる" status="passed" time="0.642113"><system-out>
+<![CDATA[
+@scenario.begin
+  Scenario: testable: false の仕様はスキップされる
+    Given 仕様 "SPEC-001" が testable: false に設定されている ... passed in 0.022s
+    And "SPEC-001" に対応するGherkinテストが存在しない ... passed in 0.000s
+    When audit コマンドを実行する ... passed in 0.620s
+    Then "SPEC-001" はテスト漏れとして報告されないこと ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="audit.audit コマンド" name="Suspect Link の検出" status="passed" time="1.306705"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @QA-001
+  Scenario: Suspect Link の検出
+    Given 仕様 "VIS-005" の上位アイテムが変更されている（cleared=false） ... passed in 0.673s
+    When audit コマンドを実行する ... passed in 0.634s
+    Then 終了コード 1 が返ること ... passed in 0.000s
+    And Suspect Link テーブルに "VIS-005" が報告されること ... passed in 0.000s
+    And 変更された上位アイテムのIDが表示されること ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="audit.audit コマンド" name="Unreviewed Changes の検出" status="passed" time="1.280559"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @QA-001
+  Scenario: Unreviewed Changes の検出
+    Given 仕様 "VIS-005" 自体に未レビューの変更がある（reviewed=false） ... passed in 0.652s
+    When audit コマンドを実行する ... passed in 0.628s
+    Then 終了コード 1 が返ること ... passed in 0.000s
+    And Unreviewed Changes テーブルに "VIS-005" が報告されること ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="audit.audit コマンド" name="feature ファイルが Unreviewed として検出される" status="passed" time="1.280116"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @QA-001
+  Scenario: feature ファイルが Unreviewed として検出される
+    Given ".feature" ファイルのフィンガープリントコメントが現在の内容と一致しない ... passed in 0.649s
+    When audit コマンドを実行する ... passed in 0.630s
+    Then 終了コード 1 が返ること ... passed in 0.000s
+    And Unreviewed テーブルに対応する feature ファイル名が表示されること ... passed in 0.000s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase></testsuite>
