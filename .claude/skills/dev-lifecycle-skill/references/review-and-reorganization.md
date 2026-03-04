@@ -198,8 +198,8 @@ grep -rh "^layer:" ./specification/specs/ 2>/dev/null | sort | uniq -c
 
 #### F-2. layer と Gherkin タグの整合性
 
-- [ ] `layer: architecture` の SPEC に `@SPEC-xxx` タグが付いた .feature がないか
-- [ ] `layer: behavior` かつ `testable: true` の SPEC に対応する .feature があるか
+- [ ] 内部仕様（`layer: architecture`）の SPEC に `@SPEC-xxx` タグが付いた振る舞い仕様がないか
+- [ ] 外部仕様（`layer: behavior`）かつ `testable: true` の SPEC に対応する振る舞い仕様（.feature）があるか
 
 #### F-3. layer 分類の妥当性
 

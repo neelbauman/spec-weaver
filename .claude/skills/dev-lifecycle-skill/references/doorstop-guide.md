@@ -97,7 +97,7 @@ text: |
   （空欄 - ここを編集する）
 ```
 
-### REQ（ビジネス要件）の text の書き方
+### REQ（要件）の text の書き方
 
 ```yaml
 text: |
@@ -115,7 +115,7 @@ text: |
   - （測定可能な条件2）
 ```
 
-### SPEC（システム仕様）の text の書き方
+### SPEC（仕様）の text の書き方
 
 ```yaml
 text: |
@@ -143,8 +143,8 @@ text: |
 
 ```yaml
 active: true
-layer: behavior       # ← behavior（外部から観察可能な振る舞い）
-testable: true        #    または architecture（内部構造・技術的制約）
+layer: behavior       # ← 外部仕様（外部のアクターが結果を直接観察できる）
+testable: true        #    または architecture（内部仕様）
 status: draft
 text: |
   ユーザーが正しい認証情報でログインするとアクセストークンが返る。
@@ -152,8 +152,8 @@ text: |
 
 | 値 | 意味 | Gherkin との関係 |
 |---|---|---|
-| `behavior` | 外部から観察可能な振る舞い | .feature でテストすべき（推奨） |
-| `architecture` | 内部構造・技術的制約 | Gherkin は不適切（ユニットテスト等で検証） |
+| `behavior` | 外部仕様 | 振る舞い仕様（.feature）でテストすべき（推奨） |
+| `architecture` | 内部仕様 | 振る舞い仕様は不適切（ユニットテスト等で検証） |
 
 > **`testable` と `layer` の違い**: `testable` は「テスト可能かどうか」、`layer` は「仕様がどの層に属するか」を示す。
 > `layer: architecture` でも `testable: true`（ユニットテストで検証可能）はあり得る。
@@ -161,7 +161,7 @@ text: |
 
 **Spec-Weaver のテスト除外設定:**
 
-Gherkin で振る舞いテストができない仕様の場合は `testable: false` を追加する。
+振る舞い仕様（.feature）でテストができない仕様の場合は `testable: false` を追加する。
 
 ```yaml
 active: true
@@ -250,14 +250,14 @@ text: |
 
 ## 4. `layer` 属性の導入ガイド
 
-SPEC アイテムには `layer` カスタム属性を設定し、仕様が記述する対象の層を明示する。
+SPEC アイテムには `layer` カスタム属性を設定し、仕様が外部仕様か内部仕様かを明示する。
 
 ### 値の定義
 
 | 値 | 意味 | Gherkin との関係 |
 |---|---|---|
-| `behavior` | 外部から観察可能な振る舞い | .feature でテストすべき（推奨） |
-| `architecture` | 内部構造・技術的制約 | Gherkin は不適切（ユニットテスト等で検証） |
+| `behavior` | 外部仕様 | 振る舞い仕様（.feature）でテストすべき（推奨） |
+| `architecture` | 内部仕様 | 振る舞い仕様は不適切（ユニットテスト等で検証） |
 
 ### 判断基準（3問で決定）
 
@@ -310,13 +310,13 @@ doorstop create PAY      ./specification/specs/payment --parent PAY-REQ
 
 ```text
 <project-root>/specification/
-├── reqs/                  # ビジネス要件 [Doorstop: prefix=REQ]
+├── reqs/                  # 要件 [Doorstop: prefix=REQ]
 │   ├── .doorstop.yml      # doorstop create REQ ./specification/reqs で自動生成
 │   ├── REQ-001.yml
 │   └── auth/              # サブグループ（認証ドメイン）
 │       ├── .doorstop.yml  # doorstop create AUTH-REQ ... --parent REQ
 │       └── AUTH-REQ-001.yml
-├── specs/                 # システム仕様 [Doorstop: prefix=SPEC, parent=REQ]
+├── specs/                 # 仕様 [Doorstop: prefix=SPEC, parent=REQ]
 │   ├── .doorstop.yml
 │   ├── SPEC-001.yml
 │   └── auth/              # サブグループ（認証ドメイン）

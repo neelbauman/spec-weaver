@@ -1,11 +1,11 @@
 # Gherkin .feature 作成ガイド
 
-## Gherkin の適用範囲
+## 振る舞い仕様（.feature）の適用範囲
 
-Gherkin は **`layer: behavior` の SPEC（外部から観察可能な振る舞い）** にのみ適用する。
-`layer: architecture` の SPEC には Gherkin を書かない。
+振る舞い仕様（.feature）は **外部仕様（`layer: behavior` の SPEC）** に対してのみ記述する。
+内部仕様（`layer: architecture`）の SPEC には振る舞い仕様を書かない。
 
-### 書くべきもの（behavior 層）
+### 書くべきもの（外部仕様の検証）
 
 | 仕様の内容 | Gherkin で表現する理由 |
 |---|---|
@@ -14,7 +14,7 @@ Gherkin は **`layer: behavior` の SPEC（外部から観察可能な振る舞�
 | 条件を満たすと状態が変化する | ビジネスルールに基づく振る舞い |
 | コマンドを実行すると期待する出力が得られる | CLI の外部インターフェース |
 
-### 書くべきでないもの（architecture 層以下）
+### 書くべきでないもの（内部仕様の領域）
 
 | 仕様の内容 | 理由 | 代替テスト手段 |
 |---|---|---|
@@ -26,8 +26,8 @@ Gherkin は **`layer: behavior` の SPEC（外部から観察可能な振る舞�
 
 ### タグ付けと `layer` の関係ルール
 
-- `layer: behavior` の SPEC → `@SPEC-xxx` タグで .feature にリンク（推奨）
-- `layer: architecture` の SPEC → .feature にリンクしない（タグを付けない）
+- 外部仕様（`layer: behavior`）の SPEC → `@SPEC-xxx` タグで振る舞い仕様にリンク（推奨）
+- 内部仕様（`layer: architecture`）の SPEC → 振る舞い仕様にリンクしない（タグを付けない）
 - `layer` 未設定の SPEC → 従来通り `testable` 属性で判断（後方互換）
 
 ---

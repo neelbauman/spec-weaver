@@ -41,8 +41,8 @@ settings:
 
 ```text
 specification/
-├── reqs/              # REQ（ビジネス要件）
-├── specs/             # SPEC（システム仕様）
+├── reqs/              # REQ（要件）
+├── specs/             # SPEC（仕様）
 ├── features/          # Gherkin .feature ファイル
 ├── designs/           # DESIGN（設計ドキュメント）
 ├── plans/             # PLAN（実装計画）
@@ -91,8 +91,8 @@ text: |
   （なぜこの設計が必要か。関連するSPECの概要）
 
   ### 対象SPECのlayer分類
-  - SPEC-001 (`layer: behavior`): （外部から観察可能な振る舞いの仕様）
-  - SPEC-002 (`layer: architecture`): （内部構造に関する技術的制約）
+  - SPEC-001 (`layer: behavior`): （外部仕様）
+  - SPEC-002 (`layer: architecture`): （内部仕様）
 
   ## アーキテクチャ
 
@@ -400,8 +400,8 @@ flowchart TD
 #### 大規模変更（複数モジュール横断の新機能）
 
 ```text
-REQ-xxx（ビジネス要件）
-└── SPEC-xxx（システム仕様）
+REQ-xxx（要件）
+└── SPEC-xxx（仕様）
     ├── RESEARCH-xxx（技術調査）    ← 必要に応じて
     ├── ADR-xxx（技術選定）         ← 必要に応じて
     ├── DESIGN-xxx（設計）          ← 必須

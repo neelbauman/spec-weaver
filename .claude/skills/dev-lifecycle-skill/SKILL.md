@@ -77,8 +77,8 @@ description: >
 2. REQ / SPEC の YAML に `status: draft` を設定すること。
    新規 SPEC には `layer` 属性も設定すること（`behavior` または `architecture`）:
    ```yaml
-   layer: behavior     # 外部から観察可能な振る舞い → .feature でテスト
-   # layer: architecture  # 内部構造・技術的制約 → ユニットテストで検証
+   layer: behavior     # 外部仕様 → 振る舞い仕様（.feature）でテスト
+   # layer: architecture  # 内部仕様 → ユニットテストで検証
    ```
 3. 規模に応じて設計ドキュメントを作成すること（判定表を参照）:
 
@@ -193,7 +193,7 @@ Plan Modeで立てた実装計画などをドキュメントとして保存す�
    | `.feature` を変更 | 対応 SPEC / テストコード | SPEC の testable 属性やタグが正しいか |
    | DESIGN を変更 | 親 SPEC / 実装コード | コードが設計と一致しているか |
    | コードを変更 | 対応 SPEC / `.feature` | 仕様に記載のない振る舞いが増えていないか |
-   | SPEC の `layer` | `.feature` との対応 | `layer: behavior` の SPEC に .feature があるか。`layer: architecture` の SPEC に .feature が紐づいていないか |
+   | SPEC の `layer` | 振る舞い仕様との対応 | 外部仕様（`layer: behavior`）に `.feature` があるか。内部仕様（`layer: architecture`）に `.feature` が紐づいていないか |
 
 4. 精査結果と更新内容をユーザーに報告すること。
 
@@ -245,8 +245,8 @@ uv run spec-weaver build ./specification/features --out-dir .specification
 REQ → SPEC の下に以下のドキュメント型を配置できる。
 
 ```
-REQ（ビジネス要件）
-└── SPEC（システム仕様）
+REQ（要件）
+└── SPEC（仕様）
     ├── DESIGN（アーキテクチャ・コンポーネント設計）
     ├── PLAN（実装タスク分解・順序）
     ├── ADR（技術選定の記録）
@@ -274,7 +274,7 @@ doorstop create RESEARCH ./specification/research --parent SPEC
 ### 3層構造（Spec-Glue-Execution）
 
 ```
- Spec 層 ──── .feature（Gherkin）    : ビジネスの振る舞いを宣言
+ Spec 層 ──── .feature（振る舞い仕様）: 外部仕様をシナリオで宣言
  Glue 層 ──── Step 定義（Python）    : 翻訳・委譲のみ（ロジック禁止）
  Execution 層 ── ヘルパー / クライアント : 実際のシステム操作
 ```
@@ -282,7 +282,7 @@ doorstop create RESEARCH ./specification/research --parent SPEC
 ### 絶対原則
 
 1. **仕様至上主義**: 実装の都合で Gherkin を変更しない。仕様として正しければ、テストが失敗してもよい。
-2. **関心の分離**: Gherkin はビジネスの振る舞い（What）、Step は翻訳と委譲のみ（How）。Step にロジックを書かない。
+2. **関心の分離**: 振る舞い仕様（.feature）は外部仕様のシナリオ化（What）、Step は翻訳と委譲のみ（How）。Step にロジックを書かない。
 3. **宣言的記述**: Gherkin に UI・API・DB の実装詳細を書かない。ドメイン用語を最優先する。
 
 > 詳細は `references/behave-and-testing.md` を参照。

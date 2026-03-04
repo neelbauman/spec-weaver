@@ -5,8 +5,8 @@
 BDD テストは以下の3層に分離する。依存方向は上から下への一方向のみ。
 
 ```
- Spec 層 ──── .feature（Gherkin）
-    ↓          ビジネスの振る舞いを自然言語で宣言
+ Spec 層 ──── .feature（振る舞い仕様）
+    ↓          外部仕様を自然言語のシナリオで宣言
  Glue 層 ──── Step 定義（Python / behave）
     ↓          Spec の翻訳・委譲のみ（ロジック禁止）
  Execution 層 ── ヘルパー / クライアント（context.xxx）
@@ -15,7 +15,7 @@ BDD テストは以下の3層に分離する。依存方向は上から下への
 
 | 層 | ファイル | 責務 | 含めてよいもの | 含めてはいけないもの |
 |---|---|---|---|---|
-| **Spec** | `.feature` | ビジネスの振る舞いを宣言 | Given/When/Then、ドメイン用語 | 実装詳細、技術用語 |
+| **Spec** | `.feature` | 外部仕様のシナリオ化 | Given/When/Then、ドメイン用語 | 実装詳細、技術用語 |
 | **Glue** | `steps/*.py` | Spec → Execution への翻訳・委譲 | パラメータ受け渡し、assert | if/for、計算、ビジネスロジック |
 | **Execution** | ヘルパークラス | 実際のシステム操作 | API呼び出し、DB操作、状態管理 | Gherkin の知識、assert |
 
@@ -25,14 +25,14 @@ BDD テストは以下の3層に分離する。依存方向は上から下への
 
 ## 2. Gherkin の適用範囲
 
-Gherkin は **`layer: behavior` の SPEC（外部から観察可能な振る舞い）** にのみ適用する。
+振る舞い仕様（.feature）は **外部仕様（`layer: behavior` の SPEC）** に対してのみ記述する。
 
-| SPEC の layer | テスト手段 |
-|---|---|
-| `behavior` | Gherkin + behave（本ガイドの対象） |
-| `architecture` | ユニットテスト / 統合テスト（本ガイドの対象外） |
+| SPEC の layer | 呼称 | テスト手段 |
+|---|---|---|
+| `behavior` | 外部仕様 | 振る舞い仕様（.feature）+ behave（本ガイドの対象） |
+| `architecture` | 内部仕様 | ユニットテスト / 統合テスト（本ガイドの対象外） |
 
-`layer: architecture` の SPEC に対して .feature を書いてはならない。
+内部仕様（`layer: architecture`）の SPEC に対して振る舞い仕様を書いてはならない。
 
 ---
 
@@ -45,9 +45,9 @@ Gherkin は **`layer: behavior` の SPEC（外部から観察可能な振る舞�
 BDD テストを書くには「何を証明するか」が明確でなければならない。
 spec-weaver trace はその問いに答えるための情報を、単一コマンドで収集できる。
 
-- **REQ** → なぜこの振る舞いが必要か（背景・目的）
+- **REQ** → なぜこの要件が必要か（背景・目的）
 - **SPEC** → 何を実装すべきか（仕様本文）
-- **`.feature`** → 既にどんな振る舞いがテストされているか
+- **`.feature`** → 既にどんな振る舞い仕様がテストされているか
 - **実装ファイル** → 現在どう実装されているか
 
 ### 起点の特定
@@ -85,7 +85,7 @@ REQ-005 決済フローの整合性保証 ✅ implemented
 ### Doorstop YAML の仕様本文を読む
 
 trace で SPEC ID が判明したら、YAML を直接読んで仕様本文を確認する。
-**この `text` が「あるべき振る舞い」の唯一の根拠**。
+**この `text` が「あるべき仕様」の唯一の根拠**。
 実装ファイルではなく、この YAML を基準にテストを設計する。
 
 ### 既存テストとのギャップ分析
@@ -232,7 +232,7 @@ Step 関数は **委譲のみ**。以下を **禁止** する。
 uv run spec-weaver trace SPEC-xxx -f ./specification/features --show-impl
 ```
 
-Doorstop YAML の `text` を読み、「あるべき振る舞い」を確認する。
+Doorstop YAML の `text` を読み、「あるべき仕様」を確認する。
 
 ### Step 2: `.feature` ファイルを設計する
 

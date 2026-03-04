@@ -101,10 +101,10 @@ doorstop edit SPEC-xxx
 新規 SPEC には `layer` 属性を設定し、仕様が記述する対象の層を明示する。
 
 ```yaml
-# 外部から観察可能な振る舞い → .feature でテスト
+# 外部仕様 → 振る舞い仕様（.feature）でテスト
 layer: behavior
 
-# 内部構造・技術的制約 → ユニットテスト等で検証
+# 内部仕様 → ユニットテスト等で検証
 layer: architecture
 ```
 
@@ -309,7 +309,7 @@ uv run spec-weaver status
 | DESIGN を変更 | 親 SPEC、実装コード | コードが設計と一致しているか。SPEC の記述と矛盾しないか |
 | PLAN を変更 | 親 SPEC、実装コード | 計画と実装結果が一致しているか |
 | コードを変更 | 対応 SPEC、`.feature` | 仕様に記載のない振る舞いが増えていないか。既存シナリオが壊れていないか |
-| SPEC の `layer` | `.feature` との対応 | `layer: behavior` の SPEC に .feature があるか。`layer: architecture` の SPEC に .feature が紐づいていないか |
+| SPEC の `layer` | 振る舞い仕様との対応 | 外部仕様（`layer: behavior`）に `.feature` があるか。内部仕様（`layer: architecture`）に `.feature` が紐づいていないか |
 
 #### 5.4 精査結果の報告
 
