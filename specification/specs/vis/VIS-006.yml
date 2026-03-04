@@ -2,13 +2,13 @@ active: true
 derived: false
 gherkin_fingerprints:
 - ./specification/features/timestamp.feature: |
-    ae9371686ef77c9470deade29668fe6a32a4c422b3e8a78924acdd9001a0b95c
+    a0ac358f70ef63bba4b7f20b81037e273b8218c9ddc836cf830361dd47ceba78
 header: |
   タイムスタンプ・カスタム属性の定義
 layer: behavior
 level: 6.0
 links:
-- REQ-010: ECPuWqjRylWWFNUNmco_ygq9reO2BgGgFUNtymMh_HU=
+- REQ-010: null
 normative: true
 ref: ''
 reviewed: aYdV84_cX-TMDJkzuW1OYdQNmY72bM70vz0jWBhNIj0=

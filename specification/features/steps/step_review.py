@@ -1,15 +1,20 @@
-from specification.features.steps._helpers import create_doorstop_project_api, write_feature_file, run_spec_weaver
 """behave steps for: review コマンド — .feature ファイルへのフィンガープリント書き込み"""
 # implements: QA-004
 
 import shutil
 from pathlib import Path
+
+from behave import given, then, when
 from typer.testing import CliRunner
 
-from behave import given, when, then, step
-
-from spec_weaver.cli.main import app
 from spec_weaver.adapters.gherkin import read_stored_fingerprint
+from spec_weaver.cli.main import app
+from specification.features.steps._helpers import (
+    create_doorstop_project_api,
+    create_doorstop_project_yaml,
+    run_spec_weaver,
+    write_feature_file,
+)
 
 _runner = CliRunner()
 
@@ -106,7 +111,7 @@ def then_exit_code_1_review(context):
 
 @then('review エラーメッセージが表示される')  # type: ignore
 def then_error_msg_review(context):
-    assert any(msg in context.output.lower() for msg in ["error", "not found", "見つかりません", "エラー"]), f"Expected error message not found in output: {context.output}"
+    assert any(msg in context.output for msg in ["❌", "Error", "error", "見つかりません", "エラー", "指定できません", "未対応"]), f"Expected error message not found in output: {context.output}"
 
 
 @when('`spec-weaver review not_feature.txt` を実行する')  # type: ignore
@@ -121,6 +126,80 @@ def when_da1afe24(context):
     _invoke_review(context, ["review", str(target), "-r", str(context.temp_dir), "-f", str(context.temp_dir)])
 
 
+@given('複数のアクティブな Doorstop アイテムが存在する')  # type: ignore
+def given_1f1bb9b0(context):
+    """複数のアクティブな Doorstop アイテムが存在する
+
+    Scenarios:
+      - --all で全 .feature ファイルと全 Doorstop アイテムを一括レビューできる
+    """
+    pass  # given_2e849535 でセットアップ済み
+
+
+@when('`spec-weaver review --all --feature-dir ./specification/features` を実行する')  # type: ignore
+def when_0656954c(context):
+    """`spec-weaver review --all --feature-dir ./specification/features` を実行する
+
+    Scenarios:
+      - --all で全 .feature ファイルと全 Doorstop アイテムを一括レビューできる
+    """
+    feature_dir = getattr(context, "feature_dir",
+                          context.project_root / "specification" / "features")
+    result = run_spec_weaver(
+        ["review", "--all", "--feature-dir", str(feature_dir)],
+        cwd=context.temp_dir,
+    )
+    context.exit_code = result.returncode
+    context.output = result.stdout + result.stderr
+
+
+@then('全 "{param0}" ファイルにフィンガープリントが書き込まれる')  # type: ignore
+def then_225cbe73(context, param0):
+    """全 ".feature" ファイルにフィンガープリントが書き込まれる
+
+    Scenarios:
+      - --all で全 .feature ファイルと全 Doorstop アイテムを一括レビューできる
+    """
+    assert "件レビュー済み" in context.output, (
+        f"Expected '件レビュー済み' in output:\n{context.output}"
+    )
+    feature_dir = getattr(context, "feature_dir",
+                          context.project_root / "specification" / "features")
+    for f in feature_dir.glob("*.feature"):
+        stored = read_stored_fingerprint(f)
+        assert stored is not None, f"{f.name} にフィンガープリントが書き込まれていません"
+
+
+@then('アクティブな全 Doorstop アイテムがレビュー済みになる')  # type: ignore
+def then_25d6c9d2(context):
+    """アクティブな全 Doorstop アイテムがレビュー済みになる
+
+    Scenarios:
+      - --all で全 .feature ファイルと全 Doorstop アイテムを一括レビューできる
+    """
+    assert "Doorstop アイテム" in context.output and "件レビュー済み" in context.output, (
+        f"Expected Doorstop item review count in output:\n{context.output}"
+    )
+
+
+@when('`spec-weaver review --all specification/features/audit.feature` を実行する')  # type: ignore
+def when_b791afe5(context):
+    """`spec-weaver review --all specification/features/audit.feature` を実行する
+
+    Scenarios:
+      - --all と対象パスを同時に指定するとエラーになる
+    """
+    _invoke_review(context, ["review", "--all", "specification/features/audit.feature"])
+
+
+@when('`spec-weaver review` を引数なしで実行する')  # type: ignore
+def when_fa6f8e67(context):
+    """`spec-weaver review` を引数なしで実行する
+
+    Scenarios:
+      - 引数も --all も指定しないとエラーになる
+    """
+    _invoke_review(context, ["review"])
 @then('ファイル先頭に "{param0}" コメントが追加される')  # type: ignore
 def then_22d76672(context, param0):
     """ファイル先頭に "# spec-weaver-fingerprint:" コメントが追加される

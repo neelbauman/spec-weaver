@@ -1,11 +1,17 @@
 # -*- coding: utf-8 -*-
-from specification.features.steps._helpers import create_doorstop_project_api, write_feature_file, run_spec_weaver, create_doorstop_project_yaml, write_doorstop_yaml
-from behave import given, when, then, step
-from pathlib import Path
-import subprocess
-import os
 import datetime
+import os
+import subprocess
+
 import yaml
+from behave import given, then, when
+
+from specification.features.steps._helpers import (
+    create_doorstop_project_yaml,
+    run_spec_weaver,
+    write_doorstop_yaml,
+    write_feature_file,
+)
 
 # ======================================================================
 # Steps
@@ -91,8 +97,9 @@ def step_impl_created_at(context, date):
 
 @then('created_at として "{expected}" が返されること')  # type: ignore
 def step_impl_created_at_check(context, expected):
-    from spec_weaver.utils.formatters import get_timestamp
     import doorstop
+
+    from spec_weaver.utils.formatters import get_timestamp
     tree = doorstop.build(cwd=str(context.temp_dir))
     item = tree.find_item(context.target_item_id)
     val = get_timestamp(item, "created_at")
@@ -112,8 +119,9 @@ def given_20d06697(context):
 
 @then('両方とも "{expected}" が返されること')  # type: ignore
 def step_impl_both_check(context, expected):
-    from spec_weaver.utils.formatters import get_timestamp
     import doorstop
+
+    from spec_weaver.utils.formatters import get_timestamp
     tree = doorstop.build(cwd=str(context.temp_dir))
     item = tree.find_item(context.target_item_id)
     c = get_timestamp(item, "created_at")
@@ -126,7 +134,9 @@ def given_cc8e9bef(context):
     given_5c08ab27(context)
 
 
-# [Dup→step_build.py] @when('build コマンドを実行する')  # type: ignore
+# [Dup→step_build.py] build コマンドを実行する — step_build.py の定義を使用
+
+
 @then('一覧テーブルに「作成日」列が含まれること')  # type: ignore
 def then_ed934883(context):
     index_md = context.temp_dir / ".specification" / "docs" / "spec.md"

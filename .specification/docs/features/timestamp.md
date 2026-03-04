@@ -1,7 +1,5 @@
 # Feature: タイムスタンプ管理
 
-> 📋 **Unreviewed Changes**: このフィーチャーファイル自体に未レビューの変更があります。レビュー後に `review` コマンドで更新してください。
-
 **タグ**: `@VIS-006`
 
 **関連アイテム**: [QA-002](../items/QA-002.md) / [VIS-006](../items/VIS-006.md) / [VIS-007](../items/VIS-007.md)
@@ -115,21 +113,6 @@ def then_c016ae72(context):
 
 <details><summary><b>Step Definitions (Source Code)</b></summary>
 
-#### 📋 Execution Log (Failure)
-
-```text
-Traceback (most recent call last):
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/model.py", line 1991, in run
-    match.run(runner.context)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^
-  File "/home/adelie/projects/spec-weaver/.venv/lib/python3.14/site-packages/behave/matchers.py", line 105, in run
-    self.func(context, *args, **kwargs)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "specification/features/steps/step_timestamp.py", line 79, in given_78ddd292
-    raise NotImplementedError('STEP: YAMLに created_at: \'2026-01-15\' が設定されている')
-NotImplementedError: STEP: YAMLに created_at: '2026-01-15' が設定されている
-```
-
 #### Given DoorstopアイテムのYAMLファイルがGit管理外である
 
 ```python
@@ -175,8 +158,9 @@ def when_7e4b3813(context):
 ```python
 @then('created_at として "{expected}" が返されること')  # type: ignore
 def step_impl_created_at_check(context, expected):
-    from spec_weaver.utils.formatters import get_timestamp
     import doorstop
+
+    from spec_weaver.utils.formatters import get_timestamp
     tree = doorstop.build(cwd=str(context.temp_dir))
     item = tree.find_item(context.target_item_id)
     val = get_timestamp(item, "created_at")
@@ -242,8 +226,9 @@ def when_7e4b3813(context):
 ```python
 @then('両方とも "{expected}" が返されること')  # type: ignore
 def step_impl_both_check(context, expected):
-    from spec_weaver.utils.formatters import get_timestamp
     import doorstop
+
+    from spec_weaver.utils.formatters import get_timestamp
     tree = doorstop.build(cwd=str(context.temp_dir))
     item = tree.find_item(context.target_item_id)
     c = get_timestamp(item, "created_at")
@@ -738,7 +723,7 @@ def then_e6a9cec1(context):
 <details><summary>Raw .feature source</summary>
 
 ```gherkin
-# spec-weaver-fingerprint: e3987b29813b5d5fa8a1bf13f8eb8dd1232fc3eaa35e4a1a941a9f376706edbd
+# spec-weaver-fingerprint: da96d085750ad925a01239120c8024c82745d513fe7bcda1e9ba144c448a9023
 # spec-weaver-fingerprint-QA-002: pIUDUCm2SbEPeLzmScATm5kxQXhzHgfNLVTet64j5OY=
 # spec-weaver-fingerprint-VIS-006: X_KRBM_YhZCFigeGpRMit5ZIjnIx1JMby0egIg10egw=
 # spec-weaver-fingerprint-VIS-007: yOFv-Mqqd6cmn9y-BMHTC3-5N_plpH_vbw4UzEypfk8=

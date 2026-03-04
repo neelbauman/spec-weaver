@@ -7,7 +7,7 @@ impl_files:
 layer: behavior
 level: 4.0
 links:
-- REQ-013: mlYsN4aIR9VbxHA-yfOSM2Kvja2WM53jkqu9QVTeP3E=
+- REQ-013: null
 normative: true
 ref: ''
 reviewed: pAOSrFy90ulim8e_iCdFpdr1qBKEd6QcXuJ31x2Y-C4=

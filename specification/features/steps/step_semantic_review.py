@@ -13,8 +13,6 @@ def given_2b87969c(context):
     pass
 
 
-# [Duplicate Skip] '仕様アイテム "{param0}" が存在する' is defined in step_clear.py
-
 
 @when('`spec-weaver semantic-review --item SPEC-003 --feature-dir ./specification/features` を実行する') # type: ignore
 def when_84125f26(context):
@@ -23,33 +21,7 @@ def when_84125f26(context):
     context.result = run_spec_weaver(["semantic-review", "--item", "SPEC-003", "--feature-dir", str(feature_dir)], cwd=context.temp_dir)
 
 
-# [Duplicate Skip] This step is already defined elsewhere
-# @then('終了コードが0である')  # type: ignore
-# def then_0f800e56(context):
-#     """終了コードが0である
-# 
-#     Scenarios:
-#   - 単一アイテムのレビューが実行できる
-#       - 単一アイテムのレビューが実行できる
-#       - 単一アイテムをJSON形式で出力できる
-#       - --fail-on high でhigh findingがない場合に終了コード0を返す
-#       - --min-severity medium で low の finding が非表示になる
-#       - 全体並列レビューが実行できる
-#     """
-#     raise NotImplementedError('STEP: 終了コードが0である')
-
-@then('終了コードが0である')  # type: ignore
-def then_0f800e56(context):
-    """終了コードが0である
-
-    Scenarios:
-      - 単一アイテムのレビューが実行できる
-      - 単一アイテムをJSON形式で出力できる
-      - --fail-on high でhigh findingがない場合に終了コード0を返す
-      - --min-severity medium で low の finding が非表示になる
-      - 全体並列レビューが実行できる
-    """
-    raise NotImplementedError('STEP: 終了コードが0である')
+# [Dup→step_trace.py] 終了コードが0である — step_trace.py の定義を使用
 
 
 @then('出力にレビュー結果が含まれる')  # type: ignore
@@ -81,19 +53,6 @@ def when_d00f5929(context):
 
 
 # [Duplicate Skip] This step is already defined elsewhere
-# @then('終了コードが1である')  # type: ignore
-# def then_9b731a71(context):
-#     """終了コードが1である
-# 
-#     Scenarios:
-#   - 存在しないアイテムIDを指定するとエラーになる
-#       - 存在しないアイテムIDを指定するとエラーになる
-#       - --fail-on high でhigh findingがある場合に終了コード1を返す
-#       - claudeコマンドが見つからない場合にエラーになる
-#     """
-#     raise NotImplementedError('STEP: 終了コードが1である')
-
-# [Duplicate Skip] This step is already defined elsewhere
 # @then('エラーメッセージが表示される')  # type: ignore
 # def then_d53287cf(context):
 #     """エラーメッセージが表示される
@@ -103,19 +62,8 @@ def when_d00f5929(context):
 #     """
 #     raise NotImplementedError('STEP: エラーメッセージが表示される')
 
-@then('終了コードが1である')  # type: ignore
-def then_9b731a71(context):
-    """終了コードが1である
+# [Dup→step_trace.py] 終了コードが1である — step_trace.py の定義を使用
 
-    Scenarios:
-      - 存在しないアイテムIDを指定するとエラーになる
-      - --fail-on high でhigh findingがある場合に終了コード1を返す
-      - claudeコマンドが見つからない場合にエラーになる
-    """
-    raise NotImplementedError('STEP: 終了コードが1である')
-
-
-# [Duplicate Skip] 'エラーメッセージが表示される' is defined in step_clear.py
 
 
 @when('`spec-weaver semantic-review --item SPEC-003 --all` を実行する') # type: ignore

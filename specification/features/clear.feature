@@ -1,4 +1,4 @@
-# spec-weaver-fingerprint: 0c0424f9b232677c9c2cb4b197f3442a1154c7ddfe9307911dad7333a0311c66
+# spec-weaver-fingerprint: 741608174602dbd8d2c07dc0644fe9c18a798fbd3de6d3108e3f98ecf6de540b
 # spec-weaver-fingerprint-QA-005: sF4bXqVCp0C7Q2T3NpRXT26Hdj_FTb7yqGfcnXQcYkU=
 @QA-005
 Feature: clear コマンド — Doorstop gherkin_fingerprints 更新
@@ -38,3 +38,20 @@ Feature: clear コマンド — Doorstop gherkin_fingerprints 更新
     When `spec-weaver clear SPEC-004 --feature-dir ./specification/features` を実行する
     Then clear 終了コードが1である
     And 警告メッセージが表示される
+
+  Scenario: --all で全 .feature ファイルの全アイテムを一括クリアできる
+    Given feature_dir に複数の ".feature" ファイルが存在する
+    When `spec-weaver clear --all --feature-dir ./specification/features` を実行する
+    Then clear 終了コードが0である
+    And 各ファイルのアイテムの gherkin_fingerprints が更新される
+
+  Scenario: --all で未レビューアイテムはスキップされ警告が出る
+    Given あるアイテムが "unreviewed" 状態である
+    When `spec-weaver clear --all --feature-dir ./specification/features` を実行する
+    Then clear 終了コードが0である
+    And 未レビューアイテムに対して警告メッセージが表示される
+
+  Scenario: --all と対象パスを同時に指定するとエラーになる
+    When `spec-weaver clear --all SPEC-003 --feature-dir ./specification/features` を実行する
+    Then clear 終了コードが1である
+    And エラーメッセージが表示される

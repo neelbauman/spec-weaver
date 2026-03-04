@@ -2,7 +2,7 @@ active: true
 derived: false
 gherkin_fingerprints:
 - ./specification/features/review.feature: |
-    6cbb9f1d0de7ec36050ce134163cc48a86306e73dcdc60679b72219062efd7d4
+    19f642958b93767b5effebcd3c086360020b50b696fc2c3d9a05e8299252d26c
 header: |
   review コマンド — .feature ファイルへのフィンガープリント書き込み
 impl_files:
@@ -11,11 +11,11 @@ impl_files:
 layer: behavior
 level: 4.0
 links:
-- REQ-004: KXm5cZc2wXUhF29d-4lpSPbclfjN4ruCBIwDvWX93tg=
+- REQ-004: null
 normative: true
 ref: ''
 reviewed: -sx5zwtMjo2PKRCiZyHrg49NzfVuN3eDPu0HGcdTq68=
-status: implemented
+status: in-progress
 testable: true
 text: |
   ## 概要

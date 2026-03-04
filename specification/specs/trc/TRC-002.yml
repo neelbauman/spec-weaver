@@ -11,7 +11,7 @@ impl_files:
 layer: behavior
 level: 2.0
 links:
-- REQ-012: W1M-g8bMakjNSi3dVoSS2rEjVb7A3bfA2f3UYepGHok=
+- REQ-012: null
 normative: true
 ref: ''
 reviewed: Ia7bNk8-qcB8DcZY-0hb4rlBfj0KAC2buehEkdKtq_c=

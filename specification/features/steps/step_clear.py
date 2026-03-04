@@ -1,9 +1,14 @@
 # -*- coding: utf-8 -*-
-from specification.features.steps._helpers import create_doorstop_project_api, write_feature_file, run_spec_weaver, create_doorstop_project_yaml, write_doorstop_yaml
-from behave import given, when, then, step
-from pathlib import Path
-import yaml
 import shlex
+
+import yaml
+from behave import given, then, when
+
+from specification.features.steps._helpers import (
+    create_doorstop_project_yaml,
+    run_spec_weaver,
+    write_feature_file,
+)
 
 # ======================================================================
 # Steps
@@ -176,3 +181,90 @@ def given_b669b903(context, param0):
 @then('警告メッセージが表示される')  # type: ignore
 def then_a11d14f9(context):
     assert "Warning" in context.result.stdout or "warning" in context.result.stdout or "警告" in context.result.stdout
+@given('feature_dir に複数の "{param0}" ファイルが存在する')  # type: ignore
+def given_2e849535(context, param0):
+    """feature_dir に複数の ".feature" ファイルが存在する
+
+    Scenarios:
+      - --all で全 .feature ファイルの全アイテムを一括クリアできる
+    """
+    create_doorstop_project_yaml(
+        context.temp_dir,
+        [{"dir": "specs", "prefix": "SPEC", "items": [
+            {"uid": "SPEC-001", "testable": True},
+            {"uid": "SPEC-002", "testable": True},
+        ]}],
+    )
+    feature_dir = context.temp_dir / "specification" / "features"
+    feature_dir.mkdir(parents=True, exist_ok=True)
+    write_feature_file(feature_dir / "feat1.feature",
+        "@SPEC-001\nFeature: Feat 1\n  Scenario: S1\n    Given test\n")
+    write_feature_file(feature_dir / "feat2.feature",
+        "@SPEC-002\nFeature: Feat 2\n  Scenario: S2\n    Given test\n")
+    context.feature_dir = feature_dir
+
+
+@then('各ファイルのアイテムの gherkin_fingerprints が更新される')  # type: ignore
+def then_a5d1d5ce(context):
+    """各ファイルのアイテムの gherkin_fingerprints が更新される
+
+    Scenarios:
+      - --all で全 .feature ファイルの全アイテムを一括クリアできる
+    """
+    output = context.result.stdout + context.result.stderr
+    assert "件更新しました" in output or "更新しました" in output, (
+        f"Expected update count in output:\n{output}"
+    )
+    for uid in ["SPEC-001", "SPEC-002"]:
+        yaml_path = context.temp_dir / "specs" / f"{uid}.yml"
+        with open(yaml_path, "r") as f:
+            data = yaml.safe_load(f)
+        assert "gherkin_fingerprints" in data, (
+            f"{uid}.yml に gherkin_fingerprints がありません"
+        )
+
+
+@given('あるアイテムが "{param0}" 状態である')  # type: ignore
+def given_e594920a(context, param0):
+    """あるアイテムが "unreviewed" 状態である
+
+    Scenarios:
+      - --all で未レビューアイテムはスキップされ警告が出る
+    """
+    create_doorstop_project_yaml(
+        context.temp_dir,
+        [{"dir": "specs", "prefix": "SPEC", "items": [
+            {"uid": "SPEC-001", "testable": True},
+            {"uid": "SPEC-002", "testable": True},
+        ]}],
+    )
+    # SPEC-002 を未レビュー状態にする
+    spec2_path = context.temp_dir / "specs" / "SPEC-002.yml"
+    with open(spec2_path) as f:
+        data = yaml.safe_load(f)
+    data["reviewed"] = None
+    with open(spec2_path, "w", encoding="utf-8") as f:
+        yaml.dump(data, f, allow_unicode=True, default_flow_style=False, sort_keys=True)
+
+    feature_dir = context.temp_dir / "specification" / "features"
+    feature_dir.mkdir(parents=True, exist_ok=True)
+    write_feature_file(feature_dir / "feat1.feature",
+        "@SPEC-001\nFeature: Feat 1\n  Scenario: S1\n    Given test\n")
+    write_feature_file(feature_dir / "feat2.feature",
+        "@SPEC-002\nFeature: Feat 2\n  Scenario: S2\n    Given test\n")
+    context.feature_dir = feature_dir
+
+
+@then('未レビューアイテムに対して警告メッセージが表示される')  # type: ignore
+def then_f502ed3d(context):
+    """未レビューアイテムに対して警告メッセージが表示される
+
+    Scenarios:
+      - --all で未レビューアイテムはスキップされ警告が出る
+    """
+    output = context.result.stdout + context.result.stderr
+    assert "未レビュー" in output or "スキップ" in output, (
+        f"Expected unreviewed warning in output:\n{output}"
+    )
+
+

@@ -1,4 +1,4 @@
-# spec-weaver-fingerprint: da191d2e4724ecd8ae92af47b1508866117b34863797bc3f9789eef8992ef1fc
+# spec-weaver-fingerprint: 8558674633eb8fa7d81a20573dc103f24fb474919b6f6c0d926937136ca17e0b
 # spec-weaver-fingerprint-QA-004: zJZ8rKdo5j3CC50cStOQT-dYQz3fw8w45YpbYNLYs6o=
 @QA-004
 Feature: review コマンド — .feature ファイルへのフィンガープリント書き込み
@@ -26,5 +26,23 @@ Feature: review コマンド — .feature ファイルへのフィンガープ�
   Scenario: 指定ファイルが .feature でない場合にエラーになる
     Given ".txt" ファイルが存在する
     When `spec-weaver review not_feature.txt` を実行する
+    Then review 終了コードが1である
+    And review エラーメッセージが表示される
+
+  Scenario: --all で全 .feature ファイルと全 Doorstop アイテムを一括レビューできる
+    Given feature_dir に複数の ".feature" ファイルが存在する
+    And 複数のアクティブな Doorstop アイテムが存在する
+    When `spec-weaver review --all --feature-dir ./specification/features` を実行する
+    Then review 終了コードが0である
+    And 全 ".feature" ファイルにフィンガープリントが書き込まれる
+    And アクティブな全 Doorstop アイテムがレビュー済みになる
+
+  Scenario: --all と対象パスを同時に指定するとエラーになる
+    When `spec-weaver review --all specification/features/audit.feature` を実行する
+    Then review 終了コードが1である
+    And review エラーメッセージが表示される
+
+  Scenario: 引数も --all も指定しないとエラーになる
+    When `spec-weaver review` を引数なしで実行する
     Then review 終了コードが1である
     And review エラーメッセージが表示される

@@ -8,8 +8,8 @@ header: |
 layer: architecture
 level: 1.0
 links:
-- REQ-001: r8HLD3Bp9ilMNgxhGINfuTj969G6-xvhIcjcnYrl-J0=
-- REQ-002: AL9bDV_13Z_dFORw5rjP1YoJvrpxV9BwxqcTBuTGPsA=
+- REQ-001: null
+- REQ-002: null
 normative: true
 ref: ''
 reviewed: oVfS67U4q1HeYJoxWHWO9h70r4dtUpT9OitoYLbVRAo=

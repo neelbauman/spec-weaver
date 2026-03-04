@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-from specification.features.steps._helpers import create_doorstop_project_api, write_feature_file, run_spec_weaver, write_doorstop_yaml
-from behave import given, when, then
-import json
-from pathlib import Path
+
+from behave import given, then, when
+
+from specification.features.steps._helpers import run_spec_weaver, write_doorstop_yaml
 
 # [Duplicate Skip] This step is already defined elsewhere
 # @given('Doorstopツリーが初期化されている')  # type: ignore
@@ -91,8 +91,9 @@ def given_5b35c4dd(context, param0):
 
 @when('impl_files を読み取る')  # type: ignore
 def when_1e9b41a9(context):
-    from spec_weaver.adapters.impl_scanner import get_ref_files
     import doorstop
+
+    from spec_weaver.adapters.impl_scanner import get_ref_files
     tree = doorstop.build(cwd=str(context.temp_dir))
     item = tree.find_item(context.target_spec)
     context.actual_files = get_ref_files(item)

@@ -2,14 +2,14 @@ active: true
 derived: false
 gherkin_fingerprints:
 - ./specification/features/timestamp.feature: |
-    bb616c546eb461c2d73c88217f32746aff8775fa3b4677609f021afb59d5b48e
+    75584b17c67e0b88cad32911a5f90909b8de1f1e0c99b53758a8e4afd7345631
 header: |
   タイムスタンプ鮮度の監査チェック
 layer: behavior
 level: 2.0
 links:
-- REQ-002: AL9bDV_13Z_dFORw5rjP1YoJvrpxV9BwxqcTBuTGPsA=
-- REQ-010: ECPuWqjRylWWFNUNmco_ygq9reO2BgGgFUNtymMh_HU=
+- REQ-002: null
+- REQ-010: null
 normative: true
 ref: ''
 reviewed: UI--yYUhrO7gis_6JlYsvXckIqYThdRAlkAQsHbRC6c=

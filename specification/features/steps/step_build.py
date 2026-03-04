@@ -1,8 +1,14 @@
-from specification.features.steps._helpers import create_doorstop_project_yaml, write_feature_file, run_spec_weaver
+from specification.features.steps._helpers import (
+    create_doorstop_project_yaml,
+    run_spec_weaver,
+    write_feature_file,
+)
+
 """behave steps for: build コマンド"""
 
-from behave import given, when, then, step
 from pathlib import Path
+
+from behave import given, then, when
 
 # ======================================================================
 # Steps
@@ -196,7 +202,10 @@ def given_ae2b8b7d(context):
       - 仕様一覧ページの生成
       - 一覧テーブルにレビューステータス列が表示されること
     """
-    from specification.features.steps._helpers import create_doorstop_project_yaml, write_feature_file
+    from specification.features.steps._helpers import (
+        create_doorstop_project_yaml,
+        write_feature_file,
+    )
     create_doorstop_project_yaml(context.temp_dir, [
         {
             "dir": "reqs",
@@ -257,7 +266,10 @@ def given_73c18566(context):
     Scenarios:
       - 個別アイテム詳細ページの生成
     """
-    from specification.features.steps._helpers import create_doorstop_project_yaml, write_feature_file
+    from specification.features.steps._helpers import (
+        create_doorstop_project_yaml,
+        write_feature_file,
+    )
     create_doorstop_project_yaml(context.temp_dir, [
         {"dir": "reqs", "prefix": "REQ", "items": [{"uid": "REQ-001", "header": "Req 1", "text": "Body of REQ-001"}]},
         {"dir": "specs", "prefix": "SPEC", "parent": "REQ", "items": [{"uid": "SPEC-001", "header": "Spec 1", "links": ["REQ-001"], "text": "Body of SPEC-001"}]},
@@ -431,7 +443,10 @@ def given_8c5d7037(context, param0, param1):
     Scenarios:
       - feature MDページへのバックリンク生成
     """
-    from specification.features.steps._helpers import create_doorstop_project_yaml, write_feature_file
+    from specification.features.steps._helpers import (
+        create_doorstop_project_yaml,
+        write_feature_file,
+    )
     uid = param0.replace("@", "")
     create_doorstop_project_yaml(context.temp_dir, [
         {"dir": "specs", "prefix": "SPEC", "items": [{"uid": uid, "header": "Spec 3"}]}
@@ -475,7 +490,10 @@ def given_1d9c057d(context, param0, param1):
     Scenarios:
       - 複数アイテムを参照するfeatureのバックリンク
     """
-    from specification.features.steps._helpers import create_doorstop_project_yaml, write_feature_file
+    from specification.features.steps._helpers import (
+        create_doorstop_project_yaml,
+        write_feature_file,
+    )
     uids = [param0.replace("@", ""), param1.replace("@", "")]
     create_doorstop_project_yaml(context.temp_dir, [
         {"dir": "specs", "prefix": "VIS", "items": [
@@ -512,7 +530,10 @@ def given_486efd83(context):
     Scenarios:
       - タグのないfeatureにはバックリンクを表示しない
     """
-    from specification.features.steps._helpers import create_doorstop_project_yaml, write_feature_file
+    from specification.features.steps._helpers import (
+        create_doorstop_project_yaml,
+        write_feature_file,
+    )
     create_doorstop_project_yaml(context.temp_dir, [
         {"dir": "reqs", "prefix": "REQ", "items": [{"uid": "REQ-001", "header": "R1"}]}
     ])
@@ -688,7 +709,10 @@ def given_a5569e86(context):
     Scenarios:
       - 一覧テーブルのGherkinカバレッジ列はシナリオ数を表示すること
     """
-    from specification.features.steps._helpers import create_doorstop_project_yaml, write_feature_file
+    from specification.features.steps._helpers import (
+        create_doorstop_project_yaml,
+        write_feature_file,
+    )
     create_doorstop_project_yaml(context.temp_dir, [
         {
             "dir": "reqs",

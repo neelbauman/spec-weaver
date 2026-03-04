@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
-from specification.features.steps._helpers import create_doorstop_project_api, write_feature_file, run_spec_weaver, write_doorstop_yaml
-from behave import given, when, then, step
-from pathlib import Path
-import shutil
-import os
 import subprocess
+
+from behave import given, then, when
+
+from specification.features.steps._helpers import run_spec_weaver, write_feature_file
 
 # ======================================================================
 # Steps

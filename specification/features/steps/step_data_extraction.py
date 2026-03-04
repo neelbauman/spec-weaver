@@ -1,7 +1,11 @@
-from specification.features.steps._helpers import create_doorstop_project_api, create_doorstop_project_yaml, write_feature_file, run_spec_weaver
+from specification.features.steps._helpers import (
+    create_doorstop_project_yaml,
+    write_feature_file,
+)
+
 """behave steps for: データ抽出基盤"""
 
-from behave import given, when, then, step
+from behave import given, then, when
 
 # ======================================================================
 # Steps

@@ -1,9 +1,18 @@
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional, Dict
+from typing import Dict, List, Optional, Tuple
 
-from spec_weaver.adapters.doorstop import get_item_map, get_all_prefixes, get_doorstop_tree
-from spec_weaver.adapters.gherkin import get_tag_map, compute_feature_file_hash, write_feature_fingerprints
+from spec_weaver.adapters.doorstop import (
+    get_all_prefixes,
+    get_doorstop_tree,
+    get_item_map,
+)
+from spec_weaver.adapters.gherkin import (
+    compute_feature_file_hash,
+    get_tag_map,
+    write_feature_fingerprints,
+)
+
 
 @dataclass
 class ReviewResult:
@@ -75,3 +84,34 @@ class ReviewService:
         # 3. どちらでもない場合
         msg = f"ターゲットが見つかりません: {target_path}" if not target.exists() else f"未対応のファイル形式です: {target_path}"
         return ReviewResult(is_success=False, target_type="unknown", error_message=msg)
+
+    def run_review_all_items(self, repo_root: Path) -> Tuple[List[str], List[Tuple[str, str]]]:
+        """全アクティブ Doorstop アイテムをレビューする。
+
+        Returns:
+            (reviewed_items, failed_items) のタプル。
+            failed_items は (uid_str, error_message) のリスト。
+        """
+        item_map = get_item_map(repo_root)
+        multi_tree = get_doorstop_tree(repo_root)
+        reviewed: List[str] = []
+        failed: List[Tuple[str, str]] = []
+
+        # clear (リンクスタンプ更新) → review の順で実行する
+        for uid_str in sorted(item_map.keys()):
+            try:
+                doorstop_item = multi_tree.find_item(uid_str)
+                if doorstop_item is None:
+                    failed.append((uid_str, "アイテムが見つかりません"))
+                    continue
+                try:
+                    doorstop_item.clear()
+                except Exception:
+                    pass
+                doorstop_item.review()
+                doorstop_item.save()
+                reviewed.append(uid_str)
+            except Exception as e:
+                failed.append((uid_str, str(e)))
+
+        return reviewed, failed

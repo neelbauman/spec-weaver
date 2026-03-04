@@ -1,8 +1,5 @@
 # [PLAN-003] CORE-002 実装計画：Gherkinタグ継承（Effective Tags）
 
-> ⚠️ **Suspect**: 関連するアイテムやテストが変更されました。影響範囲のレビューが必要です。
-> **原因 (Unreviewed)**: `Doorstop native suspect link`
-
 **実装状況**: ✅ implemented
 
 **作成日**: 2026-02-27　|　**更新日**: 2026-03-03
@@ -10,8 +7,6 @@
 **上位アイテム**: [CORE-002](CORE-002.md)
 
 **テスト対象**: No
- / **テストカバレッジ**: -
-
 ---
 
 ## 概要

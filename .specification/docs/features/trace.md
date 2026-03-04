@@ -138,11 +138,14 @@ def then_0f800e56(context):
     """終了コードが0である
 
     Scenarios:
-      - 単一アイテムのレビューが実行できる
-      - 単一アイテムをJSON形式で出力できる
-      - --fail-on high でhigh findingがない場合に終了コード0を返す
-      - --min-severity medium で low の finding が非表示になる
-      - 全体並列レビューが実行できる
+      - REQを起点としたトップダウンのツリー表示
+      - SPECを起点とした双方向のツリー表示
+      - Gherkin Featureファイルを起点としたボトムアップ表示
+      - --direction up で上方向のみ探索
+      - --direction down で下方向のみ探索
+      - --format flat でフラットリスト表示
+      - .feature ディレクトリが存在しない場合の警告と継続
+      - 各ノードにステータスバッジが表示される
     """
     raise NotImplementedError('STEP: 終了コードが0である')
 ```
@@ -296,11 +299,14 @@ def then_0f800e56(context):
     """終了コードが0である
 
     Scenarios:
-      - 単一アイテムのレビューが実行できる
-      - 単一アイテムをJSON形式で出力できる
-      - --fail-on high でhigh findingがない場合に終了コード0を返す
-      - --min-severity medium で low の finding が非表示になる
-      - 全体並列レビューが実行できる
+      - REQを起点としたトップダウンのツリー表示
+      - SPECを起点とした双方向のツリー表示
+      - Gherkin Featureファイルを起点としたボトムアップ表示
+      - --direction up で上方向のみ探索
+      - --direction down で下方向のみ探索
+      - --format flat でフラットリスト表示
+      - .feature ディレクトリが存在しない場合の警告と継続
+      - 各ノードにステータスバッジが表示される
     """
     raise NotImplementedError('STEP: 終了コードが0である')
 ```
@@ -422,11 +428,14 @@ def then_0f800e56(context):
     """終了コードが0である
 
     Scenarios:
-      - 単一アイテムのレビューが実行できる
-      - 単一アイテムをJSON形式で出力できる
-      - --fail-on high でhigh findingがない場合に終了コード0を返す
-      - --min-severity medium で low の finding が非表示になる
-      - 全体並列レビューが実行できる
+      - REQを起点としたトップダウンのツリー表示
+      - SPECを起点とした双方向のツリー表示
+      - Gherkin Featureファイルを起点としたボトムアップ表示
+      - --direction up で上方向のみ探索
+      - --direction down で下方向のみ探索
+      - --format flat でフラットリスト表示
+      - .feature ディレクトリが存在しない場合の警告と継続
+      - 各ノードにステータスバッジが表示される
     """
     raise NotImplementedError('STEP: 終了コードが0である')
 ```
@@ -542,11 +551,14 @@ def then_0f800e56(context):
     """終了コードが0である
 
     Scenarios:
-      - 単一アイテムのレビューが実行できる
-      - 単一アイテムをJSON形式で出力できる
-      - --fail-on high でhigh findingがない場合に終了コード0を返す
-      - --min-severity medium で low の finding が非表示になる
-      - 全体並列レビューが実行できる
+      - REQを起点としたトップダウンのツリー表示
+      - SPECを起点とした双方向のツリー表示
+      - Gherkin Featureファイルを起点としたボトムアップ表示
+      - --direction up で上方向のみ探索
+      - --direction down で下方向のみ探索
+      - --format flat でフラットリスト表示
+      - .feature ディレクトリが存在しない場合の警告と継続
+      - 各ノードにステータスバッジが表示される
     """
     raise NotImplementedError('STEP: 終了コードが0である')
 ```
@@ -659,11 +671,14 @@ def then_0f800e56(context):
     """終了コードが0である
 
     Scenarios:
-      - 単一アイテムのレビューが実行できる
-      - 単一アイテムをJSON形式で出力できる
-      - --fail-on high でhigh findingがない場合に終了コード0を返す
-      - --min-severity medium で low の finding が非表示になる
-      - 全体並列レビューが実行できる
+      - REQを起点としたトップダウンのツリー表示
+      - SPECを起点とした双方向のツリー表示
+      - Gherkin Featureファイルを起点としたボトムアップ表示
+      - --direction up で上方向のみ探索
+      - --direction down で下方向のみ探索
+      - --format flat でフラットリスト表示
+      - .feature ディレクトリが存在しない場合の警告と継続
+      - 各ノードにステータスバッジが表示される
     """
     raise NotImplementedError('STEP: 終了コードが0である')
 ```
@@ -778,11 +793,14 @@ def then_0f800e56(context):
     """終了コードが0である
 
     Scenarios:
-      - 単一アイテムのレビューが実行できる
-      - 単一アイテムをJSON形式で出力できる
-      - --fail-on high でhigh findingがない場合に終了コード0を返す
-      - --min-severity medium で low の finding が非表示になる
-      - 全体並列レビューが実行できる
+      - REQを起点としたトップダウンのツリー表示
+      - SPECを起点とした双方向のツリー表示
+      - Gherkin Featureファイルを起点としたボトムアップ表示
+      - --direction up で上方向のみ探索
+      - --direction down で下方向のみ探索
+      - --format flat でフラットリスト表示
+      - .feature ディレクトリが存在しない場合の警告と継続
+      - 各ノードにステータスバッジが表示される
     """
     raise NotImplementedError('STEP: 終了コードが0である')
 ```
@@ -884,9 +902,8 @@ def then_9b731a71(context):
     """終了コードが1である
 
     Scenarios:
-      - 存在しないアイテムIDを指定するとエラーになる
-      - --fail-on high でhigh findingがある場合に終了コード1を返す
-      - claudeコマンドが見つからない場合にエラーになる
+      - 存在しないIDを指定した場合のエラー
+      - Doorstopツリーが未初期化の場合のエラー
     """
     raise NotImplementedError('STEP: 終了コードが1である')
 ```
@@ -980,9 +997,8 @@ def then_9b731a71(context):
     """終了コードが1である
 
     Scenarios:
-      - 存在しないアイテムIDを指定するとエラーになる
-      - --fail-on high でhigh findingがある場合に終了コード1を返す
-      - claudeコマンドが見つからない場合にエラーになる
+      - 存在しないIDを指定した場合のエラー
+      - Doorstopツリーが未初期化の場合のエラー
     """
     raise NotImplementedError('STEP: 終了コードが1である')
 ```
@@ -1063,11 +1079,14 @@ def then_0f800e56(context):
     """終了コードが0である
 
     Scenarios:
-      - 単一アイテムのレビューが実行できる
-      - 単一アイテムをJSON形式で出力できる
-      - --fail-on high でhigh findingがない場合に終了コード0を返す
-      - --min-severity medium で low の finding が非表示になる
-      - 全体並列レビューが実行できる
+      - REQを起点としたトップダウンのツリー表示
+      - SPECを起点とした双方向のツリー表示
+      - Gherkin Featureファイルを起点としたボトムアップ表示
+      - --direction up で上方向のみ探索
+      - --direction down で下方向のみ探索
+      - --format flat でフラットリスト表示
+      - .feature ディレクトリが存在しない場合の警告と継続
+      - 各ノードにステータスバッジが表示される
     """
     raise NotImplementedError('STEP: 終了コードが0である')
 ```
@@ -1158,11 +1177,14 @@ def then_0f800e56(context):
     """終了コードが0である
 
     Scenarios:
-      - 単一アイテムのレビューが実行できる
-      - 単一アイテムをJSON形式で出力できる
-      - --fail-on high でhigh findingがない場合に終了コード0を返す
-      - --min-severity medium で low の finding が非表示になる
-      - 全体並列レビューが実行できる
+      - REQを起点としたトップダウンのツリー表示
+      - SPECを起点とした双方向のツリー表示
+      - Gherkin Featureファイルを起点としたボトムアップ表示
+      - --direction up で上方向のみ探索
+      - --direction down で下方向のみ探索
+      - --format flat でフラットリスト表示
+      - .feature ディレクトリが存在しない場合の警告と継続
+      - 各ノードにステータスバッジが表示される
     """
     raise NotImplementedError('STEP: 終了コードが0である')
 ```

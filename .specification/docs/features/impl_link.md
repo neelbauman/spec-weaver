@@ -69,8 +69,9 @@ def given_5b35c4dd(context, param0):
 ```python
 @when('impl_files を読み取る')  # type: ignore
 def when_1e9b41a9(context):
-    from spec_weaver.adapters.impl_scanner import get_ref_files
     import doorstop
+
+    from spec_weaver.adapters.impl_scanner import get_ref_files
     tree = doorstop.build(cwd=str(context.temp_dir))
     item = tree.find_item(context.target_spec)
     context.actual_files = get_ref_files(item)
@@ -112,8 +113,9 @@ def given_254bc1f7(context, param0):
 ```python
 @when('impl_files を読み取る')  # type: ignore
 def when_1e9b41a9(context):
-    from spec_weaver.adapters.impl_scanner import get_ref_files
     import doorstop
+
+    from spec_weaver.adapters.impl_scanner import get_ref_files
     tree = doorstop.build(cwd=str(context.temp_dir))
     item = tree.find_item(context.target_spec)
     context.actual_files = get_ref_files(item)
@@ -155,8 +157,9 @@ def given_60f3699e(context):
 ```python
 @when('impl_files を読み取る')  # type: ignore
 def when_1e9b41a9(context):
-    from spec_weaver.adapters.impl_scanner import get_ref_files
     import doorstop
+
+    from spec_weaver.adapters.impl_scanner import get_ref_files
     tree = doorstop.build(cwd=str(context.temp_dir))
     item = tree.find_item(context.target_spec)
     context.actual_files = get_ref_files(item)

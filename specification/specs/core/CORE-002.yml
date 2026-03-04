@@ -10,7 +10,7 @@ impl_files:
 layer: architecture
 level: 2.0
 links:
-- REQ-001: r8HLD3Bp9ilMNgxhGINfuTj969G6-xvhIcjcnYrl-J0=
+- REQ-001: null
 normative: true
 ref: ''
 reviewed: hWAyTwJkAqHlDaNTECKlv5nXe6AR_2xwy-FXueR8vO4=

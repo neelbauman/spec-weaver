@@ -25,15 +25,6 @@ def when_20ad7547(context):
     context.output = res.stdout + '\n' + res.stderr
 
 
-# [Duplicate Skip] This step is already defined elsewhere
-# @then('終了コード 0 が返ること')  # type: ignore
-# def then_4f25c571(context):
-#     """終了コード 0 が返ること
-#
-#     Scenarios:
-#       - 完全一致で、監査が成功する
-#     """
-#     raise NotImplementedError('STEP: 終了コード 0 が返ること')
 
 @then('成功メッセージが表示されること')  # type: ignore
 def then_f7642361(context):

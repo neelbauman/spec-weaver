@@ -51,11 +51,11 @@ def minimal_feature(spec_tag: str, scenarios: list[str] | None = None) -> str:
     lines = [f"{spec_tag}", f"Feature: {spec_tag} テスト"]
     for name in scenarios:
         lines += [
-            f"",
+            "",
             f"  Scenario: {name}",
-            f"    Given テスト前提条件",
-            f"    When  テスト実行",
-            f"    Then  テスト確認",
+            "    Given テスト前提条件",
+            "    When  テスト実行",
+            "    Then  テスト確認",
         ]
     return "\n".join(lines) + "\n"
 

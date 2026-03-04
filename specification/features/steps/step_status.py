@@ -1,7 +1,11 @@
-from specification.features.steps._helpers import create_doorstop_project_api, write_feature_file, run_spec_weaver
+from specification.features.steps._helpers import (
+    create_doorstop_project_api,
+    run_spec_weaver,
+)
+
 """behave steps for: status コマンド"""
 
-from behave import given, when, then, step
+from behave import given, then, when
 
 # ======================================================================
 # Steps
@@ -262,7 +266,9 @@ def given_0f39b2ed(context):
 #     """
 #     raise NotImplementedError('STEP: build コマンドを実行する')
 
-# [Dup→step_build.py] @when('build コマンドを実行する')  # type: ignore
+# [Dup→step_build.py] build コマンドを実行する — step_build.py の定義を使用
+
+
 @then('一覧ページの実装状況列にバッジが表示されること')  # type: ignore
 def then_f35a3316(context):
     """一覧ページの実装状況列にバッジが表示されること
