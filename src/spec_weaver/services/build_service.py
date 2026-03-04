@@ -11,7 +11,7 @@ except ImportError:
 
 from spec_weaver.core.review_state import compute_review_state, ReviewState
 from spec_weaver.core.step_resolver import StepResolver
-from spec_weaver.adapters.doorstop import get_item_map, get_doorstop_tree, _get_custom_attribute
+from spec_weaver.adapters.doorstop import get_item_map, get_doorstop_tree, get_all_prefixes, _get_custom_attribute
 from spec_weaver.adapters.gherkin import get_tag_map, get_spec_fingerprints
 from spec_weaver.adapters.test_results import (
     TestResultMap, load_test_results, spec_result_summary, 
@@ -61,7 +61,7 @@ class BuildService:
         raw_items = get_item_map(repo_root, include_inactive=True)
         all_items_str = {str(uid): item for uid, item in raw_items.items()}
         doorstop_tree = get_doorstop_tree(repo_root)
-        all_prefixes = {str(doc.prefix) for doc in doorstop_tree}
+        all_prefixes = get_all_prefixes(repo_root)
 
         # 2. Gherkinタグマップ・フィンガープリント取得
         tag_map = get_tag_map(feature_dir, repo_root, all_prefixes)

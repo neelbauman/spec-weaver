@@ -1,5 +1,5 @@
 from unittest.mock import patch, MagicMock
-from spec_weaver.adapters.doorstop import get_specs, get_item_warnings, is_suspect, ItemWarnings
+from spec_weaver.adapters.doorstop import get_specs, get_item_warnings, is_suspect, ItemWarnings, MultiTree
 
 
 class MockDoorstopItem:
@@ -24,9 +24,18 @@ class MockDoorstopDocument:
         return iter(self.items)
 
 
-@patch("spec_weaver.adapters.doorstop.doorstop.build")
-@patch("spec_weaver.adapters.doorstop.os.chdir")  # ディレクトリ移動をモックしてテスト環境を保護
-def test_get_specs_filtering(mock_chdir, mock_build, tmp_path):
+class MockDoorstopTree:
+    """_build_all_trees が返す Tree 相当のモック。"""
+
+    def __init__(self, documents):
+        self._documents = documents
+
+    def __iter__(self):
+        return iter(self._documents)
+
+
+@patch("spec_weaver.adapters.doorstop._build_all_trees")
+def test_get_specs_filtering(mock_build_trees, tmp_path):
     # Doorstopのツリーをシミュレート
     items = [
         MockDoorstopItem(
@@ -42,7 +51,7 @@ def test_get_specs_filtering(mock_chdir, mock_build, tmp_path):
             "REQ-001", "REQ", active=True, testable=True
         ),  # プレフィックス違いなので除外
     ]
-    mock_build.return_value = [MockDoorstopDocument(items)]
+    mock_build_trees.return_value = [MockDoorstopTree([MockDoorstopDocument(items)])]
 
     # 実行と検証
     specs = get_specs(repo_root=tmp_path, prefix="SPEC")
@@ -124,3 +133,73 @@ def test_is_suspect_backward_compat():
     assert is_suspect(MockWarningItem(cleared=False, reviewed=True)) is True
     assert is_suspect(MockWarningItem(cleared=True, reviewed=False)) is True
     assert is_suspect(MockWarningItem(cleared=False, reviewed=False)) is True
+
+
+# ---------------------------------------------------------------------------
+# MultiTree テスト
+# ---------------------------------------------------------------------------
+
+
+class MockTreeWithDocument:
+    """document 属性と __iter__ を持つ Tree モック。"""
+
+    def __init__(self, docs):
+        self.document = docs[0] if docs else None
+        self._docs = docs
+
+    def __iter__(self):
+        return iter(self._docs)
+
+    def find_item(self, item_id):
+        for doc in self._docs:
+            for item in doc:
+                if str(item.uid) == item_id:
+                    return item
+        return None
+
+
+def test_multi_tree_iterates_all_docs():
+    """MultiTree が複数ツリーのドキュメントをすべて列挙する。"""
+    items_a = [MockDoorstopItem("REQ-001", "REQ")]
+    items_b = [MockDoorstopItem("ADR-001", "ADR")]
+    doc_a = MockDoorstopDocument(items_a)
+    doc_b = MockDoorstopDocument(items_b)
+    tree_a = MockDoorstopTree([doc_a])
+    tree_b = MockDoorstopTree([doc_b])
+
+    multi = MultiTree([tree_a, tree_b])
+    docs = list(multi)
+
+    assert doc_a in docs
+    assert doc_b in docs
+    assert len(docs) == 2
+
+
+def test_multi_tree_find_item_across_trees():
+    """MultiTree.find_item が複数ツリーをまたいでアイテムを検索する。"""
+    item_a = MockDoorstopItem("REQ-001", "REQ")
+    item_b = MockDoorstopItem("ADR-001", "ADR")
+
+    doc_a = MockDoorstopDocument([item_a])
+    doc_b = MockDoorstopDocument([item_b])
+    tree_a = MockTreeWithDocument([doc_a])
+    tree_b = MockTreeWithDocument([doc_b])
+
+    multi = MultiTree([tree_a, tree_b])
+
+    assert multi.find_item("REQ-001") is item_a
+    assert multi.find_item("ADR-001") is item_b
+    assert multi.find_item("NOT-EXIST") is None
+
+
+def test_multi_tree_single_root_is_transparent():
+    """単一ルートの MultiTree は通常の Tree と同等にふるまう。"""
+    items = [MockDoorstopItem("REQ-001", "REQ"), MockDoorstopItem("SPEC-001", "SPEC")]
+    doc = MockDoorstopDocument(items)
+    tree = MockDoorstopTree([doc])
+    multi = MultiTree([tree])
+
+    docs = list(multi)
+    assert len(docs) == 1
+    assert docs[0] is doc
+    assert multi.trees == [tree]

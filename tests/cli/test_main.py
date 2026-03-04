@@ -2,11 +2,90 @@ from unittest.mock import patch, MagicMock
 from typer.testing import CliRunner
 from pathlib import Path
 from spec_weaver.cli.main import app
+from spec_weaver.adapters.doorstop import MultiTree
 from spec_weaver.services.audit_service import AuditReport
 from spec_weaver.services.status_service import StatusReport, ItemStatusDTO
 from spec_weaver.services.clear_service import ClearResult
 
 runner = CliRunner()
+
+
+# ---------------------------------------------------------------------------
+# デフォルトコマンド（サブコマンドなし）のテスト
+# ---------------------------------------------------------------------------
+
+
+def _make_mock_tree(prefix: str, path_str: str, child_prefixes: list[str] = []):
+    """get_doorstop_tree が返す MultiTree のモックを生成する。"""
+    root_doc = MagicMock()
+    root_doc.prefix = prefix
+    root_doc.path = path_str
+
+    docs = [root_doc]
+    for cp in child_prefixes:
+        child_doc = MagicMock()
+        child_doc.prefix = cp
+        child_doc.path = f"{path_str}/{cp.lower()}"
+        docs.append(child_doc)
+
+    inner_tree = MagicMock()
+    inner_tree.document = root_doc
+    inner_tree.__iter__ = MagicMock(return_value=iter(docs))
+
+    return MultiTree([inner_tree])
+
+
+@patch("spec_weaver.adapters.doorstop.get_doorstop_tree")
+def test_default_shows_single_root(mock_get_tree, tmp_path):
+    """サブコマンドなしで実行すると、単一ルートのドキュメント情報が表示される。"""
+    mock_get_tree.return_value = _make_mock_tree(
+        "REQ", str(tmp_path / "reqs"), ["SPEC", "PLAN"]
+    )
+
+    result = runner.invoke(app, ["--repo-root", str(tmp_path)])
+
+    assert result.exit_code == 0
+    assert "ドキュメントルート" in result.stdout
+    assert "REQ" in result.stdout
+
+
+@patch("spec_weaver.adapters.doorstop.get_doorstop_tree")
+def test_default_shows_multiple_roots(mock_get_tree, tmp_path):
+    """サブコマンドなしで実行すると、複数ルートがそれぞれ表示される。"""
+    root_a = MagicMock()
+    root_a.prefix = "REQ"
+    root_a.path = str(tmp_path / "reqs")
+
+    root_b = MagicMock()
+    root_b.prefix = "ADR"
+    root_b.path = str(tmp_path / "adrs")
+
+    tree_a = MagicMock()
+    tree_a.document = root_a
+    tree_a.__iter__ = MagicMock(return_value=iter([root_a]))
+
+    tree_b = MagicMock()
+    tree_b.document = root_b
+    tree_b.__iter__ = MagicMock(return_value=iter([root_b]))
+
+    mock_get_tree.return_value = MultiTree([tree_a, tree_b])
+
+    result = runner.invoke(app, ["--repo-root", str(tmp_path)])
+
+    assert result.exit_code == 0
+    assert "2 件" in result.stdout
+    assert "REQ" in result.stdout
+    assert "ADR" in result.stdout
+
+
+@patch("spec_weaver.adapters.doorstop.get_doorstop_tree")
+def test_default_error_exits_nonzero(mock_get_tree, tmp_path):
+    """ツリー読み込みに失敗した場合は終了コード 1 を返す。"""
+    mock_get_tree.side_effect = Exception("doorstop error")
+
+    result = runner.invoke(app, ["--repo-root", str(tmp_path)])
+
+    assert result.exit_code == 1
 
 
 def _make_mock_item(uid: str, suspect: bool = False, status: str | None = None):
