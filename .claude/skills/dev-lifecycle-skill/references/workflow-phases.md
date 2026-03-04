@@ -81,7 +81,7 @@ uv run pytest tests/ -q --collect-only
 
 #### 2.1 仕様の作成・更新
 
-doorstop-gherkin-skill の手順に従い、REQ / SPEC を作成・更新する。
+`references/doorstop-guide.md` の手順に従い、REQ / SPEC を作成・更新する。
 
 ```bash
 # 新規REQの追加
@@ -95,6 +95,25 @@ doorstop edit SPEC-xxx
 ```
 
 `status: draft` を設定すること。
+
+#### 2.1b `layer` 属性の設定
+
+新規 SPEC には `layer` 属性を設定し、仕様が記述する対象の層を明示する。
+
+```yaml
+# 外部から観察可能な振る舞い → .feature でテスト
+layer: behavior
+
+# 内部構造・技術的制約 → ユニットテスト等で検証
+layer: architecture
+```
+
+**判断基準**: 「外部のアクターが結果を直接観察できるか？」
+- Yes → `behavior`
+- No → `architecture`
+
+> `layer` 未設定は許容される（既存アイテムの後方互換）。
+> 詳細は `references/design-principles.md` を参照。
 
 #### 2.2 設計ドキュメントの作成
 
@@ -124,9 +143,9 @@ doorstop link RESEARCH-xxx SPEC-xxx
 - 既存のシナリオを更新する必要があるか
 - テスト不可能な仕様には `testable: false` を設定する
 
-`.feature` を実際に記述する場合は **bdd-behave-expert-skill の Gherkin 規則** に従うこと。
+`.feature` を実際に記述する場合は **`references/behave-and-testing.md` の Gherkin 規則** に従うこと。
 
-主なルール（詳細は bdd-behave-expert-skill を参照）:
+主なルール（詳細は `references/behave-and-testing.md` を参照）:
 - Feature タグに `@SPEC-xxx` を付与して Doorstop とリンクする
 - Rule キーワードでビジネスルールを明示する
 - 共通前提は `Background` に集約する
@@ -205,7 +224,7 @@ PLAN の `text` フィールドに実装タスクを記述する（テンプレ�
 
 #### 4.2 仕様の同期
 
-コード変更に伴い仕様が変わる場合は、doorstop-gherkin-skill の手順に従って同時に更新する:
+コード変更に伴い仕様が変わる場合は、`references/doorstop-guide.md` の手順に従って同時に更新する:
 
 - SPEC の `text` を更新する
 - 新しい振る舞いがあれば `.feature` にシナリオを追加する
@@ -221,7 +240,7 @@ PLAN の `text` フィールドに実装タスクを記述する（テンプレ�
 
 #### 4.4 BDD ステップ定義の実装（`.feature` を追加・更新した場合）
 
-**bdd-behave-expert-skill の手順に従うこと。** 手順の概要:
+**`references/behave-and-testing.md` の手順に従うこと。** 手順の概要:
 
 1. `scaffold` で雛形を生成する（手書きでゼロから書き始めてはならない）:
    ```bash
@@ -290,6 +309,7 @@ uv run spec-weaver status
 | DESIGN を変更 | 親 SPEC、実装コード | コードが設計と一致しているか。SPEC の記述と矛盾しないか |
 | PLAN を変更 | 親 SPEC、実装コード | 計画と実装結果が一致しているか |
 | コードを変更 | 対応 SPEC、`.feature` | 仕様に記載のない振る舞いが増えていないか。既存シナリオが壊れていないか |
+| SPEC の `layer` | `.feature` との対応 | `layer: behavior` の SPEC に .feature があるか。`layer: architecture` の SPEC に .feature が紐づいていないか |
 
 #### 5.4 精査結果の報告
 

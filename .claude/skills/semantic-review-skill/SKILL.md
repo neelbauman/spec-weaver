@@ -26,6 +26,12 @@
 仕様書とコードの両方に記述はあるが、内容が食い違っている
 （例: エラー時の挙動、返り値の型、副作用の有無）。
 
+### 4. layer_mismatch（layer不適切）
+SPEC の `layer` 属性と、実際の仕様内容・Gherkin紐付け状態が矛盾している。
+- `layer: behavior` なのに内部構造を記述している
+- `layer: architecture` なのに .feature でテストされている
+- `layer: behavior` かつ `testable: true` なのに .feature が存在しない
+
 ## severity の基準
 
 | レベル | 対象 |
@@ -58,6 +64,13 @@
       "title": "--prefix オプションの動作が未検証",
       "detail": "仕様書には --prefix オプションで監査対象を絞れると記載されているが、Gherkin シナリオにそのケースが存在しない",
       "location": "specification/specs/SPEC-003.yml §入力オプション"
+    },
+    {
+      "kind": "layer_mismatch",
+      "severity": "low",
+      "title": "architecture 層の SPEC に .feature が紐づいている",
+      "detail": "SPEC-003 は layer: architecture だが、audit.feature で @SPEC-003 タグにより Gherkin テストされている。layer: behavior に変更するか、.feature のタグを除去すべき",
+      "location": "specification/specs/SPEC-003.yml"
     }
   ],
   "summary": "全体的に仕様と実装は整合しているが、--prefix オプションのテストカバレッジに軽微な欠落がある。"
@@ -83,6 +96,7 @@ findingが存在しない場合は `"findings": []` とすること。
 | 重大度 | 種別 | タイトル |
 |--------|------|---------|
 | medium | missing_implementation | --prefix オプションの動作が未検証 |
+| low | layer_mismatch | architecture 層の SPEC に .feature が紐づいている |
 
 #### [medium] --prefix オプションの動作が未検証
 仕様書には --prefix オプションで監査対象を絞れると記載されているが、

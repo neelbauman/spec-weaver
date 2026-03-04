@@ -1,10 +1,17 @@
 ---
 name: dev-lifecycle
 description: >
-  Doorstop + Gherkin + Spec-Weaver で仕様管理された開発ライフサイクル全体（分析→設計→計画→実装→検証・コミット）を統制するスキル。
-  実装計画をPLANドキュメントとしてDoorstopに永続化し、拡張ドキュメント階層（DESIGN/PLAN/ADR/RESEARCH）を管理する。
+  Doorstop + Gherkin + Spec-Weaver で仕様管理された開発ライフサイクル全体を統制するスキル。
   ユーザーが要件や仕様を伝えた場合、および開発に取り組む場合は必ずこのスキルを使うこと。
-  ユーザーが「開発」「実装」「設計」「ADR」「仕様」「要件」を話題にした場合もこのスキルをつかうこと。
+  以下のキーワードでもトリガーすること:
+  「開発」「実装」「設計」「ADR」「仕様」「要件」
+  「仕様管理」「仕様更新」「Doorstop」「Gherkin」「要件定義」「.feature」「BDD」
+  「受け入れ条件」「Spec-Weaver」「トレーサビリティ」
+  「behave」「BDDテスト」「Gherkin実装」「ステップ定義」「step定義」
+  「featureファイル実装」「behaveテスト」「受け入れテスト」
+  「仕様を見直したい」「ドキュメントが増えてきた」「構造を整理したい」
+  「仕様のレビュー」「再編」「整合性チェック」「ドキュメント整理」
+  「分割」「集約」「統合」「階層変更」「親を変える」
 ---
 
 # 開発ライフサイクル管理スキル
@@ -61,13 +68,18 @@ description: >
 
 ### 必須ステップ
 
-1. 新規/更新が必要な REQ / SPEC を **doorstop-gherkin-skill の手順で** 作成・更新すること:
+1. 新規/更新が必要な REQ / SPEC を **`references/doorstop-guide.md` の手順で** 作成・更新すること:
    ```bash
    doorstop add REQ          # 新規REQ追加
    doorstop add SPEC         # 新規SPEC追加
    doorstop link SPEC-xxx REQ-xxx   # リンク設定
    ```
 2. REQ / SPEC の YAML に `status: draft` を設定すること。
+   新規 SPEC には `layer` 属性も設定すること（`behavior` または `architecture`）:
+   ```yaml
+   layer: behavior     # 外部から観察可能な振る舞い → .feature でテスト
+   # layer: architecture  # 内部構造・技術的制約 → ユニットテストで検証
+   ```
 3. 規模に応じて設計ドキュメントを作成すること（判定表を参照）:
 
    | 規模 | DESIGN | ADR | PLAN |
@@ -76,7 +88,7 @@ description: >
    | 中規模（単一モジュール内の大きな変更） | 推奨 | — | 推奨 |
    | 小規模（数ファイルの変更） | — | — | 任意 |
 
-4. `.feature` ファイルの追加・更新方針を決定し、**bdd-behave-expert-skill の Gherkin 規則に従って** Feature / Scenario を記述すること。
+4. `.feature` ファイルの追加・更新方針を決定し、**`references/behave-and-testing.md` の Gherkin 規則に従って** Feature / Scenario を記述すること。
 5. `.feature` を作成・更新したら、**その直後に scaffold を実行**してステップ雛形を生成すること:
    ```bash
    uv run spec-weaver scaffold ./specification/features --out-dir specification/features/steps
@@ -119,8 +131,8 @@ Plan Modeで立てた実装計画などをドキュメントとして保存す�
 ### 必須ステップ
 
 1. 計画に沿ってコードを変更すること。
-2. コード変更に伴い仕様が変わる場合は、**コードと同時に** SPEC / `.feature` を更新すること（doorstop-gherkin-skill の手順に従う）。
-3. `.feature` ファイルを追加・更新した場合は、**必ず scaffold を実行してステップファイルを更新**し、**bdd-behave-expert-skill の手順で** ステップ定義を肉付けすること:
+2. コード変更に伴い仕様が変わる場合は、**コードと同時に** SPEC / `.feature` を更新すること（`references/doorstop-guide.md` の手順に従う）。
+3. `.feature` ファイルを追加・更新した場合は、**必ず scaffold を実行してステップファイルを更新**し、**`references/behave-and-testing.md` の手順で** ステップ定義を肉付けすること:
    ```bash
    # .feature を変更するたびに scaffold を実行（手書き禁止）
    uv run spec-weaver scaffold ./specification/features --out-dir specification/features/steps
@@ -181,6 +193,7 @@ Plan Modeで立てた実装計画などをドキュメントとして保存す�
    | `.feature` を変更 | 対応 SPEC / テストコード | SPEC の testable 属性やタグが正しいか |
    | DESIGN を変更 | 親 SPEC / 実装コード | コードが設計と一致しているか |
    | コードを変更 | 対応 SPEC / `.feature` | 仕様に記載のない振る舞いが増えていないか |
+   | SPEC の `layer` | `.feature` との対応 | `layer: behavior` の SPEC に .feature があるか。`layer: architecture` の SPEC に .feature が紐づいていないか |
 
 4. 精査結果と更新内容をユーザーに報告すること。
 
@@ -252,22 +265,45 @@ doorstop create RESEARCH ./specification/research --parent SPEC
 
 ---
 
-## 他スキルとの役割分担
+## BDD テスト実装の原則
 
-| 操作 | 担当スキル |
-|---|---|
-| REQ / SPEC の YAML 作成・編集、`.feature` 作成・編集、Spec-Weaver コマンドの使い方 | **doorstop-gherkin-skill** |
-| `.feature` の Gherkin 設計、`scaffold` 実行、ステップ定義の実装 | **bdd-behave-expert-skill** |
-| フェーズ進行管理、コミット規約、拡張ドキュメント管理 | **本スキル** |
+**テストは「通すためのもの」ではない。**
+テストは「設計として正しい世界」を固定するために存在する。
+現在の実装がテストに追従できていない場合、**テストが失敗するのは正しい**。
 
-### bdd-behave-expert-skill を呼び出すタイミング
+### 3層構造（Spec-Glue-Execution）
 
-| フェーズ | 操作 |
-|---|---|
-| **Phase 2 (設計)** | `.feature` ファイルの新規作成・更新時、Gherkin 記述規則を適用する。作成後すぐに `scaffold` でステップ骨格を生成する |
-| **Phase 4 (実装)** | `.feature` を追加・更新した後、`scaffold` でステップ雛形を再生成し、ステップ定義を肉付けする |
+```
+ Spec 層 ──── .feature（Gherkin）    : ビジネスの振る舞いを宣言
+ Glue 層 ──── Step 定義（Python）    : 翻訳・委譲のみ（ロジック禁止）
+ Execution 層 ── ヘルパー / クライアント : 実際のシステム操作
+```
 
-### scaffold の実行タイミング（まとめ）
+### 絶対原則
+
+1. **仕様至上主義**: 実装の都合で Gherkin を変更しない。仕様として正しければ、テストが失敗してもよい。
+2. **関心の分離**: Gherkin はビジネスの振る舞い（What）、Step は翻訳と委譲のみ（How）。Step にロジックを書かない。
+3. **宣言的記述**: Gherkin に UI・API・DB の実装詳細を書かない。ドメイン用語を最優先する。
+
+> 詳細は `references/behave-and-testing.md` を参照。
+
+---
+
+## ドキュメントレビュー & 再編
+
+仕様ドキュメントの健全性を診断し、問題があれば再整理する3つのモード:
+
+| モード | 目的 | 操作 |
+|---|---|---|
+| **レビュー** | ドキュメントを変更せず問題点を報告 | 構造・リンク・内容・鮮度・layer分類を6カテゴリでチェック |
+| **再編** | 構造的問題の改善 | 分割（サブドキュメント化）、集約（統合）、階層変更（親の変更） |
+| **個別修正** | アイテム単位の問題修正 | リンク切れ修正、孤立アイテムへのリンク追加、重複統合 |
+
+> 詳細は `references/review-and-reorganization.md` を参照。
+
+---
+
+## scaffold の実行タイミング（まとめ）
 
 `.feature` に変更が入ったタイミングでは必ず scaffold を実行すること:
 
@@ -294,3 +330,10 @@ uv run spec-weaver scaffold ./specification/features --out-dir specification/fea
 | `references/workflow-phases.md` | 各フェーズの詳細手順を確認するとき |
 | `references/commit-conventions.md` | コミットメッセージを作成するとき |
 | `references/document-types.md` | DESIGN / PLAN / ADR / RESEARCH を作成するとき |
+| `references/design-principles.md` | 設計原則・4層モデル・layer属性の詳細を確認するとき |
+| `references/doorstop-guide.md` | Doorstop CLI の使い方・YAML テンプレート・セットアップ手順を確認するとき |
+| `references/gherkin-guide.md` | .feature ファイルを作成・編集するとき |
+| `references/spec-weaver-commands.md` | Spec-Weaver の各コマンドの使い方を確認するとき |
+| `references/behave-and-testing.md` | BDD テスト（behave）の実装・ステップ定義・パターンを確認するとき |
+| `references/ci-integration.md` | GitHub Actions や Pre-commit の設定をするとき |
+| `references/review-and-reorganization.md` | ドキュメントのレビュー・再編・整合性修正を行うとき |
