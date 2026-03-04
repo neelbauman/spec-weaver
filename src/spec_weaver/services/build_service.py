@@ -503,7 +503,13 @@ class BuildService:
             for child_tree in sorted(tree_node.children, key=lambda t: str(t.document.prefix)):
                 render_tree_node(child_tree, depth + 1)
 
-        render_tree_node(doorstop_tree, 0)
+        # MultiTree の場合は各ルートツリーを個別にレンダリング
+        trees = getattr(doorstop_tree, "trees", None)
+        if trees is not None:
+            for tree in trees:
+                render_tree_node(tree, 0)
+        else:
+            render_tree_node(doorstop_tree, 0)
         return "\n".join(lines) if lines else "_（ドキュメント階層が見つかりません）_"
 
     def _generate_basic_files(
