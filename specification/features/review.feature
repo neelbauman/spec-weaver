@@ -1,44 +1,59 @@
-# spec-weaver-fingerprint: 8558674633eb8fa7d81a20573dc103f24fb474919b6f6c0d926937136ca17e0b
-# spec-weaver-fingerprint-QA-004: zJZ8rKdo5j3CC50cStOQT-dYQz3fw8w45YpbYNLYs6o=
 @QA-004
-Feature: review コマンド — .feature ファイルへのフィンガープリント書き込み
-  指定した .feature ファイルの構造コンテンツ（Feature / Background / Scenario）の
-  SHA-256 ハッシュを計算し、ファイル先頭にコメントとして書き込む。
-  これにより、ファイルが最後にレビューされた時点の状態を自身が記録する。
+Feature: review コマンド — Doorstop アイテムのエディタ確認レビュー
+  Doorstop アイテムを指定し、suspect の原因となった関連アイテムをエディタで開いて確認した上で
+  reviewed スタンプを更新する。
 
-  Scenario: .feature ファイルを指定してフィンガープリントが書き込まれる
-    Given ".feature" ファイルが存在する
-    When `spec-weaver review specification/features/audit.feature` を実行する
+  Scenario: アイテムIDを指定してエディタが起動しレビュー済みになる
+    Given Doorstop アイテム "QA-001" が存在する
+    And エディタが利用可能である
+    When `spec-weaver review QA-001` を実行する
     Then review 終了コードが0である
-    And ファイル先頭に "# spec-weaver-fingerprint:" コメントが追加される
+    And エディタが起動した
+    And "QA-001" が reviewed 状態になる
 
-  Scenario: 既存のフィンガープリントコメントが新しいハッシュで上書きされる
-    Given ".feature" ファイルの先頭に古いフィンガープリントコメントが存在する
-    When `spec-weaver review specification/features/audit.feature` を実行する
+  Scenario: suspect な場合に原因アイテムがエディタで開かれる
+    Given Doorstop アイテム "QA-001" が suspect 状態である
+    And 親アイテムに git 差分が存在する
+    And エディタが利用可能である
+    When `spec-weaver review QA-001` を実行する
     Then review 終了コードが0である
-    And ファイル先頭のコメントが新しいハッシュ値で上書きされる
+    And エディタが対象 YAML と関連アイテムの分割表示で起動した
 
-  Scenario: 存在しないファイルを指定するとエラーになる
-    When `spec-weaver review nonexistent.feature` を実行する
+  Scenario: --no-edit でエディタなしでレビューできる
+    Given Doorstop アイテム "QA-001" が存在する
+    When `spec-weaver review QA-001 --no-edit` を実行する
+    Then review 終了コードが0である
+    And エディタが起動しない
+    And "QA-001" が reviewed 状態になる
+
+  Scenario: 存在しないアイテムIDを指定するとエラーになる
+    When `spec-weaver review NONEXISTENT-999` を実行する
     Then review 終了コードが1である
     And review エラーメッセージが表示される
 
-  Scenario: 指定ファイルが .feature でない場合にエラーになる
-    Given ".txt" ファイルが存在する
-    When `spec-weaver review not_feature.txt` を実行する
+  Scenario: エディタが見つからない場合はエラーになる
+    Given Doorstop アイテム "QA-001" が存在する
+    And エディタが利用不可能である
+    When `spec-weaver review QA-001` を実行する
     Then review 終了コードが1である
     And review エラーメッセージが表示される
 
-  Scenario: --all で全 .feature ファイルと全 Doorstop アイテムを一括レビューできる
-    Given feature_dir に複数の ".feature" ファイルが存在する
-    And 複数のアクティブな Doorstop アイテムが存在する
-    When `spec-weaver review --all --feature-dir ./specification/features` を実行する
+  Scenario: エディタが非ゼロ終了するとエラーになる
+    Given Doorstop アイテム "QA-001" が存在する
+    And エディタが非ゼロ終了コードを返す
+    When `spec-weaver review QA-001` を実行する
+    Then review 終了コードが1である
+    And review エラーメッセージが表示される
+
+  Scenario: --all で全 Doorstop アイテムを一括レビューできる（エディタなし）
+    Given 複数のアクティブな Doorstop アイテムが存在する
+    When `spec-weaver review --all` を実行する
     Then review 終了コードが0である
-    And 全 ".feature" ファイルにフィンガープリントが書き込まれる
+    And エディタが起動しない
     And アクティブな全 Doorstop アイテムがレビュー済みになる
 
-  Scenario: --all と対象パスを同時に指定するとエラーになる
-    When `spec-weaver review --all specification/features/audit.feature` を実行する
+  Scenario: --all と対象IDを同時に指定するとエラーになる
+    When `spec-weaver review --all QA-001` を実行する
     Then review 終了コードが1である
     And review エラーメッセージが表示される
 

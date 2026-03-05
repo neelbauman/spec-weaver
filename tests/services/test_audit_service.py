@@ -1,9 +1,10 @@
-import pytest
-from unittest.mock import patch, MagicMock
 from pathlib import Path
-from datetime import date
+from unittest.mock import MagicMock, patch
 
-from spec_weaver.services.audit_service import AuditService, AuditReport
+import pytest
+
+from spec_weaver.services.audit_service import AuditService
+
 
 @pytest.fixture
 def mock_repo_root():

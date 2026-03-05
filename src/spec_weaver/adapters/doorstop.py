@@ -133,35 +133,56 @@ class ItemWarnings:
     has_suspect_links: bool = False
     has_unreviewed_changes: bool = False
     suspect_link_targets: list[str] = field(default_factory=list)
+    has_suspect_children: bool = False
+    suspect_children: list[str] = field(default_factory=list)
+    broken_links: list[str] = field(default_factory=list)
 
     @property
     def has_any_warning(self) -> bool:
-        return self.has_suspect_links or self.has_unreviewed_changes
+        return (
+            self.has_suspect_links
+            or self.has_unreviewed_changes
+            or self.has_suspect_children
+            or bool(self.broken_links)
+        )
 
 
-def get_item_warnings(item: Any) -> ItemWarnings:
-    """item.cleared / item.reviewed を使って警告を検出する。
-
-    - cleared == False → 上位リンク先が変更されている (suspect link)
-    - reviewed == False → アイテム自身に未レビュー変更がある
-    """
+def get_item_warnings(
+    item: Any, multi_tree: Optional["MultiTree"] = None, child_index: Optional[Dict[str, List[Any]]] = None
+) -> ItemWarnings:
     w = ItemWarnings()
     try:
-        if not item.cleared:
-            w.has_suspect_links = True
-            try:
-                for uid, parent in item._get_parent_uid_and_item():
-                    if uid.stamp != parent.stamp():
-                        w.suspect_link_targets.append(str(uid))
-            except Exception:
-                w.suspect_link_targets = [str(l) for l in getattr(item, "links", [])]
-    except Exception:
-        pass
-    try:
-        if not item.reviewed:
+        if not getattr(item, "reviewed", True):
             w.has_unreviewed_changes = True
     except Exception:
         pass
+
+    if multi_tree is not None:
+        suspects, broken = check_suspect_cross_root(multi_tree, item)
+        if suspects:
+            w.has_suspect_links = True
+            w.suspect_link_targets = suspects
+        if broken:
+            w.broken_links = broken
+    else:
+        try:
+            if not item.cleared:
+                w.has_suspect_links = True
+                try:
+                    for uid, parent in item._get_parent_uid_and_item():
+                        if uid.stamp != parent.stamp():
+                            w.suspect_link_targets.append(str(uid))
+                except Exception:
+                    w.suspect_link_targets = [str(l) for l in getattr(item, "links", [])]
+        except Exception:
+            pass
+
+    if child_index is not None:
+        suspect_children = check_children_suspect(item, child_index)
+        if suspect_children:
+            w.has_suspect_children = True
+            w.suspect_children = suspect_children
+
     return w
 
 
@@ -313,16 +334,114 @@ def delete_item_attribute(repo_root: Path, item_id: str, key: str) -> None:
 def clear_doorstop_suspects(repo_root: Path, item_id: str) -> bool:
     """Doorstop ネイティブの suspect リンクを解除します。
 
-    item.clear() を呼び出して、親アイテムのスタンプを更新します。
+    クロスルート対応: item.clear() は同一ツリー内しか検索できないため、
+    MultiTree を使って全ツリーからリンク先アイテムを解決してスタンプを更新します。
     suspect リンクが存在し解除された場合は True、それ以外は False を返します。
-    複数ルートが存在する場合も全ツリーを対象に検索します。
     """
     multi_tree = get_doorstop_tree(repo_root)
     item = multi_tree.find_item(item_id)
     if not item:
         return False
-    if not item.cleared:
-        item.clear()
+
+    # item.cleared / item.clear() は self.tree.find_item() しか使わないため
+    # クロスルートリンクを解決できない。直接スタンプを操作する。
+    suspect_uids = [uid for uid in item.links if not bool(uid.stamp)]
+    if not suspect_uids:
+        return False
+
+    for uid in suspect_uids:
+        linked = multi_tree.find_item(str(uid))
+        if linked:
+            uid.stamp = linked.stamp()
+
+    item.save()
+    return True
+
+# ---------------------------------------------------------------------------
+# Cross-root & Children suspects
+# ---------------------------------------------------------------------------
+
+def _build_child_index(multi_tree: "MultiTree") -> Dict[str, List[Any]]:
+    index: Dict[str, List[Any]] = {}
+    for doc in multi_tree:
+        for item in doc:
+            if not getattr(item, "active", True):
+                continue
+            for link_uid in getattr(item, "links", []):
+                parent_id = str(link_uid)
+                if parent_id not in index:
+                    index[parent_id] = []
+                index[parent_id].append(item)
+    return index
+
+def check_suspect_cross_root(
+    multi_tree: "MultiTree", item: Any
+) -> tuple[list[str], list[str]]:
+    suspect_targets: list[str] = []
+    broken_links: list[str] = []
+    for link_uid in getattr(item, "links", []):
+        parent_id = str(link_uid)
+        parent = multi_tree.find_item(parent_id)
+        if parent is None:
+            broken_links.append(parent_id)
+            continue
+        if link_uid.stamp != parent.stamp():
+            suspect_targets.append(parent_id)
+    return suspect_targets, broken_links
+
+def check_children_suspect(
+    item: Any, child_index: Dict[str, List[Any]]
+) -> list[str]:
+    item_id = str(item.uid)
+    children = child_index.get(item_id, [])
+    if not children:
+        return []
+
+    stored_stamps = _get_custom_attribute(item, "child_stamps", {}) or {}
+    suspect_children: list[str] = []
+    for child in children:
+        child_id = str(child.uid)
+        stored = stored_stamps.get(child_id)
+        if stored is None:
+            continue
+        current_stamp = child.stamp()
+        if str(stored) != str(current_stamp):
+            suspect_children.append(child_id)
+    return suspect_children
+
+def clear_suspect_cross_root(multi_tree: "MultiTree", item: Any, targets: Optional[Set[str]] = None) -> bool:
+    updated = False
+    for link_uid in getattr(item, "links", []):
+        parent_id = str(link_uid)
+        if targets is not None and parent_id not in targets:
+            continue
+        parent = multi_tree.find_item(parent_id)
+        if parent is None:
+            continue
+        p_stamp = parent.stamp()
+        if link_uid.stamp != p_stamp:
+            link_uid.stamp = p_stamp
+            updated = True
+    if updated:
         item.save()
-        return True
-    return False
+    return updated
+
+def clear_children_stamps(parent: Any, child_index: Dict[str, List[Any]]) -> bool:
+    parent_id = str(parent.uid)
+    children = child_index.get(parent_id, [])
+    if not children:
+        return False
+    
+    stored_stamps = _get_custom_attribute(parent, "child_stamps", {}) or {}
+    updated = False
+    for child in children:
+        child_id = str(child.uid)
+        c_stamp = child.stamp()
+        if stored_stamps.get(child_id) != str(c_stamp):
+            stored_stamps[child_id] = str(c_stamp)
+            updated = True
+            
+    if updated:
+        parent.set("child_stamps", stored_stamps)
+        parent.save()
+    return updated

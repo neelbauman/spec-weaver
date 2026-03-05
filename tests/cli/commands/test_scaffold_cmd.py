@@ -1,23 +1,21 @@
 """scaffold / ci コマンド および codegen モジュールのテスト。"""
 
-import hashlib
-import re
 import ast as python_ast
-from pathlib import Path
-from unittest.mock import patch, MagicMock
+import re
+from unittest.mock import patch
 
 from typer.testing import CliRunner
 
-from spec_weaver.cli.main import app
 from spec_weaver.adapters.codegen import (
-    _hash_name,
-    _escape_string,
-    _step_keyword_to_prefix,
-    _resolve_step_prefixes,
     _collect_existing_steps,
+    _escape_string,
+    _hash_name,
     _parse_step_file,
+    _resolve_step_prefixes,
+    _step_keyword_to_prefix,
     generate_test_file,
 )
+from spec_weaver.cli.main import app
 
 runner = CliRunner()
 
@@ -135,8 +133,8 @@ def test_escape_string_backslash():
 
 def test_generate_test_file_with_quotes(tmp_path):
     """ダブルクオーテーションを含むステップが正しく生成されること。"""
-    feature_dir = tmp_path / "features"
-    feature_dir.mkdir()
+    feature_dir = tmp_path / ".specification" / "features"
+    feature_dir.mkdir(parents=True)
     feature_file = feature_dir / "quotes.feature"
     feature_file.write_text(SAMPLE_FEATURE_QUOTES, encoding="utf-8")
 
@@ -180,8 +178,8 @@ def test_resolve_step_prefixes_and_but():
 
 def test_generate_test_file_basic(tmp_path):
     """基本的なテストファイル生成が動作すること。"""
-    feature_dir = tmp_path / "features"
-    feature_dir.mkdir()
+    feature_dir = tmp_path / ".specification" / "features"
+    feature_dir.mkdir(parents=True)
     feature_file = feature_dir / "sample.feature"
     feature_file.write_text(SAMPLE_FEATURE_JA, encoding="utf-8")
 
@@ -216,8 +214,8 @@ def test_generate_test_file_basic(tmp_path):
 
 def test_generate_test_file_docstring_scenarios(tmp_path):
     """各ステップ関数の Docstring に Scenarios セクションが含まれること。"""
-    feature_dir = tmp_path / "features"
-    feature_dir.mkdir()
+    feature_dir = tmp_path / ".specification" / "features"
+    feature_dir.mkdir(parents=True)
     feature_file = feature_dir / "sample.feature"
     feature_file.write_text(SAMPLE_FEATURE_JA, encoding="utf-8")
 
@@ -237,8 +235,8 @@ def test_generate_test_file_docstring_scenarios(tmp_path):
 
 def test_generate_test_file_step_dedup(tmp_path):
     """同一ステップが重複生成されないこと。共有ステップは両シナリオを Docstring に持つ。"""
-    feature_dir = tmp_path / "features"
-    feature_dir.mkdir()
+    feature_dir = tmp_path / ".specification" / "features"
+    feature_dir.mkdir(parents=True)
     feature_file = feature_dir / "shared.feature"
     feature_file.write_text(SAMPLE_FEATURE_SHARED_STEPS, encoding="utf-8")
 
@@ -261,8 +259,8 @@ def test_generate_test_file_step_dedup(tmp_path):
 
 def test_generate_test_file_no_change_returns_none(tmp_path):
     """同一 .feature で2度実行した場合、2回目は None（変更なし）を返すこと。"""
-    feature_dir = tmp_path / "features"
-    feature_dir.mkdir()
+    feature_dir = tmp_path / ".specification" / "features"
+    feature_dir.mkdir(parents=True)
     feature_file = feature_dir / "sample.feature"
     feature_file.write_text(SAMPLE_FEATURE_JA, encoding="utf-8")
 
@@ -280,8 +278,8 @@ def test_generate_test_file_no_change_returns_none(tmp_path):
 
 def test_generate_test_file_merge_new_steps(tmp_path):
     """新規ステップが既存ファイルに差分マージされること。"""
-    feature_dir = tmp_path / "features"
-    feature_dir.mkdir()
+    feature_dir = tmp_path / ".specification" / "features"
+    feature_dir.mkdir(parents=True)
     feature_file = feature_dir / "sample.feature"
 
     out_dir = tmp_path / "tests"
@@ -318,8 +316,8 @@ def test_generate_test_file_merge_new_steps(tmp_path):
 
 def test_generate_test_file_merge_order(tmp_path):
     """新規ステップが .feature の出現順で挿入されること。"""
-    feature_dir = tmp_path / "features"
-    feature_dir.mkdir()
+    feature_dir = tmp_path / ".specification" / "features"
+    feature_dir.mkdir(parents=True)
     feature_file = feature_dir / "sample.feature"
     out_dir = tmp_path / "tests"
 
@@ -343,8 +341,8 @@ def test_generate_test_file_merge_order(tmp_path):
 
 def test_generate_test_file_merge_scenarios_update(tmp_path):
     """既存ステップの Docstring に新しいシナリオ名が追記されること。"""
-    feature_dir = tmp_path / "features"
-    feature_dir.mkdir()
+    feature_dir = tmp_path / ".specification" / "features"
+    feature_dir.mkdir(parents=True)
     feature_file = feature_dir / "shared.feature"
     out_dir = tmp_path / "tests"
 
@@ -377,8 +375,8 @@ def test_generate_test_file_merge_scenarios_update(tmp_path):
 
 def test_generate_test_file_overwrite(tmp_path):
     """--overwrite で既存ファイルが上書きされること。"""
-    feature_dir = tmp_path / "features"
-    feature_dir.mkdir()
+    feature_dir = tmp_path / ".specification" / "features"
+    feature_dir.mkdir(parents=True)
     feature_file = feature_dir / "sample.feature"
     feature_file.write_text(SAMPLE_FEATURE_JA, encoding="utf-8")
 
@@ -401,8 +399,8 @@ def test_generate_test_file_overwrite(tmp_path):
 
 def test_scaffold_cmd_generates_files(tmp_path):
     """scaffold コマンドでテストファイルが生成されること。"""
-    feature_dir = tmp_path / "features"
-    feature_dir.mkdir()
+    feature_dir = tmp_path / ".specification" / "features"
+    feature_dir.mkdir(parents=True)
     (feature_dir / "sample.feature").write_text(SAMPLE_FEATURE_JA, encoding="utf-8")
 
     out_dir = tmp_path / "tests"
@@ -411,12 +409,12 @@ def test_scaffold_cmd_generates_files(tmp_path):
         app,
         [
             "scaffold",
-            str(feature_dir),
+            "--repo-root",
+            str(tmp_path),
             "--out-dir",
             str(out_dir),
         ],
     )
-
     assert result.exit_code == 0
     assert (out_dir / "step_sample.py").exists()
     assert "新規作成" in result.stdout
@@ -424,8 +422,8 @@ def test_scaffold_cmd_generates_files(tmp_path):
 
 def test_scaffold_cmd_generates_environment_py(tmp_path):
     """scaffold コマンドで environment.py が生成されること。"""
-    feature_dir = tmp_path / "features"
-    feature_dir.mkdir()
+    feature_dir = tmp_path / ".specification" / "features"
+    feature_dir.mkdir(parents=True)
     (feature_dir / "sample.feature").write_text(SAMPLE_FEATURE_JA, encoding="utf-8")
 
     out_dir = tmp_path / "steps"
@@ -434,12 +432,12 @@ def test_scaffold_cmd_generates_environment_py(tmp_path):
         app,
         [
             "scaffold",
-            str(feature_dir),
+            "--repo-root",
+            str(tmp_path),
             "--out-dir",
             str(out_dir),
         ],
     )
-
     assert result.exit_code == 0
     assert (feature_dir / "environment.py").exists()
     assert "環境設定作成" in result.stdout
@@ -448,8 +446,8 @@ def test_scaffold_cmd_generates_environment_py(tmp_path):
 
 def test_scaffold_cmd_skips_environment_py_if_exists(tmp_path):
     """environment.py が既に存在する場合、上書きせずにスキップすること。"""
-    feature_dir = tmp_path / "features"
-    feature_dir.mkdir()
+    feature_dir = tmp_path / ".specification" / "features"
+    feature_dir.mkdir(parents=True)
     (feature_dir / "sample.feature").write_text(SAMPLE_FEATURE_JA, encoding="utf-8")
     env_file = feature_dir / "environment.py"
     env_file.write_text("existing content", encoding="utf-8")
@@ -460,12 +458,12 @@ def test_scaffold_cmd_skips_environment_py_if_exists(tmp_path):
         app,
         [
             "scaffold",
-            str(feature_dir),
+            "--repo-root",
+            str(tmp_path),
             "--out-dir",
             str(out_dir),
         ],
     )
-
     assert result.exit_code == 0
     assert "スキップ" in result.stdout
     assert env_file.read_text() == "existing content"
@@ -473,19 +471,19 @@ def test_scaffold_cmd_skips_environment_py_if_exists(tmp_path):
 
 def test_scaffold_cmd_skip_no_diff(tmp_path):
     """既存ファイルと差分がない場合はスキップされること。"""
-    feature_dir = tmp_path / "features"
-    feature_dir.mkdir()
+    feature_dir = tmp_path / ".specification" / "features"
+    feature_dir.mkdir(parents=True)
     (feature_dir / "sample.feature").write_text(SAMPLE_FEATURE_JA, encoding="utf-8")
 
     out_dir = tmp_path / "tests"
 
     # 1回目: 生成
-    runner.invoke(app, ["scaffold", str(feature_dir), "--out-dir", str(out_dir)])
+    runner.invoke(app, ["scaffold", "--repo-root", str(tmp_path), "--out-dir", str(out_dir)])
     original_content = (out_dir / "step_sample.py").read_text()
 
     # 2回目: 差分なし → スキップ
     result = runner.invoke(
-        app, ["scaffold", str(feature_dir), "--out-dir", str(out_dir)]
+        app, ["scaffold", "--repo-root", str(tmp_path), "--out-dir", str(out_dir)]
     )
 
     assert result.exit_code == 0
@@ -495,19 +493,19 @@ def test_scaffold_cmd_skip_no_diff(tmp_path):
 
 def test_scaffold_cmd_merge_diff_display(tmp_path):
     """差分マージ時に diff が表示されること。"""
-    feature_dir = tmp_path / "features"
-    feature_dir.mkdir()
+    feature_dir = tmp_path / ".specification" / "features"
+    feature_dir.mkdir(parents=True)
     feature_file = feature_dir / "sample.feature"
     out_dir = tmp_path / "tests"
 
     # 1回目: 元の feature で生成
     feature_file.write_text(SAMPLE_FEATURE_JA, encoding="utf-8")
-    runner.invoke(app, ["scaffold", str(feature_dir), "--out-dir", str(out_dir)])
+    runner.invoke(app, ["scaffold", "--repo-root", str(tmp_path), "--out-dir", str(out_dir)])
 
     # 2回目: 新規ステップ追加でマージ
     feature_file.write_text(SAMPLE_FEATURE_EXTENDED, encoding="utf-8")
     result = runner.invoke(
-        app, ["scaffold", str(feature_dir), "--out-dir", str(out_dir)]
+        app, ["scaffold", "--repo-root", str(tmp_path), "--out-dir", str(out_dir)]
     )
 
     assert result.exit_code == 0
@@ -517,19 +515,19 @@ def test_scaffold_cmd_merge_diff_display(tmp_path):
 
 def test_scaffold_cmd_no_features(tmp_path):
     """feature ファイルがない場合の動作。"""
-    feature_dir = tmp_path / "features"
-    feature_dir.mkdir()
+    feature_dir = tmp_path / ".specification" / "features"
+    feature_dir.mkdir(parents=True)
 
     result = runner.invoke(
         app,
         [
             "scaffold",
-            str(feature_dir),
+            "--repo-root",
+            str(tmp_path),
             "--out-dir",
             str(tmp_path / "tests"),
         ],
     )
-
     assert result.exit_code == 0
     assert "見つかりません" in result.stdout
 
@@ -537,8 +535,8 @@ def test_scaffold_cmd_no_features(tmp_path):
 @patch("spec_weaver.cli.commands.scaffold_cmd.is_file_dirty")
 def test_scaffold_cmd_dirty_prompt_cancel(mock_dirty, tmp_path):
     """Git dirty ファイルの確認プロンプトでキャンセルするとスキップされること。"""
-    feature_dir = tmp_path / "features"
-    feature_dir.mkdir()
+    feature_dir = tmp_path / ".specification" / "features"
+    feature_dir.mkdir(parents=True)
     feature_file = feature_dir / "sample.feature"
     feature_file.write_text(SAMPLE_FEATURE_JA, encoding="utf-8")
 
@@ -554,13 +552,13 @@ def test_scaffold_cmd_dirty_prompt_cancel(mock_dirty, tmp_path):
         app,
         [
             "scaffold",
-            str(feature_dir),
+            "--repo-root",
+            str(tmp_path),
             "--out-dir",
             str(out_dir),
         ],
         input="n\n",
     )
-
     assert result.exit_code == 0
     assert "スキップ" in result.stdout
     # ファイルは変更されていないこと
@@ -570,15 +568,15 @@ def test_scaffold_cmd_dirty_prompt_cancel(mock_dirty, tmp_path):
 @patch("spec_weaver.cli.commands.scaffold_cmd.is_file_dirty")
 def test_scaffold_cmd_force_skips_prompt(mock_dirty, tmp_path):
     """--force オプションで確認プロンプトなしにマージが実行されること。"""
-    feature_dir = tmp_path / "features"
-    feature_dir.mkdir()
+    feature_dir = tmp_path / ".specification" / "features"
+    feature_dir.mkdir(parents=True)
     feature_file = feature_dir / "sample.feature"
     feature_file.write_text(SAMPLE_FEATURE_JA, encoding="utf-8")
 
     out_dir = tmp_path / "tests"
 
     # 1回目: 生成
-    runner.invoke(app, ["scaffold", str(feature_dir), "--out-dir", str(out_dir)])
+    runner.invoke(app, ["scaffold", "--repo-root", str(tmp_path), "--out-dir", str(out_dir)])
 
     # ファイルが dirty とみなされる状態で拡張 feature にマージ
     mock_dirty.return_value = True
@@ -588,13 +586,13 @@ def test_scaffold_cmd_force_skips_prompt(mock_dirty, tmp_path):
         app,
         [
             "scaffold",
-            str(feature_dir),
+            "--repo-root",
+            str(tmp_path),
             "--out-dir",
             str(out_dir),
             "--force",
         ],
     )
-
     assert result.exit_code == 0
     # プロンプトなしでマージが実行されていること（差分更新 or 新規作成）
     assert "差分更新" in result.stdout or "新規作成" in result.stdout
@@ -630,8 +628,8 @@ def test_collect_existing_steps_ignores_commented_duplicates(tmp_path):
 
 def test_merge_stub_replaced_with_duplicate_comment(tmp_path):
     """他ファイルで実装されたステップのスタブが Duplicate コメントに置き換わること（Bug 2 修正）。"""
-    feature_dir = tmp_path / "features"
-    feature_dir.mkdir()
+    feature_dir = tmp_path / ".specification" / "features"
+    feature_dir.mkdir(parents=True)
     out_dir = tmp_path / "tests"
     out_dir.mkdir()
 

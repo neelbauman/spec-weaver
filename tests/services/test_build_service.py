@@ -1,6 +1,7 @@
 from unittest.mock import MagicMock
-from spec_weaver.services.build_service import BuildService
+
 from spec_weaver.adapters.doorstop import MultiTree
+from spec_weaver.services.build_service import BuildService
 
 
 def _make_tree_node(prefix: str, children=None):

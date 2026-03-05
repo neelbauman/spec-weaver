@@ -1,57 +1,73 @@
-# spec-weaver-fingerprint: 741608174602dbd8d2c07dc0644fe9c18a798fbd3de6d3108e3f98ecf6de540b
-# spec-weaver-fingerprint-QA-005: sF4bXqVCp0C7Q2T3NpRXT26Hdj_FTb7yqGfcnXQcYkU=
 @QA-005
-Feature: clear コマンド — Doorstop gherkin_fingerprints 更新
-  指定した仕様アイテムまたは .feature ファイル内の全アイテムの
-  gherkin_fingerprints を現在の Gherkin 内容のハッシュで更新し、
-  Suspect 状態を解除する。
+Feature: clear コマンド — Doorstop gherkin_fingerprints エディタ確認更新
+  Doorstop アイテムを指定し、変更のあった Gherkin ファイルをエディタで開いて確認した上で
+  gherkin_fingerprints を更新し Suspect 状態を解除する。
 
-  Scenario: アイテムIDを指定して gherkin_fingerprints を更新できる
-    Given 仕様アイテム "SPEC-003" が存在する
-    And "SPEC-003" に紐づく Gherkin シナリオが存在する
-    When `spec-weaver clear SPEC-003 --feature-dir ./specification/features` を実行する
+  Scenario: アイテムIDを指定してエディタが起動し gherkin_fingerprints が更新される
+    Given 仕様アイテム "QA-001" が存在する
+    And "QA-001" に紐づく Gherkin シナリオが存在する
+    And エディタが利用可能である
+    When `spec-weaver clear QA-001` を実行する
     Then clear 終了コードが0である
-    And "SPEC-003" の YAML に gherkin_fingerprints が書き込まれる
+    And エディタが起動した
+    And "QA-001" の YAML に gherkin_fingerprints が書き込まれる
 
-  Scenario: .feature ファイルを指定して複数アイテムの gherkin_fingerprints を一括更新できる
-    Given ".feature" ファイルに複数の仕様IDタグが含まれる
-    When `spec-weaver clear specification/features/audit.feature --feature-dir ./specification/features` を実行する
+  Scenario: --no-edit でエディタなしでクリアできる
+    Given 仕様アイテム "QA-001" が存在する
+    And "QA-001" に紐づく Gherkin シナリオが存在する
+    When `spec-weaver clear QA-001 --no-edit` を実行する
     Then clear 終了コードが0である
-    And ファイル内の各アイテムの gherkin_fingerprints が更新される
-    And 更新件数が表示される
-
-  Scenario: .feature ファイルを指定してファイル自身の suspect 状態も解除できる
-    Given ".feature" ファイルが "suspect-with-reviewed" 状態である
-    When `spec-weaver clear specification/features/audit.feature --feature-dir ./specification/features` を実行する
-    Then clear 終了コードが0である
-    And "specification/features/audit.feature" の内部フィンガープリントが最新の Doorstop スタンプで更新される
-    And `spec-weaver status` で当該ファイルが "✅ reviewed" となる
+    And エディタが起動しない
+    And "QA-001" の YAML に gherkin_fingerprints が書き込まれる
 
   Scenario: 存在しないアイテムIDを指定するとエラーになる
-    When `spec-weaver clear SPEC-999 --feature-dir ./specification/features` を実行する
+    When `spec-weaver clear NONEXISTENT-999` を実行する
     Then clear 終了コードが1である
     And エラーメッセージが表示される
 
   Scenario: 紐づくGherkinシナリオが存在しないアイテムを指定するとエラーになる
-    Given 仕様アイテム "SPEC-004" が存在する
-    And "SPEC-004" に紐づく Gherkin シナリオが存在しない
-    When `spec-weaver clear SPEC-004 --feature-dir ./specification/features` を実行する
+    Given 仕様アイテム "QA-001" が存在する
+    And "QA-001" に紐づく Gherkin シナリオが存在しない
+    When `spec-weaver clear QA-001` を実行する
     Then clear 終了コードが1である
     And 警告メッセージが表示される
 
-  Scenario: --all で全 .feature ファイルの全アイテムを一括クリアできる
-    Given feature_dir に複数の ".feature" ファイルが存在する
-    When `spec-weaver clear --all --feature-dir ./specification/features` を実行する
+  Scenario: 未レビューアイテムはクリアできない
+    Given あるアイテムが "unreviewed" 状態である
+    When そのアイテム ID で `spec-weaver clear` を実行する
+    Then clear 終了コードが1である
+    And エラーメッセージが表示される
+
+  Scenario: エディタが見つからない場合はエラーになる
+    Given 仕様アイテム "QA-001" が存在する
+    And "QA-001" に紐づく Gherkin シナリオが存在する
+    And エディタが利用不可能である
+    When `spec-weaver clear QA-001` を実行する
+    Then clear 終了コードが1である
+    And エラーメッセージが表示される
+
+  Scenario: エディタが非ゼロ終了するとエラーになる
+    Given 仕様アイテム "QA-001" が存在する
+    And "QA-001" に紐づく Gherkin シナリオが存在する
+    And エディタが非ゼロ終了コードを返す
+    When `spec-weaver clear QA-001` を実行する
+    Then clear 終了コードが1である
+    And エラーメッセージが表示される
+
+  Scenario: --all で全アイテムの gherkin_fingerprints を一括更新できる（エディタなし）
+    Given gherkin_fingerprints が不一致のアイテムが複数存在する
+    When `spec-weaver clear --all` を実行する
     Then clear 終了コードが0である
-    And 各ファイルのアイテムの gherkin_fingerprints が更新される
+    And エディタが起動しない
+    And 各アイテムの gherkin_fingerprints が更新される
 
   Scenario: --all で未レビューアイテムはスキップされ警告が出る
     Given あるアイテムが "unreviewed" 状態である
-    When `spec-weaver clear --all --feature-dir ./specification/features` を実行する
+    When `spec-weaver clear --all` を実行する
     Then clear 終了コードが0である
     And 未レビューアイテムに対して警告メッセージが表示される
 
-  Scenario: --all と対象パスを同時に指定するとエラーになる
-    When `spec-weaver clear --all SPEC-003 --feature-dir ./specification/features` を実行する
+  Scenario: --all と対象IDを同時に指定するとエラーになる
+    When `spec-weaver clear --all QA-001` を実行する
     Then clear 終了コードが1である
     And エラーメッセージが表示される

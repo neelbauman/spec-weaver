@@ -1,29 +1,29 @@
-import typer
 from pathlib import Path
+
+import typer
 from rich.console import Console
 from rich.prompt import Confirm
 from rich.syntax import Syntax
 
 from spec_weaver.adapters.codegen import (
-    generate_test_file,
+    _load_existing_resolver,
+    collect_all_feature_steps,
     generate_environment_file,
     prepare_test_file_content,
-    collect_all_feature_steps,
-    _load_existing_resolver,
 )
 from spec_weaver.utils.git_utils import is_file_dirty
 
 console = Console()
 
 def _scaffold_cmd(
-    feature_dir: Path = typer.Argument(..., exists=True, resolve_path=True, help=".feature ファイルが格納されたディレクトリ"),
-    out_dir: Path = typer.Option(Path("specification/features/steps"), "--out-dir", "-o", resolve_path=True, help="テストコード出力先ディレクトリ"),
+    out_dir: Path = typer.Option(Path(".specification/features/steps"), "--out-dir", "-o", resolve_path=True, help="テストコード出力先ディレクトリ"),
     overwrite: bool = typer.Option(False, "--overwrite", help="既存ファイルを全上書きする"),
     repo_root: Path = typer.Option(Path.cwd(), "--repo-root", "-r", resolve_path=True, help="Git dirty チェック用リポジトリルート"),
     force: bool = typer.Option(False, "--force", help="Git 未コミット変更の確認プロンプトをスキップして強制マージする"),
 ) -> None:
     """Gherkin .feature ファイルから behave テストコードの雛形を生成・差分マージします。"""
     try:
+        feature_dir = repo_root / ".specification" / "features"
         feature_files = sorted(feature_dir.rglob("*.feature"))
         if not feature_files:
             console.print("[yellow]⚠️ .feature ファイルが見つかりませんでした。[/yellow]")
@@ -71,7 +71,7 @@ def _scaffold_cmd(
                     if is_file_dirty(out_file, repo_root):
                         console.print(f"\n[bold yellow]⚠️  {_display_path(out_file)} に未コミットの変更があります。[/bold yellow]")
                         if status == "updated" and diff_text:
-                            console.print(f"  [dim]マージ予定の差分:[/dim]")
+                            console.print("  [dim]マージ予定の差分:[/dim]")
                             console.print(Syntax(diff_text, "diff", theme="monokai", padding=(0, 2)))
                             diff_shown = True
                         

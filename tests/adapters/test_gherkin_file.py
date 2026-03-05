@@ -1,6 +1,5 @@
-import pytest
-from pathlib import Path
 from spec_weaver.adapters.gherkin import get_tag_map
+
 
 def test_get_tag_map_with_single_file(tmp_path):
     # Setup: Create a feature file

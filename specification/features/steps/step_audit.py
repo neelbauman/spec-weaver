@@ -26,6 +26,12 @@ def when_20ad7547(context):
 
 
 
+# [Dup→step_status.py] 終了コード 0 が返ること — step_status.py の定義を使用
+# @then('終了コード 0 が返ること')  # type: ignore
+# def then_4f25c571(context):
+#     raise NotImplementedError('STEP: 終了コード 0 が返ること')
+
+
 @then('成功メッセージが表示されること')  # type: ignore
 def then_f7642361(context):
     assert "完璧です" in context.output or "Success" in context.output

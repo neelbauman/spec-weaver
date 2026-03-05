@@ -26,3 +26,6 @@ text: |
   - `spec-weaver` 自身はHTMLのレンダリングやMermaidの描画エンジンを持たないこと
   - データの抽出・結合（Markdown生成）に徹し、描画の全責務を `MkDocs` に委譲すること
   - 「データ構築 vs 描画」の分離を厳守すること
+
+  ### コア技術
+  - Doorstopとgherkin

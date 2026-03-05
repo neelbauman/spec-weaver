@@ -1,11 +1,16 @@
-import typer
 import json
 from pathlib import Path
 from typing import Optional
+
+import typer
 from rich.console import Console
 
 from spec_weaver.core.review import (
-    ReviewResult, filter_findings, run_all_reviews, run_claude_review, severity_gte
+    ReviewResult,
+    filter_findings,
+    run_all_reviews,
+    run_claude_review,
+    severity_gte,
 )
 
 console = Console()
@@ -13,7 +18,6 @@ console = Console()
 def _semantic_review_cmd(
     item: Optional[str] = typer.Option(None, "--item", "-i", help="レビュー対象の仕様アイテムID。--all と排他。"),
     all_items: bool = typer.Option(False, "--all", help="全仕様アイテムを並列レビューする。--item と排他。"),
-    feature_dir: Path = typer.Option(Path("specification/features"), "--feature-dir", "-f", resolve_path=True),
     repo_root: Path = typer.Option(Path.cwd(), "--repo-root", "-r", resolve_path=True),
     output: str = typer.Option("text", "--output", "-o", help="出力形式: text（Markdown） / json"),
     min_severity: str = typer.Option("low", "--min-severity", help="表示する finding の最低重大度"),
@@ -26,8 +30,7 @@ def _semantic_review_cmd(
         console.print("[bold red]❌ --item または --all のどちらか一方を指定してください。[/bold red]")
         raise typer.Exit(code=2)
 
-    if not feature_dir.exists() and (repo_root / feature_dir).exists():
-        feature_dir = repo_root / feature_dir
+    feature_dir = repo_root / ".specification" / "features"
 
     if item:
         try:
@@ -54,7 +57,15 @@ def _semantic_review_cmd(
     # --all の場合
     try:
         if output != "json":
-            from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn, MofNCompleteColumn, TimeElapsedColumn
+            from rich.progress import (
+                BarColumn,
+                MofNCompleteColumn,
+                Progress,
+                SpinnerColumn,
+                TextColumn,
+                TimeElapsedColumn,
+            )
+
             from spec_weaver.adapters.doorstop import get_item_map
             
             total = len(get_item_map(repo_root))

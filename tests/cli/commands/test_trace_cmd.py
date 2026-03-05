@@ -1,14 +1,14 @@
-from spec_weaver.cli.main import app
+
 # tests/test_trace.py
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
+
 from typer.testing import CliRunner
-from pathlib import Path
 
 from spec_weaver.cli.commands.trace_cmd import (
     _collect_all_ancestors,
     _format_trace_node,
-    _build_trace_rich_tree,
 )
+from spec_weaver.cli.main import app
 from spec_weaver.services.trace_service import TraceData
 
 runner = CliRunner()
@@ -141,7 +141,7 @@ def test_trace_down_shows_descendants(mock_service_class, tmp_path):
         impl_map=None
     )
 
-    result = runner.invoke(app, ["trace", "REQ-001", "-f", str(tmp_path), "--direction", "down"])
+    result = runner.invoke(app, ["trace", "REQ-001", "--direction", "down"])
 
     assert result.exit_code == 0
     assert "REQ-001" in result.stdout
@@ -167,7 +167,7 @@ def test_trace_both_shows_ancestors_and_descendants(mock_service_class, tmp_path
         impl_map=None
     )
 
-    result = runner.invoke(app, ["trace", "SPEC-001", "-f", str(tmp_path), "--direction", "both"])
+    result = runner.invoke(app, ["trace", "SPEC-001", "--direction", "both"])
 
     assert result.exit_code == 0
     assert "REQ-001" in result.stdout

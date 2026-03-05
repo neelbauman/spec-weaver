@@ -1,4 +1,5 @@
 import pytest
+
 from spec_weaver.adapters.gherkin import get_tag_map, get_tags
 
 

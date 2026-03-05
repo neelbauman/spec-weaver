@@ -59,29 +59,6 @@ nav:
   - SPEC:
       - SPEC一覧: spec.md
       - SPEC-001: items/SPEC-001.md
-      - SPEC-002: items/SPEC-002.md
-      - SPEC-005: items/SPEC-005.md
-      - SPEC-004: items/SPEC-004.md
-      - SPEC-006: items/SPEC-006.md
-      - SPEC-014: items/SPEC-014.md
-      - SPEC-015: items/SPEC-015.md
-      - SPEC-016: items/SPEC-016.md
-      - SPEC-007: items/SPEC-007.md
-      - SPEC-008: items/SPEC-008.md
-      - SPEC-009: items/SPEC-009.md
-      - SPEC-010: items/SPEC-010.md
-      - SPEC-011: items/SPEC-011.md
-      - SPEC-012: items/SPEC-012.md
-      - SPEC-013: items/SPEC-013.md
-      - SPEC-017: items/SPEC-017.md
-      - SPEC-018: items/SPEC-018.md
-      - SPEC-019: items/SPEC-019.md
-      - SPEC-020: items/SPEC-020.md
-      - SPEC-021: items/SPEC-021.md
-      - SPEC-022: items/SPEC-022.md
-      - SPEC-023: items/SPEC-023.md
-      - SPEC-024: items/SPEC-024.md
-      - SPEC-025: items/SPEC-025.md
   - TRC:
       - TRC一覧: trc.md
       - TRC-001: items/TRC-001.md
@@ -101,17 +78,6 @@ nav:
 
   - 振る舞い仕様 (Features):
       - features/index.md
-      - audit.md: features/audit.md
-      - build.md: features/build.md
-      - clear.md: features/clear.md
-      - data_extraction.md: features/data_extraction.md
-      - impl_link.md: features/impl_link.md
-      - review.md: features/review.md
-      - scaffold.md: features/scaffold.md
-      - semantic_review.md: features/semantic_review.md
-      - status.md: features/status.md
-      - timestamp.md: features/timestamp.md
-      - trace.md: features/trace.md
 
 markdown_extensions:
   - tables

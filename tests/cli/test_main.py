@@ -1,11 +1,12 @@
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
+
 from typer.testing import CliRunner
-from pathlib import Path
-from spec_weaver.cli.main import app
+
 from spec_weaver.adapters.doorstop import MultiTree
+from spec_weaver.cli.main import app
 from spec_weaver.services.audit_service import AuditReport
-from spec_weaver.services.status_service import StatusReport, ItemStatusDTO
 from spec_weaver.services.clear_service import ClearResult
+from spec_weaver.services.status_service import ItemStatusDTO, StatusReport
 
 runner = CliRunner()
 
@@ -131,7 +132,7 @@ def test_audit_perfect_match(mock_service_class, tmp_path):
     )
 
     # 実行
-    result = runner.invoke(app, ["audit", str(tmp_path), "--repo-root", str(tmp_path)])
+    result = runner.invoke(app, ["audit", "--repo-root", str(tmp_path)])
 
     # 終了コード0（成功）で、成功メッセージが含まれているか
     assert result.exit_code == 0
@@ -156,7 +157,7 @@ def test_audit_with_errors(mock_service_class, tmp_path):
         undefined_steps=set(),
     )
 
-    result = runner.invoke(app, ["audit", str(tmp_path), "--repo-root", str(tmp_path)])
+    result = runner.invoke(app, ["audit", "--repo-root", str(tmp_path)])
 
     # 終了コード1（失敗）で、それぞれの警告が出力されているか
     assert result.exit_code == 1
@@ -184,7 +185,7 @@ def test_audit_suspect_specs(mock_service_class, tmp_path):
         undefined_steps=set(),
     )
 
-    result = runner.invoke(app, ["audit", str(tmp_path), "--repo-root", str(tmp_path)])
+    result = runner.invoke(app, ["audit", "--repo-root", str(tmp_path)])
 
     # Suspectがあれば終了コード1
     assert result.exit_code == 1
@@ -211,7 +212,7 @@ def test_audit_no_suspect_does_not_report_suspect(mock_service_class, tmp_path):
         undefined_steps=set(),
     )
 
-    result = runner.invoke(app, ["audit", str(tmp_path), "--repo-root", str(tmp_path)])
+    result = runner.invoke(app, ["audit", "--repo-root", str(tmp_path)])
 
     assert result.exit_code == 0
     assert "Suspect" not in result.stdout
@@ -242,7 +243,7 @@ def test_status_shows_all_items(mock_service_class, tmp_path):
         review_state=MagicMock(get_status=MagicMock(return_value="✅ reviewed"))
     )
 
-    result = runner.invoke(app, ["status", "--repo-root", str(tmp_path), "--feature-dir", str(tmp_path)])
+    result = runner.invoke(app, ["status", "--repo-root", str(tmp_path)])
 
     assert result.exit_code == 0
     assert "REQ-001" in result.stdout
@@ -270,7 +271,7 @@ def test_status_filter_by_status(mock_service_class, tmp_path):
     )
 
     result = runner.invoke(
-        app, ["status", "--repo-root", str(tmp_path), "--filter", "implemented", "--feature-dir", str(tmp_path)]
+        app, ["status", "--repo-root", str(tmp_path), "--filter", "implemented"]
     )
 
     assert result.exit_code == 0
@@ -295,7 +296,7 @@ def test_status_unset_shows_dash(mock_service_class, tmp_path):
         review_state=MagicMock(get_status=MagicMock(return_value="✅ reviewed"))
     )
 
-    result = runner.invoke(app, ["status", "--repo-root", str(tmp_path), "--feature-dir", str(tmp_path)])
+    result = runner.invoke(app, ["status", "--repo-root", str(tmp_path)])
 
     assert result.exit_code == 0
     assert "SPEC-001" in result.stdout
@@ -308,16 +309,21 @@ def test_status_unset_shows_dash(mock_service_class, tmp_path):
 # ---------------------------------------------------------------------------
 
 
+@patch("spec_weaver.cli.commands.clear_cmd.get_item_map")
 @patch("spec_weaver.cli.commands.clear_cmd.ClearService")
-def test_clear_blocks_suspect_with_unreviewed(mock_service_class, tmp_path):
+def test_clear_blocks_suspect_with_unreviewed(mock_service_class, mock_get_item_map, tmp_path):
     """上位アイテムが未レビュー（suspect-with-unreviewed）の場合、clear をブロックする。"""
+    mock_item = MagicMock()
+    mock_item.path = str(tmp_path / "specs" / "SPEC-001.yml")
+    mock_get_item_map.return_value = {"SPEC-001": mock_item}
+    
     mock_service = mock_service_class.return_value
     mock_service.run_clear.return_value = ClearResult(
         is_success=False,
         error_message="上位アイテムが未レビューです。先に上位アイテムをレビューしてください。"
     )
 
-    result = runner.invoke(app, ["clear", "SPEC-001", "--repo-root", str(tmp_path)])
+    result = runner.invoke(app, ["clear", "SPEC-001", "--no-edit", "--repo-root", str(tmp_path)])
 
     assert result.exit_code == 1
     assert "上位アイテムが未レビューです" in result.stdout

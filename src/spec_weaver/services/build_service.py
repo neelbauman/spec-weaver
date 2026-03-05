@@ -1,28 +1,39 @@
-import re
 import traceback
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional, Dict, List, Set, Tuple, Any
+from typing import Dict, List, Optional, Set
 
 try:
     from importlib import resources
 except ImportError:
     import importlib_resources as resources  # type: ignore
 
-from spec_weaver.core.review_state import compute_review_state, ReviewState
-from spec_weaver.core.step_resolver import StepResolver
-from spec_weaver.adapters.doorstop import get_item_map, get_doorstop_tree, get_all_prefixes, _get_custom_attribute
-from spec_weaver.adapters.gherkin import get_tag_map, get_spec_fingerprints
-from spec_weaver.adapters.test_results import (
-    TestResultMap, load_test_results, spec_result_summary, 
-    result_badge, format_status_badge
-)
 from spec_weaver.adapters.codegen import _step_keyword_to_prefix
+from spec_weaver.adapters.doorstop import (
+    _build_child_index,
+    _get_custom_attribute,
+    get_all_prefixes,
+    get_doorstop_tree,
+    get_item_map,
+)
+from spec_weaver.adapters.gherkin import get_spec_fingerprints, get_tag_map
+from spec_weaver.adapters.test_results import (
+    TestResultMap,
+    format_status_badge,
+    load_test_results,
+    result_badge,
+    spec_result_summary,
+)
+from spec_weaver.core.review_state import ReviewState, compute_review_state
+from spec_weaver.core.step_resolver import StepResolver
 from spec_weaver.services.audit_service import AuditService
 from spec_weaver.utils.formatters import (
-    get_uid_prefix, get_impl_status_badge, 
-    get_review_status_badge, get_timestamp
+    get_impl_status_badge,
+    get_review_status_badge,
+    get_timestamp,
+    get_uid_prefix,
 )
+
 
 @dataclass
 class BuildReport:
@@ -31,6 +42,7 @@ class BuildReport:
     out_dir: Path
     generated_features_count: int = 0
     generated_items_count: int = 0
+    bdd_generated_count: int = 0
     error_message: Optional[str] = None
 
 
@@ -54,9 +66,18 @@ class BuildService:
             return BuildReport(is_success=False, out_dir=out_dir, error_message=f"{e}\n{traceback.format_exc()}")
 
     def _execute_build(
-        self, feature_dir: Path, repo_root: Path, out_dir: Path, 
+        self, feature_dir: Path, repo_root: Path, out_dir: Path,
         test_results_file: Optional[Path], prefix: str
     ) -> BuildReport:
+        # 0. BDD アイテムから .feature ファイルを生成（プレステップ）
+        from spec_weaver.services.bdd_service import generate_feature_files
+
+        bdd_result = generate_feature_files(
+            repo_root=repo_root,
+            out_dir=feature_dir,
+            prefix="BDD",
+        )
+
         # 1. Doorstopから全アイテムと全プレフィックス取得（非活性アイテムも含む）
         raw_items = get_item_map(repo_root, include_inactive=True)
         all_items_str = {str(uid): item for uid, item in raw_items.items()}
@@ -69,7 +90,11 @@ class BuildService:
         
         audit_service = AuditService()
         feature_file_states = audit_service._compute_feature_file_states(feature_dir, repo_root)
-        review_state = compute_review_state(all_items_str, gherkin_fingerprints, tag_map, feature_file_states)
+        child_index = _build_child_index(doorstop_tree)
+        review_state = compute_review_state(
+            all_items_str, gherkin_fingerprints, tag_map, feature_file_states,
+            multi_tree=doorstop_tree, child_index=child_index,
+        )
 
         # feature_path -> 関連アイテムUID一覧（バックリンク用）
         _backlink_sets: Dict[str, Set[str]] = {}
@@ -98,7 +123,10 @@ class BuildService:
         items_dir.mkdir(parents=True, exist_ok=True)
         features_md_dir.mkdir(parents=True, exist_ok=True)
 
-        report = BuildReport(is_success=True, out_dir=out_dir)
+        report = BuildReport(
+            is_success=True, out_dir=out_dir,
+            bdd_generated_count=bdd_result.generated_count,
+        )
 
         # 5. Gherkin .feature → Markdown 変換
         step_resolver = StepResolver()

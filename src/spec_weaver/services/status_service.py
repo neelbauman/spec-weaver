@@ -1,13 +1,22 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional, Dict, List, Set, Any
+from typing import Any, Dict, List, Optional
 
-from spec_weaver.adapters.doorstop import get_item_map, get_all_prefixes, _get_custom_attribute
-from spec_weaver.adapters.gherkin import get_tag_map, get_spec_fingerprints
-from spec_weaver.core.review_state import compute_review_state, ReviewState
 from spec_weaver.adapters.behave import check_behave_steps
-from spec_weaver.services.audit_service import AuditService  # feature_file_states取得などを再利用
+from spec_weaver.adapters.doorstop import (
+    _build_child_index,
+    _get_custom_attribute,
+    get_all_prefixes,
+    get_doorstop_tree,
+    get_item_map,
+)
+from spec_weaver.adapters.gherkin import get_spec_fingerprints, get_tag_map
+from spec_weaver.core.review_state import ReviewState, compute_review_state
+from spec_weaver.services.audit_service import (
+    AuditService,  # feature_file_states取得などを再利用
+)
 from spec_weaver.utils.formatters import get_uid_prefix
+
 
 @dataclass
 class ItemStatusDTO:
@@ -42,7 +51,7 @@ class StatusService:
         filter_status: Optional[str] = None
     ) -> StatusReport:
         # 1. Doorstopデータの取得
-        raw_items = get_item_map(repo_root=repo_root, include_inactive=True)
+        raw_items = get_item_map(repo_root=repo_root)
         all_items_str = {str(uid): item for uid, item in raw_items.items()}
         all_prefixes = get_all_prefixes(repo_root)
 
@@ -59,7 +68,12 @@ class StatusService:
         # TODO: _compute_feature_file_states は共通UtilityかGherkinモジュールに完全に移すのが理想ですが、
         # 今回は一旦 AuditService から流用する想定とします。
         feature_file_states = AuditService()._compute_feature_file_states(feature_dir, repo_root)
-        review_state = compute_review_state(all_items_str, gherkin_fingerprints, tag_map, feature_file_states)
+        multi_tree = get_doorstop_tree(repo_root)
+        child_index = _build_child_index(multi_tree)
+        review_state = compute_review_state(
+            all_items_str, gherkin_fingerprints, tag_map, feature_file_states,
+            multi_tree=multi_tree, child_index=child_index,
+        )
 
         # 3. アイテムのグループ化とフィルタリング
         grouped_items: Dict[str, List[ItemStatusDTO]] = {p: [] for p in all_prefixes}

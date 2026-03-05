@@ -1,6 +1,5 @@
 # tests/test_step_resolver.py
 
-from pathlib import Path
 from spec_weaver.core.step_resolver import StepResolver
 
 

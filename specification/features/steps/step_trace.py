@@ -15,6 +15,12 @@ from specification.features.steps._helpers import write_doorstop_yaml
 # [Dup→step_impl_link.py] Doorstopツリーが初期化されている — step_impl_link.py の定義を使用
 
 
+# [Dup→step_impl_link.py] Doorstopツリーが初期化されている — step_impl_link.py の定義を使用
+# @given('Doorstopツリーが初期化されている')  # type: ignore
+# def given_6df87eb3(context):
+#     raise NotImplementedError('STEP: Doorstopツリーが初期化されている')
+
+
 @given('以下のREQアイテムが存在する:')  # type: ignore
 def given_28140be4(context):
     """以下のREQアイテムが存在する:"""
@@ -27,6 +33,12 @@ def given_28140be4(context):
 
 
 # [Dup→step_impl_link.py] 以下のSPECアイテムが存在する: — step_impl_link.py の定義を使用
+
+
+# [Dup→step_impl_link.py] 以下のSPECアイテムが存在する: — step_impl_link.py の定義を使用
+# @given('以下のSPECアイテムが存在する:')  # type: ignore
+# def given_14c0b615(context):
+#     raise NotImplementedError('STEP: 以下のSPECアイテムが存在する:')
 
 
 @given('以下のfeatureファイルが存在する:')  # type: ignore
@@ -60,19 +72,7 @@ def given_a838a6ff(context):
 # [Dup→step_semantic_review.py] @then('終了コードが0である')  # type: ignore
 @then('終了コードが0である')  # type: ignore
 def then_0f800e56(context):
-    """終了コードが0である
-
-    Scenarios:
-      - REQを起点としたトップダウンのツリー表示
-      - SPECを起点とした双方向のツリー表示
-      - Gherkin Featureファイルを起点としたボトムアップ表示
-      - --direction up で上方向のみ探索
-      - --direction down で下方向のみ探索
-      - --format flat でフラットリスト表示
-      - .feature ディレクトリが存在しない場合の警告と継続
-      - 各ノードにステータスバッジが表示される
-    """
-    raise NotImplementedError('STEP: 終了コードが0である')
+    assert getattr(context, 'exit_code', None) == 0 or (hasattr(context, 'result') and context.result.returncode == 0)
 
 
 @when('`spec-weaver trace {target}` を実行する')  # type: ignore
@@ -233,13 +233,7 @@ def then_29017220(context, param0, param1, param2):
 # [Dup→step_semantic_review.py] @then('終了コードが1である')  # type: ignore
 @then('終了コードが1である')  # type: ignore
 def then_9b731a71(context):
-    """終了コードが1である
-
-    Scenarios:
-      - 存在しないIDを指定した場合のエラー
-      - Doorstopツリーが未初期化の場合のエラー
-    """
-    raise NotImplementedError('STEP: 終了コードが1である')
+    assert getattr(context, 'exit_code', None) == 1 or (hasattr(context, 'result') and context.result.returncode == 1)
 
 
 @then('エラーメッセージに "{param0}" が含まれる')  # type: ignore
@@ -294,6 +288,12 @@ def given_1b5b3d28(context):
 #     raise NotImplementedError('STEP: 警告メッセージが表示される')
 
 # [Dup→step_clear.py] 警告メッセージが表示される — step_clear.py の定義を使用
+
+
+# [Dup→step_clear.py] 警告メッセージが表示される — step_clear.py の定義を使用
+# @then('警告メッセージが表示される')  # type: ignore
+# def then_a11d14f9(context):
+#     raise NotImplementedError('STEP: 警告メッセージが表示される')
 
 
 @then('"{param0}" のノードに "{param1}" のステータスバッジが表示される')  # type: ignore

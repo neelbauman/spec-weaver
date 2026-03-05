@@ -10,8 +10,8 @@ from pathlib import Path
 from typing import List
 
 from spec_weaver.adapters.test_results import (
-    load_test_results,
     format_status_badge,
+    load_test_results,
     result_badge,
     spec_result_summary,
 )

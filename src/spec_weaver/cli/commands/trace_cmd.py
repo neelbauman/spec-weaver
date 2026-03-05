@@ -1,12 +1,17 @@
-import typer
 from pathlib import Path
 from typing import Optional, Set
+
+import typer
 from rich.console import Console
 from rich.table import Table
 from rich.tree import Tree
 
 from spec_weaver.services.trace_service import TraceService
-from spec_weaver.utils.formatters import get_impl_status_badge, get_review_status_badge, get_uid_prefix
+from spec_weaver.utils.formatters import (
+    get_impl_status_badge,
+    get_review_status_badge,
+    get_uid_prefix,
+)
 
 console = Console()
 
@@ -178,7 +183,6 @@ def _trace_flat_output(
     origin_uid: str, all_items_str: dict, child_map: dict, direction: str, review_state=None
 ) -> None:
     """flat形式でトレース結果をテーブル表示する。"""
-    from rich import box
     all_relevant: Set[str] = set()
     if direction in ("up", "both"):
         all_relevant.update(_collect_all_ancestors(origin_uid, all_items_str))
@@ -213,7 +217,6 @@ def _trace_flat_output(
 
 def _trace_cmd(
     item_id: str = typer.Argument(..., help="探索起点ID (例: REQ-001, SPEC-003, audit.feature)"),
-    feature_dir: Optional[Path] = typer.Option(None, "--feature-dir", "-f", help="Gherkin feature ディレクトリ"),
     repo_root: Path = typer.Option(Path.cwd(), "--repo-root", "-r", help="リポジトリルート"),
     direction: str = typer.Option("both", "--direction", "-d", help="探索方向: up / down / both (デフォルト: both)"),
     output_format: str = typer.Option("tree", "--format", help="出力形式: tree (デフォルト) / flat"),
@@ -222,9 +225,9 @@ def _trace_cmd(
 ) -> None:
     """指定したアイテムを起点として、上位・下位のトレーサビリティツリーを表示します。"""
     try:
-        actual_feature_dir = feature_dir
-        if feature_dir and not feature_dir.exists():
-            console.print(f"[yellow]⚠️  Warning: Feature directory '{feature_dir}' does not exist. Skipping Gherkin trace.[/yellow]")
+        actual_feature_dir = repo_root / ".specification" / "features"
+        if not actual_feature_dir.exists():
+            console.print(f"[yellow]⚠️  Warning: Feature directory '{actual_feature_dir}' does not exist. Skipping Gherkin trace.[/yellow]")
             actual_feature_dir = None
 
         with console.status("[bold cyan]データを読み込み中...[/bold cyan]"):

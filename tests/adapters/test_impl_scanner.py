@@ -5,14 +5,14 @@
 ImplScanner と get_ref_files のユニットテスト。
 """
 
-import pytest
 from pathlib import Path
 from unittest.mock import MagicMock, patch
+
 from typer.testing import CliRunner
 
-from spec_weaver.adapters.impl_scanner import get_ref_files, ImplScanner
-from spec_weaver.cli.main import app
+from spec_weaver.adapters.impl_scanner import ImplScanner, get_ref_files
 from spec_weaver.cli.commands.trace_cmd import _build_trace_rich_tree
+from spec_weaver.cli.main import app
 
 runner = CliRunner()
 
@@ -206,13 +206,11 @@ def test_check_impl_broken_ref(mock_service_class, tmp_path):
         app,
         [
             "audit",
-            str(feat_dir),
             "--repo-root",
             str(tmp_path),
             "--check-impl",
         ],
     )
-
     # UIでの表示を確認（audit_cmd.py で broken_refs の表示が実装されているか？）
     # 現状の audit_cmd.py を見ると broken_refs の表示は「... 同様に ...」として省略されていたので、
     # 実際の実装を確認する必要がある。
@@ -239,12 +237,10 @@ def test_check_impl_disabled_by_default(mock_service_class, tmp_path):
         app,
         [
             "audit",
-            str(feat_dir),
             "--repo-root",
             str(tmp_path),
         ],
-    )
-    
+    )    
     # サービス呼び出しで check_impl=False であることを検証
     args, kwargs = mock_service.run_audit.call_args
     check_impl_val = kwargs.get('check_impl')
@@ -292,8 +288,9 @@ def test_show_impl_file_shown_in_tree(tmp_path):
     tag_map: dict = {}
     impl_map = {"SPEC-001": [{"path": "src/impl.py", "source": "annotation", "exists": True}]}
 
-    from rich.console import Console
     from io import StringIO
+
+    from rich.console import Console
 
     buf = StringIO()
     con = Console(file=buf, highlight=False)
@@ -318,8 +315,9 @@ def test_show_impl_not_shown_without_flag():
     child_map: dict = {}
     tag_map: dict = {}
 
-    from rich.console import Console
     from io import StringIO
+
+    from rich.console import Console
 
     buf = StringIO()
     con = Console(file=buf, highlight=False)

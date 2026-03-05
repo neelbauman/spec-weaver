@@ -22,15 +22,29 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent  # spec-weav
 
 
 def run_spec_weaver(
-    args: list[str], cwd: Path | None = None, input: str | None = None
+    args: list[str],
+    cwd: Path | None = None,
+    input: str | None = None,
+    env: dict | None = None,
 ) -> subprocess.CompletedProcess:
-    """spec-weaver CLI を uv run 経由で実行し、結果を返す。"""
+    """spec-weaver CLI を uv run 経由で実行し、結果を返す。
+
+    Args:
+        env: 追加/上書きする環境変数。現在の環境にマージされる（置換ではない）。
+    """
+    import os as _os
+
+    merged_env = None
+    if env:
+        merged_env = {**_os.environ, **env}
+
     return subprocess.run(
         ["uv", "run", "spec-weaver"] + args,
         input=input,
         capture_output=True,
         text=True,
         cwd=str(cwd or PROJECT_ROOT),
+        env=merged_env,
     )
 
 

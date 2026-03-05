@@ -4,10 +4,11 @@ gherkin_fingerprints:
 - ./specification/features/review.feature: |
     19f642958b93767b5effebcd3c086360020b50b696fc2c3d9a05e8299252d26c
 header: |
-  review コマンド — .feature ファイルへのフィンガープリント書き込み
+  review コマンド — Doorstop アイテムのエディタ確認レビュー
 impl_files:
 - src/spec_weaver/cli/commands/review_cmd.py
 - src/spec_weaver/services/review_service.py
+- src/spec_weaver/utils/editor.py
 layer: behavior
 level: 4.0
 links:
@@ -19,44 +20,53 @@ status: in-progress
 testable: true
 text: |
   ## 概要
-  指定した `.feature` ファイルの構造コンテンツ（Feature / Background / Scenario）の
-  SHA-256 ハッシュを計算し、ファイル先頭にコメントとして書き込む `review` コマンドの仕様。
-  これにより、ファイルが最後にレビューされた時点の状態を `.feature` ファイル自身が記録する。
+  Doorstop アイテムを指定し、suspect の原因となった関連アイテムをエディタで開いて確認した上で
+  `reviewed` スタンプを更新する `review` コマンドの仕様。
+  `.feature` ファイルは BDD アイテムから自動生成される対象であるため、直接レビューしない。
 
   ## コマンド形式
 
   ```
-  spec-weaver review <FEATURE_FILE_PATH>
+  spec-weaver review <ITEM_ID> [OPTIONS]
+  spec-weaver review --all [OPTIONS]
   ```
 
   ### 引数
-  - `<FEATURE_FILE_PATH>` (必須): レビュー対象の `.feature` ファイルパス
+  - `<ITEM_ID>` (必須、`--all` との排他): レビュー対象の Doorstop アイテム ID（例: `QA-001`）
 
-  ## 処理
+  ### オプション
+  - `--no-edit`: エディタを開かずにレビューする（CI / 自動化向け）
+  - `--all`: 全アクティブ Doorstop アイテムを一括レビューする（エディタなし・`--no-edit` 相当）
+  - `--repo-root <path>`: Doorstop プロジェクトルート（デフォルト: カレントディレクトリ）
 
-  1. 指定された `.feature` ファイルを Gherkin パーサーで解析する。
-  2. Feature / Background / 全 Scenario の構造コンテンツ（keyword, name, steps, examples）を
-     連結して SHA-256 ハッシュを計算する。
-     - ハッシュ計算の対象: Feature の keyword・name・description、Background の steps、
-       各 Scenario の name・keyword・steps・examples テーブル
-     - ハッシュ計算の **除外対象**: ファイル先頭の `# spec-weaver-fingerprint:` コメント行
-  3. ファイルの先頭行に `# spec-weaver-fingerprint: <sha256>` の形式でコメントを書き込む。
-     - 既存のコメントがある場合は上書き更新する。
-     - コメントがない場合は先頭に挿入する。
+  ## 処理（単一アイテム）
 
-  ## コメント形式
+  1. 指定アイテムの YAML ファイルパスを取得する。
+  2. `suspect_causes` から原因ファイル（親 YAML または .feature）を特定する。
+  3. `--no-edit` が指定されていない場合:
+     a. suspect の原因となった親アイテムの YAML パスを収集する。
+     b. エディタを分割表示で起動する:
+        - vim / nvim / vi / view / gvim:
+          `-O <target.yml> <related1.yml> <related2.yml> ...`
+          で縦分割（対象 YAML と関連アイテムを並べて表示）
+        - それ以外のエディタ: 対象 YAML と関連アイテムをまとめて開く
+     c. エディタが終了コード 0 以外で終了した場合はエラーにして中断する。
+  4. Doorstop の `item.review()` を呼び出して `reviewed` スタンプを更新する。
 
-  ```gherkin
-  # spec-weaver-fingerprint: abc123def456...
-  @QA-004
-  Feature: ...
-  ```
+  ## 処理（--all モード）
+
+  1. 全アクティブ Doorstop アイテムに対して `item.clear()` → `item.review()` を実行する。
+  2. エディタは開かない（`--no-edit` 相当）。
+  3. 処理結果（成功件数・失敗件数）を表示する。
 
   ## 出力
-  - 成功時: 書き込んだファイルパスとハッシュ値を表示する
-  - 指定ファイルが存在しない: エラーメッセージを表示し終了コード 1 を返す
-  - 指定ファイルが `.feature` でない: エラーメッセージを表示し終了コード 1 を返す
+  - 成功時: レビュー済みアイテム ID を表示する
+  - エディタが見つからない: エラーメッセージを表示し終了コード 1 を返す
+  - エディタが非ゼロ終了した: エラーメッセージを表示し終了コード 1 を返す
+  - 指定アイテムが見つからない: エラーメッセージを表示し終了コード 1 を返す
+  - `--all` と `<ITEM_ID>` を同時指定: エラーメッセージを表示し終了コード 1 を返す
+  - どちらも未指定: エラーメッセージを表示し終了コード 1 を返す
 
   ## 関連コマンドとの役割分担
-  - `spec-weaver review <feature_file>`: `.feature` ファイル自身のレビュー状態を記録する（本仕様）
-  - `spec-weaver clear <SPEC_ID>`: Doorstop アイテムが現在の Gherkin 内容を把握済みであることを記録する（QA-005）
+  - `spec-weaver review <ITEM_ID>`: Doorstop アイテムをエディタで確認してレビュー済みにする（本仕様）
+  - `spec-weaver clear <ITEM_ID>`: Doorstop アイテムの Gherkin フィンガープリントをエディタで確認して更新する（QA-005）

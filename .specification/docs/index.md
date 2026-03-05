@@ -18,10 +18,10 @@ Spec-Weaverによって自動生成されたドキュメントポータルです
 ## 仕様階層ツリー
 
 - [**REQ**](req.md)
-    - [**PLAN**](plan.md)
 - [**SPEC**](spec.md)
     - [**AUT**](aut.md)
     - [**CORE**](core.md)
     - [**QA**](qa.md)
     - [**TRC**](trc.md)
     - [**VIS**](vis.md)
+- [**PLAN**](plan.md)

@@ -1,5 +1,6 @@
-import typer
 from pathlib import Path
+
+import typer
 from rich.console import Console
 
 from spec_weaver.services.build_service import BuildService
@@ -7,7 +8,6 @@ from spec_weaver.services.build_service import BuildService
 console = Console()
 
 def _build_cmd(
-    feature_dir: Path = typer.Argument(..., exists=True, resolve_path=True),
     repo_root: Path = typer.Option(Path.cwd(), "--repo-root", "-r", exists=True, resolve_path=True),
     out_dir: Path = typer.Option(Path(".specification"), "--out-dir", "-o", resolve_path=True),
     prefix: str = typer.Option("SPEC", "--prefix", "-p", help="Gherkinタグとして主に扱うデフォルトプレフィックス"),
@@ -20,6 +20,7 @@ def _build_cmd(
     """
     Doorstopの全ドキュメントを解析し、相互リンク・カバレッジ・テスト結果を含むポータルサイトをビルドします。
     """
+    feature_dir = repo_root / ".specification" / "features"
     if test_results_file and not test_results_file.exists():
         console.print(f"[bold red]❌ テスト結果ファイルが見つかりません: {test_results_file}[/bold red]")
         raise typer.Exit(1)
@@ -40,6 +41,8 @@ def _build_cmd(
             raise typer.Exit(1)
 
         console.print(f"[bold green]✅ ビルド成功！ [white]{report.out_dir}[/white][/bold green]")
+        if report.bdd_generated_count > 0:
+            console.print(f"  - BDD → .feature 生成: {report.bdd_generated_count} 件")
         console.print(f"  - 生成された Feature ページ: {report.generated_features_count} 件")
         console.print(f"  - 生成された アイテム ページ: {report.generated_items_count} 件")
         

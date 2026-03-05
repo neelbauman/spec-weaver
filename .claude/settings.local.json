@@ -5,7 +5,8 @@
       "Bash(doorstop add:*)",
       "Bash(doorstop link:*)",
       "Bash(doorstop review:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(grep:*)"
     ]
   }
 }

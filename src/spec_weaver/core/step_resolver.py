@@ -1,9 +1,9 @@
 # src/spec_weaver/step_resolver.py
 
 import ast
-import re
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import List, Optional
+
 from parse import compile as parse_compile
 
 
@@ -80,7 +80,7 @@ class StepResolver:
                                                 line=node.lineno,
                                             )
                                         )
-        except Exception as e:
+        except Exception:
             # print(f"DEBUG Error parsing {py_file}: {e}", file=sys.stderr)
             pass
 

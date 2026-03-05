@@ -1,8 +1,10 @@
-import pytest
-from unittest.mock import patch, MagicMock
 from pathlib import Path
+from unittest.mock import MagicMock, patch
 
-from spec_weaver.services.status_service import StatusService, StatusReport
+import pytest
+
+from spec_weaver.services.status_service import StatusReport, StatusService
+
 
 @pytest.fixture
 def mock_repo_root():

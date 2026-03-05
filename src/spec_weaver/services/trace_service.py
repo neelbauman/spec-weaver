@@ -1,12 +1,18 @@
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional, Dict, List, Set
+from typing import Dict, List, Optional
 
-from spec_weaver.core.review_state import compute_review_state, ReviewState
-from spec_weaver.adapters.doorstop import get_item_map, get_all_prefixes
-from spec_weaver.adapters.gherkin import get_tag_map, get_spec_fingerprints
+from spec_weaver.adapters.doorstop import (
+    _build_child_index,
+    get_all_prefixes,
+    get_doorstop_tree,
+    get_item_map,
+)
+from spec_weaver.adapters.gherkin import get_spec_fingerprints, get_tag_map
 from spec_weaver.adapters.impl_scanner import ImplScanner, get_ref_files
+from spec_weaver.core.review_state import ReviewState, compute_review_state
 from spec_weaver.services.audit_service import AuditService
+
 
 @dataclass
 class TraceData:
@@ -53,13 +59,23 @@ class TraceService:
             try:
                 gherkin_fingerprints = get_spec_fingerprints(feature_dir, repo_root, all_prefixes)
                 feature_file_states = AuditService()._compute_feature_file_states(feature_dir, repo_root)
-                review_state = compute_review_state(raw_items, gherkin_fingerprints, tag_map, feature_file_states)
+                multi_tree = get_doorstop_tree(repo_root)
+                ci = _build_child_index(multi_tree)
+                review_state = compute_review_state(
+                    raw_items, gherkin_fingerprints, tag_map, feature_file_states,
+                    multi_tree=multi_tree, child_index=ci,
+                )
             except Exception:
                 pass
         else:
             # feature_dirがなくてもDoorstopネイティブのsuspectを見るため計算は試みる
             try:
-                review_state = compute_review_state(raw_items, {}, {}, {})
+                multi_tree = get_doorstop_tree(repo_root)
+                ci = _build_child_index(multi_tree)
+                review_state = compute_review_state(
+                    raw_items, {}, {}, {},
+                    multi_tree=multi_tree, child_index=ci,
+                )
             except Exception:
                 pass
 

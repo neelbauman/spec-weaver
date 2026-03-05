@@ -1,6 +1,6 @@
+import logging
 from collections import defaultdict
-from typing import Dict, List, Optional, Set, Any
-from pathlib import Path
+from typing import Any, Dict, List, Optional, Set
 
 
 class ReviewState:
@@ -54,6 +54,8 @@ def compute_review_state(
     gherkin_fingerprints: dict,
     tag_map: dict,
     feature_file_states: Optional[Dict[str, bool]] = None,
+    multi_tree: Optional[Any] = None,
+    child_index: Optional[Dict[str, List[Any]]] = None,
 ) -> ReviewState:
     """
     レビュー状態を計算して ReviewState を返します。
@@ -64,10 +66,19 @@ def compute_review_state(
         tag_map: {spec_id: [ScenarioInfo, ...]}
         feature_file_states: {file_path: is_unreviewed} .feature ファイル単位のレビュー状態。
             None の場合は feature file の unreviewed 判定をスキップする。
+        multi_tree: クロスルート対応の MultiTree。指定時はクロスルート suspect を使用。
+        child_index: 親→子の逆引きインデックス。指定時は下方向 suspect も検出。
     """
     state = ReviewState()
 
     children: Dict[str, Set[str]] = defaultdict(set)
+
+    # 複数ルートツリー構成ではクロスツリーリンクの解決時に doorstop が
+    # "no item with UID: XXX" を log.warning() で出力する。
+    # これは既知の制約であるため WARNING を抑制する。
+    _doorstop_item_logger = logging.getLogger("doorstop.core.item")
+    _orig_level = _doorstop_item_logger.level
+    _doorstop_item_logger.setLevel(logging.ERROR)
 
     # Doorstop アイテム間のリンク
     for uid, item in all_items.items():
@@ -86,7 +97,7 @@ def compute_review_state(
                 state.parents[fpath].add(tag)
                 children[tag].add(fpath)
 
-    # Doorstop アイテムの unreviewed / native suspect 検出
+    # Doorstop アイテムの unreviewed / suspect 検出
     for uid, item in all_items.items():
         uid_str = str(uid)
         try:
@@ -95,11 +106,38 @@ def compute_review_state(
         except Exception:
             pass
 
-        try:
-            if not getattr(item, "cleared", True):
-                state.suspect_causes[uid_str].add("Doorstop native suspect link")
-        except Exception:
-            pass
+        # --- 上方向 suspect ---
+        if multi_tree is not None:
+            from spec_weaver.adapters.doorstop import check_suspect_cross_root
+
+            try:
+                suspects, _broken = check_suspect_cross_root(multi_tree, item)
+                for parent_id in suspects:
+                    state.suspect_causes[uid_str].add(parent_id)
+            except Exception:
+                pass
+        else:
+            # フォールバック: Doorstop ネイティブ
+            try:
+                if not getattr(item, "cleared", True):
+                    state.suspect_causes[uid_str].add(
+                        "Doorstop native suspect link"
+                    )
+            except Exception:
+                pass
+
+        # --- 下方向 suspect (child_stamps) ---
+        if child_index is not None:
+            from spec_weaver.adapters.doorstop import check_children_suspect
+
+            try:
+                suspect_kids = check_children_suspect(item, child_index)
+                for child_id in suspect_kids:
+                    state.suspect_causes[uid_str].add(child_id)
+            except Exception:
+                pass
+
+    _doorstop_item_logger.setLevel(_orig_level)
 
     # feature ファイルの unreviewed 判定と suspect 判定
     if feature_file_states is not None:
@@ -144,12 +182,28 @@ def compute_review_state(
                     expected_dict = {list(d.keys())[0]: list(d.values())[0] for d in stripped_expected_fps}
                     
                     changed_files = set()
-                    for f, h in actual_dict.items():
-                        if expected_dict.get(f) != h:
-                            changed_files.add(f)
-                    for f in expected_dict:
-                        if f not in actual_dict:
-                            changed_files.add(f)
+                    
+                    # Normalize paths for comparison
+                    try:
+                        from pathlib import Path
+                        # Extract just the filename to avoid path resolution issues across different working directories
+                        actual_norm = {Path(f).name: (f, h) for f, h in actual_dict.items()}
+                        expected_norm = {Path(f).name: (f, h) for f, h in expected_dict.items()}
+                        
+                        for fname, (orig_f, h) in actual_norm.items():
+                            if fname not in expected_norm or expected_norm[fname][1] != h:
+                                changed_files.add(orig_f)
+                                
+                        for fname, (orig_f, h) in expected_norm.items():
+                            if fname not in actual_norm:
+                                changed_files.add(orig_f)
+                    except Exception:
+                        for f, h in actual_dict.items():
+                            if expected_dict.get(f) != h:
+                                changed_files.add(f)
+                        for f in expected_dict:
+                            if f not in actual_dict:
+                                changed_files.add(f)
                     
                     if changed_files:
                         state.suspect_causes[tag].update(changed_files)

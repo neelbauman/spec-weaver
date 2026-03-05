@@ -1,58 +1,75 @@
-import typer
 from pathlib import Path
 from typing import Optional
+
+import typer
 from rich.console import Console
 from rich.table import Table
 
 from spec_weaver.services.status_service import StatusService
-from spec_weaver.utils.formatters import get_impl_status_badge, get_review_status_badge, get_timestamp
+from spec_weaver.utils.formatters import (
+    get_impl_status_badge,
+    get_review_status_badge,
+    get_timestamp,
+)
 
 console = Console()
 
 def _status_cmd(
     repo_root: Path = typer.Option(Path.cwd(), "--repo-root", "-r", exists=True, resolve_path=True),
-    feature_dir: Path = typer.Option(Path("specification/features"), "--feature-dir", "-f", exists=True, resolve_path=True),
     filter_status: Optional[str] = typer.Option(None, "--filter", "-F", help="表示するステータスで絞り込む"),
 ) -> None:
     """
     REQ・SPECの実装ステータス（status フィールド）を一覧表示します。
     """
+    feature_dir = repo_root / ".specification" / "features"
     try:
         with console.status("[bold cyan]ステータスを集計中...[/bold cyan]"):
             report = StatusService().get_status_report(repo_root, feature_dir, filter_status)
 
-        def _print_status_table(title: str, items: list) -> None:
-            if not items:
-                return
-            table = Table(title=title, show_header=True, header_style="bold magenta")
-            table.add_column("ID", style="bold cyan", no_wrap=True)
-            table.add_column("タイトル")
-            table.add_column("活性", no_wrap=True)
-            table.add_column("実装ステータス")
-            table.add_column("レビューステータス")
-            table.add_column("最終更新日", no_wrap=True)
-            
+        table = Table(title="実装ステータス一覧", show_header=True, header_style="bold magenta")
+        table.add_column("分類", style="bold yellow", no_wrap=True)
+        table.add_column("ID", style="bold cyan", no_wrap=True)
+        table.add_column("タイトル")
+        table.add_column("活性", no_wrap=True)
+        table.add_column("実装ステータス")
+        table.add_column("レビューステータス")
+        table.add_column("最終更新日", no_wrap=True)
+
+        priority_prefixes = ["REQ", "SPEC", "CORE", "QA", "VIS", "TRC", "AUT", "DESIGN", "PLAN", "ADR", "RESEARCH"]
+        has_items = False
+
+        # 優先順位付けして表示
+        for prefix in priority_prefixes:
+            if prefix in report.grouped_items and report.grouped_items[prefix]:
+                items = report.grouped_items.pop(prefix)
+                for dto in sorted(items, key=lambda x: x.uid):
+                    has_items = True
+                    active_badge = "✅" if dto.active else "[dim]⛔ 非活性[/dim]"
+                    impl_badge = get_impl_status_badge(dto.item_obj)
+                    review_badge = get_review_status_badge(dto.uid, review_state=report.review_state)
+                    updated = get_timestamp(dto.item_obj, "updated_at")
+                    
+                    if not dto.active:
+                        table.add_row(f"[dim]{prefix}[/dim]", f"[dim]{dto.uid}[/dim]", f"[dim]{dto.title}[/dim]", active_badge, f"[dim]{impl_badge}[/dim]", f"[dim]{review_badge}[/dim]", f"[dim]{updated}[/dim]")
+                    else:
+                        table.add_row(prefix, dto.uid, dto.title, active_badge, impl_badge, review_badge, updated)
+
+        # 残りのプレフィックスを表示
+        for prefix, items in sorted(report.grouped_items.items()):
             for dto in sorted(items, key=lambda x: x.uid):
+                has_items = True
                 active_badge = "✅" if dto.active else "[dim]⛔ 非活性[/dim]"
                 impl_badge = get_impl_status_badge(dto.item_obj)
                 review_badge = get_review_status_badge(dto.uid, review_state=report.review_state)
                 updated = get_timestamp(dto.item_obj, "updated_at")
                 
                 if not dto.active:
-                    table.add_row(f"[dim]{dto.uid}[/dim]", f"[dim]{dto.title}[/dim]", active_badge, f"[dim]{impl_badge}[/dim]", f"[dim]{review_badge}[/dim]", f"[dim]{updated}[/dim]")
+                    table.add_row(f"[dim]{prefix}[/dim]", f"[dim]{dto.uid}[/dim]", f"[dim]{dto.title}[/dim]", active_badge, f"[dim]{impl_badge}[/dim]", f"[dim]{review_badge}[/dim]", f"[dim]{updated}[/dim]")
                 else:
-                    table.add_row(dto.uid, dto.title, active_badge, impl_badge, review_badge, updated)
+                    table.add_row(prefix, dto.uid, dto.title, active_badge, impl_badge, review_badge, updated)
+
+        if has_items:
             console.print(table)
-
-        # 優先順位付けして表示
-        priority_prefixes = ["REQ", "SPEC", "CORE", "QA", "VIS", "TRC", "AUT", "DESIGN", "PLAN", "ADR", "RESEARCH"]
-        for prefix in priority_prefixes:
-            if prefix in report.grouped_items and report.grouped_items[prefix]:
-                _print_status_table(f"ドキュメント: {prefix}", report.grouped_items.pop(prefix))
-
-        # 残りのプレフィックスを表示
-        for prefix, items in sorted(report.grouped_items.items()):
-            _print_status_table(f"ドキュメント: {prefix}", items)
 
         # Featureファイルのステータス表示
         if report.feature_files:

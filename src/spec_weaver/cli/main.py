@@ -3,19 +3,22 @@ from pathlib import Path
 from typing import Optional
 
 import typer
+from rich import box
 from rich.console import Console
 from rich.table import Table
-from rich import box
+
+from spec_weaver.cli.commands.add_cmd import _add_cmd
 
 # 各コマンドモジュールからのインポート
 from spec_weaver.cli.commands.audit_cmd import _audit_cmd
-from spec_weaver.cli.commands.scaffold_cmd import _scaffold_cmd
-from spec_weaver.cli.commands.review_cmd import _review_cmd
-from spec_weaver.cli.commands.clear_cmd import _clear_cmd
-from spec_weaver.cli.commands.status_cmd import _status_cmd
 from spec_weaver.cli.commands.build_cmd import _build_cmd
-from spec_weaver.cli.commands.trace_cmd import _trace_cmd
+from spec_weaver.cli.commands.clear_cmd import _clear_cmd
+from spec_weaver.cli.commands.create_cmd import _create_cmd
+from spec_weaver.cli.commands.review_cmd import _review_cmd
+from spec_weaver.cli.commands.scaffold_cmd import _scaffold_cmd
 from spec_weaver.cli.commands.semantic_review_cmd import _semantic_review_cmd
+from spec_weaver.cli.commands.status_cmd import _status_cmd
+from spec_weaver.cli.commands.trace_cmd import _trace_cmd
 
 # Typerアプリケーションの初期化
 app = typer.Typer(
@@ -107,6 +110,8 @@ app.command("status")(_status_cmd)
 app.command("build")(_build_cmd)
 app.command("trace")(_trace_cmd)
 app.command("semantic-review")(_semantic_review_cmd)
+app.command("create")(_create_cmd)
+app.command("add")(_add_cmd)
 
 if __name__ == "__main__":
     app()

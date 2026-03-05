@@ -1,20 +1,29 @@
 # implements: QA-006
 from dataclasses import dataclass, field
-from pathlib import Path
-from typing import Optional, Set, Dict, List, Tuple
 from datetime import date as _date
+from pathlib import Path
+from typing import Dict, List, Optional, Set, Tuple
 
-from spec_weaver.core.review_state import compute_review_state, ReviewState
 from spec_weaver.adapters.behave import check_behave_steps
 from spec_weaver.adapters.doorstop import (
-    get_item_map, get_specs, get_all_prefixes, 
-    _get_custom_attribute, _get_git_file_date
+    _build_child_index,
+    _get_custom_attribute,
+    _get_git_file_date,
+    get_all_prefixes,
+    get_doorstop_tree,
+    get_item_map,
+    get_specs,
 )
 from spec_weaver.adapters.gherkin import (
-    get_tag_map, get_tags, get_spec_fingerprints, 
-    compute_feature_file_hash, read_stored_fingerprints
+    compute_feature_file_hash,
+    get_spec_fingerprints,
+    get_tag_map,
+    get_tags,
+    read_stored_fingerprints,
 )
 from spec_weaver.adapters.impl_scanner import ImplScanner, get_ref_files
+from spec_weaver.core.review_state import compute_review_state
+
 
 @dataclass
 class AuditReport:
@@ -86,7 +95,12 @@ class AuditService:
             gherkin_fingerprints, tag_map = {}, {}
 
         feature_file_states = self._compute_feature_file_states(feature_dir, repo_root)
-        review_state = compute_review_state(raw_items, gherkin_fingerprints, tag_map, feature_file_states)
+        multi_tree = get_doorstop_tree(repo_root)
+        child_index = _build_child_index(multi_tree)
+        review_state = compute_review_state(
+            raw_items, gherkin_fingerprints, tag_map, feature_file_states,
+            multi_tree=multi_tree, child_index=child_index,
+        )
 
         suspect_specs, suspect_features = {}, {}
         unreviewed_specs, unreviewed_features = set(), set()

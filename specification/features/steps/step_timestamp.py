@@ -137,6 +137,12 @@ def given_cc8e9bef(context):
 # [Dup→step_build.py] build コマンドを実行する — step_build.py の定義を使用
 
 
+# [Dup→step_build.py] build コマンドを実行する — step_build.py の定義を使用
+# @when('build コマンドを実行する')  # type: ignore
+# def when_40f323b6(context):
+#     raise NotImplementedError('STEP: build コマンドを実行する')
+
+
 @then('一覧テーブルに「作成日」列が含まれること')  # type: ignore
 def then_ed934883(context):
     index_md = context.temp_dir / ".specification" / "docs" / "spec.md"

@@ -6,25 +6,22 @@ review.py のユニットテスト。
 """
 
 import json
-from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
 
 from spec_weaver.core.review import (
-    ReviewFinding,
-    ReviewResult,
-    ReviewReport,
     SCHEMA_VERSION,
+    ReviewFinding,
+    ReviewReport,
+    ReviewResult,
     _extract_last_json,
     _parse_review_result,
-    build_review_prompt,
     collect_review_files,
     filter_findings,
     run_claude_review,
     severity_gte,
 )
-
 
 # ---------------------------------------------------------------------------
 # severity_gte のテスト

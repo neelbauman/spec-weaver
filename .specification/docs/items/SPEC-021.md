@@ -12,6 +12,8 @@
 **上位アイテム**: [REQ-001](REQ-001.md) / **兄弟アイテム**: [SPEC-001](SPEC-001.md), [SPEC-002](SPEC-002.md)
 
 **テスト対象**: Yes
+ / **テストカバレッジ**: -
+
 ---
 
 ## 概要
@@ -78,6 +80,8 @@ def _extract_scenarios_with_inherited_tags(
 ## 削除対象
 
 - `_extract_tag_map_recursive()`: 本仕様実装後、コアジェネレータに完全に置き換えられ不要となる
+
+**テスト実行結果**: -
 
 ### 🧪 検証シナリオ
 

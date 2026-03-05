@@ -6,7 +6,7 @@ Cucumber/Behave互換JSONテスト結果レポートの読み込みと集計ユ�
 
 import json
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, Optional, Tuple
 
 # (feature_file_stem, scenario_or_feature_name) -> {status: str, error: str}
 TestResultMap = Dict[Tuple[str, str], Dict[str, Any]]

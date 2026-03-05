@@ -1,7 +1,8 @@
 # implements: QA-006
-import typer
 from pathlib import Path
 from typing import Optional
+
+import typer
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
@@ -11,10 +12,6 @@ from spec_weaver.services.audit_service import AuditService
 console = Console()
 
 def _audit_cmd(
-    feature_dir: Path = typer.Argument(
-        ..., help="Gherkinの .feature ファイルが格納されているディレクトリのパス",
-        exists=True, file_okay=False, dir_okay=True, resolve_path=True,
-    ),
     repo_root: Path = typer.Option(
         Path.cwd(), "--repo-root", "-r",
         help="Doorstopのプロジェクトルート（.doorstopディレクトリがある場所）",
@@ -40,6 +37,7 @@ def _audit_cmd(
     """
     Doorstopに登録された仕様と、Gherkinのフィーチャーファイル間のタグの乖離を監査します。
     """
+    feature_dir = repo_root / ".specification" / "features"
     prefix_display = f"@{prefix}" if prefix else "All testable items"
     console.print(
         Panel.fit(
@@ -67,15 +65,6 @@ def _audit_cmd(
         raise typer.Exit(code=1)
 
     # 以降、純粋な表示(UI)処理
-    if report.inactive_testable:
-        wide_console.print("\n[dim]⛔ 非活性のためスキップした仕様 (Inactive Testable Specs):[/dim]")
-        table = Table(show_header=True, header_style="dim")
-        table.add_column("Spec ID", style="dim")
-        table.add_column("理由", style="dim")
-        for spec in sorted(report.inactive_testable):
-            table.add_row(spec, "active: false")
-        console.print(table)
-
     if report.untested_specs:
         wide_console.print("\n[bold red]❌ テストが実装されていない仕様 (Untested Specs):[/bold red]")
         table = Table(show_header=True, header_style="bold magenta")
@@ -101,10 +90,7 @@ def _audit_cmd(
         for spec in sorted(report.suspect_specs):
             causes_list = []
             for c in report.suspect_specs[spec]:
-                if c == "Doorstop native suspect link":
-                    causes_list.extend(sorted(list(report.review_state_parents.get(spec, set()))))
-                else:
-                    causes_list.append(c)
+                causes_list.append(c)
             causes = ", ".join(causes_list) or "不明"
             action = f"必要に応じて変化に応じた編集をし、spec-weaver review {spec} 後、 spec-weaver clear {spec}"
             table.add_row(spec, causes, action)

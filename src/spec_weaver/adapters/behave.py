@@ -1,8 +1,8 @@
-import subprocess
 import shutil
-import re
+import subprocess
 from pathlib import Path
-from typing import List, Tuple, Optional
+from typing import List, Tuple
+
 
 def check_behave_steps(features_dir: Path) -> Tuple[List[str], List[str]]:
     """

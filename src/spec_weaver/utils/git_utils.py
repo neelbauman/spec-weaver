@@ -1,6 +1,7 @@
 import subprocess
 from pathlib import Path
 
+
 def is_file_dirty(file_path: Path, repo_root: Path) -> bool:
     """指定ファイルに未コミットの変更があるか Git ステータスで確認する。"""
     try:

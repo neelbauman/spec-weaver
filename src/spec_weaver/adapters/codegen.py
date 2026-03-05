@@ -36,7 +36,7 @@ from typing import Any
 from gherkin.parser import Parser
 from gherkin.token_scanner import TokenScanner
 
-from spec_weaver.core.step_resolver import StepResolver, StepDefinition
+from spec_weaver.core.step_resolver import StepDefinition, StepResolver
 
 # behave ステップデコレータ名
 STEP_DECORATORS = frozenset({"given", "when", "then", "step"})
