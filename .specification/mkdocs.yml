@@ -22,6 +22,8 @@ nav:
   - CORE:
       - CORE一覧: core.md
       - CORE-001: items/CORE-001.md
+      - CORE-999: items/CORE-999.md
+      - CORE-003: items/CORE-003.md
       - CORE-002: items/CORE-002.md
   - PLAN:
       - PLAN一覧: plan.md
@@ -43,6 +45,8 @@ nav:
   - REQ:
       - REQ一覧: req.md
       - REQ-001: items/REQ-001.md
+      - REQ-998: items/REQ-998.md
+      - REQ-999: items/REQ-999.md
       - REQ-002: items/REQ-002.md
       - REQ-004: items/REQ-004.md
       - REQ-003: items/REQ-003.md

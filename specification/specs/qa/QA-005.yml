@@ -1,5 +1,7 @@
 active: true
 derived: false
+feature_files:
+- specification/features/clear.feature
 gherkin_fingerprints:
 - ./specification/features/clear.feature: |
     4473b81523d9d7402cbfd942a286c88aa4b1464991fd91b8fc7da4839c55bd27
@@ -15,7 +17,9 @@ links:
 - REQ-004: null
 normative: true
 ref: ''
-reviewed: 7VjgPmS2-h-BrX1ZHrTJ8HtYy-IHVk3WtP363H8TGVU=
+reviewed: 509ONhqmYklB49dSGYd2UEdnquQNhPH9urP7mxEe1Vs=
+scanned_impl_files:
+- src/spec_weaver/utils/editor.py
 status: in-progress
 testable: true
 text: |

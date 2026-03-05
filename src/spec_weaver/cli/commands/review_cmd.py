@@ -7,6 +7,7 @@ from rich.console import Console
 from spec_weaver.adapters.doorstop import get_item_map
 from spec_weaver.cli.commands.audit_cmd import _audit_cmd
 from spec_weaver.services.review_service import ReviewService
+from spec_weaver.services.status_service import StatusService
 
 console = Console()
 
@@ -77,6 +78,13 @@ def _review_single(item_id: str, repo_root: Path, no_edit: bool) -> None:
     if item_id not in item_map:
         console.print(f"[bold red]❌ アイテムが見つかりません: {item_id}[/bold red]")
         raise typer.Exit(1)
+
+    feature_dir = repo_root / ".specification" / "features"
+    report = StatusService().get_status_report(repo_root, feature_dir)
+    status = report.review_state.get_status(item_id)
+    if "unreviewed" not in status:
+        console.print(f"[bold yellow]⚠️ {item_id} は unreviewed 状態ではないため、エディタを開かずに終了します。[/bold yellow]")
+        raise typer.Exit(0)
 
     item = item_map[item_id]
     item_yaml_path = _resolve_repo_path(Path(item.path), repo_root)

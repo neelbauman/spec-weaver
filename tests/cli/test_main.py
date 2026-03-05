@@ -309,10 +309,15 @@ def test_status_unset_shows_dash(mock_service_class, tmp_path):
 # ---------------------------------------------------------------------------
 
 
+@patch("spec_weaver.cli.commands.clear_cmd.StatusService")
 @patch("spec_weaver.cli.commands.clear_cmd.get_item_map")
 @patch("spec_weaver.cli.commands.clear_cmd.ClearService")
-def test_clear_blocks_suspect_with_unreviewed(mock_service_class, mock_get_item_map, tmp_path):
+def test_clear_blocks_suspect_with_unreviewed(mock_service_class, mock_get_item_map, mock_status_service, tmp_path):
     """上位アイテムが未レビュー（suspect-with-unreviewed）の場合、clear をブロックする。"""
+    mock_status_report = MagicMock()
+    mock_status_report.review_state.get_status.return_value = "suspect"
+    mock_status_service.return_value.get_status_report.return_value = mock_status_report
+
     mock_item = MagicMock()
     mock_item.path = str(tmp_path / "specs" / "SPEC-001.yml")
     mock_get_item_map.return_value = {"SPEC-001": mock_item}

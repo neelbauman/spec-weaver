@@ -1,5 +1,7 @@
 active: true
 derived: false
+feature_files:
+- specification/features/status.feature
 gherkin_fingerprints:
 - ./specification/features/status.feature: |
     72ac1ce4a2997f6706804ec8c5abfe2ff9fd0bd496d923626c60f441fbfd1e30

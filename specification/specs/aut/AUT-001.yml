@@ -1,5 +1,7 @@
 active: true
 derived: false
+feature_files:
+- specification/features/scaffold.feature
 gherkin_fingerprints:
 - ./specification/features/scaffold.feature: |
     70791a8012582a2b5aed53a74b13b3e639541f9ac7331f8c681ad36efb43c8ca
@@ -12,6 +14,8 @@ links:
 normative: true
 ref: ''
 reviewed: zXyMhdxGaYBxLYAMOiJFpADkc5xwnSUne3p5Xw1jd7E=
+scanned_impl_files:
+- src/spec_weaver/adapters/codegen.py
 status: implemented
 test_fingerprint: |
   70791a8012582a2b5aed53a74b13b3e639541f9ac7331f8c681ad36efb43c8ca

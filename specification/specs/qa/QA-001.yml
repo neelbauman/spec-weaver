@@ -1,5 +1,8 @@
 active: true
 derived: false
+feature_files:
+- specification/features/audit.feature
+- specification/features/build.feature
 gherkin_fingerprints:
 - ./specification/features/audit.feature: |
     98812089fff1e69dcf080e6bd9902cdcd4180bbdf12289a9cba5fc2146bf723a

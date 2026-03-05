@@ -1,5 +1,7 @@
 active: true
 derived: false
+feature_files:
+- specification/features/audit.feature
 gherkin_fingerprints:
 - ./specification/features/audit.feature: |
     15872c5828fc3b0e280107ac96384dae143ceb1c482b9401ccbf61af0b2b454e
@@ -15,6 +17,9 @@ links:
 normative: true
 ref: ''
 reviewed: UaR_wfgWgF9DOJADCR-KTvTDxSvtRgTU0wTA0m0XLjc=
+scanned_impl_files:
+- src/spec_weaver/cli/commands/audit_cmd.py
+- src/spec_weaver/services/audit_service.py
 status: implemented
 testable: true
 text: |

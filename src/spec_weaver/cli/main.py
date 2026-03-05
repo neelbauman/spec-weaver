@@ -18,6 +18,7 @@ from spec_weaver.cli.commands.review_cmd import _review_cmd
 from spec_weaver.cli.commands.scaffold_cmd import _scaffold_cmd
 from spec_weaver.cli.commands.semantic_review_cmd import _semantic_review_cmd
 from spec_weaver.cli.commands.status_cmd import _status_cmd
+from spec_weaver.cli.commands.sync_cmd import _sync_cmd
 from spec_weaver.cli.commands.trace_cmd import _trace_cmd
 
 # Typerアプリケーションの初期化
@@ -112,6 +113,7 @@ app.command("trace")(_trace_cmd)
 app.command("semantic-review")(_semantic_review_cmd)
 app.command("create")(_create_cmd)
 app.command("add")(_add_cmd)
+app.command("sync")(_sync_cmd)
 
 if __name__ == "__main__":
     app()

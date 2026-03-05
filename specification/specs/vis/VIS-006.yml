@@ -1,5 +1,7 @@
 active: true
 derived: false
+feature_files:
+- specification/features/timestamp.feature
 gherkin_fingerprints:
 - ./specification/features/timestamp.feature: |
     a0ac358f70ef63bba4b7f20b81037e273b8218c9ddc836cf830361dd47ceba78

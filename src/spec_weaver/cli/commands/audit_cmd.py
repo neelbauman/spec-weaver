@@ -65,130 +65,112 @@ def _audit_cmd(
         raise typer.Exit(code=1)
 
     # 以降、純粋な表示(UI)処理
-    if report.untested_specs:
-        wide_console.print("\n[bold red]❌ テストが実装されていない仕様 (Untested Specs):[/bold red]")
-        table = Table(show_header=True, header_style="bold magenta")
-        table.add_column("Missing Spec ID", style="dim")
-        for spec in sorted(report.untested_specs):
-            table.add_row(spec)
-        wide_console.print(table)
+    
+    # 1. サマリー計算
+    error_count = (
+        len(report.untested_specs) + len(report.orphaned_tags) + 
+        len(report.broken_refs) + len(report.behavior_without_gherkin) + 
+        len(report.undefined_steps) + len(report.suspect_specs) + 
+        len(report.suspect_features) + len(report.unreviewed_specs) + 
+        len(report.unreviewed_features)
+    )
+    warning_count = (
+        len(report.ref_only) + len(report.annotation_only) + 
+        len(report.architecture_with_gherkin) + len(report.stale_items)
+    )
+    info_count = len(report.layer_unset) + len(report.unused_step_defs)
 
-    if report.orphaned_tags:
-        wide_console.print("\n[bold yellow]⚠️ 仕様書に存在しない孤児タグ (Orphaned Tags):[/bold yellow]")
-        table = Table(show_header=True, header_style="bold magenta")
-        table.add_column("Orphaned Tag", style="dim")
-        for tag in sorted(report.orphaned_tags):
-            table.add_row(f"@{tag}")
-        wide_console.print(table)
+    summary_text = (
+        f"[bold red]❌ Errors   (Action Required) :[/bold red] {error_count}\n"
+        f"[bold yellow]⚠️ Warnings (Needs Review)    :[/bold yellow] {warning_count}\n"
+        f"[bold blue]ℹ️ Infos    (Good to know)   :[/bold blue] {info_count}"
+    )
+    wide_console.print(Panel(summary_text, title="Audit Summary", border_style="cyan"))
 
-    if report.suspect_specs or report.suspect_features:
-        wide_console.print("\n[bold yellow]⚠️ Suspect — 関連アイテムが変更されています:[/bold yellow]")
-        table = Table(show_header=True, header_style="bold magenta")
-        table.add_column("Spec ID", style="dim", no_wrap=True)
-        table.add_column("原因アイテム", style="dim")
-        table.add_column("アクション", style="dim", overflow="fold")
-        for spec in sorted(report.suspect_specs):
-            causes_list = []
-            for c in report.suspect_specs[spec]:
-                causes_list.append(c)
-            causes = ", ".join(causes_list) or "不明"
-            action = f"必要に応じて変化に応じた編集をし、spec-weaver review {spec} 後、 spec-weaver clear {spec}"
-            table.add_row(spec, causes, action)
-        for fpath in sorted(report.suspect_features):
-            fname = Path(fpath).name
-            causes = ", ".join(sorted(report.suspect_features[fpath])) or "不明"
-            table.add_row(fname, causes, "feature ファイルを確認し、必要に応じてシナリオを更新")
-        wide_console.print(table)
+    # 2. 詳細表示 (Errors - 要対応)
+    if error_count > 0:
+        wide_console.print("\n[bold red]=== 🔴 ERRORS (Action Required) ===[/bold red]")
+        
+        if report.untested_specs:
+            wide_console.print("\n[bold red]❌ テストが実装されていない仕様 (Untested Specs):[/bold red]")
+            wide_console.print(f"  [red]{', '.join(sorted(report.untested_specs))}[/red]")
+            
+        if report.orphaned_tags:
+            wide_console.print("\n[bold red]❌ 仕様書に存在しない孤児タグ (Orphaned Tags):[/bold red]")
+            tags = [f"@{t}" for t in sorted(report.orphaned_tags)]
+            wide_console.print(f"  [red]{', '.join(tags)}[/red]")
 
-    if report.unreviewed_specs or report.unreviewed_features:
-        wide_console.print("\n[bold yellow]📋 未レビューの変更 (Unreviewed Changes):[/bold yellow]")
-        table = Table(show_header=True, header_style="bold yellow")
-        table.add_column("UID / File", style="dim")
-        table.add_column("Type")
-        for spec in sorted(report.unreviewed_specs):
-            table.add_row(spec, "Doorstop Item")
-        for fpath in sorted(report.unreviewed_features):
-            table.add_row(Path(fpath).name, "Feature File")
-        wide_console.print(table)
+        if report.suspect_specs or report.suspect_features:
+            wide_console.print("\n[bold red]❌ Suspect — 関連アイテムが変更されています:[/bold red]")
+            table = Table(show_header=True, header_style="bold red", box=None)
+            table.add_column("ID / File", style="bold")
+            table.add_column("原因", style="dim")
+            table.add_column("アクション", style="dim")
+            for spec in sorted(report.suspect_specs):
+                causes = ", ".join(report.suspect_specs[spec]) or "不明"
+                action = f"必要に応じて編集し、spec-weaver review {spec} 後、 spec-weaver clear {spec}"
+                table.add_row(spec, causes, action)
+            for fpath in sorted(report.suspect_features):
+                causes = ", ".join(sorted(report.suspect_features[fpath])) or "不明"
+                table.add_row(Path(fpath).name, causes, "feature ファイルを確認し必要に応じて更新")
+            wide_console.print(table)
 
-    if report.broken_refs:
-        wide_console.print("\n[bold red]❌ 実装ファイルリンク切れ (Broken Implementation Refs):[/bold red]")
-        table = Table(show_header=True, header_style="bold red")
-        table.add_column("Spec ID")
-        table.add_column("Path (not found)")
-        for uid, p in sorted(report.broken_refs):
-            table.add_row(uid, p)
-        wide_console.print(table)
+        if report.unreviewed_specs or report.unreviewed_features:
+            wide_console.print("\n[bold red]📋 未レビューの変更 (Unreviewed Changes):[/bold red]")
+            items = sorted(report.unreviewed_specs) + [Path(p).name for p in sorted(report.unreviewed_features)]
+            wide_console.print(f"  [red]{', '.join(items)}[/red]")
 
-    if report.ref_only:
-        wide_console.print("\n[bold yellow]⚠️ impl_files のみ（アノテーションなし）(Ref Only):[/bold yellow]")
-        table = Table(show_header=True, header_style="bold yellow")
-        table.add_column("Spec ID")
-        table.add_column("Path")
-        for uid, p in sorted(report.ref_only):
-            table.add_row(uid, f"{uid} → {p}")
-        wide_console.print(table)
+        if report.broken_refs:
+            wide_console.print("\n[bold red]❌ 実装ファイルリンク切れ (Broken Implementation Refs):[/bold red]")
+            for uid, p in sorted(report.broken_refs):
+                wide_console.print(f"  - [bold]{uid}[/bold]: {p}")
 
-    if report.annotation_only:
-        wide_console.print("\n[bold yellow]⚠️ アノテーションのみ（impl_files なし）(Annotation Only):[/bold yellow]")
-        table = Table(show_header=True, header_style="bold yellow")
-        table.add_column("Spec ID")
-        table.add_column("Path")
-        for uid, p in sorted(report.annotation_only):
-            table.add_row(uid, f"{uid} ← {p}")
-        wide_console.print(table)
+        if report.behavior_without_gherkin:
+            wide_console.print("\n[bold red]❌ layer: behavior なのにGherkinテストがない (Behavior Without Gherkin):[/bold red]")
+            for spec in sorted(report.behavior_without_gherkin):
+                wide_console.print(f"  - [bold]{spec}[/bold]: .feature ファイルに @{spec} タグを追加してください")
 
-    if report.behavior_without_gherkin:
-        wide_console.print("\n[bold red]❌ layer: behavior なのにGherkinテストがない (Behavior Without Gherkin):[/bold red]")
-        table = Table(show_header=True, header_style="bold red")
-        table.add_column("Spec ID", style="dim")
-        table.add_column("layer", style="dim")
-        table.add_column("アクション", style="dim")
-        for spec in sorted(report.behavior_without_gherkin):
-            table.add_row(spec, "behavior", f".feature ファイルに @{spec} タグを追加してください")
-        wide_console.print(table)
+        if report.undefined_steps:
+            wide_console.print("\n[bold red]❌ ステップ定義が見つからないシナリオ (Undefined Steps):[/bold red]")
+            for step in sorted(report.undefined_steps):
+                wide_console.print(f"  - [red]{step}[/red]")
 
-    if report.architecture_with_gherkin:
-        wide_console.print("\n[bold yellow]⚠️ layer: architecture なのにGherkinタグが存在する (Architecture With Gherkin):[/bold yellow]")
-        table = Table(show_header=True, header_style="bold yellow")
-        table.add_column("Spec ID", style="dim")
-        table.add_column("layer", style="dim")
-        table.add_column("推奨アクション", style="dim")
-        for spec in sorted(report.architecture_with_gherkin):
-            table.add_row(spec, "architecture", "Gherkin テストを単体テスト（pytest）へ移行を検討してください")
-        wide_console.print(table)
+    # 3. 詳細表示 (Warnings)
+    if warning_count > 0:
+        wide_console.print("\n[bold yellow]=== 🟡 WARNINGS (Needs Review) ===[/bold yellow]")
 
-    if report.layer_unset:
-        wide_console.print("\n[bold blue]ℹ️ layer 属性が未設定のアイテム (Layer Unset):[/bold blue]")
-        table = Table(show_header=True, header_style="bold blue")
-        table.add_column("Spec ID", style="dim")
-        table.add_column("推奨アクション", style="dim")
-        for spec in sorted(report.layer_unset):
-            table.add_row(spec, "layer: behavior または layer: architecture を設定してください")
-        wide_console.print(table)
+        if report.ref_only:
+            wide_console.print("\n[bold yellow]⚠️ impl_files のみ（アノテーションなし）(Ref Only):[/bold yellow]")
+            for uid, p in sorted(report.ref_only):
+                wide_console.print(f"  - [bold]{uid}[/bold] → {p}")
 
-    if report.stale_items:
-        wide_console.print("\n[bold yellow]⏳ 最終更新から長期間経過しているアイテム (Stale Items):[/bold yellow]")
-        table = Table(show_header=True, header_style="bold yellow")
-        table.add_column("Spec ID")
-        table.add_column("最終更新日")
-        table.add_column("経過日数")
-        for uid, updated_at, delta in sorted(report.stale_items):
-            table.add_row(uid, updated_at, f"{delta} days")
-        wide_console.print(table)
+        if report.annotation_only:
+            wide_console.print("\n[bold yellow]⚠️ アノテーションのみ（impl_files なし）(Annotation Only):[/bold yellow]")
+            for uid, p in sorted(report.annotation_only):
+                wide_console.print(f"  - [bold]{uid}[/bold] ← {p}")
 
-    if report.undefined_steps:
-        wide_console.print("\n[bold red]❌ ステップ定義が見つからないシナリオ (Undefined Steps):[/bold red]")
-        table = Table(show_header=True, header_style="bold red")
-        table.add_column("Missing Step Text")
-        for step in sorted(report.undefined_steps):
-            table.add_row(step)
-        wide_console.print(table)
+        if report.architecture_with_gherkin:
+            wide_console.print("\n[bold yellow]⚠️ layer: architecture なのにGherkinタグが存在する (Architecture With Gherkin):[/bold yellow]")
+            for spec in sorted(report.architecture_with_gherkin):
+                wide_console.print(f"  - [bold]{spec}[/bold]: Gherkin テストを単体テスト（pytest）へ移行を検討してください")
 
-    if report.unused_step_defs:
-        wide_console.print("\n[dim]💡 未使用のステップ定義 (Unused Step Definitions):[/dim]")
-        for step in sorted(report.unused_step_defs):
-            wide_console.print(f"  [dim]- {step}[/dim]")
+        if report.stale_items:
+            wide_console.print("\n[bold yellow]⏳ 最終更新から長期間経過しているアイテム (Stale Items):[/bold yellow]")
+            for uid, updated_at, delta in sorted(report.stale_items):
+                wide_console.print(f"  - [bold]{uid}[/bold]: {updated_at} ({delta} days ago)")
+
+    # 4. 詳細表示 (Infos)
+    if info_count > 0:
+        wide_console.print("\n[bold blue]=== 🔵 INFOS ===[/bold blue]")
+        
+        if report.layer_unset:
+            wide_console.print("\n[bold blue]ℹ️ layer 属性が未設定のアイテム (Layer Unset):[/bold blue]")
+            wide_console.print(f"  [blue]{', '.join(sorted(report.layer_unset))}[/blue]")
+
+        if report.unused_step_defs:
+            wide_console.print("\n[dim]💡 未使用のステップ定義 (Unused Step Definitions):[/dim]")
+            for step in sorted(report.unused_step_defs):
+                wide_console.print(f"  [dim]- {step}[/dim]")
 
     if report.is_success:
         wide_console.print(f"\n[bold green]✅ 完璧です！ {report.specs_count} 件の仕様がすべてGherkinテストでカバーされています。[/bold green]")

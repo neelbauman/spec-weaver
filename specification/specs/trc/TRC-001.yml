@@ -1,5 +1,7 @@
 active: true
 derived: false
+feature_files:
+- specification/features/trace.feature
 gherkin_fingerprints:
 - ./specification/features/trace.feature: |
     a4a2d569a03cb048dc0056cc4acc09efcf6184bc37d58c9bf009cccd0b4e3535

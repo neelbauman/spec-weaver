@@ -1,5 +1,7 @@
 active: true
 derived: false
+feature_files:
+- specification/features/impl_link.feature
 gherkin_fingerprints:
 - ./specification/features/impl_link.feature: |
     ce6a306301223d62fa8782f6c7b0616344f68e525901fa9821895790da1ab969

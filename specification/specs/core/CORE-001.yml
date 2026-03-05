@@ -1,5 +1,7 @@
 active: true
 derived: false
+feature_files:
+- specification/features/data_extraction.feature
 gherkin_fingerprints:
 - ./specification/features/data_extraction.feature: |
     94fef768d8c88132b2a4457867d408e46b114533d92c9ba78fbe97ceb7c2f55a
@@ -13,6 +15,11 @@ links:
 normative: true
 ref: ''
 reviewed: oVfS67U4q1HeYJoxWHWO9h70r4dtUpT9OitoYLbVRAo=
+scanned_impl_files:
+- .specification/docs/items/SPEC-018.md
+- .specification/docs/items/TRC-003.md
+- specification/specs/trc/TRC-003.yml
+- src/spec_weaver/adapters/gherkin.py
 status: implemented
 test_fingerprint: |
   bfb97c507a8e3e23e58c4c6e0bc437d7d98c1d27c8c9accfcc20affd9fe0aa20

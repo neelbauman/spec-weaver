@@ -9,6 +9,10 @@ links:
 normative: true
 ref: ''
 reviewed: 1RoqY0YTffbhxDtBOsQ0wOeclTKergcY6r-ggwtfrSU=
+scanned_impl_files:
+- .specification/docs/items/SPEC-018.md
+- .specification/docs/items/TRC-003.md
+- specification/specs/trc/TRC-003.yml
 status: implemented
 testable: false
 text: |

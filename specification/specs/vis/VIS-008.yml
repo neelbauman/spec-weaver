@@ -1,6 +1,8 @@
 active: true
 created_at: '2026-02-26'
 derived: false
+feature_files:
+- specification/features/build.feature
 gherkin_fingerprints:
 - ./specification/features/build.feature: |
     f8dca681ef818075b4380e7e5f191a826fedc63badeaaa82420750d50426d32d
@@ -9,7 +11,7 @@ header: |
 layer: behavior
 level: 8.0
 links:
-- REQ-003: null
+- REQ-003: Rb8ehO6TwgTYIqN3kXtu3nzq6LWHqvsE0-d2B9HrUWM=
 normative: true
 ref: ''
 reviewed: Vje8n_R1Vr_0ZlJbce9wz1vkklamOHu4fyT60jEMf-A=

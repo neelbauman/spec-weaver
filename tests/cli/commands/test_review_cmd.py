@@ -15,11 +15,16 @@ runner = CliRunner()
 # review コマンド
 # ---------------------------------------------------------------------------
 
+@patch("spec_weaver.cli.commands.review_cmd.StatusService")
 @patch("spec_weaver.cli.commands.review_cmd._audit_cmd")
 @patch("spec_weaver.cli.commands.review_cmd.ReviewService")
 @patch("spec_weaver.cli.commands.review_cmd.get_item_map")
-def test_review_item_success_no_edit(mock_get_item_map, mock_service_class, mock_audit, tmp_path):
+def test_review_item_success_no_edit(mock_get_item_map, mock_service_class, mock_audit, mock_status_service, tmp_path):
     """--no-edit でアイテムを正常にレビューできる。"""
+    mock_status_report = MagicMock()
+    mock_status_report.review_state.get_status.return_value = "unreviewed"
+    mock_status_service.return_value.get_status_report.return_value = mock_status_report
+
     mock_item = MagicMock()
     mock_item.path = str(tmp_path / "specs" / "QA-001.yml")
     mock_get_item_map.return_value = {"QA-001": mock_item}
@@ -113,10 +118,15 @@ def test_clear_item_not_found(mock_get_item_map, tmp_path):
     assert "見つかりません" in result.output
 
 
+@patch("spec_weaver.cli.commands.clear_cmd.StatusService")
 @patch("spec_weaver.cli.commands.clear_cmd.ClearService")
 @patch("spec_weaver.cli.commands.clear_cmd.get_item_map")
-def test_clear_service_error(mock_get_item_map, mock_service_class, tmp_path):
+def test_clear_service_error(mock_get_item_map, mock_service_class, mock_status_service, tmp_path):
     """サービスがエラーを返した場合は終了コード 1 を返す。"""
+    mock_status_report = MagicMock()
+    mock_status_report.review_state.get_status.return_value = "suspect"
+    mock_status_service.return_value.get_status_report.return_value = mock_status_report
+
     mock_item = MagicMock()
     mock_item.path = str(tmp_path / "specs" / "SPEC-001.yml")
     mock_get_item_map.return_value = {"SPEC-001": mock_item}

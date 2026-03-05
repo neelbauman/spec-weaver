@@ -1,5 +1,7 @@
 active: true
 derived: false
+feature_files:
+- specification/features/review.feature
 gherkin_fingerprints:
 - ./specification/features/review.feature: |
     19f642958b93767b5effebcd3c086360020b50b696fc2c3d9a05e8299252d26c
@@ -15,7 +17,11 @@ links:
 - REQ-004: null
 normative: true
 ref: ''
-reviewed: -sx5zwtMjo2PKRCiZyHrg49NzfVuN3eDPu0HGcdTq68=
+reviewed: B1UkPXom29rTD8rnt906VgALp0R2LNT6w7pl9e-6p6c=
+scanned_impl_files:
+- specification/features/steps/step_review.py
+- src/spec_weaver/adapters/gherkin.py
+- src/spec_weaver/utils/editor.py
 status: in-progress
 testable: true
 text: |

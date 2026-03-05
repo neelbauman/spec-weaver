@@ -1,5 +1,7 @@
 active: true
 derived: false
+feature_files:
+- specification/features/semantic_review.feature
 gherkin_fingerprints:
 - ./specification/features/semantic_review.feature: |
     c49fe8e649223eccc77206d3b8083a864a5fc9682137b891586d0c3bf2385b2c
@@ -18,6 +20,8 @@ links:
 normative: true
 ref: ''
 reviewed: MB4eeUZO0EDm7bsiPLQyr2GenWbP17gHCN5m6OURntc=
+scanned_impl_files:
+- src/spec_weaver/core/review.py
 status: implemented
 test_fingerprint: |
   1f0d1125418eb94a5e8445595c56bd0ec5681fd03ff31964c090b3eb683b017e

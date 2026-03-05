@@ -6,6 +6,7 @@ from rich.console import Console
 
 from spec_weaver.adapters.doorstop import get_item_map
 from spec_weaver.services.clear_service import ClearService
+from spec_weaver.services.status_service import StatusService
 
 console = Console()
 
@@ -96,6 +97,12 @@ def _clear_single(item_id: str, feature_dir: Path, repo_root: Path, no_edit: boo
     if item_id not in item_map:
         console.print(f"[bold red]❌ アイテム {item_id} が見つかりません。[/bold red]")
         raise typer.Exit(1)
+
+    report = StatusService().get_status_report(repo_root, feature_dir)
+    status = report.review_state.get_status(item_id)
+    if "suspect" not in status:
+        console.print(f"[bold yellow]⚠️ {item_id} は suspect 状態ではないため、エディタを開かずに終了します。[/bold yellow]")
+        raise typer.Exit(0)
 
     item = item_map[item_id]
     item_yaml_path = _resolve_repo_path(Path(item.path), repo_root)

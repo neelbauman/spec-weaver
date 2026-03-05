@@ -1,0 +1,23 @@
+active: true
+derived: false
+header: |
+  CORE-003: AST解析結果の同期とCLIフレンドリー化 (Sync Command)
+level: 1.3
+links:
+- CORE-001: null
+normative: true
+ref: ''
+status: in-progress
+testable: true
+text: |
+  ## 概要
+  .featureファイルのAST解析により得られた仕様アイテムとの紐づけ（タグ）、および実装コードのスキャンから得られた紐づけ（アノテーション）を、DoorstopのYAMLファイル自体に書き込む機能（`spec-weaver sync` コマンド）を実装する。これにより、各種CLIツール（grep, jq 等）を用いた直接的な情報抽出を可能にする。
+
+  ## 詳細仕様
+  1. **Sync コマンド (`spec-weaver sync`)**
+     - `.feature` ファイルのAST解析結果（`get_tag_map`）を元に、各 Doorstop アイテムに関連づけられている `.feature` ファイルのパスを抽出し、YAML の `feature_files` 属性に保存する。
+     - 実装コードのスキャン結果（`ImplScanner`）を元に、各 Doorstop アイテムに関連づけられている実装ファイルのパスを抽出し、YAML の `impl_files` 属性に保存・更新する。
+  2. **親子ハッシュ等のDoorstop拡張との連携**
+     - 必要に応じて、`child_stamps` などの拡張属性の不整合も検知・同期更新する（または sync コマンドで一元的に整合させる）。
+  3. **CLIフレンドリー性**
+     - 上記同期により、ユーザーは `grep -r "feature_files:.*audit.feature" specification/specs` のように簡単なシェルコマンドでリンクを逆引きできるようになる。

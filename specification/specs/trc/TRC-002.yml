@@ -1,5 +1,7 @@
 active: true
 derived: false
+feature_files:
+- specification/features/impl_link.feature
 gherkin_fingerprints:
 - ./specification/features/impl_link.feature: |
     ce6a306301223d62fa8782f6c7b0616344f68e525901fa9821895790da1ab969
@@ -15,6 +17,9 @@ links:
 normative: true
 ref: ''
 reviewed: Ia7bNk8-qcB8DcZY-0hb4rlBfj0KAC2buehEkdKtq_c=
+scanned_impl_files:
+- src/spec_weaver/adapters/doorstop.py
+- src/spec_weaver/adapters/impl_scanner.py
 status: implemented
 test_fingerprint: |
   41dcbf4a7faa415e07ef63246c95e474b424447dfdad377e0db239885ff3b30f

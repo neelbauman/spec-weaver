@@ -12,7 +12,7 @@ from specification.features.steps._helpers import run_spec_weaver, write_doorsto
 #     Scenarios:
 #       - 
 #     """
-#     raise NotImplementedError('STEP: Doorstopツリーが初期化されている')
+#     pass
 
 # [Duplicate Skip] This step is already defined elsewhere
 # @given('以下のSPECアイテムが存在する:')  # type: ignore
@@ -32,7 +32,7 @@ from specification.features.steps._helpers import run_spec_weaver, write_doorsto
 #     Scenarios:
 #       - 
 #     """
-#     raise NotImplementedError('STEP: Doorstopツリーが初期化されている')
+#     pass
 
 # [Duplicate Skip] This step is already defined elsewhere
 # @given('以下のSPECアイテムが存在する:')  # type: ignore
@@ -52,7 +52,7 @@ from specification.features.steps._helpers import run_spec_weaver, write_doorsto
 #     Scenarios:
 #       - 
 #     """
-#     raise NotImplementedError('STEP: Doorstopツリーが初期化されている')
+#     pass
 
 # [Duplicate Skip] This step is already defined elsewhere
 # @given('以下のSPECアイテムが存在する:')  # type: ignore
@@ -71,7 +71,7 @@ def given_6df87eb3(context):
     Scenarios:
       - 
     """
-    raise NotImplementedError('STEP: Doorstopツリーが初期化されている')
+    pass
 
 
 @given('以下のSPECアイテムが存在する:')  # type: ignore

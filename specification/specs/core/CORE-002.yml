@@ -1,5 +1,7 @@
 active: true
 derived: false
+feature_files:
+- specification/features/data_extraction.feature
 gherkin_fingerprints:
 - ./specification/features/data_extraction.feature: |
     5c2a81c2c65d34eea85b92937f2ae406193e27c44f94c9c8cf1afbbb75212f58
@@ -14,6 +16,8 @@ links:
 normative: true
 ref: ''
 reviewed: hWAyTwJkAqHlDaNTECKlv5nXe6AR_2xwy-FXueR8vO4=
+scanned_impl_files:
+- src/spec_weaver/adapters/gherkin.py
 status: implemented
 test_fingerprint: |
   5c2a81c2c65d34eea85b92937f2ae406193e27c44f94c9c8cf1afbbb75212f58
